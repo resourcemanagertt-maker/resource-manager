@@ -3696,7 +3696,7 @@ function vRequests() {
         }).join('') + '</div>' : '') + '</div>';
     }).join('') + '</div>';
   }
-  return top(true) + '<h1 class="title">Requests to buy</h1><p class="sub">Newest first.</p>' + body;
+  return top(true) + '<h1 class="title">Requests to buy</h1>' + body;
 }
 // A CSV a spreadsheet can open. Text that starts with = + - @ gets a leading apostrophe so it is never run as a formula.
 function csvCell(v) {
@@ -3961,7 +3961,7 @@ function vLabels(v) {
     ? places.map(function (p) { return labelCard(linkTo({ c: v.centre, p: p }), p, v.centre + ' · scan to count this shelf', ''); })
     : inCentre.filter(function (it) { return !v.place || it.loc === v.place; })
         .sort(function (a, b) { return a.loc.localeCompare(b.loc) || a.name.localeCompare(b.name); })
-        .map(function (it) { return labelCard(linkTo({ i: it.id }), it.name, it.centre + ' · ' + it.loc, it.id); });
+        .map(function (it) { return labelCard(linkTo({ i: it.id }), shown(it), it.centre + ' · ' + it.loc, it.id); });
   return '<div class="noprint">' + top(true) + '<h1 class="title">Print QR stickers</h1>' +
     '<p class="sub">Stick one on each item or shelf. Scanning it with the phone camera opens it in this app.</p>' +
     '<label class="lab">What to print</label><div class="chips">' + opt('mode', 'items', 'One per item', v.mode === 'items') + opt('mode', 'shelves', 'One per shelf', v.mode === 'shelves') + '</div>' +
