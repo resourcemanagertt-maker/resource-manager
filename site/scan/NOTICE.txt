@@ -1,0 +1,5 @@
+Barcode reading for browsers without the Barcode Detection API.
+
+zbar-wasm.js and zbar.wasm: @undecaf/zbar-wasm (https://github.com/undecaf/zbar-wasm), a WebAssembly build of ZBar,
+licensed LGPL-2.1 or later. barcode-polyfill.js: @undecaf/barcode-detector-polyfill, MIT licence.
+These files are unmodified and are loaded as separate files, so they can be replaced with another build of the library.

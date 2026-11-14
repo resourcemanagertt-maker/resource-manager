@@ -3702,7 +3702,7 @@ function vAdmin() {
 // ----- Add many things at once -----
 function newRow() { return { isbn: '', name: '', qty: '1', msg: '', err: '' }; }
 function rowsHtml() {
-  var canScan = 'BarcodeDetector' in window;
+  var canScan = 'BarcodeDetector' in window || HOSTED;   // hosted: the reader is fetched when someone taps Scan
   return F.rows.map(function (r, i) {
     return '<div class="card brow" data-i="' + i + '">' +
       '<div class="isbnline"><input id="b-isbn-' + i + '" class="inp" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="ISBN (optional)" value="' + esc(r.isbn) + '" aria-label="ISBN, line ' + (i + 1) + '">' +
@@ -3962,7 +3962,8 @@ var ACT = {
   scanIsbn: function (el) {
     F.scanFor = Number(el.dataset.i);
     byIdEl('scan').value = '';
-    byIdEl('scan').click();
+    byIdEl('scan').click();       // opens the camera at once (it must happen in the tap); the reader loads meanwhile
+    loadReader().catch(function () { /* said when the photo comes back */ });
   },
   bulkGo: function () {
     var loc = val('f-loc');
@@ -4301,11 +4302,32 @@ document.addEventListener('error', function (e) {
   if (t.dataset.fb) { var fb = t.dataset.fb; delete t.dataset.fb; t.src = fb; }
   else t.remove();
 }, true);
-// Barcode scanning only where the browser can do it (Chrome on Android). Elsewhere the person types the ISBN.
+// Barcode scanning: the browser's own reader where there is one (Chrome on Android); otherwise, on the hosted page, a small
+// reader (scan/, a WebAssembly build of ZBar) is fetched the first time it is needed. Otherwise the person types the ISBN.
+var readerLoad = null;
+function addScript(src) {
+  return new Promise(function (ok, no) {
+    var s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = function () { no(new Error('could not load ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+// (the polyfill script declares a top-level const, so it is reached by name, not through window)
+function loadReader() {
+  if ('BarcodeDetector' in window) return Promise.resolve(window.BarcodeDetector);
+  if (!HOSTED) return Promise.reject(new Error('no reader'));
+  if (!readerLoad) {
+    readerLoad = addScript('scan/zbar-wasm.js').then(function () { return addScript('scan/barcode-polyfill.js'); })
+      .then(function () { return barcodeDetectorPolyfill.BarcodeDetectorPolyfill; })
+      .catch(function (e) { readerLoad = null; throw e; });
+  }
+  return readerLoad;
+}
 byIdEl('scan').addEventListener('change', function () {
   var file = this.files && this.files[0], i = F.scanFor;
-  if (!file || !('BarcodeDetector' in window) || !F.rows || !F.rows[i]) return;
-  createImageBitmap(file).then(function (bmp) { return new BarcodeDetector({ formats: ['ean_13', 'ean_8'] }).detect(bmp); })
+  if (!file || !F.rows || !F.rows[i]) return;
+  setRowMsg(i, 'Reading the barcode…');
+  Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8'] }).detect(a[0]); })
     .then(function (codes) {
       var isbn = RMIsbn.clean(codes && codes[0] && codes[0].rawValue);
       if (!isbn) return setRowMsg(i, 'Could not read that barcode. Try again, or type the ISBN.');
