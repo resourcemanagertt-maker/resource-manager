@@ -159,7 +159,7 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .brow{padding:var(--s4) 0;display:flex;flex-direction:column;gap:var(--s2);border-top:0;border-bottom:1px solid var(--line)}
 .brow .help{margin:0}
 .isbnline{display:grid;grid-template-columns:1fr auto auto;gap:var(--s2)}
-.isbnline .btn{width:auto;min-width:92px}
+.isbnline .btn,.isbnline .btn + .btn{width:auto;min-width:92px;margin:0}
 .bq{display:flex;align-items:center;gap:var(--s3)}
 .bq .stepper{flex:1}
 @media print{
@@ -3243,6 +3243,7 @@ function resultsHtml(v) {
       S.categories.filter(function (c) { return counts[c]; }).map(function (c) {
         return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span class="lbl2">' + esc(c) + '</span><small>' + counts[c] + '</small></button>';
       }).join('') + '</div>' +
+      '<button class="btn" data-act="addNew" style="margin-top:var(--s5)">Add a new item</button>' +
       '<button class="btn quiet" data-act="go" data-to="scanBooks">Adding books? Scan them</button>';
   }
   var r = RMSearch.search(S.groups, RMIsbn.clean(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
@@ -3718,6 +3719,7 @@ function vMore() {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
     '<div class="card rows" style="margin-top:var(--s5)">' +
+    '<button class="rowbtn" data-act="addNew"><span>Add a new item<small>One thing that is not on the list yet</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="rooms"><span>Rooms<small>What is kept where</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="scanBooks"><span>Scan books<small>Point the camera at each barcode; it is recorded</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="bulk"><span>Add many things at once<small>A box of books or a delivery, one line each</small></span>' + ICON.go + '</button>' +
@@ -3840,6 +3842,7 @@ function vAdmin() {
       row('go', 'requests', 'Requests to buy', waiting ? waiting + ' waiting for a decision' : 'Approve, decline or mark as bought') +
     '</div>' +
     '<h2 class="sec">Set up</h2><div class="card rows">' +
+      row('addNew', '', 'Add a new item', 'One thing that is not on the list yet') +
       row('go', 'adminRooms', 'Rooms', 'Add, rename or remove the places things are kept') +
       row('go', 'labels', 'Print QR stickers', 'For items or shelves; choose which ones') +
       row('go', 'bulk', 'Add many things at once', 'A delivery or a box of books') +
@@ -4249,6 +4252,7 @@ var ACT = {
 
   toRequest: function () { go({ name: 'request', text: S.q.trim() }); },
   requestMore: function () { go({ name: 'request', key: cur().key, itemId: cur().id }); },
+  addNew: function () { S.q = ''; go({ name: 'add', text: '' }); },
   toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
   addPlace: function () { go({ name: 'add', key: cur().key }); },
   toEdit: function () { go({ name: 'edit', id: cur().id, key: cur().key }); },
