@@ -3845,7 +3845,8 @@ function vAdmin() {
       row('go', 'bulk', 'Add many things at once', 'A delivery or a box of books') +
     '</div>' +
     '<h2 class="sec">The data</h2><div class="card rows">' +
-      '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>Open the Google Sheet<small>Edit anything directly, set the PIN and the minimums</small></span>' + ICON.go + '</a>' +
+      '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>Open the Google Sheet<small>' + esc(S.admin.sheetName || 'Edit anything directly, set the PIN and the minimums') + '</small></span>' + ICON.go + '</a>' +
+      row('sheetChange', '', 'Change the Google Sheet', 'Use a different sheet for the whole list') +
       row('csv', '', 'Download the list', 'A spreadsheet file with every item') +
     '</div>' +
     '<p class="hint">To take a wrong item off the list, open it and tap “Change details”.</p>' +
@@ -4652,7 +4653,7 @@ var ACT = {
     if (!pin) return;
     busy(true, 'Checking…');
     call('adminOpen', { pin: pin }).then(function (res) {
-      S.admin = { sheetUrl: res.sheetUrl, log: res.log };
+      S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log };
       S.pin = pin;
       loadRequests();
       closeSheet();
@@ -4660,6 +4661,44 @@ var ACT = {
     }).catch(function (e) {
       busy(false);
       var err = byIdEl('m-err');
+      err.textContent = e.network ? 'No signal. Try again.' : e.message;
+      err.hidden = false;
+    });
+  },
+  sheetChange: function () {
+    if (S.outbox.length) return toast('Some changes are still waiting to send. Send them first, then change the sheet.');
+    M = { type: 'sheet' };
+    openSheet('<h2>Use a different Google Sheet</h2>' +
+      '<p class="sub">Now: ' + esc((S.admin && S.admin.sheetName) || 'the original sheet') + '</p>' +
+      '<label class="lab" for="m-url">Link to the new sheet</label>' +
+      '<input id="m-url" class="inp" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://docs.google.com/spreadsheets/d/…">' +
+      '<p class="help">Share the new sheet with the Google account that owns this app, as an Editor. A blank sheet is set up for you. Staff keep using the same link. The old sheet is not changed.</p>' +
+      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="sheetChangeGo">Use this sheet</button><button class="btn quiet" data-act="closeSheet">Cancel</button>', 'm-url');
+  },
+  sheetChangeGo: function () {
+    var url = val('m-url');
+    if (!url) return;
+    busy(true, 'Linking…');
+    call('adminSetSheet', { pin: S.pin, url: url }).then(function (res) {
+      busy(false);
+      S.admin = null; S.pin = '';                    // the new sheet has its own PIN
+      S.base = []; S.requests = null; S.history = {}; S.outbox = []; store.set('rm_outbox', []);
+      rebuild(); saveData();
+      root('more');
+      refresh(false);
+      if (res.created) {
+        openSheet('<h2>The new sheet is ready</h2><p class="sub">' + esc(res.sheetName) + '</p>' +
+          '<p>Its admin PIN is <b>' + esc(res.pin) + '</b></p>' +
+          '<p class="help">Write it down. It is also in the Setup tab of that sheet, where you can change it and rename the centres.</p>' +
+          '<button class="btn primary" data-act="closeSheet">Done</button>');
+      } else {
+        closeSheet();
+        toast('Now using “' + res.sheetName + '”. Its own admin PIN applies.');
+      }
+    }).catch(function (e) {
+      busy(false);
+      var err = byIdEl('m-err');
+      if (!err) return toast(e.network ? 'No signal. Try again.' : e.message);
       err.textContent = e.network ? 'No signal. Try again.' : e.message;
       err.hidden = false;
     });
