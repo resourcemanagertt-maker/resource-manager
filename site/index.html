@@ -3445,7 +3445,8 @@ function vEdit(v) {
     photoField() +
     (S.admin ? '' : '<p class="help" style="margin-top:14px">The name, type and minimum can be changed by the admin.</p>') +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="formend"><button class="btn primary" id="f-go" data-act="editGo">Save changes</button></div>';
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="editGo">Save changes</button>' +
+    (S.admin ? '<button type="button" class="btn quiet" data-act="removeItem">Take this item off the list</button>' : '') + '</div>';
 }
 
 // ----- Running low -----
@@ -3476,7 +3477,13 @@ function vLow() {
   var mine = myCentre();
   var scope = function (it) { return S.lowAll || it.centre === mine; };
   var lows = S.items.filter(function (it) { return scope(it) && low(it); })
-    .sort(function (a, b) { return (a.centre === mine ? 0 : 1) - (b.centre === mine ? 0 : 1) || a.centre.localeCompare(b.centre) || a.name.localeCompare(b.name); });
+    .sort(function (a, b) {
+      if (S.lowSort === 'u') {   // emptiest first: how much of the minimum is left
+        var ua = a.qty / a.min, ub = b.qty / b.min;
+        if (ua !== ub) return ua - ub;
+      }
+      return (a.centre === mine ? 0 : 1) - (b.centre === mine ? 0 : 1) || a.centre.localeCompare(b.centre) || a.name.localeCompare(b.name);
+    });
   var broken = S.items.filter(function (it) { return scope(it) && STATUS_LABEL[it.status]; });
   var row = function (it, extra) {
     return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' +
@@ -3487,6 +3494,8 @@ function vLow() {
     '<div class="seg" data-group="lowAll">' +
     '<button class="chip' + (S.lowAll ? '' : ' on') + '" data-act="lowScope" data-val="">' + esc(mine || 'My centre') + '</button>' +
     '<button class="chip' + (S.lowAll ? ' on' : '') + '" data-act="lowScope" data-val="1">All centres</button></div>' +
+    (lows.length > 1 ? '<div class="seg" data-group="lowSort"><button class="chip' + (S.lowSort === 'u' ? '' : ' on') + '" data-act="lowSort" data-val="">By name</button>' +
+      '<button class="chip' + (S.lowSort === 'u' ? ' on' : '') + '" data-act="lowSort" data-val="u">Emptiest first</button></div>' : '') +
     (lows.length || broken.length ? '<a class="btn" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' +
       encodeURIComponent(shoppingText(lows, broken, S.lowAll ? 'all centres' : (mine || 'my centre'))) + '">Send this list on WhatsApp</a>' : '') +
     (lows.length ? '<div class="list">' + lows.map(function (it) {
@@ -4124,8 +4133,32 @@ var ACT = {
     }).catch(failed);
   },
 
+  lowSort: function (el) { S.lowSort = el.dataset.val; render(); },
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
+  removeItem: function () {
+    var it = S.byId[cur().id];
+    if (!it) return;
+    M = { type: 'remove', id: it.id };
+    openSheet('<h2>Take “' + esc(it.name) + '” off the list?</h2><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + ' · ' + esc(amountOf(it)) +
+      '</p><p class="help">Use this for a mistake or a duplicate. It cannot be undone, but the activity log keeps a note of it.</p>' +
+      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="removeItemGo">Take it off the list</button><button class="btn quiet" data-act="closeSheet">Cancel</button>');
+  },
+  removeItemGo: function () {
+    var id = M.id;
+    busy(true, 'Removing…');
+    call('removeItem', { itemId: id, pin: S.pin }).then(function () {
+      S.base = S.base.filter(function (b) { return b.id !== id; });
+      saveData(); rebuild(); closeSheet();
+      root('home');
+      toast('Taken off the list.');
+    }).catch(function (e) {
+      busy(false);
+      var err = byIdEl('m-err');
+      err.textContent = e.network ? 'No signal. Try again.' : e.message;
+      err.hidden = false;
+    });
+  },
   csv: function () {
     try {
       var blob = new Blob(['\ufeff' + csvText()], { type: 'text/csv;charset=utf-8' });
