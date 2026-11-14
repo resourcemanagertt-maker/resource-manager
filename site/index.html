@@ -1,0 +1,4178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base target="_top">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resource Manager</title>
+<style>
+:root{
+  --bg:#f4f3ef; --card:#fff; --ink:#1e1d1a; --muted:#66645d; --line:#dfddd5; --soft:#eceae3;
+  --brand:#0113a1; --red:#b3261e; --red-bg:#fbe7e4; --amber:#7a5200; --amber-bg:#fdf0cf;
+  --green:#1a6a39; --green-bg:#e4f3e8; --r:12px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Noto Sans","PingFang SC","Microsoft YaHei",sans-serif;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+button,input,textarea{font:inherit;color:inherit;margin:0}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:inherit}
+h1,h2,h3,p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+
+#banner,#app{max-width:560px;margin:0 auto}
+#app{padding:8px 16px 104px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-bottom:4px}
+.org{color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me{font-size:14px;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);max-width:62%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{display:flex;align-items:center;gap:2px;min-height:48px;padding:0 12px 0 0;font-weight:600}
+.back svg{width:22px;height:22px}
+.notice{margin:8px 16px 0;padding:10px 12px;border-radius:var(--r);background:var(--amber-bg);color:var(--amber);font-size:14px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.notice button{font-weight:700;text-decoration:underline;white-space:nowrap;min-height:44px;padding:0 4px}
+
+.hero{font-size:28px;line-height:1.15;font-weight:700;letter-spacing:-.01em;margin:10px 0 14px}
+h1.title{font-size:22px;line-height:1.2;margin:4px 0 4px}
+.sub{color:var(--muted);font-size:15px;margin-bottom:14px}
+.sec{font-size:15px;font-weight:700;margin:22px 0 8px}
+.hint{color:var(--muted);font-size:14px;margin-top:10px}
+.muted{color:var(--muted)}
+
+.search{position:relative}
+.search svg.ico{position:absolute;left:16px;top:18px;width:22px;height:22px;color:var(--muted);pointer-events:none}
+.search input{width:100%;height:58px;border:2px solid var(--ink);border-radius:16px;background:var(--card);padding:0 52px 0 48px;font-size:18px;outline:0;-webkit-appearance:none;appearance:none}
+.search input:focus{border-color:var(--brand)}
+.search .clear{position:absolute;right:6px;top:6px;width:46px;height:46px;display:grid;place-items:center;color:var(--muted)}
+.search .clear svg{width:20px;height:20px}
+
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cat{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);font-size:14px;line-height:1.2}
+.cat .emo{font-size:22px;flex:none}
+.cat small{display:block;color:var(--muted);font-size:12px}
+.pillx{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;margin:12px 0 2px;border-radius:999px;background:var(--ink);color:#fff;font-size:14px}
+.pillx svg{width:14px;height:14px}
+
+.count{color:var(--muted);font-size:14px;margin:14px 0 8px}
+.list{display:flex;flex-direction:column;gap:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.item{display:flex;gap:12px;padding:12px;width:100%;align-items:flex-start}
+.item .body{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.name{font-weight:700;font-size:16px;line-height:1.25;overflow-wrap:anywhere}
+.alt{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.line{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.line b{color:var(--ink)}
+.places{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:3px}
+.pl{font-size:13px;padding:3px 8px;border-radius:999px;background:var(--soft);white-space:nowrap}
+.pl b{font-weight:700}
+.pl.mine{outline:1.5px solid var(--ink)}
+.pl.low{background:var(--red-bg);color:var(--red)}
+.pl.low.mine{outline-color:var(--red)}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.badge.low{background:var(--red-bg);color:var(--red)}
+.badge.warn{background:var(--amber-bg);color:var(--amber)}
+.badge.ok{background:var(--green-bg);color:var(--green)}
+.badge.plain{background:var(--soft);color:var(--muted)}
+.tile{position:relative;flex:none;width:52px;height:52px;border-radius:10px;background:var(--soft);display:grid;place-items:center;overflow:hidden}
+.tile .emo{font-size:26px}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tile.big{width:84px;height:84px;border-radius:14px}
+.tile.big .emo{font-size:40px}
+
+.after{margin-top:22px;display:flex;flex-direction:column;gap:8px}
+.after p{color:var(--muted);font-size:14px}
+.empty{padding:18px 16px;text-align:left}
+.empty h2{font-size:18px;margin-bottom:6px;overflow-wrap:anywhere}
+.empty p{color:var(--muted);font-size:15px;margin-bottom:14px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);font-weight:600;text-align:center;text-decoration:none}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.quiet{border-color:transparent;background:none;color:var(--muted);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn + .btn{margin-top:8px}
+
+.headcard{display:flex;gap:14px;align-items:center;margin:4px 0 14px}
+.headcard .name{font-size:21px}
+.place{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border-bottom:1px solid var(--line)}
+.place:last-child{border-bottom:0}
+.place .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--muted)}
+.place.on .dot{border:6px solid var(--brand)}
+.place .where{flex:1;min-width:0;font-size:15px}
+.place .where small{display:block;color:var(--muted);font-size:13px;margin-top:1px}
+.place .qty{font-weight:700;font-size:17px;white-space:nowrap;text-align:right}
+.place .qty small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.place .qty.low{color:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.two .btn{margin-top:0}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.lvl{min-height:64px;padding:8px 4px;border:1px solid #b9b6ac;border-radius:var(--r);background:var(--card);font-weight:600;font-size:15px;text-align:center}
+.lvl.on{border-width:2px;border-color:var(--ink)}
+.lvl.lv0.on{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.lvl.lv1.on{background:var(--amber-bg);color:var(--amber);border-color:var(--amber)}
+.lvl.lv2.on,.lvl.lv3.on{background:var(--green-bg);color:var(--green);border-color:var(--green)}
+.cline.lvrow{flex-wrap:wrap}
+.cline.lvrow .levels{width:100%;margin-top:2px;gap:6px}
+.cline.lvrow .lvl{min-height:46px;font-size:14px}
+.lbls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.lbl{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px dashed #b9b6ac;border-radius:10px;background:#fff;break-inside:avoid}
+.lbl .qr svg{display:block;width:100%;height:auto}
+.lbl .lt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.lbl .lt b{font-size:14px;line-height:1.2;overflow-wrap:anywhere}
+.lbl .lt span,.lbl .lt small{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.brow{padding:12px;margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.brow .help{margin:0}
+.isbnline{display:grid;grid-template-columns:1fr auto auto;gap:8px}
+.isbnline .btn{width:auto;min-width:92px}
+.bq{display:flex;align-items:center;gap:12px}
+.bq .stepper{flex:1}
+@media print{
+  .noprint,#nav,#banner,.top,#toast,#sheet{display:none!important}
+  body{background:#fff}
+  #app{max-width:none;padding:0}
+  .lbls{grid-template-columns:repeat(4,1fr);gap:0;margin:0}
+  .lbl{border:1px dashed #888;border-radius:0;padding:5mm}
+}
+.big{min-height:84px;flex-direction:column;gap:2px;font-size:16px}
+.big .sign{font-size:30px;line-height:1;font-weight:400}
+.big.add{background:var(--green-bg);border-color:#bfdcc8;color:var(--green)}
+.forwhere{font-size:13px;color:var(--muted);text-align:center;margin-top:8px}
+.note{margin-top:12px;padding:10px 12px;border-radius:var(--r);background:var(--soft);font-size:14px;overflow-wrap:anywhere}
+.rows{margin-top:16px}
+.rowbtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:15px}
+.rowbtn:last-child{border-bottom:0}
+.rowbtn svg{width:18px;height:18px;color:var(--muted);flex:none}
+.rowbtn small{display:block;color:var(--muted);font-size:13px}
+.hist{font-size:14px;padding:10px 12px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.hist:last-child{border-bottom:0}
+.hist small{color:var(--muted)}
+
+.lab{display:block;font-size:14px;font-weight:600;margin:16px 0 6px}
+.lab i{font-style:normal;font-weight:400;color:var(--muted)}
+.inp{width:100%;min-height:52px;padding:12px 14px;border:1px solid #b9b6ac;border-radius:var(--r);background:var(--card);font-size:16px;outline:0;-webkit-appearance:none;appearance:none}
+.inp:focus{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand)}
+.inp[readonly]{background:var(--soft);border-color:var(--line)}
+textarea.inp{min-height:76px;resize:vertical;line-height:1.35}
+.help{font-size:13px;color:var(--muted);margin-top:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:44px;padding:8px 14px;border:1px solid #b9b6ac;border-radius:999px;background:var(--card);font-size:14px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.stepper{display:flex;align-items:stretch;gap:8px}
+.stepper button{flex:none;width:56px;min-height:56px;border:1px solid #b9b6ac;border-radius:var(--r);background:var(--card);font-size:28px;line-height:1;text-align:center}
+.stepper .num{flex:1;min-width:0;text-align:center;font-size:24px;font-weight:700;border:1px solid #b9b6ac;border-radius:var(--r);background:var(--card);outline:0}
+.stepper .num:focus{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand)}
+.qtyunit{display:grid;grid-template-columns:1fr 112px;gap:8px;align-items:end}
+details{margin-top:18px;border-top:1px solid var(--line)}
+summary{min-height:52px;display:flex;align-items:center;font-weight:600;cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:22px;font-weight:400;color:var(--muted)}
+details[open] summary::after{content:"–"}
+.similar{margin-top:10px;padding:12px;border-radius:var(--r);background:var(--amber-bg);color:var(--amber);font-size:14px}
+.similar .list{margin-top:8px}
+.similar .item{color:var(--ink)}
+.photorow{display:flex;gap:12px;align-items:center}
+.photorow .btn{flex:1}
+.formend{margin-top:22px}
+.err{color:var(--red);font-size:14px;margin-top:10px}
+
+.cline{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.cline:last-child{border-bottom:0}
+.cline .cname{flex:1;min-width:0;font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.cline .cname small{display:block;font-weight:400;font-size:13px;color:var(--muted)}
+.cline .stepper{gap:4px}
+.cline .stepper button{width:44px;min-height:44px;font-size:24px}
+.cline .stepper .num{width:56px;flex:none;font-size:18px}
+.cline.changed{background:#eef1ff}
+.cline.changed .cname small{color:var(--brand)}
+.savebar{position:fixed;left:0;right:0;bottom:66px;z-index:5;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.savebar .btn{max-width:528px;margin:0 auto}
+
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+#nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+#nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;font-size:12px;color:var(--muted);text-align:center}
+#nav button svg{width:24px;height:24px}
+#nav button.on{color:var(--ink);font-weight:700}
+#nav .n{position:absolute;top:8px;left:50%;margin-left:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;line-height:18px}
+
+#sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center}
+#sheet .scrim{position:absolute;inset:0;background:rgba(20,19,16,.45)}
+#sheet .panel{position:relative;width:100%;max-width:560px;max-height:92vh;overflow:auto;background:var(--bg);border-radius:18px 18px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom))}
+#sheet h2{font-size:20px;margin-bottom:4px}
+#sheet .sub{margin-bottom:4px}
+#sheet .btn.primary{margin-top:18px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:8px 12px;border:1px solid #b9b6ac;border-radius:var(--r);background:var(--card);margin-top:8px}
+.opt .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--muted)}
+.opt.on{border-color:var(--ink)}
+.opt.on .dot{border:6px solid var(--ink)}
+
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:30;width:calc(100% - 32px);max-width:528px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:var(--r);background:var(--ink);color:#fff;font-size:15px}
+#toast button{color:#fff;font-weight:700;text-decoration:underline;min-height:44px;padding:0 6px;margin:-8px 0;white-space:nowrap}
+.splash{padding:80px 8px;text-align:center;color:var(--muted)}
+.splash .btn{max-width:240px;margin:18px auto 0}
+.seg{display:flex;gap:6px;margin:6px 0 12px;flex-wrap:wrap}
+@media (min-width:700px){#app{padding-top:20px}.hero{font-size:32px}}
+</style>
+</head>
+<body>
+<div id="banner"></div>
+<div id="app"><div class="splash">Getting the list…</div></div>
+<nav id="nav" hidden></nav>
+<div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
+<div id="toast" hidden role="status"></div>
+<input type="file" accept="image/*" id="file" hidden>
+<input type="file" accept="image/*" capture="environment" id="scan" hidden>
+
+<script id="rm-qr">
+/* qrcode-generator 1.4.4, MIT licence, (c) 2009 Kazuhiko Arase. Inlined unchanged so the app needs nothing from the internet to draw codes. */
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+</script>
+
+<script id="rm-isbn">
+// ISBN checking. Same rules as isbn13_ in Code.gs (a test compares the two): '' = nothing typed, null = wrong,
+// otherwise 13 digits (an ISBN-10 is converted, so old and new printings of a book match).
+var RMIsbn = (function () {
+  function weighted(digits) { return digits.split('').reduce(function (sum, c, i) { return sum + Number(c) * (i % 2 ? 3 : 1); }, 0); }
+  function clean(v) {
+    var raw = String(v == null ? '' : v).normalize('NFKC').replace(/[\s-]/g, '').toUpperCase();
+    if (!raw) return '';
+    if (/^\d{13}$/.test(raw)) return /^97[89]/.test(raw) && weighted(raw) % 10 === 0 ? raw : null;
+    if (/^\d{9}[\dX]$/.test(raw)) {
+      var sum = raw.split('').reduce(function (t, c, i) { return t + (c === 'X' ? 10 : Number(c)) * (10 - i); }, 0);
+      if (sum % 11 !== 0) return null;
+      var core = '978' + raw.slice(0, 9);
+      return core + ((10 - weighted(core) % 10) % 10);
+    }
+    return null;
+  }
+  return { clean: clean };
+})();
+</script>
+
+<script id="rm-search">
+// Search that forgives: English, BM or Chinese, any word order, small typos, Traditional or Simplified.
+var RMSearch = (function () {
+  // Traditional → Simplified for characters that turn up in school inventory names
+  var T2S = {};
+  ('紙纸 筆笔 膠胶 書书 畫画 顏颜 蠟蜡 積积 電电 腦脑 機机 潔洁 藥药 燈灯 籠笼 節节 禮礼 紅红 帶带 貼贴 濕湿 櫃柜 墊垫 鏡镜 鐘钟 記记 訂订 釘钉 計计 圖图 數数 學学 兒儿 遊游 戲戏 樂乐 鈴铃 繩绳 車车 風风 線线 雙双 鉛铅 馬马 掃扫 創创 繃绷 體体 溫温 裝装 飾饰 聖圣 誕诞 樹树 氣气 國国 複复 衛卫 廁厕 劑剂 塊块 個个 盤盘 噴喷 霧雾 輪轮 檔档 夾夹 黏粘 單单 張张 練练 習习 讀读 寫写 語语 華华 來来 開开 齋斋 運运 動动 會会 錐锥 畢毕 業业 針针 鋼钢 鐵铁 鎖锁 鑰钥 門门 簾帘 護护 貝贝 過过 櫥橱 層层 襪袜 褲裤 傘伞 湯汤 鍋锅 爐炉 凍冻 熱热 涼凉 乾干 淨净 髒脏 壞坏 舊旧 擴扩 聲声 響响 織织 絲丝 繪绘 彈弹 龍龙 鳥鸟 魚鱼 蟲虫 獅狮 貓猫 豬猪 雞鸡 鴨鸭 龜龟 園园 場场 廳厅 樓楼 儲储 倉仓 庫库 辦办 課课 醫医 療疗 傷伤 燒烧 條条 對对 購购 買买 賣卖 貨货 價价 錢钱 號号 碼码 標标 籤签 簽签 題题 頁页 邊边 級级 組组 隊队 員员 師师 長长 廣广 紋纹 圓圆 滾滚 擺摆 設设 備备 儀仪 錶表 鍵键 攝摄 錄录 視视 頻频 網网 聯联 發发 傳传 郵邮 蓋盖 壺壶 籃篮 鈕钮 鏈链 環环 疊叠 搖摇 闆板 鑽钻 鋸锯 錘锤 飛飞 軌轨 鋪铺 塵尘 紗纱 鑷镊 鉗钳 壓压 稱称 規规 燭烛 鑼锣 揮挥 橫横 額额 獎奖 狀状 證证').split(' ').forEach(function (p) { T2S[p.charAt(0)] = p.charAt(1); });
+  var HAN = /[㐀-鿿]/;
+
+  function norm(s) {
+    s = String(s == null ? '' : s).normalize('NFKC').toLowerCase();
+    s = s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    s = s.replace(/[㐀-鿿]/g, function (c) { return T2S[c] || c; });
+    return s.replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  }
+
+  // "a4纸 kertas" → ["a4", "纸", "kertas"]: Chinese runs and Latin words become separate tokens
+  function tokens(s) {
+    return norm(s).match(/[㐀-鿿]+|[^\s㐀-鿿]+/g) || [];
+  }
+
+  // Edit distance, giving up once it is clearly more than max
+  function lev(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    var prev = [], i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      var cur = [i], best = i;
+      for (j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+        if (cur[j] < best) best = cur[j];
+      }
+      if (best > max) return max + 1;
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+
+  // g.main = the item's name and other names; g.rest = category, centres, places, notes
+  function index(g, main, rest) {
+    g._main = norm(main);
+    g._rest = norm(rest);
+    g._words = tokens(main);
+    return g;
+  }
+
+  // 5 whole word · 4 start of a word / Chinese match · 2 inside a word or near miss · 1 only in place/category
+  function scoreToken(tok, g) {
+    var han = HAN.test(tok), i, w;
+    if (g._main.indexOf(tok) >= 0) {
+      if (han) return 4;
+      var best = 2;
+      for (i = 0; i < g._words.length; i++) {
+        if (g._words[i] === tok) return 5;
+        if (g._words[i].indexOf(tok) === 0) best = 4;
+      }
+      return best;
+    }
+    if (han) {
+      // 彩纸 still finds 彩色纸: every character is there, just not side by side
+      if (tok.length >= 2) {
+        for (i = 0; i < tok.length; i++) if (g._main.indexOf(tok.charAt(i)) < 0) break;
+        if (i === tok.length) return 2;
+      }
+    } else if (tok.length >= 4 && !/^\d+$/.test(tok)) {
+      var max = tok.length >= 8 ? 2 : 1;
+      for (i = 0; i < g._words.length; i++) {
+        w = g._words[i];
+        if (HAN.test(w)) continue;
+        if (lev(tok, w, max) <= max) return 2;                                        // scisors → scissors
+        if (w.length > tok.length && lev(tok, w.slice(0, tok.length), 1) <= 1) return 2; // crayn → crayons
+      }
+    }
+    return g._rest.indexOf(tok) >= 0 ? 1 : 0;
+  }
+
+  // strong = every word matched; weak = some words matched the name (shown as "closest")
+  function search(groups, q) {
+    var toks = tokens(q), strong = [], weak = [];
+    if (!toks.length) return { strong: [], weak: [] };
+    groups.forEach(function (g) {
+      var total = 0, hit = 0, named = 0;
+      toks.forEach(function (t) {
+        var s = scoreToken(t, g);
+        if (s) { hit++; total += s; if (s >= 2) named++; }
+      });
+      if (hit === toks.length && named > 0) strong.push({ g: g, s: total });
+      else if (hit === toks.length) strong.push({ g: g, s: total - 100 });
+      else if (named > 0) weak.push({ g: g, s: total });
+    });
+    var by = function (a, b) { return b.s - a.s || (a.g.name < b.g.name ? -1 : 1); };
+    return {
+      strong: strong.sort(by).map(function (x) { return x.g; }),
+      weak: weak.sort(by).slice(0, 4).map(function (x) { return x.g; })
+    };
+  }
+
+  return { norm: norm, tokens: tokens, lev: lev, index: index, search: search };
+})();
+</script>
+
+<script>
+(function () {
+'use strict';
+
+// ---------- tiny helpers ----------
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var byIdEl = function (id) { return document.getElementById(id); };
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+var store = {
+  get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode: carry on without saving */ } }
+};
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function parseQty(v) {
+  var s = String(v == null ? '' : v).normalize('NFKC').trim();
+  return /^\d{1,6}$/.test(s) ? parseInt(s, 10) : NaN;
+}
+function unitFor(n, unit) {
+  unit = unit || 'pcs';
+  if (n !== 1) return unit;
+  if (/(x|ch|sh|ss)es$/i.test(unit)) return unit.slice(0, -2);
+  if (/[a-z]{2,}s$/i.test(unit) && !/ss$/i.test(unit)) return unit.slice(0, -1);
+  return unit;
+}
+function amount(n, unit) { return n + ' ' + unitFor(n, unit); }
+function ago(ms) {
+  if (!ms) return 'not yet';
+  var d = Math.floor((Date.now() - ms) / 86400000);
+  return d <= 0 ? 'today' : d === 1 ? 'yesterday' : d + ' days ago';
+}
+function when(ms) {
+  if (!ms) return '';
+  try {
+    return new Date(ms).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
+  } catch (e) { return new Date(ms).toDateString(); }
+}
+
+var ICON = {
+  search: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  go: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  find: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>',
+  low: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg>',
+  count: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.2 1.2L7 4.8M3.5 12l1.2 1.2L7 10.8M3.5 18l1.2 1.2L7 16.8"/></svg>',
+  more: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.500 7 5.500"/></svg>'
+};
+var CAT_ICON = {
+  'Learning materials': '📚', 'Toys and play': '🧸', 'Art and craft': '🎨', 'Stationery and paper': '✏️',
+  'Printing and electronics': '🖨️', 'Furniture and fittings': '🪑', 'Hygiene and cleaning': '🧼',
+  'First aid': '🩹', 'Festival and event items': '🏮'
+};
+var STATUS_LABEL = { 'Needs Repair': 'Needs repair', 'Missing Pieces': 'Pieces missing' };
+
+// ---------- state ----------
+var S = {
+  loaded: false, failed: false, offline: false, refreshing: false, flushing: false,
+  base: [], items: [], byId: {}, groups: [], gmap: {},
+  centres: [], categories: [], org: '', syncedAt: 0, appUrl: '', fresh: false,
+  me: store.get('rm_me', null), outbox: store.get('rm_outbox', []),
+  admin: null, pin: '', requests: null, history: {}, localPhoto: {},
+  stack: [{ name: 'home' }], q: '', lowAll: false
+};
+var F = {};   // the form on screen
+var M = {};   // the open bottom sheet
+function cur() { return S.stack[S.stack.length - 1]; }
+function low(it) { return it.min > 0 && it.qty < it.min; }
+// "Level" items (loose paper, glue, soap) are not counted. They have four levels, kept as 0 to 3.
+var LEVEL_NAMES = ['Out', 'Low', 'Half', 'Plenty'];
+function isLevel(it) { return !!it && it.tracking === 'Level'; }
+function qtyText(it) { return isLevel(it) ? (LEVEL_NAMES[it.qty] || '') : String(it.qty); }
+function amountOf(it) { return isLevel(it) ? LEVEL_NAMES[it.qty] : amount(it.qty, it.unit); }
+function groupSummary(g) { return g.levelOnly ? 'Lowest: ' + LEVEL_NAMES[g.lowest] : amount(g.total, g.unit); }
+function levelButtons(act, current, extra) {
+  return [3, 2, 1, 0].map(function (n) {
+    return '<button type="button" class="lvl lv' + n + (current === n ? ' on' : '') + '" data-act="' + act + '" data-n="' + n + '"' + (extra || '') + '>' + LEVEL_NAMES[n] + '</button>';
+  }).join('');
+}
+// the QR sticker that was scanned, waiting for the list to be ready
+var pendingLink = null;
+function applyLink() {
+  var p = pendingLink;
+  if (!p || !S.loaded || !hasCentre()) return;
+  var found = null;
+  if (p.i && S.byId[p.i]) found = { name: 'item', key: RMSearch.norm(S.byId[p.i].name), id: p.i };
+  else if (p.c && p.p && S.items.some(function (it) { return it.centre === p.c && it.loc === p.p; })) found = { name: 'countList', centre: p.c, loc: p.p };
+  if (!found && !S.fresh) return;   // the saved list on this phone may be old: wait for the fresh one
+  pendingLink = null;
+  if (!found) { if (p.i || p.c) toast('That sticker points to something that is no longer on the list.'); return; }
+  S.stack = [{ name: 'home' }];
+  S.q = '';
+  go(found);
+}
+function levelOn() { return !!(F.fixedLevel || F.tracking === 'Just the level'); }
+function syncTrack() {
+  var on = levelOn();
+  [['f-count', !on], ['f-levelbox', on], ['f-minbox', !on]].forEach(function (p) { if (byIdEl(p[0])) byIdEl(p[0]).hidden = !p[1]; });
+}
+function myCentre() { return S.me ? S.me.centre : ''; }
+// Only a centre is remembered on the phone. The app never asks who you are.
+function hasCentre() { return !!(S.me && S.centres.indexOf(S.me.centre) >= 0); }
+
+// ---------- where this page is running ----------
+// Inside Apps Script (google.script.run exists) the page talks to the script directly. Hosted on a normal website
+// (GitHub Pages) it calls the script's web link instead, with no Google cookies, so it works however many Google
+// accounts the phone is signed into. The list it talks to is named in the link people are given (…/#b=CODE);
+// the code is kept on the phone and removed from the address bar. It is never part of the page's own files.
+var HOSTED = !(window.google && google.script && google.script.run);
+var BACKEND = { id: '', url: '' };
+function parseBackend(text) {
+  var t = String(text || '').trim();
+  var m = /\/macros\/s\/([\w-]{20,200})/.exec(t) || /[#&?]b=([\w-]{20,200})/.exec(t) || /^([\w-]{20,200})$/.exec(t);
+  return m ? m[1] : '';
+}
+function setBackend(id) { BACKEND.id = id; BACKEND.url = 'https://script.google.com/macros/s/' + id + '/exec'; }
+
+// ---------- talking to the sheet ----------
+function hostedCall(fn, data) {
+  return new Promise(function (resolve, reject) {
+    var done = false, ctl = window.AbortController ? new AbortController() : null;
+    function finish(f, v) { if (done) return; done = true; clearTimeout(timer); f(v); }
+    function offline() { return Object.assign(new Error('No signal.'), { network: true }); }
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); finish(reject, offline()); }, 45000);
+    if (!BACKEND.url) return finish(reject, Object.assign(new Error('This page is not connected to a list yet.'), { network: false }));
+    fetch(BACKEND.url, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, data: data || {} }),
+      credentials: 'omit', redirect: 'follow', signal: ctl ? ctl.signal : undefined
+    }).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(function (r) {
+        if (r && r.ok) finish(resolve, r);
+        else finish(reject, Object.assign(new Error((r && r.error) || 'Something went wrong. Please try again.'), { data: r || {} }));
+      })
+      .catch(function () { finish(reject, offline()); });
+  });
+}
+function call(fn, data) {
+  if (HOSTED) return hostedCall(fn, data);
+  return new Promise(function (resolve, reject) {
+    var done = false;
+    var timer = setTimeout(function () {
+      if (done) return;
+      done = true;
+      reject(Object.assign(new Error('No signal.'), { network: true }));
+    }, 45000);
+    function finish(f, v) { if (done) return; done = true; clearTimeout(timer); f(v); }
+    try {
+      google.script.run
+        .withSuccessHandler(function (r) {
+          if (r && r.ok) finish(resolve, r);
+          else finish(reject, Object.assign(new Error((r && r.error) || 'Something went wrong. Please try again.'), { data: r || {} }));
+        })
+        .withFailureHandler(function () { finish(reject, Object.assign(new Error('No signal.'), { network: true })); })
+        .api(fn, data);
+    } catch (e) {
+      finish(reject, Object.assign(new Error('No signal.'), { network: true }));
+    }
+  });
+}
+
+function applyData(d) {
+  S.base = d.items || [];
+  S.centres = d.centres || [];
+  S.categories = d.categories || [];
+  S.org = d.org || '';
+  S.appUrl = HOSTED ? location.origin + location.pathname : (d.appUrl || S.appUrl);
+  S.syncedAt = d.now || Date.now();
+  S.loaded = true;
+  rebuild();
+}
+function saveData() {
+  store.set('rm_data', { items: S.base, centres: S.centres, categories: S.categories, org: S.org, appUrl: S.appUrl, now: S.syncedAt });
+}
+function mergeItems(list) {
+  (list || []).forEach(function (it) {
+    var i = S.base.findIndex(function (b) { return b.id === it.id; });
+    if (i >= 0) S.base[i] = it; else S.base.push(it);
+  });
+  saveData();
+}
+
+// What we show = what the sheet last told us + changes still waiting to be sent
+function rebuild() {
+  var items = S.base.map(function (o) { return Object.assign({}, o); });
+  var map = {};
+  items.forEach(function (it) { map[it.id] = it; });
+  S.outbox.forEach(function (job) {
+    if (job.fn === 'changeStock') {
+      var it = map[job.data.itemId];
+      if (it) it.qty = Math.max(0, it.qty + job.data.delta);
+    } else if (job.fn === 'setLevel') {
+      var lv = map[job.data.itemId];
+      if (lv) lv.qty = job.data.level;
+    } else if (job.fn === 'saveCount') {
+      (job.data.counts || []).forEach(function (c) {
+        var m = map[c.id];
+        if (m) m.qty = Math.max(0, Math.min(isLevel(m) ? 3 : Infinity, m.qty + c.delta));
+      });
+      items.forEach(function (it) {
+        if (it.centre === job.data.centre && it.loc === job.data.location) it.counted = job.at;
+      });
+    }
+  });
+  var gm = {};
+  items.forEach(function (it) {
+    var k = RMSearch.norm(it.name);
+    if (!gm[k]) gm[k] = { key: k, name: it.name, rows: [] };
+    gm[k].rows.push(it);
+  });
+  var order = function (c) { var i = S.centres.indexOf(c); return i < 0 ? 99 : i; };
+  S.groups = Object.keys(gm).map(function (k) {
+    var g = gm[k], seen = {}, alts = [];
+    g.rows.sort(function (a, b) { return order(a.centre) - order(b.centre) || (a.loc < b.loc ? -1 : 1); });
+    g.rows.forEach(function (r) {
+      String(r.alt || '').split(/[,，、;；]+/).forEach(function (a) {
+        a = a.trim();
+        var n = RMSearch.norm(a);
+        if (n && !seen[n] && n !== k) { seen[n] = 1; alts.push(a); }
+      });
+    });
+    g.alt = alts.join(', ');
+    g.cat = (g.rows.filter(function (r) { return r.cat; })[0] || {}).cat || '';
+    g.unit = g.rows[0].unit;
+    g.min = Math.max.apply(null, g.rows.map(function (r) { return r.min; }));
+    g.total = g.rows.reduce(function (s, r) { return s + (isLevel(r) ? 0 : r.qty); }, 0);
+    g.levelOnly = g.rows.every(isLevel);
+    g.lowest = Math.min.apply(null, g.rows.filter(isLevel).map(function (r) { return r.qty; }));
+    g.photoRow = g.rows.filter(function (r) { return r.photo || S.localPhoto[r.id]; })[0] || g.rows[0];
+    RMSearch.index(g, g.name + ' ' + g.alt,
+      g.cat + ' ' + g.rows.map(function (r) { return r.centre + ' ' + r.loc + ' ' + r.notes; }).join(' '));
+    return g;
+  }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+  S.items = items;
+  S.byId = map;
+  S.gmap = gm;
+}
+
+function refresh(manual) {
+  if (S.refreshing) return;
+  S.refreshing = true;
+  call('getData', {}).then(function (d) {
+    S.offline = false; S.failed = false; S.fresh = true;
+    applyData(d);
+    saveData();
+    if (manual) toast('The list is up to date.');
+  }).catch(function (e) {
+    S.offline = !!e.network;
+    if (!S.loaded) S.failed = true;
+    else if (manual) toast(e.network ? 'No signal. Showing the last saved list.' : e.message);
+  }).then(function () {
+    S.refreshing = false;
+    softRender();
+    applyLink();
+    flush();
+  });
+}
+
+// Stock changes and counts wait here until the sheet confirms them (so weak signal never loses a change)
+function enqueue(fn, data) {
+  data.actionId = uid();
+  S.outbox.push({ fn: fn, data: data, at: Date.now() });
+  store.set('rm_outbox', S.outbox);
+  rebuild();
+  flush();
+}
+var retryTimer = 0;
+function flush() {
+  if (S.flushing || !S.outbox.length) return;
+  S.flushing = true;
+  var stale = false;
+  (function next() {
+    var job = S.outbox[0];
+    if (!job) return end();
+    call(job.fn, job.data).then(function (res) {
+      S.offline = false;
+      if (res.replay) stale = true;
+      S.outbox.shift();
+      store.set('rm_outbox', S.outbox);
+      mergeItems(res.items);
+      next();
+    }).catch(function (e) {
+      if (e.network) { S.offline = true; return end(); }
+      S.outbox.shift();                       // the sheet said no (e.g. item was removed): drop it and say so
+      store.set('rm_outbox', S.outbox);
+      stale = true;
+      toast(e.message);
+      next();
+    });
+  })();
+  function end() {
+    S.flushing = false;
+    rebuild();
+    softRender();
+    clearTimeout(retryTimer);
+    if (S.outbox.length) retryTimer = setTimeout(flush, 20000);
+    else if (stale) refresh();
+  }
+}
+
+// ---------- navigation ----------
+var hist = (window.google && google.script && google.script.history) || null;
+if (!hist && HOSTED) {
+  hist = {
+    push: function (state) { history.pushState(state, ''); },
+    setChangeHandler: function (fn) { window.addEventListener('popstate', function () { fn(); }); }
+  };
+}
+function go(view, replace) {
+  if (replace) S.stack[S.stack.length - 1] = view; else S.stack.push(view);
+  try { if (hist && !replace) hist.push({ n: S.stack.length }); } catch (e) { /* back button just leaves the app */ }
+  render();
+  window.scrollTo(0, 0);
+}
+function back() {
+  if (S.stack.length > 1) S.stack.pop(); else S.stack = [{ name: 'home' }];
+  render();
+}
+function root(name) {
+  S.stack = [{ name: name }];
+  if (name === 'home') S.q = '';
+  render();
+  window.scrollTo(0, 0);
+}
+try {
+  // The phone's own back button: close an open sheet, otherwise go up one screen.
+  if (hist) hist.setChangeHandler(function () {
+    if (!byIdEl('sheet').hidden) { closeSheet(); return; }
+    if (S.stack.length > 1) { S.stack.pop(); render(); }
+  });
+} catch (e) { /* no history support */ }
+
+// ---------- drawing ----------
+function vConnect() {
+  return '<div style="padding-top:40px"><h1 class="hero">Connect to the list</h1>' +
+    '<p class="sub">Open the link your admin sent you. If you only have its long code, paste it here.</p>' +
+    '<label class="lab" for="s-link">Link or code</label>' +
+    '<input id="s-link" class="inp" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Link or code">' +
+    '<p class="err" id="s-err" hidden></p>' +
+    '<button class="btn primary" style="margin-top:14px" data-act="connect">Connect</button></div>';
+}
+function render() {
+  var app = byIdEl('app'), v = cur();
+  if (!S.loaded) {
+    byIdEl('nav').hidden = true;
+    if (HOSTED && !BACKEND.id) { app.innerHTML = vConnect(); return; }
+    app.innerHTML = S.failed
+      ? '<div class="splash"><p>Can’t reach the list right now.</p><p>Check the internet and try again.</p><button class="btn primary" data-act="refresh">Try again</button></div>'
+      : '<div class="splash">Getting the list…</div>';
+    return;
+  }
+  if (!hasCentre()) v = { name: 'pick' };
+  var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vCount,
+    countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels, bulk: vBulk };
+  app.innerHTML = (views[v.name] || vHome)(v);
+  drawChrome(v);
+  if (v.name === 'home' && window.matchMedia && matchMedia('(pointer:fine)').matches && byIdEl('q')) byIdEl('q').focus();
+}
+// Refresh what is on screen without wiping something the person is typing
+function softRender() {
+  var n = cur().name;
+  if (!byIdEl('sheet').hidden) return;
+  if (S.loaded && hasCentre() && ['add', 'request', 'edit', 'countList', 'bulk'].indexOf(n) >= 0) { drawChrome(cur()); return; }
+  if (S.loaded && hasCentre() && n === 'home' && byIdEl('results')) { drawResults(); drawChrome(cur()); return; }
+  render();
+}
+function drawChrome(v) {
+  var nav = byIdEl('nav');
+  nav.hidden = v.name === 'pick';
+  var tab = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'count',
+    countList: 'count', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'more' }[v.name];
+  var lows = S.items.filter(function (it) { return it.centre === myCentre() && low(it); }).length;
+  var b = function (to, label, icon, n) {
+    return '<button data-act="nav" data-to="' + to + '" class="' + (tab === to ? 'on' : '') + '">' + icon +
+      '<span>' + label + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + '</button>';
+  };
+  nav.innerHTML = '<div class="in">' + b('home', 'Find', ICON.find) + b('low', 'Running low', ICON.low, lows) +
+    b('count', 'Count', ICON.count) + b('more', 'Me', ICON.more) + '</div>';
+  var n = S.outbox.length, msg = '';
+  if (n && S.offline) {
+    msg = '<div class="notice"><span>' + n + (n === 1 ? ' change is' : ' changes are') +
+      ' saved on this phone and will send when there is signal.</span><button data-act="flushNow">Send now</button></div>';
+  } else if (S.offline) {
+    msg = '<div class="notice"><span>No signal. Showing the list from ' + esc(when(S.syncedAt)) +
+      '.</span><button data-act="refresh">Try again</button></div>';
+  }
+  byIdEl('banner').innerHTML = msg;
+}
+function top(hasBack) {
+  var me = S.me ? '<button class="me" data-act="nav" data-to="more">' + esc(S.me.centre) + '</button>' : '';
+  return '<header class="top">' + (hasBack
+    ? '<button class="back" data-act="back">' + ICON.back + '<span>Back</span></button>'
+    : '<span class="org">' + esc(S.org) + '</span>') + me + '</header>';
+}
+
+function photoSrc(it, w) {
+  if (!it) return '';
+  if (S.localPhoto[it.id]) return S.localPhoto[it.id];
+  var p = it.photo || '';
+  if (!p) return '';
+  var m = /\/d\/([\w-]{10,})/.exec(p) || /[?&]id=([\w-]{10,})/.exec(p);
+  if (m) return (window.RM_PHOTO_BASE || 'https://lh3.googleusercontent.com/d/') + m[1] + '=w' + w;
+  return /^https:\/\//.test(p) ? p : '';
+}
+function tile(it, cat, big) {
+  var src = photoSrc(it, big ? 600 : 200);
+  var m = it && /\/d\/([\w-]{10,})/.exec(it.photo || '');
+  return '<span class="tile' + (big ? ' big' : '') + '"><span class="emo">' + (CAT_ICON[cat] || '📦') + '</span>' +
+    (src ? '<img alt="" loading="lazy" src="' + esc(src) + '"' +
+      (m ? ' data-fb="https://drive.google.com/thumbnail?id=' + esc(m[1]) + '&amp;sz=w' + (big ? 600 : 200) + '"' : '') + '>' : '') +
+    '</span>';
+}
+function badges(it) {
+  var out = '';
+  if (low(it)) out += '<span class="badge low">Running low</span> ';
+  if (STATUS_LABEL[it.status]) out += '<span class="badge warn">' + STATUS_LABEL[it.status] + '</span> ';
+  return out;
+}
+
+// ----- Find (home) -----
+function vHome(v) {
+  return top(false) +
+    '<h1 class="hero">Do we have it?</h1>' +
+    '<div class="search">' + ICON.search +
+    '<input id="q" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Search for an item" placeholder="English, BM or 中文" value="' + esc(S.q) + '">' +
+    '<button class="clear" data-act="clearQ" aria-label="Clear the search"' + (S.q ? '' : ' hidden') + '>' + ICON.x + '</button></div>' +
+    '<div id="results">' + resultsHtml(v) + '</div>';
+}
+function drawResults() {
+  var box = byIdEl('results');
+  if (box) box.innerHTML = resultsHtml(cur());
+  var c = $('.search .clear');
+  if (c) c.hidden = !S.q;
+}
+function resultsHtml(v) {
+  var q = S.q.trim();
+  if (!q && v.cat) {
+    var inCat = S.groups.filter(function (g) { return g.cat === v.cat; });
+    return '<button class="pillx" data-act="clearCat">' + esc(v.cat) + ' ' + ICON.x + '</button>' +
+      '<p class="count">' + inCat.length + (inCat.length === 1 ? ' thing' : ' things') + '</p>' +
+      '<div class="list">' + inCat.map(card).join('') + '</div>';
+  }
+  if (!q) {
+    var counts = {};
+    S.groups.forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
+    return '<p class="hint">Try “kertas A4”, “蜡笔” or “scissors”.</p>' +
+      '<h2 class="sec">Or look by type</h2><div class="cats">' +
+      S.categories.filter(function (c) { return counts[c]; }).map(function (c) {
+        return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span class="emo">' + (CAT_ICON[c] || '📦') +
+          '</span><span>' + esc(c) + '<small>' + counts[c] + '</small></span></button>';
+      }).join('') + '</div>' +
+      '<button class="btn quiet" data-act="go" data-to="bulk">Adding lots of books? Add many at once</button>';
+  }
+  var r = RMSearch.search(S.groups, RMIsbn.clean(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
+  if (!r.strong.length) {
+    return '<div class="card empty" style="margin-top:14px"><h2>Nothing called “' + esc(q) + '” on the list.</h2>' +
+      '<p>Check the spelling, or try the word in another language.</p>' +
+      '<button class="btn primary" data-act="toRequest">Ask to buy it</button>' +
+      '<button class="btn quiet" data-act="toAdd">We have it. Add it to the list</button></div>' +
+      (r.weak.length ? '<p class="count">Closest things on the list:</p><div class="list">' + r.weak.map(card).join('') + '</div>' : '');
+  }
+  var shown = r.strong.slice(0, 30);
+  return '<p class="count">' + (r.strong.length === 1 ? 'Yes, we have this:' : 'We have ' + r.strong.length + ' things like this:') + '</p>' +
+    '<div class="list">' + shown.map(card).join('') + '</div>' +
+    (r.strong.length > shown.length ? '<p class="hint">Showing the first 30. Type more to narrow it down.</p>' : '') +
+    '<div class="after"><p>None of these?</p>' +
+    '<button class="btn" data-act="toRequest">Ask to buy something new</button>' +
+    '<button class="btn quiet" data-act="toAdd">We have it, but it’s not on the list</button></div>';
+}
+function card(g) {
+  var mine = myCentre(), places;
+  if (g.rows.length === 1) {
+    var r = g.rows[0];
+    places = '<span class="pl' + (low(r) ? ' low' : '') + (r.centre === mine ? ' mine' : '') + '">' + esc(r.centre) + ' · ' +
+      esc(r.loc) + ' <b>' + qtyText(r) + '</b></span>';
+  } else {
+    var per = {}, names = [];
+    g.rows.forEach(function (r) {
+      if (!per[r.centre]) { per[r.centre] = { qty: 0, lv: null, low: false }; names.push(r.centre); }
+      if (isLevel(r)) per[r.centre].lv = per[r.centre].lv === null ? r.qty : Math.min(per[r.centre].lv, r.qty);
+      else per[r.centre].qty += r.qty;
+      if (low(r)) per[r.centre].low = true;
+    });
+    places = names.map(function (c) {
+      return '<span class="pl' + (per[c].low ? ' low' : '') + (c === mine ? ' mine' : '') + '">' + esc(c) + ' <b>' + (per[c].lv !== null && !per[c].qty ? LEVEL_NAMES[per[c].lv] : per[c].qty) + '</b></span>';
+    }).join('');
+  }
+  var flags = '';
+  g.rows.forEach(function (r) {
+    if (STATUS_LABEL[r.status] && flags.indexOf(STATUS_LABEL[r.status]) < 0) flags += ' <span class="badge warn">' + STATUS_LABEL[r.status] + '</span>';
+  });
+  return '<button class="card item" data-act="open" data-key="' + esc(g.key) + '">' + tile(g.photoRow, g.cat) +
+    '<span class="body"><span class="name">' + esc(g.name) + '</span>' +
+    (g.alt ? '<span class="alt">' + esc(g.alt) + '</span>' : '') +
+    '<span class="line"><b>' + groupSummary(g) + '</b>' + (g.rows.length > 1 ? ' in ' + g.rows.length + ' places' : '') + flags + '</span>' +
+    '<span class="places">' + places + '</span></span></button>';
+}
+
+// ----- One item -----
+function pickRow(g, id) {
+  return g.rows.filter(function (r) { return r.id === id; })[0] ||
+    g.rows.filter(function (r) { return r.centre === myCentre(); })[0] || g.rows[0];
+}
+function vItem(v) {
+  var g = S.gmap[v.key];
+  if (!g) return top(true) + '<div class="card empty"><h2>That item is no longer on the list.</h2><button class="btn" data-act="nav" data-to="home">Search again</button></div>';
+  var sel = pickRow(g, v.id);
+  v.id = sel.id;
+  var many = g.rows.length > 1;
+  var places = g.rows.map(function (r) {
+    return '<' + (many ? 'button data-act="pick" data-id="' + esc(r.id) + '"' : 'div') + ' class="place' + (r.id === sel.id && many ? ' on' : '') + '">' +
+      (many ? '<span class="dot"></span>' : '') +
+      '<span class="where">' + esc(r.centre) + ' · ' + esc(r.loc) +
+      (badges(r) ? '<small>' + badges(r) + '</small>' : '') +
+      '<small>' + (!isLevel(r) && r.min > 0 ? 'Keep at least ' + r.min + ' · ' : '') + (isLevel(r) ? 'Checked ' : 'Counted ') + ago(r.counted) + '</small></span>' +
+      '<span class="qty' + (low(r) ? ' low' : '') + '">' + (isLevel(r) ? LEVEL_NAMES[r.qty] : r.qty + '<small>' + esc(unitFor(r.qty, r.unit)) + '</small>') + '</span>' +
+      '</' + (many ? 'button' : 'div') + '>';
+  }).join('');
+  var past = S.history[sel.id];
+  return top(true) +
+    '<div class="headcard">' + tile(g.photoRow, g.cat, true) + '<div style="min-width:0"><h1 class="name">' + esc(g.name) + '</h1>' +
+    (g.alt ? '<p class="line">' + esc(g.alt) + '</p>' : '') +
+    (many ? '<p class="line"><b>' + groupSummary(g) + '</b> in ' + g.rows.length + ' places</p>' : '') + '</div></div>' +
+    '<div class="card">' + places + '</div>' +
+    (sel.notes ? '<p class="note">' + esc(sel.notes) + '</p>' : '') +
+    (isLevel(sel)
+      ? '<div class="levels" role="group" aria-label="How much is left?">' + levelButtons('setLevel', sel.qty) + '</div>' +
+        '<p class="forwhere">How much is left' + (many ? ' at ' + esc(sel.centre) + ' · ' + esc(sel.loc) : '') + '? Tap one.</p>'
+      : '<div class="two"><button class="btn big add" data-act="stock" data-dir="1"><span class="sign">+</span>Add stock</button>' +
+        '<button class="btn big" data-act="stock" data-dir="-1"><span class="sign">−</span>Use stock</button></div>' +
+        (many ? '<p class="forwhere">at ' + esc(sel.centre) + ' · ' + esc(sel.loc) + '</p>' : '')) +
+    '<div class="card rows">' +
+    '<button class="rowbtn" data-act="problem"><span>Something wrong with it?<small>Broken, or pieces missing</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="requestMore"><span>Ask to buy more</span>' + ICON.go + '</button>' +
+    (!isLevel(sel) && sel.qty > 0 && S.centres.length > 1
+      ? '<button class="rowbtn" data-act="moveOpen"><span>Send some to another centre<small>Moves the count away from ' + esc(sel.centre) + '</small></span>' + ICON.go + '</button>' : '') +
+    '<button class="rowbtn" data-act="addPlace"><span>It’s kept somewhere else too</span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="toEdit"><span>Change details<small>Place, notes, photo</small></span>' + ICON.go + '</button>' +
+    '</div>' +
+    '<h2 class="sec">What happened lately</h2>' +
+    (past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">Nothing recorded yet.</p>') + '</div>'
+      : '<button class="btn" data-act="history">Show the last changes</button>');
+}
+function histLine(h) {
+  var what = h.action;
+  if (h.change != null && h.change !== 0 && h.action !== 'Level set') what += ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')';
+  return '<p class="hist"><b>' + esc(what) + '</b>' +
+    (h.note ? '<br>' + esc(h.note) : '') + '<br><small>' + esc(when(h.when)) + '</small></p>';
+}
+
+// ----- Bottom sheets -----
+function openSheet(html, focusId) {
+  $('#sheet .panel').innerHTML = html;
+  byIdEl('sheet').hidden = false;
+  if (focusId && byIdEl(focusId)) byIdEl(focusId).focus();
+}
+function closeSheet() {
+  byIdEl('sheet').hidden = true;
+  $('#sheet .panel').innerHTML = '';
+  M = {};
+  softRender();
+}
+function stepper(id, val, min, max) {
+  return '<div class="stepper"><button type="button" data-act="step" data-for="' + id + '" data-d="-1" aria-label="One less">−</button>' +
+    '<input id="' + id + '" class="num" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + val + '" data-min="' + min + '" data-max="' + max + '">' +
+    '<button type="button" data-act="step" data-for="' + id + '" data-d="1" aria-label="One more">+</button></div>';
+}
+function openStock(dir) {
+  var it = S.byId[cur().id];
+  if (!it) return;
+  M = { type: 'stock', id: it.id, dir: dir };
+  var none = dir < 0 && it.qty === 0;
+  openSheet('<h2>' + (dir > 0 ? 'Add stock' : 'Use stock') + '</h2>' +
+    '<p class="sub">' + esc(it.name) + '<br>' + esc(it.centre) + ' · ' + esc(it.loc) + ' · now <b>' + amount(it.qty, it.unit) + '</b></p>' +
+    (none ? '<p class="err">There are none here to take.</p>' :
+      '<label class="lab" for="m-n">' + (dir > 0 ? 'How many arrived?' : 'How many are you taking?') + '</label>' +
+      stepper('m-n', 1, 1, dir > 0 ? 99999 : it.qty) +
+      '<p class="help" id="m-help"></p>' +
+      (dir < 0 && /ream|pack/i.test(it.unit) ? '<p class="help">Counting packs? Take one only when you open a new one. There is no need to count sheets.</p>' : '') +
+      '<label class="lab" for="m-note">Note <i>(optional)</i></label>' +
+      '<input id="m-note" class="inp" maxlength="200" autocomplete="off" placeholder="' + (dir > 0 ? 'e.g. delivery arrived' : 'e.g. for the concert') + '">' +
+      '<button class="btn primary" id="m-go" data-act="stockGo"></button>') +
+    '<button class="btn quiet" data-act="closeSheet">Cancel</button>');
+  if (!none) updateStockBtn();
+}
+function updateStockBtn() {
+  var it = S.byId[M.id], btn = byIdEl('m-go');
+  if (!it || !btn) return;
+  var n = parseQty(byIdEl('m-n').value), max = M.dir > 0 ? 99999 : it.qty;
+  var ok = n >= 1 && n <= max;
+  btn.disabled = !ok;
+  btn.textContent = ok ? (M.dir > 0 ? 'Add ' : 'Take ') + amount(n, it.unit) : (M.dir > 0 ? 'Add' : 'Take');
+  byIdEl('m-help').textContent = !ok && n > max ? 'There are only ' + it.qty + ' here.'
+    : ok ? 'That will leave ' + amount(it.qty + M.dir * n, it.unit) + '.' : 'Type a number.';
+}
+// ----- Send some to another centre -----
+function openMove() {
+  var it = S.byId[cur().id];
+  if (!it) return;
+  var others = S.centres.filter(function (c) { return c !== it.centre; });
+  M = { type: 'move', id: it.id, to: others.length === 1 ? others[0] : '' };
+  openSheet('<h2>Send to another centre</h2><p class="sub">' + esc(it.name) + '<br>' + esc(it.centre) + ' · ' + esc(it.loc) + ' · now <b>' + amount(it.qty, it.unit) + '</b></p>' +
+    '<label class="lab">Send to</label><div class="chips">' + others.map(function (c) {
+      return '<button type="button" class="chip' + (M.to === c ? ' on' : '') + '" data-act="moveCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('') + '</div>' +
+    '<label class="lab" for="m-n">How many?</label>' + stepper('m-n', 1, 1, it.qty) + '<p class="help" id="m-help"></p>' +
+    '<div id="m-wherebox" hidden><label class="lab" for="m-loc">Where will it be kept there? <i>(optional)</i></label>' +
+    '<input id="m-loc" class="inp" maxlength="60" autocomplete="off"><p class="help" id="m-wherehelp"></p></div>' +
+    '<label class="lab" for="m-note">Note <i>(optional)</i></label>' +
+    '<input id="m-note" class="inp" maxlength="200" autocomplete="off" placeholder="e.g. borrowing for the concert">' +
+    '<button class="btn primary" id="m-go" data-act="moveGo"></button>' +
+    '<button class="btn quiet" data-act="closeSheet">Cancel</button>');
+  refreshMove();
+}
+function refreshMove() {
+  var it = S.byId[M.id];
+  if (!it || !byIdEl('m-n')) return;
+  var n = parseQty(byIdEl('m-n').value), ok = !!M.to && n >= 1 && n <= it.qty, btn = byIdEl('m-go');
+  btn.disabled = !ok;
+  btn.textContent = !M.to ? 'Choose a centre' : ok ? 'Send ' + amount(n, it.unit) + ' to ' + M.to : 'Send';
+  byIdEl('m-help').textContent = n > it.qty ? 'There are only ' + it.qty + ' here.'
+    : n >= 1 ? it.centre + ' will have ' + amount(it.qty - n, it.unit) + ' left.' : 'Type a number.';
+  byIdEl('m-wherebox').hidden = !M.to;
+  if (M.to) {
+    var there = S.items.filter(function (r) { return r.centre === M.to && RMSearch.norm(r.name) === RMSearch.norm(it.name); });
+    byIdEl('m-wherehelp').textContent = there.length
+      ? M.to + ' keeps it in ' + there.map(function (r) { return r.loc; }).join(', ') + '. Leave this empty to use ' + there[0].loc + '.'
+      : M.to + ' does not have it yet. Say where it will be kept, or leave this empty for “Received”.';
+  }
+}
+function openProblem() {
+  var it = S.byId[cur().id];
+  if (!it) return;
+  M = { type: 'problem', id: it.id, status: STATUS_LABEL[it.status] ? it.status : '' };
+  var opt = function (val, label) {
+    return '<button class="opt' + (M.status === val ? ' on' : '') + '" data-act="problemPick" data-val="' + val + '"><span class="dot"></span>' + label + '</button>';
+  };
+  openSheet('<h2>What’s wrong with it?</h2><p class="sub">' + esc(it.name) + ' · ' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
+    opt('Needs Repair', 'It’s broken and needs repair') + opt('Missing Pieces', 'Some pieces are missing') +
+    opt('Good', 'Nothing. It’s fine now') +
+    '<label class="lab" for="m-note">What exactly? <i>(optional)</i></label>' +
+    '<input id="m-note" class="inp" maxlength="200" autocomplete="off" placeholder="e.g. 2 puzzle pieces lost">' +
+    '<button class="btn primary" id="m-go" data-act="problemGo"' + (M.status ? '' : ' disabled') + '>Save</button>' +
+    '<button class="btn quiet" data-act="closeSheet">Cancel</button>');
+}
+
+// ----- Add something we already have -----
+function chips(group, list, selected) {
+  return '<div class="chips" data-group="' + group + '">' + list.map(function (v) {
+    return '<button type="button" class="chip' + (v === selected ? ' on' : '') + '" data-act="chip" data-val="' + esc(v) + '">' + esc(v) + '</button>';
+  }).join('') + '</div>';
+}
+function locChips(centre) {
+  var seen = {}, locs = [];
+  S.items.forEach(function (it) { if (it.centre === centre && !seen[it.loc]) { seen[it.loc] = 1; locs.push(it.loc); } });
+  locs.sort();
+  return locs.length ? '<div class="chips" style="margin-top:8px">' + locs.map(function (l) {
+    return '<button type="button" class="chip" data-act="locPick" data-val="' + esc(l) + '">' + esc(l) + '</button>';
+  }).join('') + '</div>' : '';
+}
+function photoField() {
+  return '<label class="lab">Photo <i>(optional)</i></label><div class="photorow"><span id="f-thumb">' +
+    (F.photo ? '<span class="tile"><img alt="" src="' + F.photo + '"></span>' : '') + '</span>' +
+    '<button type="button" class="btn" data-act="photo">' + (F.photo ? 'Take another photo' : 'Take a photo') + '</button></div>';
+}
+function vAdd(v) {
+  var g = v.key ? S.gmap[v.key] : null;
+  F = { centre: myCentre(), cat: g ? g.cat : '', photo: '', tracking: 'Count them', level: 'Plenty', fixedLevel: !!(g && isLevel(g.rows[0])) };
+  return top(true) + '<h1 class="title">' + (g ? 'Where else is it kept?' : 'Add it to the list') + '</h1>' +
+    '<p class="sub">' + (g ? 'Same item, another place.' : 'For things we already have. Only the first three are needed.') + '</p>' +
+    '<label class="lab" for="f-name">What is it?</label>' +
+    '<input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(g ? g.name : v.text || '') + '"' + (g ? ' readonly' : '') + '>' +
+    '<div id="similar">' + (g ? '' : similarHtml(v.text || '')) + '</div>' +
+    (g ? '' : '<label class="lab">How do you keep track of it?</label>' + chips('tracking', ['Count them', 'Just the level'], F.tracking) +
+      '<p class="help">Choose “just the level” for things used a bit at a time, like loose paper, glue or soap. Nobody has to count them.</p>') +
+    '<div id="f-count"' + (levelOn() ? ' hidden' : '') + '><div class="qtyunit"><div><label class="lab" for="f-qty">How many?</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
+    '<div><label class="lab" for="f-unit">Counted in</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g ? g.unit : '') + '" placeholder="pcs"></div></div>' +
+    '<p class="help">Count whole packs, not single pieces. For paper, count reams.</p></div>' +
+    '<div id="f-levelbox"' + (levelOn() ? '' : ' hidden') + '><label class="lab">How much is there now?</label>' + chips('level', ['Plenty', 'Half', 'Low', 'Out'], F.level) + '</div>' +
+    '<label class="lab">Which centre?</label>' + chips('centre', S.centres, F.centre) +
+    '<label class="lab" for="f-loc">Where is it kept?</label>' +
+    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="e.g. Store room, top shelf">' +
+    '<div id="f-locs">' + locChips(F.centre) + '</div>' +
+    '<details><summary>More details</summary>' +
+    (g ? '' : '<label class="lab" for="f-alt">Other names people use</label>' +
+      '<input id="f-alt" class="inp" maxlength="200" autocomplete="off" placeholder="e.g. kertas A4, 复印纸">' +
+      '<p class="help">Add the BM and Chinese names so everyone can find it.</p>' +
+      '<label class="lab">What type of thing?</label>' + chips('cat', S.categories, F.cat)) +
+    '<div id="f-minbox"' + (levelOn() ? ' hidden' : '') + '><label class="lab" for="f-min">Keep at least</label>' +
+    '<input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="0">' +
+    '<p class="help">We’ll flag it when there are fewer than this. Leave empty for things that don’t run out.</p></div>' +
+    '<label class="lab" for="f-notes">Notes</label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" placeholder="e.g. set of 10, check all pieces">' +
+    photoField() + '</details>' +
+    '<p class="err" id="f-err" hidden></p>' +
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="addGo">Add to the list</button></div>';
+}
+function similarHtml(text) {
+  var r = text.trim() ? RMSearch.search(S.groups, text).strong.slice(0, 3) : [];
+  if (!r.length) return '';
+  return '<div class="similar">This may already be on the list. Tap it instead of adding it again.<div class="list">' + r.map(card).join('') + '</div></div>';
+}
+
+// ----- Ask to buy -----
+function vRequest(v) {
+  var g = v.key ? S.gmap[v.key] : null;
+  F = { centre: myCentre() };
+  var have = '';
+  if (g) {
+    var rows = g.rows.filter(function (r) { return r.qty > 0; });
+    if (rows.length) {
+      have = '<div class="similar"><b>Before you ask: we already have ' + (g.levelOnly ? 'some' : amount(g.total, g.unit)) + '.</b><br>' +
+        rows.map(function (r) { return esc(r.centre) + ' · ' + esc(r.loc) + ': ' + amountOf(r); }).join('<br>') +
+        '<br>Could another centre share theirs?</div>';
+    }
+  }
+  return top(true) + '<h1 class="title">Ask to buy</h1><p class="sub">Your request goes to the person who approves purchases.</p>' +
+    have +
+    '<label class="lab" for="f-name">What do you need?</label>' +
+    '<input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(g ? g.name : v.text || '') + '"' + (g ? ' readonly' : '') + '>' +
+    '<div id="similar">' + (g ? '' : similarHtml(v.text || '')) + '</div>' +
+    '<div class="qtyunit"><div><label class="lab" for="f-qty">How many?</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
+    '<div><label class="lab" for="f-unit">Counted in</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g ? g.unit : '') + '" placeholder="pcs"></div></div>' +
+    '<label class="lab">For which centre?</label>' + chips('centre', S.centres, F.centre) +
+    '<label class="lab" for="f-why">Why do we need it? <i>(optional)</i></label>' +
+    '<input id="f-why" class="inp" maxlength="300" autocomplete="off">' +
+    '<label class="lab" for="f-price">About how much, in RM? <i>(optional)</i></label>' +
+    '<input id="f-price" class="inp" inputmode="decimal" maxlength="9" autocomplete="off" placeholder="e.g. 45">' +
+    '<p class="err" id="f-err" hidden></p>' +
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="requestGo">Send request</button></div>';
+}
+
+// ----- Change details -----
+function vEdit(v) {
+  var it = S.byId[v.id];
+  if (!it) return top(true) + '<div class="card empty"><h2>That item is no longer on the list.</h2></div>';
+  F = { centre: it.centre, cat: it.cat, photo: '', tracking: 'Count them' };
+  var admin = S.admin ?
+    '<label class="lab" for="f-name">Name</label><input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(it.name) + '">' +
+    '<label class="lab" for="f-alt">Other names people use</label><input id="f-alt" class="inp" maxlength="200" autocomplete="off" value="' + esc(it.alt) + '">' +
+    '<label class="lab">What type of thing?</label>' + chips('cat', S.categories, F.cat) +
+    '<label class="lab">Which centre?</label>' + chips('centre', S.centres, F.centre) +
+    (isLevel(it) ? '' : '<label class="lab">How is it tracked?</label>' + chips('tracking', ['Count them', 'Just the level'], F.tracking) +
+      '<p class="help">“Just the level” means nobody counts it. Staff tap Plenty, Half, Low or Out. This cannot be changed back.</p>') +
+    (isLevel(it) ? '' : '<div class="qtyunit"><div><label class="lab" for="f-min">Keep at least</label><input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + it.min + '"></div>' +
+    '<div><label class="lab" for="f-unit">Counted in</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(it.unit) + '"></div></div>') : '';
+  return top(true) + '<h1 class="title">Change details</h1><p class="sub">' + esc(it.name) + ' · ' + esc(it.centre) + '</p>' +
+    admin +
+    '<label class="lab" for="f-loc">Where is it kept?</label><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
+    '<label class="lab" for="f-notes">Notes</label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
+    photoField() +
+    (S.admin ? '' : '<p class="help" style="margin-top:14px">The name, type and minimum can be changed by the admin.</p>') +
+    '<p class="err" id="f-err" hidden></p>' +
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="editGo">Save changes</button></div>';
+}
+
+// ----- Running low -----
+// who else has plenty of it
+function spareOf(it) {
+  return (S.gmap[RMSearch.norm(it.name)] || { rows: [] }).rows.filter(function (r) {
+    return r.centre !== it.centre && (isLevel(r) ? r.qty === 3 : r.qty > r.min);
+  });
+}
+// the list as a WhatsApp message: what is low, who has spare, and what is broken
+function shoppingText(lows, broken, scopeLabel) {
+  var day = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  var lines = ['Running low at ' + scopeLabel + ' (' + day + '):'];
+  lows.slice(0, 25).forEach(function (it) {
+    var spare = spareOf(it);
+    lines.push('• ' + it.name + ' (' + it.centre + '): ' +
+      (isLevel(it) ? LEVEL_NAMES[it.qty] : amount(it.qty, it.unit) + ' left, need at least ' + it.min) +
+      (spare.length ? '. ' + spare.map(function (r) { return r.centre + ' has ' + qtyText(r); }).join(', ') : ''));
+  });
+  if (lows.length > 25) lines.push('…and ' + (lows.length - 25) + ' more. Open the app for the rest.');
+  if (broken.length) {
+    lines.push('', 'Broken or missing pieces:');
+    broken.slice(0, 10).forEach(function (it) { lines.push('• ' + it.name + ' (' + it.centre + '): ' + STATUS_LABEL[it.status].toLowerCase()); });
+  }
+  return lines.join('\n');
+}
+function vLow() {
+  var mine = myCentre();
+  var scope = function (it) { return S.lowAll || it.centre === mine; };
+  var lows = S.items.filter(function (it) { return scope(it) && low(it); })
+    .sort(function (a, b) { return (a.centre === mine ? 0 : 1) - (b.centre === mine ? 0 : 1) || a.centre.localeCompare(b.centre) || a.name.localeCompare(b.name); });
+  var broken = S.items.filter(function (it) { return scope(it) && STATUS_LABEL[it.status]; });
+  var row = function (it, extra) {
+    return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' +
+      tile(it, it.cat) + '<span class="body"><span class="name">' + esc(it.name) + '</span>' + extra +
+      '<span class="line">' + esc(it.centre) + ' · ' + esc(it.loc) + '</span></span></button>';
+  };
+  return top(false) + '<h1 class="title">Running low</h1>' +
+    '<div class="seg" data-group="lowAll">' +
+    '<button class="chip' + (S.lowAll ? '' : ' on') + '" data-act="lowScope" data-val="">' + esc(mine || 'My centre') + '</button>' +
+    '<button class="chip' + (S.lowAll ? ' on' : '') + '" data-act="lowScope" data-val="1">All centres</button></div>' +
+    (lows.length || broken.length ? '<a class="btn" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' +
+      encodeURIComponent(shoppingText(lows, broken, S.lowAll ? 'all centres' : (mine || 'my centre'))) + '">Send this list on WhatsApp</a>' : '') +
+    (lows.length ? '<div class="list">' + lows.map(function (it) {
+      var spare = spareOf(it);
+      return row(it, (isLevel(it)
+        ? '<span class="line"><span class="badge low">' + LEVEL_NAMES[it.qty] + '</span> running out</span>'
+        : '<span class="line"><span class="badge low">' + amount(it.qty, it.unit) + ' left</span> need at least ' + it.min + '</span>') +
+        (spare.length ? '<span class="line"><span class="badge ok">' + spare.map(function (r) { return esc(r.centre) + ' has ' + qtyText(r); }).join(' · ') + '</span></span>' : ''));
+    }).join('') + '</div>' : '<div class="card empty"><h2>Nothing is running low.</h2><p style="margin:0">Everything here is above its minimum.</p></div>') +
+    (broken.length ? '<h2 class="sec">Broken or missing pieces</h2><div class="list">' + broken.map(function (it) {
+      return row(it, '<span class="line"><span class="badge warn">' + STATUS_LABEL[it.status] + '</span>' + (it.notes ? ' ' + esc(it.notes) : '') + '</span>');
+    }).join('') + '</div>' : '');
+}
+
+// ----- Count -----
+function vCount(v) {
+  var centre = v.centre || myCentre() || S.centres[0];
+  v.centre = centre;
+  var places = {}, names = [];
+  S.items.forEach(function (it) {
+    if (it.centre !== centre) return;
+    if (!places[it.loc]) { places[it.loc] = { n: 0, oldest: Infinity }; names.push(it.loc); }
+    places[it.loc].n++;
+    places[it.loc].oldest = Math.min(places[it.loc].oldest, it.counted || 0);
+  });
+  names.sort(function (a, b) { return places[a].oldest - places[b].oldest; });
+  return top(false) + '<h1 class="title">Count a shelf</h1><p class="sub">Pick a place, check the numbers, save. Two minutes.</p>' +
+    '<div class="seg" data-group="countCentre">' + S.centres.map(function (c) {
+      return '<button class="chip' + (c === centre ? ' on' : '') + '" data-act="countCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('') + '</div>' +
+    (names.length ? '<div class="card">' + names.map(function (loc) {
+      var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
+      return '<button class="rowbtn" data-act="countPlace" data-val="' + esc(loc) + '"><span>' + esc(loc) +
+        '<small>' + p.n + (p.n === 1 ? ' thing' : ' things') + ' · counted ' + ago(p.oldest) + '</small></span>' +
+        (days > 30 ? '<span class="badge warn">Due</span>' : '') + ICON.go + '</button>';
+    }).join('') + '</div>' : '<div class="card empty"><h2>Nothing is listed at this centre yet.</h2></div>');
+}
+function vCountList(v) {
+  var rows = S.items.filter(function (it) { return it.centre === v.centre && it.loc === v.loc; })
+    .sort(function (a, b) { return a.name.localeCompare(b.name); });
+  F = { was: {} };
+  rows.forEach(function (it) { F.was[it.id] = it.qty; });
+  return top(true) + '<h1 class="title">' + esc(v.loc) + '</h1><p class="sub">' + esc(v.centre) + ' · fix anything that is wrong, then save.</p>' +
+    '<div class="card">' + rows.map(function (it) {
+      return '<div class="cline' + (isLevel(it) ? ' lvrow' : '') + '" data-row="' + esc(it.id) + '"><span class="cname">' + esc(it.name) +
+        '<small>' + (isLevel(it) ? 'level' : esc(it.unit)) + '</small></span>' +
+        (isLevel(it)
+          ? '<input type="hidden" id="c-' + esc(it.id) + '" value="' + it.qty + '"><div class="levels">' + levelButtons('countLevel', it.qty, ' data-for="c-' + esc(it.id) + '"') + '</div>'
+          : stepper('c-' + it.id, it.qty, 0, 99999)) + '</div>';
+    }).join('') + '</div>' +
+    '<p class="hint">Found something that isn’t here? Search for it first, then add it.</p>' +
+    '<div class="savebar"><button class="btn primary" id="c-go" data-act="countGo">All correct. Save count</button></div>';
+}
+function countChanges() {
+  var out = [], bad = false;
+  Object.keys(F.was || {}).forEach(function (id) {
+    var el = byIdEl('c-' + id);
+    if (!el) return;
+    var n = parseQty(el.value), line = el.closest('.cline');
+    if (isNaN(n)) { bad = true; return; }
+    var changed = n !== F.was[id];
+    line.classList.toggle('changed', changed);
+    var lvl = isLevel(S.byId[id]), said = function (x) { return lvl ? LEVEL_NAMES[x] : x; };
+    $('small', line).textContent = changed ? 'was ' + said(F.was[id]) + ', now ' + said(n) : (lvl ? 'level' : (S.byId[id] || {}).unit || '');
+    if (changed) out.push({ id: id, delta: n - F.was[id] });
+  });
+  var btn = byIdEl('c-go');
+  if (btn) {
+    btn.disabled = bad;
+    btn.textContent = bad ? 'Type a number in every box' : out.length ? 'Save count (' + out.length + ' changed)' : 'All correct. Save count';
+  }
+  return bad ? null : out;
+}
+
+// ----- Me / requests / admin -----
+function vMore() {
+  var waiting = S.outbox.length;
+  return top(false) + '<h1 class="title">Me</h1><p class="sub">No names are kept. The list only remembers what changed, and when.</p>' +
+    '<label class="lab">Your centre today</label>' + '<div class="chips" data-group="myCentre">' + S.centres.map(function (c) {
+      return '<button class="chip' + (c === S.me.centre ? ' on' : '') + '" data-act="myCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('') + '</div>' +
+    '<div class="card rows">' +
+    '<button class="rowbtn" data-act="go" data-to="bulk"><span>Add many things at once<small>A box of books or a delivery, one line each</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="requests"><span>Requests to buy<small>See what was asked for and what was decided</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="refresh"><span>Get the latest list<small>Last updated ' + esc(when(S.syncedAt)) +
+    (waiting ? ' · ' + waiting + ' waiting to send' : '') + '</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="' + (S.admin ? 'go" data-to="admin' : 'pinOpen') + '"><span>Admin<small>' + (S.admin ? 'Recent activity and the Google Sheet' : 'Needs the admin PIN') + '</small></span>' + ICON.go + '</button>' +
+    '</div>';
+}
+function vPick() {
+  if (!S.centres.length) {
+    return '<h1 class="hero">Welcome</h1><div class="card empty"><h2>No centres set up yet.</h2><p>Ask the admin to add the centres in the Setup tab of the Google Sheet.</p><button class="btn" data-act="refresh">Check again</button></div>';
+  }
+  return '<h1 class="hero">Which centre are you at?</h1><p class="sub">Tap one. This phone will remember it. You can change it any time under Me.</p>' +
+    '<div class="chips">' + S.centres.map(function (c) {
+      return '<button class="chip" data-act="pickCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('') + '</div>';
+}
+var REQ_BADGE = { 'New': 'plain', 'Approved': 'ok', 'Bought': 'ok', 'Declined': 'low' };
+var REQ_LABEL = { 'New': 'Waiting', 'Approved': 'Approved', 'Bought': 'Bought', 'Declined': 'Not approved' };
+function vRequests() {
+  var body;
+  if (!S.requests) body = '<p class="hint">Getting the requests…</p>';
+  else if (!S.requests.length) body = '<div class="card empty"><h2>No requests yet.</h2><p style="margin:0">Search for something first. If we don’t have it, you can ask to buy it.</p></div>';
+  else {
+    body = '<div class="list">' + S.requests.map(function (r) {
+      return '<div class="card" style="padding:12px"><p class="name">' + esc(r.name) + ' <span class="muted" style="font-weight:400">× ' + amount(r.qty, r.unit) + '</span></p>' +
+        '<p class="line">' + esc(r.centre) + ' · ' + esc(when(r.date)) + (r.price ? ' · about RM ' + r.price : '') + '</p>' +
+        (r.why ? '<p class="line">' + esc(r.why) + '</p>' : '') +
+        (S.admin && r.have ? '<p class="line"><b>Already have:</b> ' + esc(r.have) + '</p>' : '') +
+        '<p class="line" style="margin-top:6px"><span class="badge ' + (REQ_BADGE[r.status] || 'plain') + '">' + (REQ_LABEL[r.status] || esc(r.status)) + '</span>' +
+        (r.adminNote ? ' ' + esc(r.adminNote) : '') + '</p>' +
+        (S.admin ? '<div class="chips" style="margin-top:10px">' + ['Approved', 'Declined', 'Bought'].filter(function (s) { return s !== r.status; }).map(function (s) {
+          return '<button class="chip" data-act="decide" data-id="' + esc(r.id) + '" data-val="' + s + '">' + { Approved: 'Approve', Declined: 'Decline', Bought: 'Mark as bought' }[s] + '</button>';
+        }).join('') + '</div>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  return top(true) + '<h1 class="title">Requests to buy</h1><p class="sub">Newest first.</p>' + body;
+}
+function vAdmin() {
+  if (!S.admin) return vMore();
+  return top(true) + '<h1 class="title">Admin</h1><p class="sub">You can now decide requests and change any detail of an item.</p>' +
+    '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '">Open the Google Sheet</a>' +
+    '<button class="btn" data-act="go" data-to="requests">Decide requests</button>' +
+    '<button class="btn" data-act="go" data-to="labels">Print QR stickers</button>' +
+    (HOSTED && BACKEND.id ? '<label class="lab" for="staff-link">The link to give staff</label>' +
+      '<input id="staff-link" class="inp" readonly value="' + esc(location.origin + location.pathname + '#b=' + BACKEND.id) + '" onclick="this.select()">' +
+      '<p class="help">Send this in the staff group. Anyone with it can use the list, so share it only with staff.</p>' : '') +
+    '<button class="btn quiet" data-act="adminLeave">Leave admin mode</button>' +
+    '<h2 class="sec">Latest activity</h2><div class="card">' +
+    (S.admin.log.length ? S.admin.log.map(function (h) {
+      return '<p class="hist"><b>' + esc(h.action) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
+        (h.change != null && h.change !== 0 && h.action !== 'Level set' ? ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')' : '') +
+        (h.note ? '<br>' + esc(h.note) : '') + '<br><small>' + esc(h.centre) + (h.loc ? ' · ' + esc(h.loc) : '') + ' · ' + esc(when(h.when)) + '</small></p>';
+    }).join('') : '<p class="hist muted">Nothing yet.</p>') + '</div>';
+}
+
+// ----- Add many things at once -----
+function newRow() { return { isbn: '', name: '', qty: '1', msg: '', err: '' }; }
+function rowsHtml() {
+  var canScan = 'BarcodeDetector' in window;
+  return F.rows.map(function (r, i) {
+    return '<div class="card brow" data-i="' + i + '">' +
+      '<div class="isbnline"><input id="b-isbn-' + i + '" class="inp" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="ISBN (optional)" value="' + esc(r.isbn) + '" aria-label="ISBN, line ' + (i + 1) + '">' +
+      '<button type="button" class="btn" data-act="isbnLook" data-i="' + i + '">Look up</button>' +
+      (canScan ? '<button type="button" class="btn" data-act="scanIsbn" data-i="' + i + '">Scan</button>' : '') + '</div>' +
+      '<p class="help" id="b-msg-' + i + '">' + esc(r.msg) + '</p>' +
+      '<input id="b-name-' + i + '" class="inp" maxlength="80" autocomplete="off" placeholder="Title or name" value="' + esc(r.name) + '" aria-label="Title, line ' + (i + 1) + '">' +
+      '<div class="bq"><span>Copies</span>' + stepper('b-qty-' + i, r.qty, 1, 99999) + '</div>' +
+      (r.err ? '<p class="err" style="margin:0">' + esc(r.err) + '</p>' : '') +
+      (F.rows.length > 1 ? '<button type="button" class="btn quiet" data-act="rowDel" data-i="' + i + '">Remove this line</button>' : '') + '</div>';
+  }).join('');
+}
+function drawRows() { var box = byIdEl('b-rows'); if (box) box.innerHTML = rowsHtml(); }
+function vBulk() {
+  F = { centre: myCentre(), cat: S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : '', rows: [newRow(), newRow(), newRow()] };
+  return top(true) + '<h1 class="title">Add many things at once</h1>' +
+    '<p class="sub">For a box of books or a delivery. One line each: type the title, or type the ISBN and tap Look up.</p>' +
+    '<label class="lab">Which centre?</label>' + chips('centre', S.centres, F.centre) +
+    '<label class="lab" for="f-loc">Where are they kept?</label>' +
+    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="e.g. Reading corner">' +
+    '<div id="f-locs">' + locChips(F.centre) + '</div>' +
+    '<details><summary>Counted in “books”, type “' + esc(F.cat || 'none') + '” · change</summary>' +
+    '<label class="lab" for="f-unit">Counted in</label>' +
+    '<input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="books" placeholder="books">' +
+    '<label class="lab">What type of thing?</label>' + chips('cat', S.categories, F.cat) + '</details>' +
+    '<div id="b-rows">' + rowsHtml() + '</div>' +
+    '<button class="btn" data-act="rowAdd" style="margin-top:10px">+ Add another line</button>' +
+    '<p class="err" id="f-err" hidden></p>' +
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="bulkGo">Add to the list</button></div>';
+}
+function listHasIsbn(isbn) {
+  return S.items.filter(function (it) { return String(it.alt || '').indexOf('ISBN ' + isbn) >= 0; })[0] || null;
+}
+// Title from Open Library (free). If it is not reachable or does not know the book, the person types the title.
+function lookupTitle(isbn) {
+  return new Promise(function (resolve) {
+    var done = false, timer = setTimeout(function () { if (!done) { done = true; resolve({ error: true }); } }, 8000);
+    function finish(v) { if (done) return; done = true; clearTimeout(timer); resolve(v); }
+    try {
+      fetch('https://openlibrary.org/api/books?bibkeys=ISBN:' + isbn + '&format=json&jscmd=data')
+        .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+        .then(function (j) {
+          var b = j && j['ISBN:' + isbn];
+          finish(b && b.title ? { title: String(b.title) + (b.subtitle ? ': ' + b.subtitle : '') } : { missing: true });
+        })
+        .catch(function () { finish({ error: true }); });
+    } catch (e) { finish({ error: true }); }
+  });
+}
+function setRowMsg(i, msg) {
+  if (F.rows[i]) F.rows[i].msg = msg;
+  var el = byIdEl('b-msg-' + i);
+  if (el) el.textContent = msg;
+}
+function setRowName(i, name) {
+  F.rows[i].name = name;
+  var el = byIdEl('b-name-' + i);
+  if (el) el.value = name;
+}
+
+// ----- QR stickers -----
+function qrSvg(text) {
+  var q = qrcode(0, 'M');
+  q.addData(text);
+  q.make();
+  return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+}
+function linkTo(params) {
+  var base = S.appUrl || '';
+  var qs = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+  return base + (base.indexOf('?') >= 0 ? '&' : '?') + qs + (HOSTED && BACKEND.id ? '#b=' + BACKEND.id : '');
+}
+function labelCard(url, title, sub, id) {
+  return '<div class="lbl"><div class="qr" data-url="' + esc(url) + '">' + qrSvg(url) + '</div><div class="lt"><b>' + esc(title) + '</b><span>' +
+    esc(sub) + '</span>' + (id ? '<small>' + esc(id) + '</small>' : '') + '</div></div>';
+}
+function vLabels(v) {
+  v.centre = v.centre || myCentre() || S.centres[0];
+  v.mode = v.mode || 'items';
+  v.place = v.place || '';
+  var inCentre = S.items.filter(function (it) { return it.centre === v.centre; });
+  var places = [];
+  inCentre.forEach(function (it) { if (places.indexOf(it.loc) < 0) places.push(it.loc); });
+  places.sort();
+  if (v.place && places.indexOf(v.place) < 0) v.place = '';
+  var opt = function (k, val, label, on) {
+    return '<button class="chip' + (on ? ' on' : '') + '" data-act="labelOpt" data-k="' + k + '" data-val="' + esc(val) + '">' + esc(label) + '</button>';
+  };
+  var cards = v.mode === 'shelves'
+    ? places.map(function (p) { return labelCard(linkTo({ c: v.centre, p: p }), p, v.centre + ' · scan to count this shelf', ''); })
+    : inCentre.filter(function (it) { return !v.place || it.loc === v.place; })
+        .sort(function (a, b) { return a.loc.localeCompare(b.loc) || a.name.localeCompare(b.name); })
+        .map(function (it) { return labelCard(linkTo({ i: it.id }), it.name, it.centre + ' · ' + it.loc, it.id); });
+  return '<div class="noprint">' + top(true) + '<h1 class="title">Print QR stickers</h1>' +
+    '<p class="sub">Stick one on each item or shelf. Scanning it with the phone camera opens it in this app.</p>' +
+    '<label class="lab">What to print</label><div class="chips">' + opt('mode', 'items', 'One per item', v.mode === 'items') + opt('mode', 'shelves', 'One per shelf', v.mode === 'shelves') + '</div>' +
+    '<label class="lab">Which centre?</label><div class="chips">' + S.centres.map(function (c) { return opt('centre', c, c, c === v.centre); }).join('') + '</div>' +
+    (v.mode === 'items' ? '<label class="lab">Which place?</label><div class="chips">' + opt('place', '', 'All places', !v.place) + places.map(function (p) { return opt('place', p, p, p === v.place); }).join('') + '</div>' : '') +
+    (S.appUrl ? '<p class="help">The codes open: ' + esc(S.appUrl) + '</p>'
+      : '<p class="err">The app’s link is not known yet, so the codes would not work. Open the app from its link, or type the link in the Setup tab (Setting “App link”).</p>') +
+    '<button class="btn primary" data-act="print"' + (S.appUrl && cards.length ? '' : ' disabled') + '>Print ' + cards.length + (cards.length === 1 ? ' sticker' : ' stickers') + '</button>' +
+    '<p class="help">If nothing happens, press Ctrl+P (or use the browser menu, then Print).</p></div>' +
+    (S.appUrl ? '<div class="lbls">' + cards.join('') + '</div>' : '');
+}
+
+// ---------- toast ----------
+var toastTimer = 0, toastFn = null;
+function toast(msg, action, fn) {
+  var t = byIdEl('toast');
+  toastFn = fn || null;
+  t.innerHTML = '<span>' + esc(msg) + '</span>' + (action ? '<button data-act="toastAct">' + esc(action) + '</button>' : '');
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.hidden = true; }, action ? 7000 : 3500);
+}
+
+// ---------- forms ----------
+function val(id) { var el = byIdEl(id); return el ? el.value.trim() : ''; }
+function formError(msg) {
+  var e = byIdEl('f-err');
+  if (e) { e.textContent = msg; e.hidden = !msg; if (msg) e.scrollIntoView({ block: 'center' }); }
+  else if (msg) toast(msg);
+}
+function busy(on, label) {
+  var b = byIdEl('f-go') || byIdEl('m-go');
+  if (!b) return;
+  if (on) { b.dataset.label = b.textContent; b.textContent = label || 'Saving…'; b.disabled = true; }
+  else { b.textContent = b.dataset.label || b.textContent; b.disabled = false; }
+}
+function failed(e) {
+  busy(false);
+  formError(e.network ? 'No signal. Try again when you’re back on Wi-Fi.' : e.message);
+}
+function shrink(file) {
+  return new Promise(function (resolve, reject) {
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      var k = Math.min(1, 900 / Math.max(img.width, img.height));
+      var c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * k));
+      c.height = Math.max(1, Math.round(img.height * k));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', 0.72));
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('photo')); };
+    img.src = url;
+  });
+}
+
+// ---------- what each tap does ----------
+var ACT = {
+  nav: function (el) { root(el.dataset.to); },
+  go: function (el) { if (el.dataset.to === 'requests') loadRequests(); go({ name: el.dataset.to }); },
+  back: back,
+  refresh: function () { refresh(true); },
+  flushNow: function () { flush(); },
+  toastAct: function () { byIdEl('toast').hidden = true; if (toastFn) toastFn(); },
+  closeSheet: closeSheet,
+
+  clearQ: function () { S.q = ''; byIdEl('q').value = ''; drawResults(); byIdEl('q').focus(); },
+  cat: function (el) { go({ name: 'home', cat: el.dataset.val }); },
+  clearCat: function () { back(); },
+  open: function (el) { go({ name: 'item', key: el.dataset.key, id: el.dataset.id || '' }); },
+  pick: function (el) { cur().id = el.dataset.id; render(); },
+
+  stock: function (el) { openStock(Number(el.dataset.dir)); },
+  step: function (el) {
+    var input = byIdEl(el.dataset.for), n = parseQty(input.value);
+    if (isNaN(n)) n = 0;
+    n = Math.min(Number(input.dataset.max), Math.max(Number(input.dataset.min), n + Number(el.dataset.d)));
+    input.value = n;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  },
+  stockGo: function () {
+    var it = S.byId[M.id], n = parseQty(byIdEl('m-n').value), dir = M.dir;
+    if (!it || !(n >= 1) || (dir < 0 && n > it.qty)) return;
+    var id = it.id, unit = it.unit;
+    enqueue('changeStock', { itemId: id, delta: dir * n, note: val('m-note') });
+    closeSheet();
+    var now = S.byId[id] ? S.byId[id].qty : 0;
+    toast((dir > 0 ? 'Added ' : 'Took ') + amount(n, unit) + '. Now ' + now + '.', 'Undo', function () {
+      enqueue('changeStock', { itemId: id, delta: -dir * n, note: 'Undo' });
+      softRender();
+      toast('Undone.');
+    });
+  },
+  problem: openProblem,
+  problemPick: function (el) {
+    M.status = el.dataset.val;
+    document.querySelectorAll('#sheet .opt').forEach(function (o) { o.classList.toggle('on', o === el); });
+    byIdEl('m-go').disabled = false;
+  },
+  problemGo: function () {
+    if (!M.status) return;
+    busy(true);
+    call('updateItem', { itemId: M.id, fields: { status: M.status }, note: val('m-note') }).then(function (res) {
+      mergeItems(res.items); rebuild(); closeSheet(); toast('Saved. Thank you for telling us.');
+    }).catch(function (e) { busy(false); toast(e.network ? 'No signal. Try again when you’re back on Wi-Fi.' : e.message); });
+  },
+  history: function () {
+    var id = cur().id;
+    call('getHistory', { itemId: id }).then(function (res) { S.history[id] = res.history; softRender(); })
+      .catch(function (e) { toast(e.network ? 'No signal.' : e.message); });
+  },
+
+  toRequest: function () { go({ name: 'request', text: S.q.trim() }); },
+  requestMore: function () { go({ name: 'request', key: cur().key, itemId: cur().id }); },
+  toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
+  addPlace: function () { go({ name: 'add', key: cur().key }); },
+  toEdit: function () { go({ name: 'edit', id: cur().id, key: cur().key }); },
+
+  moveOpen: openMove,
+  moveCentre: function (el) {
+    M.to = el.dataset.val;
+    document.querySelectorAll('#sheet [data-act=moveCentre]').forEach(function (c) { c.classList.toggle('on', c === el); });
+    refreshMove();
+  },
+  moveGo: function () {
+    var it = S.byId[M.id], n = parseQty(byIdEl('m-n').value);
+    if (!it || !M.to || !(n >= 1) || n > it.qty) return;
+    var to = M.to, unit = it.unit;
+    busy(true, 'Sending…');
+    call('moveStock', { itemId: it.id, toCentre: to, toLocation: val('m-loc'), qty: n, note: val('m-note'), actionId: uid() }).then(function (res) {
+      mergeItems(res.items); rebuild(); closeSheet();
+      toast(res.replay ? 'Already sent.' : 'Sent ' + amount(n, unit) + ' to ' + to + '.');
+    }).catch(function (e) { busy(false); toast(e.network ? 'No signal. Try again when you’re back on Wi-Fi.' : e.message); });
+  },
+  rowAdd: function () {
+    if (F.rows.length >= 100) return formError('That is the most for one go (100 lines).');
+    F.rows.push(newRow());
+    drawRows();
+    var last = byIdEl('b-isbn-' + (F.rows.length - 1));
+    if (last) last.scrollIntoView({ block: 'center' });
+  },
+  rowDel: function (el) { F.rows.splice(Number(el.dataset.i), 1); drawRows(); },
+  isbnLook: function (el) {
+    var i = Number(el.dataset.i), row = F.rows[i];
+    var isbn = RMIsbn.clean(row.isbn);
+    if (isbn === '') return setRowMsg(i, 'Type the ISBN first.');
+    if (isbn === null) return setRowMsg(i, 'The ISBN looks wrong. Check the digits.');
+    var known = listHasIsbn(isbn);
+    if (known) {
+      setRowName(i, known.name);
+      return setRowMsg(i, 'Already on the list as “' + known.name + '”. The same title is used.');
+    }
+    setRowMsg(i, 'Looking it up…');
+    lookupTitle(isbn).then(function (res) {
+      if (!F.rows[i] || RMIsbn.clean(F.rows[i].isbn) !== isbn) return;   // the line changed meanwhile
+      if (res.title) {
+        if (!F.rows[i].name.trim()) setRowName(i, res.title.slice(0, 80));
+        setRowMsg(i, 'Found: ' + res.title);
+      } else setRowMsg(i, res.missing ? 'That book is not in the online list. Type the title.' : 'Could not look it up. Type the title.');
+    });
+  },
+  scanIsbn: function (el) {
+    F.scanFor = Number(el.dataset.i);
+    byIdEl('scan').value = '';
+    byIdEl('scan').click();
+  },
+  bulkGo: function () {
+    var loc = val('f-loc');
+    if (!F.centre) return formError('Choose which centre it is at.');
+    if (!loc) return formError('Type where they are kept.');
+    var rows = [], map = [], bad = false;
+    F.rows.forEach(function (r, i) {
+      r.err = '';
+      var name = String(r.name || '').trim(), typedIsbn = String(r.isbn || '').trim(), isbn = RMIsbn.clean(r.isbn), q = parseQty(r.qty);
+      if (!name && !typedIsbn) return;                                     // an empty line is not a mistake
+      if (isbn === null) { r.err = 'The ISBN looks wrong. Check the digits.'; bad = true; return; }
+      if (isNaN(q) || q < 1) { r.err = 'Copies must be 1 or more.'; bad = true; return; }
+      if (!name && !listHasIsbn(isbn)) { r.err = 'Type the title. This ISBN is not on the list yet.'; bad = true; return; }
+      rows.push({ name: name, isbn: isbn, qty: q });
+      map.push(i);
+    });
+    if (bad) { drawRows(); return formError('Fix the lines marked in red.'); }
+    if (!rows.length) return formError('Add at least one book or item.');
+    formError('');
+    busy(true);
+    call('addMany', { centre: F.centre, location: loc, unit: val('f-unit'), cat: F.cat || '', rows: rows, actionId: uid() }).then(function (res) {
+      mergeItems(res.items); rebuild();
+      if (res.problems && res.problems.length) {
+        var errs = {};
+        res.problems.forEach(function (p) { errs[map[p.row]] = p.error; });
+        // keep only the lines that failed, in their old order, each with its own message
+        var failedAt = Object.keys(errs).map(Number).sort(function (a, b) { return a - b; });
+        F.rows = failedAt.map(function (i) { var r = F.rows[i]; r.err = errs[i]; return r; });
+        drawRows();
+        busy(false);
+        return formError('Saved ' + (res.created + res.topped) + '. The lines below need a fix.');
+      }
+      root('home');
+      toast(res.replay ? 'Already saved.' : 'Added ' + res.created + (res.created === 1 ? ' new item' : ' new items') +
+        (res.topped ? ' and more copies of ' + res.topped + ' already listed' : '') + '.');
+    }).catch(failed);
+  },
+  connect: function () {
+    var id = parseBackend(val('s-link')), err = byIdEl('s-err');
+    if (!id) { err.textContent = 'That does not look like the list’s link. Ask your admin to send it again.'; err.hidden = false; return; }
+    store.set('rm_backend', id);
+    setBackend(id);
+    S.failed = false;
+    render();
+    refresh();
+  },
+  labelOpt: function (el) {
+    var v = cur();
+    v[el.dataset.k] = el.dataset.val;
+    if (el.dataset.k === 'centre') v.place = '';
+    render();
+  },
+  print: function () {
+    try { window.print(); } catch (e) { toast('Press Ctrl+P (or the browser menu, then Print).'); }
+  },
+  setLevel: function (el) {
+    var it = S.byId[cur().id], n = Number(el.dataset.n);
+    if (!it || !isLevel(it) || it.qty === n) return;
+    var id = it.id, was = it.qty;
+    enqueue('setLevel', { itemId: id, level: n });
+    softRender();
+    toast('Set to ' + LEVEL_NAMES[n] + '.', 'Undo', function () {
+      enqueue('setLevel', { itemId: id, level: was });
+      softRender();
+      toast('Undone.');
+    });
+  },
+  countLevel: function (el) {
+    var input = byIdEl(el.dataset.for);
+    input.value = el.dataset.n;
+    el.parentNode.querySelectorAll('.lvl').forEach(function (b) { b.classList.toggle('on', b === el); });
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  },
+  chip: function (el) {
+    var box = el.parentNode, group = box.dataset.group, v = el.dataset.val;
+    F[group] = F[group] === v && group === 'cat' ? '' : v;
+    box.querySelectorAll('.chip').forEach(function (c) { c.classList.toggle('on', c.dataset.val === F[group]); });
+    if (group === 'tracking') syncTrack();
+    if (group === 'centre' && byIdEl('f-locs')) byIdEl('f-locs').innerHTML = locChips(F.centre);
+  },
+  locPick: function (el) { byIdEl('f-loc').value = el.dataset.val; },
+  photo: function () { byIdEl('file').value = ''; byIdEl('file').click(); },
+
+  addGo: function () {
+    var name = val('f-name'), qty = parseQty(val('f-qty')), loc = val('f-loc'), min = val('f-min'), lv = levelOn();
+    if (!name) return formError('Type what it is.');
+    if (!lv && isNaN(qty)) return formError('Type how many there are, as a number.');
+    if (!F.centre) return formError('Choose which centre it is at.');
+    if (!loc) return formError('Type where it is kept.');
+    if (!lv && min && isNaN(parseQty(min))) return formError('“Keep at least” must be a number.');
+    var g = S.gmap[RMSearch.norm(name)] || {};   // same name as something we have: keep its details the same
+    // the minimum is copied to a new centre, but not to a second shelf in a centre that already has one
+    var here = (g.rows || []).some(function (r) { return r.centre === F.centre; });
+    formError('');
+    busy(true);
+    var photo = F.photo;
+    call('addItem', {
+      name: g.name || name, qty: lv ? '' : qty, centre: F.centre, location: loc, unit: lv ? '' : (val('f-unit') || g.unit || ''),
+      alt: val('f-alt') || g.alt || '', cat: F.cat || g.cat || '', min: lv ? '' : (min || (g.min && !here ? g.min : '')), notes: val('f-notes'),
+      tracking: lv ? 'Level' : '', level: lv ? Math.max(0, LEVEL_NAMES.indexOf(F.level)) : '',
+      photoData: photo
+    }).then(function (res) {
+      var it = res.items[0];
+      if (photo && !res.photoFailed) S.localPhoto[it.id] = photo;
+      mergeItems(res.items); rebuild();
+      S.stack = [{ name: 'home' }]; S.q = '';
+      go({ name: 'item', key: RMSearch.norm(it.name), id: it.id });
+      toast(res.photoFailed ? 'Added, but the photo could not be saved.' : 'Added to the list.');
+    }).catch(function (e) {
+      if (e.data && e.data.duplicateId && S.byId[e.data.duplicateId]) {
+        var d = S.byId[e.data.duplicateId];
+        S.stack = [{ name: 'home' }];
+        go({ name: 'item', key: RMSearch.norm(d.name), id: d.id });
+        return toast('That’s already on the list here. Use “Add stock”.');
+      }
+      failed(e);
+    });
+  },
+  requestGo: function () {
+    var v = cur(), name = val('f-name'), qty = parseQty(val('f-qty')), price = val('f-price').replace(',', '.');
+    if (!name) return formError('Type what you need.');
+    if (!(qty >= 1)) return formError('Type how many you need, as a number.');
+    if (!F.centre) return formError('Choose which centre it is for.');
+    if (price && !/^\d+(\.\d{1,2})?$/.test(price)) return formError('Type the price as a number, like 45 or 12.50.');
+    formError('');
+    busy(true, 'Sending…');
+    var data = { name: name, qty: qty, unit: val('f-unit'), centre: F.centre, why: val('f-why'), price: price, itemId: v.itemId || '' };
+    call('addRequest', data).then(function (res) {
+      S.requests = null;
+      root('home');
+      var text = 'Request to buy: ' + qty + ' ' + (data.unit || 'pcs') + ' of ' + name + ' for ' + F.centre +
+        (data.why ? '. Why: ' + data.why : '') + (price ? '. About RM ' + price : '') + ' (' + res.id + ')';
+      openSheet('<h2>Request sent</h2><p class="sub">It’s on the list for a decision. You can check it under Me → Requests to buy.</p>' +
+        '<a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(text) + '">Also send it on WhatsApp</a>' +
+        '<button class="btn primary" data-act="closeSheet">Done</button>');
+    }).catch(failed);
+  },
+  editGo: function () {
+    var it = S.byId[cur().id];
+    if (!it) return;
+    var f = {}, loc = val('f-loc'), photo = F.photo;
+    if (!loc) return formError('Type where it is kept.');
+    if (loc !== it.loc) f.loc = loc;
+    if (val('f-notes') !== it.notes) f.notes = val('f-notes');
+    if (S.admin) {
+      var min = val('f-min');
+      if (!val('f-name')) return formError('The item needs a name.');
+      if (!isLevel(it) && min && isNaN(parseQty(min))) return formError('“Keep at least” must be a number.');
+      if (val('f-name') !== it.name) f.name = val('f-name');
+      if (val('f-alt') !== it.alt) f.alt = val('f-alt');
+      if (F.cat !== it.cat) f.cat = F.cat;
+      if (F.centre !== it.centre) f.centre = F.centre;
+      if (!isLevel(it) && (val('f-unit') || 'pcs') !== it.unit) f.unit = val('f-unit');
+      if (!isLevel(it) && (parseQty(min) || 0) !== it.min) f.min = parseQty(min) || 0;
+      if (!isLevel(it) && F.tracking === 'Just the level') f.tracking = 'Level';
+    }
+    if (!Object.keys(f).length && !photo) return back();
+    formError('');
+    busy(true);
+    call('updateItem', { itemId: it.id, fields: f, photoData: photo, pin: S.pin }).then(function (res) {
+      var n = res.items[0];
+      if (photo && !res.photoFailed) S.localPhoto[n.id] = photo;
+      mergeItems(res.items); rebuild();
+      S.stack.pop();
+      S.stack[S.stack.length - 1] = { name: 'item', key: RMSearch.norm(n.name), id: n.id };
+      render();
+      toast(res.photoFailed ? 'Saved, but the photo could not be saved.' : 'Saved.');
+    }).catch(failed);
+  },
+
+  lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
+  countCentre: function (el) { cur().centre = el.dataset.val; render(); },
+  countPlace: function (el) { go({ name: 'countList', centre: cur().centre, loc: el.dataset.val }); },
+  countGo: function () {
+    var v = cur(), changes = countChanges();
+    if (!changes) return;
+    enqueue('saveCount', { centre: v.centre, location: v.loc, counts: changes });
+    S.stack.pop();
+    render();
+    toast(changes.length ? 'Count saved. ' + changes.length + ' corrected.' : 'Count saved. All correct.');
+  },
+
+  pickCentre: function (el) {
+    S.me = { centre: el.dataset.val };
+    store.set('rm_me', S.me);
+    root('home');
+    applyLink();
+  },
+  myCentre: function (el) { S.me = { centre: el.dataset.val }; store.set('rm_me', S.me); render(); },
+
+  pinOpen: function () {
+    M = { type: 'pin' };
+    openSheet('<h2>Admin PIN</h2><p class="sub">It’s in the Setup tab of the Google Sheet.</p>' +
+      '<input id="m-pin" class="inp" type="password" inputmode="numeric" maxlength="12" autocomplete="off" aria-label="Admin PIN">' +
+      '<p class="err" id="m-err" hidden></p>' +
+      '<button class="btn primary" id="m-go" data-act="pinGo">Continue</button><button class="btn quiet" data-act="closeSheet">Cancel</button>', 'm-pin');
+  },
+  pinGo: function () {
+    var pin = val('m-pin');
+    if (!pin) return;
+    busy(true, 'Checking…');
+    call('adminOpen', { pin: pin }).then(function (res) {
+      S.admin = { sheetUrl: res.sheetUrl, log: res.log };
+      S.pin = pin;
+      closeSheet();
+      go({ name: 'admin' });
+    }).catch(function (e) {
+      busy(false);
+      var err = byIdEl('m-err');
+      err.textContent = e.network ? 'No signal. Try again.' : e.message;
+      err.hidden = false;
+    });
+  },
+  adminLeave: function () { S.admin = null; S.pin = ''; root('more'); },
+  decide: function (el) {
+    M = { type: 'decide', id: el.dataset.id, status: el.dataset.val };
+    var label = { Approved: 'Approve this request?', Declined: 'Decline this request?', Bought: 'Mark as bought?' }[M.status];
+    openSheet('<h2>' + label + '</h2>' +
+      '<label class="lab" for="m-note">Note for the person who asked <i>(optional)</i></label>' +
+      '<input id="m-note" class="inp" maxlength="200" autocomplete="off" placeholder="' + (M.status === 'Declined' ? 'e.g. another centre has spare, collect from them' : '') + '">' +
+      '<button class="btn primary" id="m-go" data-act="decideGo">Yes</button><button class="btn quiet" data-act="closeSheet">Cancel</button>');
+  },
+  decideGo: function () {
+    busy(true);
+    call('decideRequest', { id: M.id, status: M.status, note: val('m-note'), pin: S.pin }).then(function () {
+      closeSheet();
+      loadRequests();
+      toast('Saved.');
+    }).catch(function (e) { busy(false); toast(e.network ? 'No signal. Try again.' : e.message); });
+  }
+};
+function loadRequests() {
+  call('getRequests', {}).then(function (res) { S.requests = res.requests; if (cur().name === 'requests') render(); })
+    .catch(function (e) { if (cur().name === 'requests') toast(e.network ? 'No signal.' : e.message); });
+}
+
+// ---------- listeners ----------
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('[data-act]');
+  // the next tap anywhere puts the last message away, so it never sits on top of a button
+  if (!e.target.closest('#toast')) byIdEl('toast').hidden = true;
+  if (!el || el.disabled) return;
+  var fn = ACT[el.dataset.act];
+  if (fn) { if (el.tagName !== 'A') e.preventDefault(); fn(el, e); }
+});
+document.addEventListener('input', function (e) {
+  var t = e.target;
+  if (t.id === 'q') { S.q = t.value; drawResults(); }
+  else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
+  else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) byIdEl('similar').innerHTML = similarHtml(t.value);
+  else if (t.id && t.id.indexOf('c-') === 0) countChanges();
+  else if (t.id && /^b-(isbn|name|qty)-\d+$/.test(t.id)) {
+    var m = /^b-(isbn|name|qty)-(\d+)$/.exec(t.id);
+    if (F.rows && F.rows[m[2]]) F.rows[m[2]][m[1]] = t.value;
+  }
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && e.target.id === 'q') e.target.blur();
+  if (e.key === 'Enter' && e.target.id === 'm-pin') ACT.pinGo();
+  if (e.key === 'Escape' && !byIdEl('sheet').hidden) closeSheet();
+});
+// a photo that will not load falls back to the Drive thumbnail, then to the picture of its category
+document.addEventListener('error', function (e) {
+  var t = e.target;
+  if (!t || t.tagName !== 'IMG') return;
+  if (t.dataset.fb) { var fb = t.dataset.fb; delete t.dataset.fb; t.src = fb; }
+  else t.remove();
+}, true);
+// Barcode scanning only where the browser can do it (Chrome on Android). Elsewhere the person types the ISBN.
+byIdEl('scan').addEventListener('change', function () {
+  var file = this.files && this.files[0], i = F.scanFor;
+  if (!file || !('BarcodeDetector' in window) || !F.rows || !F.rows[i]) return;
+  createImageBitmap(file).then(function (bmp) { return new BarcodeDetector({ formats: ['ean_13', 'ean_8'] }).detect(bmp); })
+    .then(function (codes) {
+      var isbn = RMIsbn.clean(codes && codes[0] && codes[0].rawValue);
+      if (!isbn) return setRowMsg(i, 'Could not read that barcode. Try again, or type the ISBN.');
+      F.rows[i].isbn = isbn;
+      var el = byIdEl('b-isbn-' + i);
+      if (el) el.value = isbn;
+      ACT.isbnLook({ dataset: { i: String(i) } });
+    }).catch(function () { setRowMsg(i, 'Could not read that barcode. Try again, or type the ISBN.'); });
+});
+byIdEl('file').addEventListener('change', function () {
+  var f = this.files && this.files[0];
+  if (!f) return;
+  shrink(f).then(function (dataUrl) {
+    F.photo = dataUrl;
+    var th = byIdEl('f-thumb');
+    if (th) th.innerHTML = '<span class="tile"><img alt="" src="' + dataUrl + '"></span>';
+  }).catch(function () { toast('That photo could not be used. Try another one.'); });
+});
+window.addEventListener('online', function () { flush(); });
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden && Date.now() - S.syncedAt > 120000) refresh();
+});
+
+// ---------- start ----------
+// a phone that stored a name from an earlier version forgets it
+if (S.me && S.me.name !== undefined) { S.me = { centre: S.me.centre }; store.set('rm_me', S.me); }
+if (HOSTED) {
+  var given = parseBackend(location.hash), known = given || parseBackend(store.get('rm_backend', ''));
+  if (given) {
+    store.set('rm_backend', given);
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the code stays in the address bar */ }
+  }
+  if (known) setBackend(known);
+  // installable and usable without signal: the page's own files are kept by the browser
+  [['manifest', 'manifest.webmanifest'], ['apple-touch-icon', 'icon-192.png']].forEach(function (p) {
+    var link = document.createElement('link');
+    link.rel = p[0]; link.href = p[1];
+    document.head.appendChild(link);
+  });
+  try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
+}
+var cached = store.get('rm_data', null);
+if (cached && cached.staff) { delete cached.staff; store.set('rm_data', cached); }
+if (cached && cached.items) applyData(cached);
+render();
+refresh();
+// a QR sticker opens the app with ?i=ITEM-ID (an item) or ?c=CENTRE&p=PLACE (a shelf to count)
+if (HOSTED) {
+  try {
+    var q = new URLSearchParams(location.search), found = {};
+    ['i', 'c', 'p'].forEach(function (k) { if (q.get(k)) found[k] = q.get(k); });
+    if (found.i || (found.c && found.p)) {
+      pendingLink = found;
+      history.replaceState(null, '', location.pathname);   // a reload should not open it again
+      applyLink();
+    }
+  } catch (e) { /* no link support */ }
+} else {
+  try { google.script.url.getLocation(function (loc) { pendingLink = (loc && loc.parameter) || null; applyLink(); }); } catch (e) { /* no link support */ }
+}
+})();
+</script>
+</body>
+</html>
