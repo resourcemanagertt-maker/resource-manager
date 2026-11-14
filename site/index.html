@@ -71,11 +71,11 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .alt{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .line{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
 .line b{color:var(--ink)}
-.places{display:block;font-size:14px;color:var(--muted);line-height:1.7}
-.pl{display:inline;white-space:nowrap;margin-right:var(--s3)}
+.places{display:flex;flex-wrap:wrap;column-gap:var(--s3);font-size:14px;color:var(--muted);line-height:1.7}
+.pl{white-space:nowrap}
 .pl b{font-weight:700;color:var(--ink)}
 .pl.mine{color:var(--ink);font-weight:600}
-.pl.low{background:var(--mark);color:var(--ink);padding:1px var(--s1);margin-left:calc(-1 * var(--s1));margin-right:var(--s2);border-radius:2px}
+.pl.low{background:var(--mark);color:var(--ink);padding:1px var(--s1);border-radius:2px}
 .tot{flex:none;display:flex;flex-direction:column;align-items:flex-end;min-width:48px;text-align:right}
 .tot b{font-size:30px;line-height:1;font-weight:700;letter-spacing:-.02em}
 .tot b.word{font-size:20px;line-height:1.2;letter-spacing:0}
@@ -86,7 +86,13 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .badge.ok{color:var(--muted);font-weight:400;padding-left:0}
 .badge.plain{background:var(--wash);color:var(--muted)}
 /* a photo only appears when there is one */
-.tile{position:relative;flex:none;width:52px;height:52px;border-radius:var(--r);background:var(--wash);overflow:hidden}
+.tile{position:relative;flex:none;width:52px;height:52px;border-radius:var(--r);background:var(--wash);display:grid;place-items:center;overflow:hidden}
+.tile .emo{font-size:28px;line-height:1}
+.tile.big .emo{font-size:46px}
+.cat .emo{font-size:24px;flex:none;width:32px;text-align:center}
+.cat .lbl2{flex:1;min-width:0}
+.cat{align-items:center;justify-content:flex-start}
+.cat small{margin-left:auto}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .tile.big{width:96px;height:96px}
 
@@ -2705,6 +2711,12 @@ var ICON = {
   more: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.500 7 5.500"/></svg>'
 };
 
+// one small picture per type: it is the item's picture until someone adds a photo
+var CAT_ICON = {
+  'Learning materials': '📚', 'Toys and play': '🧸', 'Art and craft': '🎨', 'Stationery and paper': '✏️',
+  'Printing and electronics': '🖨️', 'Furniture and fittings': '🪑', 'Hygiene and cleaning': '🧼',
+  'First aid': '🩹', 'Festival and event items': '🏮'
+};
 var STATUS_LABEL = { 'Needs Repair': 'Needs repair', 'Missing Pieces': 'Pieces missing' };
 
 // ---------- state ----------
@@ -3061,10 +3073,11 @@ function photoSrc(it, w) {
 }
 function tile(it, cat, big) {
   var src = photoSrc(it, big ? 600 : 200);
-  if (!src) return '';
   var m = it && /\/d\/([\w-]{10,})/.exec(it.photo || '');
-  return '<span class="tile' + (big ? ' big' : '') + '"><img alt="" loading="lazy" src="' + esc(src) + '"' +
-    (m ? ' data-fb="https://drive.google.com/thumbnail?id=' + esc(m[1]) + '&amp;sz=w' + (big ? 600 : 200) + '"' : '') + '></span>';
+  return '<span class="tile' + (big ? ' big' : '') + '"><span class="emo">' + (CAT_ICON[cat] || '📦') + '</span>' +
+    (src ? '<img alt="" loading="lazy" src="' + esc(src) + '"' +
+      (m ? ' data-fb="https://drive.google.com/thumbnail?id=' + esc(m[1]) + '&amp;sz=w' + (big ? 600 : 200) + '"' : '') + '>' : '') +
+    '</span>';
 }
 function badges(it) {
   var out = '';
@@ -3074,6 +3087,20 @@ function badges(it) {
 }
 
 // ----- Find (home) -----
+function rememberOpened(key) {
+  if (!key) return;
+  var list = (store.get('rm_recent', []) || []).filter(function (k) { return k !== key; });
+  list.unshift(key);
+  store.set('rm_recent', list.slice(0, 5));
+}
+function recentHtml() {
+  var gs = (store.get('rm_recent', []) || []).map(function (k) { return S.gmap[k]; }).filter(Boolean);
+  if (!gs.length) return '';
+  return '<h2 class="sec">Recently opened</h2><div class="cats">' + gs.map(function (g) {
+    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[g.cat] || '📦') + '</span><span class="lbl2">' + esc(g.name) + '</span><small>' +
+      (g.levelOnly ? LEVEL_NAMES[g.lowest] : esc(amount(g.total, g.unit))) + '</small></button>';
+  }).join('') + '</div>';
+}
 function vHome(v) {
   return top(false) +
     '<h1 class="hero">Do we have it?</h1>' +
@@ -3091,18 +3118,22 @@ function drawResults() {
 function resultsHtml(v) {
   var q = S.q.trim();
   if (!q && v.cat) {
-    var inCat = S.groups.filter(function (g) { return g.cat === v.cat; });
+    var all = S.groups.filter(function (g) { return g.cat === v.cat; });
+    var lowN = all.filter(function (g) { return g.rows.some(low); }).length;
+    var inCat = v.lowOnly ? all.filter(function (g) { return g.rows.some(low); }) : all;
     return '<button class="pillx" data-act="clearCat">' + esc(v.cat) + ' ' + ICON.x + '</button>' +
-      '<p class="count">' + inCat.length + (inCat.length === 1 ? ' thing' : ' things') + '</p>' +
-      '<div class="list">' + inCat.map(card).join('') + '</div>';
+      '<div class="seg" data-group="catFilter"><button class="chip' + (v.lowOnly ? '' : ' on') + '" data-act="catFilter" data-val="">All (' + all.length + ')</button>' +
+      '<button class="chip' + (v.lowOnly ? ' on' : '') + '" data-act="catFilter" data-val="1">Running low (' + lowN + ')</button></div>' +
+      (inCat.length ? '<div class="list">' + inCat.map(card).join('') + '</div>'
+        : '<div class="card empty"><h2>Nothing here is running low.</h2></div>');
   }
   if (!q) {
     var counts = {};
     S.groups.forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
-    return '<p class="hint">Try “kertas A4”, “蜡笔” or “scissors”.</p>' +
+    return '<p class="hint">Try “kertas A4”, “蜡笔” or “scissors”.</p>' + recentHtml() +
       '<h2 class="sec">Or look by type</h2><div class="cats">' +
       S.categories.filter(function (c) { return counts[c]; }).map(function (c) {
-        return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span>' + esc(c) + '</span><small>' + counts[c] + '</small></button>';
+        return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span class="lbl2">' + esc(c) + '</span><small>' + counts[c] + '</small></button>';
       }).join('') + '</div>' +
       '<button class="btn quiet" data-act="go" data-to="bulk">Adding lots of books? Add many at once</button>';
   }
@@ -3567,7 +3598,7 @@ function vRoom(v) {
   var list = itemsIn(v.centre, v.loc).sort(function (a, b) { return a.name.localeCompare(b.name); });
   return top(true) + '<h1 class="title">' + esc(v.loc) + '</h1><p class="sub">' + esc(v.centre) + (list.length ? ' · ' + list.length + (list.length === 1 ? ' thing' : ' things') : '') + '</p>' +
     (list.length ? '<div class="list">' + list.map(function (it) {
-      return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' +
+      return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
         '<span class="body"><span class="name">' + esc(it.name) + '</span>' +
         (low(it) ? '<span class="line"><span class="badge low">Running low</span></span>' : '') + '</span>' +
         '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_NAMES[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
@@ -3624,12 +3655,28 @@ function vRequests() {
   }
   return top(true) + '<h1 class="title">Requests to buy</h1><p class="sub">Newest first.</p>' + body;
 }
+// A CSV a spreadsheet can open. Text that starts with = + - @ gets a leading apostrophe so it is never run as a formula.
+function csvCell(v) {
+  var t = String(v == null ? '' : v);
+  if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
+  return '"' + t.replace(/"/g, '""') + '"';
+}
+function csvText() {
+  var head = ['Centre', 'Room', 'Item', 'Type', 'How many', 'Unit', 'Keep at least', 'Status', 'Notes'];
+  var rows = S.items.slice().sort(function (a, b) {
+    return a.centre.localeCompare(b.centre) || a.loc.localeCompare(b.loc) || a.name.localeCompare(b.name);
+  }).map(function (it) {
+    return [it.centre, it.loc, it.name, it.cat, isLevel(it) ? LEVEL_NAMES[it.qty] : it.qty, isLevel(it) ? 'level' : it.unit, isLevel(it) ? '' : it.min, it.status, it.notes];
+  });
+  return [head].concat(rows).map(function (r) { return r.map(csvCell).join(','); }).join('\r\n') + '\r\n';
+}
 function vAdmin() {
   if (!S.admin) return vMore();
   return top(true) + '<h1 class="title">Admin</h1><p class="sub">You can now decide requests and change any detail of an item.</p>' +
     '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '">Open the Google Sheet</a>' +
     '<button class="btn" data-act="go" data-to="requests">Decide requests</button>' +
     '<button class="btn" data-act="go" data-to="adminRooms">Manage rooms</button>' +
+    '<button class="btn" data-act="csv">Download the list (spreadsheet file)</button>' +
     '<button class="btn" data-act="go" data-to="labels">Print QR stickers</button>' +
     (HOSTED && BACKEND.id ? '<label class="lab" for="staff-link">The link to give staff</label>' +
       '<input id="staff-link" class="inp" readonly value="' + esc(location.origin + location.pathname + '#b=' + BACKEND.id) + '" onclick="this.select()">' +
@@ -3810,7 +3857,8 @@ var ACT = {
   clearQ: function () { S.q = ''; byIdEl('q').value = ''; drawResults(); byIdEl('q').focus(); },
   cat: function (el) { go({ name: 'home', cat: el.dataset.val }); },
   clearCat: function () { back(); },
-  open: function (el) { go({ name: 'item', key: el.dataset.key, id: el.dataset.id || '' }); },
+  catFilter: function (el) { cur().lowOnly = !!el.dataset.val; drawResults(); },
+  open: function (el) { rememberOpened(el.dataset.key); go({ name: 'item', key: el.dataset.key, id: el.dataset.id || '' }); },
   pick: function (el) { cur().id = el.dataset.id; render(); },
 
   stock: function (el) { openStock(Number(el.dataset.dir)); },
@@ -4078,6 +4126,16 @@ var ACT = {
 
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
+  csv: function () {
+    try {
+      var blob = new Blob(['\ufeff' + csvText()], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'resource-list-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      toast('Downloaded. Open it in Excel or Sheets.');
+    } catch (e) { toast('This screen cannot download files. Use the Google Sheet instead.'); }
+  },
   roomsCentre: function (el) { cur().centre = el.dataset.val; render(); },
   roomOpen: function (el) { go({ name: 'room', centre: cur().centre, loc: el.dataset.val }); },
   countPlaceHere: function (el) { go({ name: 'countList', centre: cur().centre, loc: el.dataset.val }); },
@@ -4208,7 +4266,6 @@ document.addEventListener('error', function (e) {
   var t = e.target;
   if (!t || t.tagName !== 'IMG') return;
   if (t.dataset.fb) { var fb = t.dataset.fb; delete t.dataset.fb; t.src = fb; }
-  else if (t.parentNode && t.parentNode.classList.contains('tile')) t.parentNode.remove();   // no photo: no frame either
   else t.remove();
 }, true);
 // Barcode scanning only where the browser can do it (Chrome on Android). Elsewhere the person types the ISBN.
