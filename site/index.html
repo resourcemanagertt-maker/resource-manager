@@ -144,8 +144,14 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .cline.lvrow{flex-wrap:wrap}
 .cline.lvrow .levels{width:100%;margin-top:var(--s1)}
 .cline.lvrow .lvl{min-height:46px;font-size:14px}
+.lbl.off{opacity:.35}
+.lbl .lk{position:absolute;inset:0;width:100%;z-index:1}
+.lbl .lk i{position:absolute;top:var(--s2);right:var(--s2);width:24px;height:24px;border:2px solid #5b606b;border-radius:4px;background:#fff}
+.lbl:not(.off) .lk i{background:#0113a1;border-color:#0113a1}
+.lbl:not(.off) .lk i::after{content:"";position:absolute;left:6px;top:1px;width:6px;height:12px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+@media print{.lbl.off{display:none!important}.lbl .lk{display:none}}
 .lbls{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s4)}
-.lbl{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3);border:1px dashed #8a8f9c;background:#fff;color:#16181d;--ink:#16181d;--muted:#5b606b;--surface:#fff;break-inside:avoid}
+.lbl{position:relative;display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3);border:1px dashed #8a8f9c;background:#fff;color:#16181d;--ink:#16181d;--muted:#5b606b;--surface:#fff;break-inside:avoid}
 .lbl .qr svg{display:block;width:100%;height:auto}
 .lbl .lt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .lbl .lt b{font-size:14px;line-height:1.2;overflow-wrap:anywhere}
@@ -211,6 +217,12 @@ html[data-text] .search input{font-size:16px}
 .cline .stepper button{width:44px;min-height:44px;font-size:24px}
 .cline .stepper .num{width:56px;flex:none;font-size:20px}
 .cline{flex-wrap:wrap}
+.pickrow{position:relative;padding-left:44px}
+.pickrow .pk{position:absolute;left:var(--s3);top:50%;margin-top:-12px;width:24px;height:24px;border:2px solid var(--brand);border-radius:4px;background:var(--brand)}
+.pickrow .pk::after{content:"";position:absolute;left:6px;top:1px;width:6px;height:12px;border:solid var(--on-brand);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.pickrow.off .pk{background:var(--surface);border-color:var(--line-strong)}
+.pickrow.off .pk::after{display:none}
+.pickrow.off{opacity:.6}
 .cline .tk{flex:1 1 150px;display:flex;align-items:center;gap:var(--s2);text-align:left;min-height:44px}
 .cline .tk .cm{flex:none;width:24px;height:24px;border:2px solid var(--line-strong);border-radius:50%;background:var(--surface);position:relative}
 .cline.ticked .tk .cm{background:var(--brand);border-color:var(--brand)}
@@ -235,7 +247,7 @@ html[data-text] .search input{font-size:16px}
 #nav svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 #nav button.on svg{stroke:var(--brand);stroke-width:2.2}
 #nav button.on[data-to=low] svg{fill:var(--mark)}
-#nav .n{position:absolute;top:-6px;left:16px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--mark);box-shadow:0 0 0 1.5px var(--ink);color:var(--ink);font-size:12px;font-weight:700;line-height:18px;text-align:center}
+#nav .n{position:absolute;top:-6px;left:16px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--mark);box-shadow:0 0 0 1.5px var(--ink);color:var(--on-mark);font-size:12px;font-weight:700;line-height:18px;text-align:center}
 
 #sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center}
 #sheet .scrim{position:absolute;inset:0;background:var(--scrim)}
@@ -271,7 +283,7 @@ html[data-text] .search input{font-size:16px}
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
 <div id="cam" hidden role="dialog" aria-label="Scan books"><video id="cam-v" playsinline muted></video><div class="aim"></div>
-<div class="camtop"><span id="cam-n">0 recorded</span><button class="btn" data-act="camDone">Done</button></div>
+<div class="camtop"><span id="cam-n">0 recorded</span><button class="btn" id="cam-torch" data-act="camTorch" hidden>Light</button><button class="btn" data-act="camDone">Done</button></div>
 <div class="camlog"><p id="cam-msg">Point the camera at the barcode on the back of the book.</p><p id="cam-last"></p></div></div>
 <input type="file" accept="image/*" id="file" hidden>
 <input type="file" accept="image/*" capture="environment" id="scan" hidden>
@@ -3232,10 +3244,25 @@ function resultsHtml(v) {
       '<button class="btn quiet" data-act="toAdd">We have it. Add it to the list</button></div>' +
       (r.weak.length ? '<p class="count">Closest things on the list:</p><div class="list">' + r.weak.map(card).join('') + '</div>' : '');
   }
-  var shown = r.strong.slice(0, 30);
-  return '<p class="count">' + (r.strong.length === 1 ? 'Yes, we have this:' : 'We have ' + r.strong.length + ' things like this:') + '</p>' +
-    '<div class="list">' + shown.map(card).join('') + '</div>' +
-    (r.strong.length > shown.length ? '<p class="hint">Showing the first 30. Type more to narrow it down.</p>' : '') +
+  var found = r.strong.slice();
+  if (S.qCentre) found = found.filter(function (g) { return g.rows.some(function (x) { return x.centre === S.qCentre; }); });
+  if (S.qSort === 'az') found.sort(function (a, b) { return a.dname.localeCompare(b.dname); });
+  else if (S.qSort === 'low') {
+    var fill = function (g) { var m = Infinity; g.rows.forEach(function (x) { if (x.min > 0) m = Math.min(m, x.qty / x.min); }); return m; };
+    found.sort(function (a, b) { return fill(a) - fill(b); });
+  }
+  var shown = found.slice(0, 30);
+  var ctl = r.strong.length > 1
+    ? '<div class="seg" data-group="qSort">' + [['', 'Best match'], ['az', 'A to Z'], ['low', 'Emptiest first']].map(function (o) {
+        return '<button class="chip' + ((S.qSort || '') === o[0] ? ' on' : '') + '" data-act="qSort" data-val="' + o[0] + '">' + o[1] + '</button>';
+      }).join('') + '</div>' +
+      '<div class="seg" data-group="qCentre">' + [['', 'Anywhere']].concat(S.centres.map(function (c) { return [c, c]; })).map(function (o) {
+        return '<button class="chip' + ((S.qCentre || '') === o[0] ? ' on' : '') + '" data-act="qCentre" data-val="' + esc(o[0]) + '">' + esc(o[1]) + '</button>';
+      }).join('') + '</div>'
+    : '';
+  return '<p class="count">' + (r.strong.length === 1 ? 'Yes, we have this:' : 'We have ' + r.strong.length + ' things like this:') + '</p>' + ctl +
+    (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>None at ' + esc(S.qCentre) + '.</h2></div>') +
+    (found.length > shown.length ? '<p class="hint">Showing the first 30. Type more to narrow it down.</p>' : '') +
     '<div class="after"><p>None of these?</p>' +
     '<button class="btn" data-act="toRequest">Ask to buy something new</button>' +
     '<button class="btn quiet" data-act="toAdd">We have it, but it’s not on the list</button></div>';
@@ -3572,9 +3599,11 @@ function vLow() {
       return (a.centre === mine ? 0 : 1) - (b.centre === mine ? 0 : 1) || a.centre.localeCompare(b.centre) || a.name.localeCompare(b.name);
     });
   var broken = S.items.filter(function (it) { return scope(it) && STATUS_LABEL[it.status]; });
+  var off = S.lowOff || (S.lowOff = {}), pick = !!S.lowPick;
   var row = function (it, extra) {
-    return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' +
-      tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + extra +
+    return '<button class="card item' + (pick ? ' pickrow' + (off[it.id] ? ' off' : '') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
+      (pick ? ' role="checkbox" aria-checked="' + (off[it.id] ? 'false' : 'true') + '"' : '') + '>' +
+      (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + extra +
       '<span class="line">' + esc(S.lowAll ? it.centre + ' · ' + it.loc : it.loc) + '</span></span></button>';
   };
   return top(false) + '<h1 class="title">Running low</h1>' +
@@ -3583,8 +3612,12 @@ function vLow() {
     '<button class="chip' + (S.lowAll ? ' on' : '') + '" data-act="lowScope" data-val="1">All centres</button></div>' +
     (lows.length > 1 ? '<div class="seg" data-group="lowSort"><button class="chip' + (S.lowSort === 'u' ? '' : ' on') + '" data-act="lowSort" data-val="">By name</button>' +
       '<button class="chip' + (S.lowSort === 'u' ? ' on' : '') + '" data-act="lowSort" data-val="u">Emptiest first</button></div>' : '') +
-    (lows.length || broken.length ? '<a class="btn" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' +
-      encodeURIComponent(shoppingText(lows, broken, S.lowAll ? 'all centres' : (mine || 'my centre'))) + '">Send this list on WhatsApp</a>' : '') +
+    (lows.length || broken.length ? (function () {
+      var sl = pick ? lows.filter(function (it) { return !off[it.id]; }) : lows, sb = pick ? broken.filter(function (it) { return !off[it.id]; }) : broken, n = sl.length + sb.length;
+      return '<a class="btn" id="share" target="_blank" rel="noopener"' + (pick && !n ? ' aria-disabled="true" style="opacity:.45;pointer-events:none"' : '') + ' href="https://wa.me/?text=' +
+        encodeURIComponent(shoppingText(sl, sb, S.lowAll ? 'all centres' : (mine || 'my centre'))) + '">' + (pick ? 'Send ' + n + ' selected on WhatsApp' : 'Send this list on WhatsApp') + '</a>' +
+        '<button class="btn quiet" data-act="lowPick">' + (pick ? 'Done choosing' : 'Choose what to send') + '</button>';
+    })() : '') +
     (lows.length ? '<div class="list">' + lows.map(function (it) {
       var spare = spareOf(it);
       return row(it, (isLevel(it)
@@ -3919,7 +3952,18 @@ function camTick() {
     if (SC.stream) SC.timer = setTimeout(camTick, 200);
   });
 }
+function beep() {
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    var ac = SC.audio || (SC.audio = new AC()), o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine'; o.frequency.value = 1040; g.gain.value = .12;
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime + .09);
+  } catch (e) { /* no sound */ }
+}
 function camGot(isbn) {
+  beep();
   try { if (navigator.vibrate) navigator.vibrate(80); } catch (e) { /* no vibration */ }
   byIdEl('cam-msg').textContent = 'Read ' + isbn + '…';
   byIdEl('cam-last').innerHTML = '';
@@ -4033,8 +4077,8 @@ function linkTo(params) {
   var qs = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
   return base + (base.indexOf('?') >= 0 ? '&' : '?') + qs + (HOSTED && BACKEND.id ? '#b=' + BACKEND.id : '');
 }
-function labelCard(url, title, sub, id) {
-  return '<div class="lbl"><div class="qr" data-url="' + esc(url) + '">' + qrSvg(url) + '</div><div class="lt"><b>' + esc(title) + '</b><span>' +
+function labelCard(url, title, sub, id, key, off) {
+  return '<div class="lbl' + (off ? ' off' : '') + '"><button type="button" class="lk noprint" data-act="labelTog" data-key="' + esc(key) + '" role="checkbox" aria-checked="' + (off ? 'false' : 'true') + '" aria-label="Print the sticker for ' + esc(title) + '"><i></i></button><div class="qr" data-url="' + esc(url) + '">' + qrSvg(url) + '</div><div class="lt"><b>' + esc(title) + '</b><span>' +
     esc(sub) + '</span>' + (id ? '<small>' + esc(id) + '</small>' : '') + '</div></div>';
 }
 function vLabels(v) {
@@ -4049,11 +4093,13 @@ function vLabels(v) {
   var opt = function (k, val, label, on) {
     return '<button class="chip' + (on ? ' on' : '') + '" data-act="labelOpt" data-k="' + k + '" data-val="' + esc(val) + '">' + esc(label) + '</button>';
   };
+  v.off = v.off || {};
   var cards = v.mode === 'shelves'
-    ? places.map(function (p) { return labelCard(linkTo({ c: v.centre, p: p }), p, v.centre + ' · scan to count this shelf', ''); })
+    ? places.map(function (p) { return labelCard(linkTo({ c: v.centre, p: p }), p, v.centre + ' · scan to count this shelf', '', 'p:' + p, v.off['p:' + p]); })
     : inCentre.filter(function (it) { return !v.place || it.loc === v.place; })
         .sort(function (a, b) { return a.loc.localeCompare(b.loc) || a.name.localeCompare(b.name); })
-        .map(function (it) { return labelCard(linkTo({ i: it.id }), shown(it), it.centre + ' · ' + it.loc, it.id); });
+        .map(function (it) { return labelCard(linkTo({ i: it.id }), shown(it), it.centre + ' · ' + it.loc, it.id, 'i:' + it.id, v.off['i:' + it.id]); });
+  var chosen = cards.filter(function (c) { return c.indexOf('class="lbl off"') < 0; }).length;
   return '<div class="noprint">' + top(true) + '<h1 class="title">Print QR stickers</h1>' +
     '<p class="sub">Stick one on each item or shelf. Scanning it with the phone camera opens it in this app.</p>' +
     '<label class="lab">What to print</label><div class="chips">' + opt('mode', 'items', 'One per item', v.mode === 'items') + opt('mode', 'shelves', 'One per shelf', v.mode === 'shelves') + '</div>' +
@@ -4061,7 +4107,9 @@ function vLabels(v) {
     (v.mode === 'items' ? '<label class="lab">Which place?</label><div class="chips">' + opt('place', '', 'All places', !v.place) + places.map(function (p) { return opt('place', p, p, p === v.place); }).join('') + '</div>' : '') +
     (S.appUrl ? '<p class="help">The codes open: ' + esc(S.appUrl) + '</p>'
       : '<p class="err">The app’s link is not known yet, so the codes would not work. Open the app from its link, or type the link in the Setup tab (Setting “App link”).</p>') +
-    '<button class="btn primary" data-act="print"' + (S.appUrl && cards.length ? '' : ' disabled') + '>Print ' + cards.length + (cards.length === 1 ? ' sticker' : ' stickers') + '</button>' +
+    '<div class="chips"><button class="chip" data-act="labelAll" data-val="1">Select all</button><button class="chip" data-act="labelAll" data-val="">None</button></div>' +
+    '<p class="help">Tap a sticker below to leave it out.</p>' +
+    '<button class="btn primary" data-act="print"' + (S.appUrl && chosen ? '' : ' disabled') + '>Print ' + chosen + (chosen === 1 ? ' sticker' : ' stickers') + '</button>' +
     '<p class="help">If nothing happens, press Ctrl+P (or use the browser menu, then Print).</p></div>' +
     (S.appUrl ? '<div class="lbls">' + cards.join('') + '</div>' : '');
 }
@@ -4113,7 +4161,7 @@ function shrink(file) {
 
 // ---------- what each tap does ----------
 var ACT = {
-  nav: function (el) { root(el.dataset.to); },
+  nav: function (el) { S.lowPick = false; S.lowOff = {}; root(el.dataset.to); },
   go: function (el) { if (el.dataset.to === 'requests') loadRequests(); go({ name: el.dataset.to }); },
   back: back,
   refresh: function () { refresh(true); },
@@ -4234,6 +4282,12 @@ var ACT = {
       byIdEl('cam-last').innerHTML = '';
       camUpdate();
       byIdEl('cam').hidden = false;
+      try {   // a torch button only where the phone's camera has one
+        var tr = SC.stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
+        SC.torch = false;
+        byIdEl('cam-torch').hidden = !caps.torch;
+        byIdEl('cam-torch').textContent = 'Light';
+      } catch (e) { byIdEl('cam-torch').hidden = true; }
       SC.timer = setTimeout(camTick, 300);
     }).catch(function (e) {
       if (SC.stream) camStop();
@@ -4241,6 +4295,13 @@ var ACT = {
           : 'The camera is blocked for this page. Tap the lock icon beside the address, choose Permissions, then Camera, then Allow, and try again. Or take a photo of one barcode instead.')
         : 'The camera could not start here. Use “Take a photo of one barcode instead”, or type the ISBN under “Add many things at once”.');
     });
+  },
+  camTorch: function () {
+    var tr = SC.stream && SC.stream.getVideoTracks()[0];
+    if (!tr) return;
+    SC.torch = !SC.torch;
+    tr.applyConstraints({ advanced: [{ torch: SC.torch }] }).then(function () { byIdEl('cam-torch').textContent = SC.torch ? 'Light on' : 'Light'; })
+      .catch(function () { SC.torch = false; byIdEl('cam-torch').hidden = true; });
   },
   camDone: function () { camStop(); drawScanList(); },
   camPhoto: function () {
@@ -4315,7 +4376,20 @@ var ACT = {
     var v = cur();
     v[el.dataset.k] = el.dataset.val;
     if (el.dataset.k === 'centre') v.place = '';
+    v.off = {};
     render();
+  },
+  labelTog: function (el) {
+    var v = cur(), k = el.dataset.key;
+    v.off = v.off || {};
+    if (v.off[k]) delete v.off[k]; else v.off[k] = 1;
+    var y = window.scrollY; render(); window.scrollTo(0, y);
+  },
+  labelAll: function (el) {
+    var v = cur();
+    v.off = {};
+    if (!el.dataset.val) Array.prototype.forEach.call(document.querySelectorAll('.lbl .lk'), function (b) { v.off[b.dataset.key] = 1; });
+    var y = window.scrollY; render(); window.scrollTo(0, y);
   },
   print: function () {
     try { window.print(); } catch (e) { toast('Press Ctrl+P (or the browser menu, then Print).'); }
@@ -4523,6 +4597,10 @@ var ACT = {
     root('home');
     applyLink();
   },
+  lowPick: function () { S.lowPick = !S.lowPick; if (!S.lowPick) S.lowOff = {}; render(); },
+  lowTog: function (el) { var o = S.lowOff || (S.lowOff = {}), id = el.dataset.id; if (o[id]) delete o[id]; else o[id] = 1; var y = window.scrollY; render(); window.scrollTo(0, y); },
+  qSort: function (el) { S.qSort = el.dataset.val; drawResults(); },
+  qCentre: function (el) { S.qCentre = el.dataset.val; drawResults(); },
   setLook: function (el) {
     var k = el.dataset.k, v = el.dataset.val;
     store.set(k, k === 'rm_text' ? Number(v) : v);
