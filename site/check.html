@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Connection check</title>
+<style>
+  body{font:16px/1.45 system-ui,sans-serif;margin:0;padding:16px;background:#f4f3ef;color:#1e1d1a;max-width:560px}
+  h1{font-size:22px;margin:8px 0}
+  input,button{font:inherit;width:100%;box-sizing:border-box;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid #b9b6ac;margin-top:10px}
+  button{background:#0113a1;color:#fff;border-color:#0113a1;font-weight:600}
+  pre{white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid #dfddd5;border-radius:12px;padding:12px;font:13px/1.4 ui-monospace,monospace;margin-top:14px}
+  .ok{color:#1a6a39}.bad{color:#b3261e}
+</style>
+</head>
+<body>
+<h1>Connection check</h1>
+<p>Finds out why a phone cannot reach the list. Paste the staff link (or just its long code), tap <b>Test</b>, then send a screenshot of the result.</p>
+<input id="link" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Staff link or code">
+<button id="go">Test</button>
+<pre id="out">Not run yet.</pre>
+<script>
+(function () {
+  var out = document.getElementById('out');
+  function line(cls, text) { var s = document.createElement('span'); s.className = cls; s.textContent = text + '\n'; out.appendChild(s); }
+  function codeFrom(t) {
+    var m = /\/macros\/s\/([\w-]{20,200})/.exec(t) || /[#&?]b=([\w-]{20,200})/.exec(t) || /^([\w-]{20,200})$/.exec(String(t || '').trim());
+    return m ? m[1] : '';
+  }
+  function timed(label, make) {
+    var t0 = Date.now();
+    return Promise.resolve().then(make).then(function (v) { line('ok', 'OK    ' + label + ' (' + (Date.now() - t0) + ' ms)' + (v ? ' - ' + v : '')); return true; },
+      function (e) { line('bad', 'FAIL  ' + label + ' - ' + (e && e.name ? e.name + ': ' : '') + (e && e.message || e)); return false; });
+  }
+  document.getElementById('go').addEventListener('click', function () {
+    out.textContent = '';
+    var id = codeFrom(document.getElementById('link').value);
+    line('', 'This page: ' + location.origin + '   online: ' + navigator.onLine);
+    line('', 'Browser: ' + navigator.userAgent);
+    if (!id) { line('bad', 'That does not look like the staff link.'); return; }
+    var url = 'https://script.google.com/macros/s/' + id + '/exec';
+    timed('1. reach Google at all (www.google.com)', function () { return fetch('https://www.google.com/generate_204', { mode: 'no-cors', cache: 'no-store' }).then(function () { return 'reached'; }); })
+      .then(function () { return timed('2. reach script.google.com', function () { return fetch(url + '?ping=1', { mode: 'no-cors', cache: 'no-store' }).then(function () { return 'reached'; }); }); })
+      .then(function () { return timed('3. reach script.googleusercontent.com (where answers come from)', function () { return fetch('https://script.googleusercontent.com/', { mode: 'no-cors', cache: 'no-store' }).then(function () { return 'reached'; }); }); })
+      .then(function () {
+        return timed('4. ask the list for its data (what the app does)', function () {
+          return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: 'getData', data: {} }), credentials: 'omit', redirect: 'follow' })
+            .then(function (r) {
+              if (!r.ok) throw new Error('status ' + r.status);
+              return r.text().then(function (t) {
+                var j; try { j = JSON.parse(t); } catch (e) { throw new Error('reply is not JSON, starts: ' + t.slice(0, 60).replace(/\s+/g, ' ')); }
+                return j.ok ? 'got ' + (j.items ? j.items.length : 0) + ' items' : 'list said: ' + j.error;
+              });
+            });
+        });
+      })
+      .then(function () { line('', '\nDone. If 1 passes and 2, 3 or 4 fails, something on this phone (a tracking blocker, ad blocker, private DNS or firewall app) is blocking Google\'s script address.'); });
+  });
+})();
+</script>
+</body>
+</html>

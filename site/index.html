@@ -2756,6 +2756,7 @@ function hasCentre() { return !!(S.me && S.centres.indexOf(S.me.centre) >= 0); }
 // the code is kept on the phone and removed from the address bar. It is never part of the page's own files.
 var HOSTED = !(window.google && google.script && google.script.run);
 var BACKEND = { id: '', url: '' };
+var WHY = '';   // why the last call to the list failed (shown in small print on the "can't reach" screen)
 function parseBackend(text) {
   var t = String(text || '').trim();
   var m = /\/macros\/s\/([\w-]{20,200})/.exec(t) || /[#&?]b=([\w-]{20,200})/.exec(t) || /^([\w-]{20,200})$/.exec(t);
@@ -2774,12 +2775,13 @@ function hostedCall(fn, data) {
     fetch(BACKEND.url, {
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, data: data || {} }),
       credentials: 'omit', redirect: 'follow', signal: ctl ? ctl.signal : undefined
-    }).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    }).then(function (r) { if (!r.ok) throw new Error('the list answered with status ' + r.status); return r.json().catch(function () { throw new Error('the list sent something that was not a list'); }); })
       .then(function (r) {
+        WHY = '';
         if (r && r.ok) finish(resolve, r);
         else finish(reject, Object.assign(new Error((r && r.error) || 'Something went wrong. Please try again.'), { data: r || {} }));
       })
-      .catch(function () { finish(reject, offline()); });
+      .catch(function (e) { WHY = String(e && e.name ? e.name + ': ' : '') + String(e && e.message || e).slice(0, 140); finish(reject, offline()); });
   });
 }
 function call(fn, data) {
@@ -2992,7 +2994,8 @@ function render() {
     byIdEl('nav').hidden = true;
     if (HOSTED && !BACKEND.id) { app.innerHTML = vConnect(); return; }
     app.innerHTML = S.failed
-      ? '<div class="splash"><p>Can’t reach the list right now.</p><p>Check the internet and try again.</p><button class="btn primary" data-act="refresh">Try again</button></div>'
+      ? '<div class="splash"><p>Can’t reach the list right now.</p><p>Check the internet and try again.</p><button class="btn primary" data-act="refresh">Try again</button>' +
+        (HOSTED && WHY ? '<p class="help" style="margin-top:18px">Details: ' + esc(WHY) + '</p>' : '') + '</div>'
       : '<div class="splash">Getting the list…</div>';
     return;
   }
