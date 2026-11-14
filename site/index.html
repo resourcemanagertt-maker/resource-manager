@@ -3247,9 +3247,9 @@ function closeSheet() {
   M = {};
   softRender();
 }
-function stepper(id, val, min, max) {
+function stepper(id, val, min, max, label) {
   return '<div class="stepper"><button type="button" data-act="step" data-for="' + id + '" data-d="-1" aria-label="One less">−</button>' +
-    '<input id="' + id + '" class="num" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + val + '" data-min="' + min + '" data-max="' + max + '">' +
+    '<input id="' + id + '" class="num" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + val + '" data-min="' + min + '" data-max="' + max + '"' + (label ? ' aria-label="' + esc(label) + '"' : '') + '>' +
     '<button type="button" data-act="step" data-for="' + id + '" data-d="1" aria-label="One more">+</button></div>';
 }
 function openStock(dir) {
@@ -3544,7 +3544,7 @@ function vCountList(v) {
         '<small>' + (isLevel(it) ? 'level' : esc(it.unit)) + '</small></span>' +
         (isLevel(it)
           ? '<input type="hidden" id="c-' + esc(it.id) + '" value="' + it.qty + '"><div class="levels">' + levelButtons('countLevel', it.qty, ' data-for="c-' + esc(it.id) + '"') + '</div>'
-          : stepper('c-' + it.id, it.qty, 0, 99999)) + '</div>';
+          : stepper('c-' + it.id, it.qty, 0, 99999, 'How many ' + it.name + ' are here')) + '</div>';
     }).join('') + '</div>' +
     '<p class="hint">Found something that isn’t here? Search for it first, then add it.</p>' +
     '<div class="savebar"><button class="btn primary" id="c-go" data-act="countGo">All correct. Save count</button></div>';
@@ -3710,7 +3710,7 @@ function rowsHtml() {
       (canScan ? '<button type="button" class="btn" data-act="scanIsbn" data-i="' + i + '">Scan</button>' : '') + '</div>' +
       '<p class="help" id="b-msg-' + i + '">' + esc(r.msg) + '</p>' +
       '<input id="b-name-' + i + '" class="inp" maxlength="80" autocomplete="off" placeholder="Title or name" value="' + esc(r.name) + '" aria-label="Title, line ' + (i + 1) + '">' +
-      '<div class="bq"><span>Copies</span>' + stepper('b-qty-' + i, r.qty, 1, 99999) + '</div>' +
+      '<div class="bq"><span>Copies</span>' + stepper('b-qty-' + i, r.qty, 1, 99999, 'Copies, line ' + (i + 1)) + '</div>' +
       (r.err ? '<p class="err" style="margin:0">' + esc(r.err) + '</p>' : '') +
       (F.rows.length > 1 ? '<button type="button" class="btn quiet" data-act="rowDel" data-i="' + i + '">Remove this line</button>' : '') + '</div>';
   }).join('');
