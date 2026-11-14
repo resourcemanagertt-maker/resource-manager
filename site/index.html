@@ -4698,8 +4698,9 @@ var ACT = {
     }).catch(function (e) {
       busy(false);
       var err = byIdEl('m-err');
-      if (!err) return toast(e.network ? 'No signal. Try again.' : e.message);
-      err.textContent = e.network ? 'No signal. Try again.' : e.message;
+      var said = e.network ? 'The list did not answer. Check the link is of a Google Sheet that is shared with the app’s owner, and that there is signal, then try again.' : e.message;
+      if (!err) return toast(said);
+      err.textContent = said;
       err.hidden = false;
     });
   },
