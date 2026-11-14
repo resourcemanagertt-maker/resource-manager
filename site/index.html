@@ -174,6 +174,14 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .forwhere{font-size:13px;color:var(--muted);text-align:center;margin-top:var(--s2)}
 .note{margin-top:var(--s3);padding:var(--s3);border-radius:var(--r);background:var(--wash);font-size:15px;overflow-wrap:anywhere}
 .rows{margin-top:var(--s4);border-top:1px solid var(--ink)}
+a.rowbtn{text-decoration:none;color:inherit}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin:var(--s2) 0 var(--s2)}
+.stat{display:flex;flex-direction:column;gap:2px;padding:var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left}
+.stat b{font-size:28px;line-height:1.1}
+.stat span{font-size:13px;color:var(--muted);line-height:1.25}
+.linkrow{display:flex;gap:var(--s2);align-items:stretch}
+.linkrow .inp{flex:1;min-width:0}
+.linkrow .btn{width:auto;flex:none}
 .rowbtn{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);width:100%;min-height:52px;padding:var(--s2) 0;border-bottom:1px solid var(--line);font-size:16px}
 .rowbtn svg{width:18px;height:18px;color:var(--ink);flex:none}
 .rowbtn small{display:block;color:var(--muted);font-size:13px}
@@ -269,7 +277,8 @@ html[data-text] .search input{font-size:16px}
 #cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #cam .aim{position:absolute;left:10%;right:10%;top:28%;height:28%;border:3px solid var(--mark);border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,.4);pointer-events:none}
 #cam .camtop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,0));font-weight:600}
-#cam .camtop .btn{width:auto;min-height:44px;background:#fff;border-color:#fff;color:#16181d}
+#cam .camtop > span{flex:1;min-width:0}
+#cam .camtop .btn,#cam .camtop .btn + .btn{flex:none;margin:0;width:auto;min-height:44px;background:#fff;border-color:#fff;color:#16181d}
 #cam .camlog{position:absolute;left:0;right:0;bottom:0;padding:var(--s5) var(--s4) var(--s5);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.85))}
 #cam .camlog p{margin:var(--s1) 0}
 #cam .camlog .got{display:inline-block;background:var(--mark);color:var(--on-mark);font-weight:700;padding:var(--s1) var(--s2);border-radius:2px}
@@ -3813,22 +3822,43 @@ function csvText() {
 }
 function vAdmin() {
   if (!S.admin) return vMore();
+  var waiting = (S.requests || []).filter(function (r) { return r.status === 'New'; }).length;
+  var lowN = S.items.filter(low).length, broken = S.items.filter(function (it) { return STATUS_LABEL[it.status]; }).length;
+  var tile = function (n, label, to) {
+    return '<button class="stat" data-act="go" data-to="' + to + '"><b>' + n + '</b><span>' + label + '</span></button>';
+  };
+  var row = function (act, to, title, note, extra) {
+    return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '><span>' + title + '<small>' + note + '</small></span>' + (extra || '') + ICON.go + '</button>';
+  };
+  var link = HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : '';
   return top(true) + '<h1 class="title">Admin</h1>' +
-    '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '">Open the Google Sheet</a>' +
-    '<button class="btn" data-act="go" data-to="requests">Decide requests</button>' +
-    '<button class="btn" data-act="go" data-to="adminRooms">Manage rooms</button>' +
-    '<button class="btn" data-act="csv">Download the list (spreadsheet file)</button>' +
-    '<button class="btn" data-act="go" data-to="labels">Print QR stickers</button>' +
-    (HOSTED && BACKEND.id ? '<label class="lab" for="staff-link">The link to give staff</label>' +
-      '<input id="staff-link" class="inp" readonly value="' + esc(location.origin + location.pathname + '#b=' + BACKEND.id) + '" onclick="this.select()">' +
-      '<p class="help">Send this in the staff group. Anyone with it can use the list, so share it only with staff.</p>' : '') +
-    '<button class="btn quiet" data-act="adminLeave">Leave admin mode</button>' +
+    '<div class="stats">' +
+      tile(S.requests ? waiting : '…', waiting === 1 ? 'request waiting' : 'requests waiting', 'requests') +
+      '<button class="stat" data-act="nav" data-to="low"><b>' + lowN + '</b><span>running low</span></button>' +
+      '<button class="stat" data-act="nav" data-to="low"><b>' + broken + '</b><span>broken or missing</span></button></div>' +
+    '<h2 class="sec">Decide</h2><div class="card rows">' +
+      row('go', 'requests', 'Requests to buy', waiting ? waiting + ' waiting for a decision' : 'Approve, decline or mark as bought') +
+    '</div>' +
+    '<h2 class="sec">Set up</h2><div class="card rows">' +
+      row('go', 'adminRooms', 'Rooms', 'Add, rename or remove the places things are kept') +
+      row('go', 'labels', 'Print QR stickers', 'For items or shelves; choose which ones') +
+      row('go', 'bulk', 'Add many things at once', 'A delivery or a box of books') +
+    '</div>' +
+    '<h2 class="sec">The data</h2><div class="card rows">' +
+      '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>Open the Google Sheet<small>Edit anything directly, set the PIN and the minimums</small></span>' + ICON.go + '</a>' +
+      row('csv', '', 'Download the list', 'A spreadsheet file with every item') +
+    '</div>' +
+    '<p class="hint">To take a wrong item off the list, open it and tap “Change details”.</p>' +
+    (link ? '<h2 class="sec">The link to give staff</h2><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="The link to give staff" value="' + link + '" onclick="this.select()">' +
+      '<button class="btn" data-act="copyLink">Copy</button></div>' +
+      '<p class="help">Anyone with this link can use the list. Share it only with staff.</p>' : '') +
     '<h2 class="sec">Latest activity</h2><div class="card">' +
-    (S.admin.log.length ? S.admin.log.map(function (h) {
+    (S.admin.log.length ? S.admin.log.slice(0, 8).map(function (h) {
       return '<p class="hist"><b>' + esc(h.action) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
         (h.change != null && h.change !== 0 && h.action !== 'Level set' ? ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')' : '') +
         (h.note ? '<br>' + esc(h.note) : '') + '<br><small>' + esc(h.centre) + (h.loc ? ' · ' + esc(h.loc) : '') + ' · ' + esc(when(h.when)) + '</small></p>';
-    }).join('') : '<p class="hist muted">Nothing yet.</p>') + '</div>';
+    }).join('') : '<p class="hist muted">Nothing yet.</p>') + '</div>' +
+    '<button class="btn quiet" data-act="adminLeave">Leave admin mode</button>';
 }
 
 // ----- Scan books: point the camera, each book is recorded as it is read -----
@@ -4624,6 +4654,7 @@ var ACT = {
     call('adminOpen', { pin: pin }).then(function (res) {
       S.admin = { sheetUrl: res.sheetUrl, log: res.log };
       S.pin = pin;
+      loadRequests();
       closeSheet();
       go({ name: 'admin' });
     }).catch(function (e) {
@@ -4632,6 +4663,12 @@ var ACT = {
       err.textContent = e.network ? 'No signal. Try again.' : e.message;
       err.hidden = false;
     });
+  },
+  copyLink: function () {
+    var v = (byIdEl('staff-link') || {}).value || '';
+    var done = function () { toast('Link copied.'); };
+    try { navigator.clipboard.writeText(v).then(done, function () { byIdEl('staff-link').select(); toast('Press Copy on the keyboard menu.'); }); }
+    catch (e) { byIdEl('staff-link').select(); toast('Press Copy on the keyboard menu.'); }
   },
   adminLeave: function () { S.admin = null; S.pin = ''; root('more'); },
   decide: function (el) {
@@ -4652,7 +4689,7 @@ var ACT = {
   }
 };
 function loadRequests() {
-  call('getRequests', {}).then(function (res) { S.requests = res.requests; if (cur().name === 'requests') render(); })
+  call('getRequests', {}).then(function (res) { S.requests = res.requests; if (cur().name === 'requests' || cur().name === 'admin') render(); })
     .catch(function (e) { if (cur().name === 'requests') toast(e.network ? 'No signal.' : e.message); });
 }
 
