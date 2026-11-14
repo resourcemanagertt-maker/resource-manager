@@ -2711,7 +2711,7 @@ var STATUS_LABEL = { 'Needs Repair': 'Needs repair', 'Missing Pieces': 'Pieces m
 var S = {
   loaded: false, failed: false, offline: false, refreshing: false, flushing: false,
   base: [], items: [], byId: {}, groups: [], gmap: {},
-  centres: [], categories: [], org: '', syncedAt: 0, appUrl: '', fresh: false,
+  centres: [], categories: [], rooms: [], org: '', syncedAt: 0, appUrl: '', fresh: false,
   me: store.get('rm_me', null), outbox: store.get('rm_outbox', []),
   admin: null, pin: '', requests: null, history: {}, localPhoto: {},
   stack: [{ name: 'home' }], q: '', lowAll: false
@@ -2818,6 +2818,7 @@ function applyData(d) {
   S.base = d.items || [];
   S.centres = d.centres || [];
   S.categories = d.categories || [];
+  S.rooms = d.rooms || [];
   S.org = d.org || '';
   S.appUrl = HOSTED ? location.origin + location.pathname : (d.appUrl || S.appUrl);
   S.syncedAt = d.now || Date.now();
@@ -2825,7 +2826,7 @@ function applyData(d) {
   rebuild();
 }
 function saveData() {
-  store.set('rm_data', { items: S.base, centres: S.centres, categories: S.categories, org: S.org, appUrl: S.appUrl, now: S.syncedAt });
+  store.set('rm_data', { items: S.base, centres: S.centres, categories: S.categories, rooms: S.rooms, org: S.org, appUrl: S.appUrl, now: S.syncedAt });
 }
 function mergeItems(list) {
   (list || []).forEach(function (it) {
@@ -3007,7 +3008,8 @@ function render() {
   }
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vCount,
-    countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels, bulk: vBulk };
+    countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels, bulk: vBulk,
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms };
   app.innerHTML = (views[v.name] || vHome)(v);
   drawChrome(v);
   if (v.name === 'home' && window.matchMedia && matchMedia('(pointer:fine)').matches && byIdEl('q')) byIdEl('q').focus();
@@ -3024,7 +3026,7 @@ function drawChrome(v) {
   var nav = byIdEl('nav');
   nav.hidden = v.name === 'pick';
   var tab = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'count',
-    countList: 'count', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'more' }[v.name];
+    countList: 'count', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'more', rooms: 'more', room: 'more', adminRooms: 'more' }[v.name];
   var lows = S.items.filter(function (it) { return it.centre === myCentre() && low(it); }).length;
   var b = function (to, label, n) {
     return '<button data-act="nav" data-to="' + to + '" class="' + (tab === to ? 'on' : '') + '">' +
@@ -3304,10 +3306,17 @@ function chips(group, list, selected) {
     return '<button type="button" class="chip' + (v === selected ? ' on' : '') + '" data-act="chip" data-val="' + esc(v) + '">' + esc(v) + '</button>';
   }).join('') + '</div>';
 }
+var ALL_CENTRES = 'All centres';
+function sameRoom(a, b) { return String(a).trim().toLowerCase() === String(b).trim().toLowerCase(); }
+function roomsFor(centre) {
+  var seen = {}, out = [];
+  var add = function (n) { var k = String(n).trim().toLowerCase(); if (k && !seen[k]) { seen[k] = 1; out.push(String(n).trim()); } };
+  (S.rooms || []).forEach(function (r) { if (r.centre === centre || r.centre === ALL_CENTRES) add(r.name); });
+  S.items.forEach(function (it) { if (it.centre === centre) add(it.loc); });
+  return out.sort(function (a, b) { return a.localeCompare(b); });
+}
 function locChips(centre) {
-  var seen = {}, locs = [];
-  S.items.forEach(function (it) { if (it.centre === centre && !seen[it.loc]) { seen[it.loc] = 1; locs.push(it.loc); } });
-  locs.sort();
+  var locs = roomsFor(centre);
   return locs.length ? '<div class="chips" style="margin-top:8px">' + locs.map(function (l) {
     return '<button type="button" class="chip" data-act="locPick" data-val="' + esc(l) + '">' + esc(l) + '</button>';
   }).join('') + '</div>' : '';
@@ -3400,6 +3409,7 @@ function vEdit(v) {
   return top(true) + '<h1 class="title">Change details</h1><p class="sub">' + esc(it.name) + ' · ' + esc(it.centre) + '</p>' +
     admin +
     '<label class="lab" for="f-loc">Where is it kept?</label><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
+    '<div id="f-locs">' + locChips(it.centre) + '</div>' +
     '<label class="lab" for="f-notes">Notes</label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
     photoField() +
     (S.admin ? '' : '<p class="help" style="margin-top:14px">The name, type and minimum can be changed by the admin.</p>') +
@@ -3528,6 +3538,7 @@ function vMore() {
       return '<button class="chip' + (c === S.me.centre ? ' on' : '') + '" data-act="myCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
     }).join('') + '</div>' +
     '<div class="card rows">' +
+    '<button class="rowbtn" data-act="go" data-to="rooms"><span>Rooms<small>What is kept where</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="bulk"><span>Add many things at once<small>A box of books or a delivery, one line each</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="requests"><span>Requests to buy<small>See what was asked for and what was decided</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="refresh"><span>Get the latest list<small>Last updated ' + esc(when(S.syncedAt)) +
@@ -3535,6 +3546,54 @@ function vMore() {
     '<button class="rowbtn" data-act="' + (S.admin ? 'go" data-to="admin' : 'pinOpen') + '"><span>Admin<small>' + (S.admin ? 'Recent activity and the Google Sheet' : 'Needs the admin PIN') + '</small></span>' + ICON.go + '</button>' +
     '</div>';
 }
+// ----- Rooms: what is kept where -----
+function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
+function vRooms(v) {
+  var centre = v.centre || myCentre() || S.centres[0];
+  v.centre = centre;
+  var names = roomsFor(centre);
+  return top(true) + '<h1 class="title">Rooms</h1><p class="sub">Tap a room to see what is kept in it.</p>' +
+    '<div class="seg" data-group="roomsCentre">' + S.centres.map(function (c) {
+      return '<button class="chip' + (c === centre ? ' on' : '') + '" data-act="roomsCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('') + '</div>' +
+    (names.length ? '<div class="rows">' + names.map(function (n) {
+      var list = itemsIn(centre, n), lows = list.filter(low).length;
+      return '<button class="rowbtn" data-act="roomOpen" data-val="' + esc(n) + '"><span>' + esc(n) + '<small>' +
+        (list.length ? list.length + (list.length === 1 ? ' thing' : ' things') + (lows ? ' · ' + lows + ' running low' : '') : 'Empty') +
+        '</small></span>' + ICON.go + '</button>';
+    }).join('') + '</div>' : '<div class="card empty"><h2>No rooms yet.</h2><p>The admin can add them under Me, Admin, Rooms.</p></div>');
+}
+function vRoom(v) {
+  var list = itemsIn(v.centre, v.loc).sort(function (a, b) { return a.name.localeCompare(b.name); });
+  return top(true) + '<h1 class="title">' + esc(v.loc) + '</h1><p class="sub">' + esc(v.centre) + (list.length ? ' · ' + list.length + (list.length === 1 ? ' thing' : ' things') : '') + '</p>' +
+    (list.length ? '<div class="list">' + list.map(function (it) {
+      return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' +
+        '<span class="body"><span class="name">' + esc(it.name) + '</span>' +
+        (low(it) ? '<span class="line"><span class="badge low">Running low</span></span>' : '') + '</span>' +
+        '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_NAMES[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
+    }).join('') + '</div>' +
+      '<div class="after"><button class="btn" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">Count this room</button></div>'
+      : '<div class="card empty"><h2>Nothing is kept here yet.</h2><p>Add a thing and choose this room as its place.</p></div>');
+}
+
+// ----- Admin: manage the list of rooms -----
+function vAdminRooms() {
+  if (!S.admin) return vMore();
+  var groups = S.centres.concat([ALL_CENTRES]);
+  return top(true) + '<h1 class="title">Rooms</h1><p class="sub">The places things are kept. Renaming a room renames it on everything kept there.</p>' +
+    groups.map(function (c) {
+      var mine = (S.rooms || []).filter(function (r) { return r.centre === c; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+      return '<h2 class="sec">' + esc(c === ALL_CENTRES ? 'Every centre' : c) + '</h2><div class="rows">' +
+        (mine.length ? mine.map(function (r) {
+          var n = c === ALL_CENTRES ? S.items.filter(function (it) { return sameRoom(it.loc, r.name); }).length : itemsIn(c, r.name).length;
+          return '<div class="rowbtn"><span>' + esc(r.name) + '<small>' + (n ? n + (n === 1 ? ' thing' : ' things') : 'Empty') + '</small></span>' +
+            '<span class="chips"><button class="chip" data-act="roomRename" data-centre="' + esc(c) + '" data-val="' + esc(r.name) + '">Rename</button>' +
+            '<button class="chip" data-act="roomRemove" data-centre="' + esc(c) + '" data-val="' + esc(r.name) + '">Remove</button></span></div>';
+        }).join('') : '<p class="hint" style="margin:12px 0">None yet.</p>') + '</div>' +
+        '<button class="btn" style="margin-top:12px" data-act="roomAdd" data-centre="' + esc(c) + '">Add a room' + (c === ALL_CENTRES ? '' : ' to ' + esc(c)) + '</button>';
+    }).join('');
+}
+
 function vPick() {
   if (!S.centres.length) {
     return '<h1 class="hero">Welcome</h1><div class="card empty"><h2>No centres set up yet.</h2><p>Ask the admin to add the centres in the Setup tab of the Google Sheet.</p><button class="btn" data-act="refresh">Check again</button></div>';
@@ -3570,6 +3629,7 @@ function vAdmin() {
   return top(true) + '<h1 class="title">Admin</h1><p class="sub">You can now decide requests and change any detail of an item.</p>' +
     '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '">Open the Google Sheet</a>' +
     '<button class="btn" data-act="go" data-to="requests">Decide requests</button>' +
+    '<button class="btn" data-act="go" data-to="adminRooms">Manage rooms</button>' +
     '<button class="btn" data-act="go" data-to="labels">Print QR stickers</button>' +
     (HOSTED && BACKEND.id ? '<label class="lab" for="staff-link">The link to give staff</label>' +
       '<input id="staff-link" class="inp" readonly value="' + esc(location.origin + location.pathname + '#b=' + BACKEND.id) + '" onclick="this.select()">' +
@@ -4018,6 +4078,42 @@ var ACT = {
 
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
+  roomsCentre: function (el) { cur().centre = el.dataset.val; render(); },
+  roomOpen: function (el) { go({ name: 'room', centre: cur().centre, loc: el.dataset.val }); },
+  countPlaceHere: function (el) { go({ name: 'countList', centre: cur().centre, loc: el.dataset.val }); },
+  roomAdd: function (el) {
+    M = { type: 'room', op: 'add', centre: el.dataset.centre };
+    openSheet('<h2>Add a room</h2><p class="sub">' + esc(M.centre === ALL_CENTRES ? 'Every centre' : M.centre) + '</p>' +
+      '<label class="lab" for="m-room">Room name</label><input id="m-room" class="inp" maxlength="60" autocomplete="off" placeholder="e.g. Reading corner">' +
+      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="roomGo">Add room</button><button class="btn quiet" data-act="closeSheet">Cancel</button>', 'm-room');
+  },
+  roomRename: function (el) {
+    M = { type: 'room', op: 'rename', centre: el.dataset.centre, name: el.dataset.val };
+    openSheet('<h2>Rename “' + esc(M.name) + '”</h2><p class="sub">Everything kept there moves to the new name.</p>' +
+      '<label class="lab" for="m-room">New name</label><input id="m-room" class="inp" maxlength="60" autocomplete="off" value="' + esc(M.name) + '">' +
+      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="roomGo">Rename</button><button class="btn quiet" data-act="closeSheet">Cancel</button>', 'm-room');
+  },
+  roomRemove: function (el) {
+    M = { type: 'room', op: 'remove', centre: el.dataset.centre, name: el.dataset.val };
+    openSheet('<h2>Remove “' + esc(M.name) + '”?</h2><p class="sub">Only possible while nothing is kept there.</p>' +
+      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="roomGo">Remove room</button><button class="btn quiet" data-act="closeSheet">Cancel</button>');
+  },
+  roomGo: function () {
+    var m = M, typed = m.op === 'remove' ? '' : val('m-room');
+    if (m.op !== 'remove' && !typed) return;
+    busy(true, 'Saving…');
+    call('adminRooms', { pin: S.pin, op: m.op, centre: m.centre, name: m.op === 'add' ? typed : m.name, newName: m.op === 'rename' ? typed : '' }).then(function (res) {
+      S.rooms = res.rooms || [];
+      if (res.items && res.items.length) mergeItems(res.items);
+      saveData(); rebuild(); closeSheet();
+      toast(m.op === 'add' ? 'Room added.' : m.op === 'rename' ? 'Room renamed.' : 'Room removed.');
+    }).catch(function (e) {
+      busy(false);
+      var err = byIdEl('m-err');
+      err.textContent = e.network ? 'No signal. Try again.' : e.message;
+      err.hidden = false;
+    });
+  },
   countPlace: function (el) { go({ name: 'countList', centre: cur().centre, loc: el.dataset.val }); },
   countGo: function () {
     var v = cur(), changes = countChanges();
