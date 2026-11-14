@@ -224,6 +224,14 @@ details[open] summary::after{content:"–"}
 .splash{padding:80px var(--s2);text-align:center;color:var(--muted)}
 .splash .btn{max-width:240px;margin:var(--s4) auto 0}
 .seg{display:flex;gap:var(--s2);margin:var(--s2) 0 var(--s3);flex-wrap:wrap}
+#cam{position:fixed;inset:0;z-index:40;background:#000;color:#fff}
+#cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#cam .aim{position:absolute;left:10%;right:10%;top:28%;height:28%;border:3px solid var(--mark);border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,.4);pointer-events:none}
+#cam .camtop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,0));font-weight:600}
+#cam .camtop .btn{width:auto;min-height:44px;background:#fff;border-color:#fff;color:var(--ink)}
+#cam .camlog{position:absolute;left:0;right:0;bottom:0;padding:var(--s5) var(--s4) var(--s5);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.85))}
+#cam .camlog p{margin:var(--s1) 0}
+#cam .camlog .got{display:inline-block;background:var(--mark);color:var(--ink);font-weight:700;padding:var(--s1) var(--s2);border-radius:2px}
 @media (min-width:700px){#app{padding-top:var(--s5)}.hero{font-size:40px}}
 </style>
 </head>
@@ -233,6 +241,9 @@ details[open] summary::after{content:"–"}
 <nav id="nav" hidden></nav>
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
+<div id="cam" hidden role="dialog" aria-label="Scan books"><video id="cam-v" playsinline muted></video><div class="aim"></div>
+<div class="camtop"><span id="cam-n">0 recorded</span><button class="btn" data-act="camDone">Done</button></div>
+<div class="camlog"><p id="cam-msg">Point the camera at the barcode on the back of the book.</p><p id="cam-last"></p></div></div>
 <input type="file" accept="image/*" id="file" hidden>
 <input type="file" accept="image/*" capture="environment" id="scan" hidden>
 
@@ -3021,7 +3032,7 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vCount,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels, bulk: vBulk,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks };
   app.innerHTML = (views[v.name] || vHome)(v);
   drawChrome(v);
   if (v.name === 'home' && window.matchMedia && matchMedia('(pointer:fine)').matches && byIdEl('q')) byIdEl('q').focus();
@@ -3030,7 +3041,7 @@ function render() {
 function softRender() {
   var n = cur().name;
   if (!byIdEl('sheet').hidden) return;
-  if (S.loaded && hasCentre() && ['add', 'request', 'edit', 'countList', 'bulk'].indexOf(n) >= 0) { drawChrome(cur()); return; }
+  if (S.loaded && hasCentre() && ['add', 'request', 'edit', 'countList', 'bulk', 'scanBooks'].indexOf(n) >= 0) { drawChrome(cur()); return; }
   if (S.loaded && hasCentre() && n === 'home' && byIdEl('results')) { drawResults(); drawChrome(cur()); return; }
   render();
 }
@@ -3038,7 +3049,7 @@ function drawChrome(v) {
   var nav = byIdEl('nav');
   nav.hidden = v.name === 'pick';
   var tab = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'count',
-    countList: 'count', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'more', rooms: 'more', room: 'more', adminRooms: 'more' }[v.name];
+    countList: 'count', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'more', rooms: 'more', room: 'more', adminRooms: 'more', scanBooks: 'more' }[v.name];
   var lows = S.items.filter(function (it) { return it.centre === myCentre() && low(it); }).length;
   var b = function (to, label, n) {
     return '<button data-act="nav" data-to="' + to + '" class="' + (tab === to ? 'on' : '') + '">' +
@@ -3135,7 +3146,7 @@ function resultsHtml(v) {
       S.categories.filter(function (c) { return counts[c]; }).map(function (c) {
         return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span class="lbl2">' + esc(c) + '</span><small>' + counts[c] + '</small></button>';
       }).join('') + '</div>' +
-      '<button class="btn quiet" data-act="go" data-to="bulk">Adding lots of books? Add many at once</button>';
+      '<button class="btn quiet" data-act="go" data-to="scanBooks">Adding books? Scan them</button>';
   }
   var r = RMSearch.search(S.groups, RMIsbn.clean(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
   if (!r.strong.length) {
@@ -3579,6 +3590,7 @@ function vMore() {
     }).join('') + '</div>' +
     '<div class="card rows">' +
     '<button class="rowbtn" data-act="go" data-to="rooms"><span>Rooms<small>What is kept where</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="scanBooks"><span>Scan books<small>Point the camera at each barcode; it is recorded</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="bulk"><span>Add many things at once<small>A box of books or a delivery, one line each</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="requests"><span>Requests to buy<small>See what was asked for and what was decided</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="refresh"><span>Get the latest list<small>Last updated ' + esc(when(S.syncedAt)) +
@@ -3699,6 +3711,138 @@ function vAdmin() {
     }).join('') : '<p class="hist muted">Nothing yet.</p>') + '</div>';
 }
 
+// ----- Scan books: point the camera, each book is recorded as it is read -----
+var SC = { scans: [], queue: Promise.resolve(), stream: null, timer: 0, detector: null, lastIsbn: '', lastSeen: 0, reading: false, ctx: null, photoMode: false };
+function scanOk() { return 'BarcodeDetector' in window || HOSTED; }
+function scanStateOf(e) {
+  if (!e.title) return e.needTitle ? 'needTitle' : 'looking';
+  if (e.err) return 'error';
+  return e.inflight > 0 || e.n < e.want ? 'saving' : 'saved';
+}
+function scanListHtml() {
+  if (!SC.scans.length) return '<p class="hint">Nothing yet.</p>';
+  return '<div class="rows">' + SC.scans.map(function (e, i) {
+    var st = scanStateOf(e), head = '<span class="cname">' + esc(e.title || e.isbn) + '<small>' + esc(e.centre) + ' · ' + esc(e.loc) + ' · ISBN ' + esc(e.isbn) + '</small></span>';
+    if (st === 'needTitle') {
+      return '<div class="brow"><p class="name">' + esc(e.isbn) + '</p><p class="line">' + esc(e.centre) + ' · ' + esc(e.loc) + '</p><p class="help">This book is not in the online list. Type its title:</p>' +
+        '<input id="sc-t-' + i + '" class="inp" maxlength="80" autocomplete="off" aria-label="Title for ISBN ' + esc(e.isbn) + '">' +
+        '<button class="btn primary" data-act="scanTitle" data-i="' + i + '">Save this book</button></div>';
+    }
+    return '<div class="cline">' + head + (st === 'saved' ? '<span class="badge ok">' + e.n + (e.n === 1 ? ' copy' : ' copies') + '</span>'
+      : st === 'error' ? '<button class="chip" data-act="scanRetry" data-i="' + i + '">Try again</button>'
+      : '<span class="badge plain">' + (st === 'looking' ? 'Looking up…' : 'Saving…') + '</span>') + '</div>' +
+      (st === 'error' ? '<p class="err" style="margin-top:0">' + esc(e.err) + '</p>' : '');
+  }).join('') + '</div>';
+}
+function drawScanList() { var el = byIdEl('scan-list'); if (el) el.innerHTML = scanListHtml(); camUpdate(); }
+function camUpdate() {
+  var n = SC.scans.reduce(function (a, e) { return a + e.n; }, 0), el = byIdEl('cam-n');
+  if (el) el.textContent = n + (n === 1 ? ' book recorded' : ' books recorded');
+}
+function vScanBooks() {
+  F = { centre: myCentre(), cat: S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : '' };
+  return top(true) + '<h1 class="title">Scan books</h1>' +
+    '<p class="sub">Point the camera at the barcode on the back of each book. Each book is recorded as soon as it is read. Scan the same book again for another copy.</p>' +
+    '<label class="lab">Which centre?</label>' + chips('centre', S.centres, F.centre) +
+    '<label class="lab" for="f-loc">Where are they kept?</label>' +
+    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="e.g. Reading corner" value="' + esc(store.get('rm_scanloc', '')) + '">' +
+    '<div id="f-locs">' + locChips(F.centre) + '</div>' +
+    '<p class="err" id="f-err" hidden></p>' +
+    (scanOk() ? '<div class="formend"><button class="btn primary" data-act="camStart">Start scanning</button>' +
+      '<button class="btn quiet" data-act="camPhoto">Take a photo of one barcode instead</button></div>'
+      : '<div class="note">Scanning works on the hosted page, or in Chrome on Android. Here, use “Add many things at once” and type the ISBN.</div>') +
+    '<h2 class="sec">Recorded just now</h2><div id="scan-list">' + scanListHtml() + '</div>';
+}
+function scanContext() {
+  var loc = val('f-loc').trim();
+  if (!F.centre) { formError('Choose which centre it is at.'); return null; }
+  if (!loc) { formError('Type where they are kept first.'); return null; }
+  formError('');
+  store.set('rm_scanloc', loc);
+  return { centre: F.centre, loc: loc, cat: F.cat || '' };
+}
+// Record one more copy of this book. The title comes from our own list, then Open Library; only an unknown book asks for typing.
+function scanBook(isbn, ctx) {
+  var key = ctx.centre + '|' + ctx.loc.toLowerCase() + '|' + isbn;
+  var e = SC.scans.filter(function (x) { return x.key === key; })[0];
+  if (!e) {
+    e = { key: key, isbn: isbn, centre: ctx.centre, loc: ctx.loc, cat: ctx.cat, title: '', n: 0, want: 0, inflight: 0, err: '', needTitle: false };
+    SC.scans.unshift(e);
+  }
+  e.want++;
+  var known = listHasIsbn(isbn);
+  if (!e.title && known) e.title = known.name;
+  if (e.title) { drawScanList(); scanSave(e); return Promise.resolve(e); }
+  drawScanList();
+  if (e.looking) return e.looking;
+  e.looking = lookupTitle(isbn).then(function (res) {
+    e.looking = null;
+    if (res.title) { e.title = res.title.slice(0, 80); scanSave(e); } else e.needTitle = true;
+    drawScanList();
+    return e;
+  });
+  return e.looking;
+}
+function scanSave(e) {
+  var q = e.want - e.n - e.inflight;
+  if (q < 1 || !e.title) return;
+  e.inflight += q; e.err = '';
+  drawScanList();
+  SC.queue = SC.queue.then(function () {
+    return call('addMany', { centre: e.centre, location: e.loc, unit: 'books', cat: e.cat, rows: [{ name: e.title, isbn: e.isbn, qty: q }], actionId: uid() });
+  }).then(function (res) {
+    e.inflight -= q;
+    if (res.problems && res.problems.length) { e.want -= q; e.err = res.problems[0].error; }
+    else e.n += q;
+    mergeItems(res.items); rebuild();
+    drawScanList();
+  }).catch(function (err) {
+    e.inflight -= q; e.err = err.network ? 'No signal. Tap Try again when there is.' : err.message;
+    drawScanList();
+  });
+}
+function camStop() {
+  clearTimeout(SC.timer); SC.timer = 0;
+  if (SC.stream) { SC.stream.getTracks().forEach(function (t) { t.stop(); }); SC.stream = null; }
+  var v = byIdEl('cam-v'); if (v) v.srcObject = null;
+  byIdEl('cam').hidden = true;
+  SC.reading = false;
+}
+function camTick() {
+  if (!SC.stream) return;
+  if (cur().name !== 'scanBooks') return camStop();
+  var v = byIdEl('cam-v');
+  if (v.readyState < 2 || !v.videoWidth || SC.reading) { SC.timer = setTimeout(camTick, 250); return; }
+  SC.reading = true;
+  var k = Math.min(1, 1100 / Math.max(v.videoWidth, v.videoHeight)), c = SC.canvas || (SC.canvas = document.createElement('canvas'));
+  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  SC.detector.detect(c).then(function (codes) {
+    var isbn = '';
+    (codes || []).forEach(function (code) { var x = RMIsbn.clean(code.rawValue); if (x && !isbn) isbn = x; });
+    var now = Date.now();
+    if (isbn) {
+      var fresh = isbn !== SC.lastIsbn || now - SC.lastSeen > 1500;   // the same code staying in view is one copy; take it away and show it again for the next
+      SC.lastSeen = now;
+      if (fresh) { SC.lastIsbn = isbn; camGot(isbn); }
+    }
+  }).catch(function () { /* a frame that cannot be read is just skipped */ }).then(function () {
+    SC.reading = false;
+    if (SC.stream) SC.timer = setTimeout(camTick, 200);
+  });
+}
+function camGot(isbn) {
+  try { if (navigator.vibrate) navigator.vibrate(80); } catch (e) { /* no vibration */ }
+  byIdEl('cam-msg').textContent = 'Read ' + isbn + '…';
+  byIdEl('cam-last').innerHTML = '';
+  scanBook(isbn, SC.ctx).then(function (e) {
+    var last = byIdEl('cam-last');
+    if (!last) return;
+    last.innerHTML = e.title ? '<span class="got">' + esc(e.title) + '</span>' : esc('No title found for ' + isbn + '. You can type it when you are done.');
+    byIdEl('cam-msg').textContent = 'Point the camera at the next book.';
+  });
+}
+
 // ----- Add many things at once -----
 function newRow() { return { isbn: '', name: '', qty: '1', msg: '', err: '' }; }
 function rowsHtml() {
@@ -3716,7 +3860,7 @@ function rowsHtml() {
   }).join('');
 }
 function drawRows() { var box = byIdEl('b-rows'); if (box) box.innerHTML = rowsHtml(); }
-function vBulk() {
+function vBulk() {   // (typing the lines by hand; scanning is on its own screen, vScanBooks)
   F = { centre: myCentre(), cat: S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : '', rows: [newRow(), newRow(), newRow()] };
   return top(true) + '<h1 class="title">Add many things at once</h1>' +
     '<p class="sub">For a box of books or a delivery. One line each: type the title, or type the ISBN and tap Look up.</p>' +
@@ -3959,6 +4103,48 @@ var ACT = {
       } else setRowMsg(i, res.missing ? 'That book is not in the online list. Type the title.' : 'Could not look it up. Type the title.');
     });
   },
+  camStart: function () {
+    var ctx = scanContext();
+    if (!ctx) return;
+    SC.ctx = ctx; SC.lastIsbn = ''; SC.lastSeen = 0;
+    var asking = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+      ? navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false })
+      : Promise.reject(new Error('no camera'));
+    Promise.all([asking, loadReader()]).then(function (a) {
+      SC.stream = a[0];
+      SC.detector = new a[1]({ formats: ['ean_13'] });
+      var v = byIdEl('cam-v');
+      v.srcObject = SC.stream;
+      var p = v.play(); if (p && p.catch) p.catch(function () { /* autoplay is allowed for a muted video */ });
+      byIdEl('cam-msg').textContent = 'Point the camera at the barcode on the back of the book.';
+      byIdEl('cam-last').innerHTML = '';
+      camUpdate();
+      byIdEl('cam').hidden = false;
+      SC.timer = setTimeout(camTick, 300);
+    }).catch(function (e) {
+      if (SC.stream) camStop();
+      formError(/Permission|NotAllowed/i.test(String(e && (e.name || e.message))) ? 'The camera is blocked. Allow it for this page, or use “Take a photo of one barcode instead”.'
+        : 'The camera could not start here. Use “Take a photo of one barcode instead”, or type the ISBN under “Add many things at once”.');
+    });
+  },
+  camDone: function () { camStop(); drawScanList(); },
+  camPhoto: function () {
+    var ctx = scanContext();
+    if (!ctx) return;
+    SC.ctx = ctx; SC.photoMode = true;
+    byIdEl('scan').value = '';
+    byIdEl('scan').click();
+    loadReader().catch(function () { /* said when the photo comes back */ });
+  },
+  scanTitle: function (el) {
+    var e = SC.scans[Number(el.dataset.i)], t = (byIdEl('sc-t-' + el.dataset.i) || {}).value || '';
+    t = t.trim();
+    if (!e) return;
+    if (!t) return toast('Type the title first.');
+    e.title = t.slice(0, 80); e.needTitle = false;
+    scanSave(e);
+  },
+  scanRetry: function (el) { var e = SC.scans[Number(el.dataset.i)]; if (e) { e.err = ''; scanSave(e); } },
   scanIsbn: function (el) {
     F.scanFor = Number(el.dataset.i);
     byIdEl('scan').value = '';
@@ -4313,6 +4499,15 @@ function addScript(src) {
   });
 }
 // (the polyfill script declares a top-level const, so it is reached by name, not through window)
+// a 12-megapixel photo is too much to decode quickly on a small phone; bars stay wide enough at 2000 px
+function fitForReader(bmp) {
+  var max = 2000, big = Math.max(bmp.width, bmp.height);
+  if (big <= max) return bmp;
+  var k = max / big, c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return c;
+}
 function loadReader() {
   if ('BarcodeDetector' in window) return Promise.resolve(window.BarcodeDetector);
   if (!HOSTED) return Promise.reject(new Error('no reader'));
@@ -4325,9 +4520,21 @@ function loadReader() {
 }
 byIdEl('scan').addEventListener('change', function () {
   var file = this.files && this.files[0], i = F.scanFor;
+  if (SC.photoMode) {
+    SC.photoMode = false;
+    if (!file) return;
+    toast('Reading the barcode…');
+    Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8'] }).detect(fitForReader(a[0])); })
+      .then(function (codes) {
+        var isbn = RMIsbn.clean(codes && codes[0] && codes[0].rawValue);
+        if (!isbn) return toast('Could not read that barcode. Try again, closer and flat.');
+        scanBook(isbn, SC.ctx);
+      }).catch(function () { toast('Could not read that barcode. Try again, closer and flat.'); });
+    return;
+  }
   if (!file || !F.rows || !F.rows[i]) return;
   setRowMsg(i, 'Reading the barcode…');
-  Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8'] }).detect(a[0]); })
+  Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8'] }).detect(fitForReader(a[0])); })
     .then(function (codes) {
       var isbn = RMIsbn.clean(codes && codes[0] && codes[0].rawValue);
       if (!isbn) return setRowMsg(i, 'Could not read that barcode. Try again, or type the ISBN.');
