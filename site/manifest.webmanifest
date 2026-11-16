@@ -1,12 +1,12 @@
 {
-  "name": "Resource Manager",
-  "short_name": "Resources",
+  "name": "Ada Tak?",
+  "short_name": "Ada Tak?",
   "description": "Do we already have it? A shared list of what the centres own.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f3ef",
-  "theme_color": "#f4f3ef",
+  "background_color": "#fbfbf9",
+  "theme_color": "#f7f856",
   "icons": [
     {
       "src": "icon-192.png",
