@@ -260,8 +260,14 @@ html[data-text] .search input{font-size:16px}
 #nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;padding:12px 0 4px;font-size:13px;font-weight:600;color:var(--muted);text-align:center}
 #nav button.on{color:var(--ink)}
 #nav button.on::before{content:"";position:absolute;top:-1px;left:var(--s4);right:var(--s4);height:4px;background:var(--brand)}
+.card.item.starter{border:1px dashed var(--line-strong);background:transparent}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-top:var(--s2)}
+.tgt{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:var(--s1);min-height:84px;padding:var(--s2) var(--s1);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);font-size:13px;font-weight:600;text-align:center;line-height:1.2}
+.tgt .emo{font-size:26px;line-height:1}
+.tgt.on{border:2px solid var(--brand);background:var(--wash)}
 details.settings{margin-top:var(--s4);border-top:1px solid var(--ink)}
-details.settings summary{display:flex;flex-direction:column;gap:2px;padding:var(--s3) 0;min-height:52px;cursor:pointer}
+details.settings summary{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;padding:var(--s3) var(--s6) var(--s3) 0;min-height:52px;cursor:pointer;position:relative}
+details.settings summary::after{position:absolute;right:var(--s2);top:50%;margin-top:-12px}
 details.settings summary small{color:var(--muted);font-size:13px}
 #nav .ic{position:relative;display:block;width:26px;height:26px}
 #nav svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -2849,6 +2855,7 @@ L.ms = {
   "Already saved.": "Sudah disimpan.",
   "Already sent.": "Sudah dihantar.",
   "Also send on WhatsApp": "Hantar juga melalui WhatsApp",
+  "Antiseptic and creams": "Antiseptik dan krim",
   "Any centre": "Mana-mana pusat",
   "Anyone with this link can use the list. Share it only with staff.": "Sesiapa yang ada pautan ini boleh guna senarai. Kongsi dengan staf sahaja.",
   "Approve": "Luluskan",
@@ -2862,14 +2869,23 @@ L.ms = {
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
   "Asked to buy": "Mohon beli",
   "Back": "Kembali",
+  "Balloons and banners": "Belon dan sepanduk",
   "Barcode {code}": "Kod bar {code}",
+  "Baskets and bins": "Bakul dan tong",
   "Best match": "Paling padan",
+  "Board and card games": "Permainan papan dan kad",
+  "Boards and notice boards": "Papan dan papan kenyataan",
+  "Books": "Buku",
   "Bought": "Dibeli",
   "Broken or missing pieces": "Rosak atau bahagian hilang",
   "Broken or missing pieces:": "Rosak atau bahagian hilang:",
   "Browse by type": "Layari ikut jenis",
+  "Brushes, mops and bins": "Berus, mop dan tong",
+  "Building blocks": "Blok binaan",
+  "Cables, chargers and batteries": "Kabel, pengecas dan bateri",
   "Cancel": "Batal",
   "Can’t reach the list.": "Tidak dapat capai senarai.",
+  "Certificates and graduation": "Sijil dan konvokesyen",
   "Check again": "Semak semula",
   "Check the spelling, or try another language.": "Semak ejaan, atau cuba bahasa lain.",
   "Check your internet and try again.": "Semak internet anda dan cuba lagi.",
@@ -2887,13 +2903,20 @@ L.ms = {
   "Choose which centre it’s at.": "Pilih pusat mana.",
   "Choose which centre it’s for.": "Pilih untuk pusat mana.",
   "Choose which centre this room is in.": "Pilih pusat bagi bilik ini.",
+  "Clay and dough": "Tanah liat dan doh",
+  "Cleaning liquids": "Cecair pencuci",
   "Clear": "Kosongkan",
   "Closest matches:": "Paling hampir:",
+  "Coloured paper and card": "Kertas dan kad warna",
   "Colours": "Warna",
+  "Computers and tablets": "Komputer dan tablet",
+  "Confirm it": "Sahkan",
+  "Confirmed {name}.": "{name} disahkan.",
   "Connect": "Sambung",
   "Connect to your list": "Sambung ke senarai anda",
   "Continue": "Teruskan",
   "Copy": "Salin",
+  "Costumes and props": "Kostum dan prop",
   "Could another centre share?": "Boleh pusat lain kongsi?",
   "Couldn’t look it up. Type the name.": "Tidak dapat mencari. Taip nama.",
   "Couldn’t read that barcode. Try again, closer and flat.": "Tidak dapat membaca kod bar itu. Cuba lagi, lebih dekat dan rata.",
@@ -2907,10 +2930,15 @@ L.ms = {
   "Counted in": "Dikira dalam",
   "Counted in “books”, type “{type}” · change": "Dikira dalam “buku”, jenis “{type}” · ubah",
   "Counted {when}": "Dikira {when}",
+  "Counting and maths": "Kiraan dan matematik",
   "Counting packs? Only take one when you open a new pack. No need to count sheets.": "Kira bungkusan? Ambil satu bila buka bungkusan baru. Tak perlu kira helaian.",
+  "Craft bits": "Bahan kraf",
+  "Crayons, pencils and markers": "Krayon, pensel dan pen penanda",
+  "Curtains and blinds": "Langsir dan bidai",
   "Dark": "Gelap",
   "Decline": "Tolak",
   "Decline this request?": "Tolak permohonan ini?",
+  "Decorations and lanterns": "Hiasan dan tanglung",
   "Details changed": "Butiran diubah",
   "Do we have it?": "Ada tak?",
   "Done": "Selesai",
@@ -2927,12 +2955,16 @@ L.ms = {
   "Everything else is right": "Selebihnya betul",
   "Everything is above its warning number.": "Semua melebihi nombor amaran.",
   "Everything there moves to the new name.": "Semua barang di situ ikut nama baru.",
+  "Fans and lights": "Kipas dan lampu",
   "Festival and event items": "Barang perayaan dan acara",
+  "Files, folders and books": "Fail, folder dan buku",
   "Fill in every number": "Isi semua nombor",
   "Find": "Cari",
   "Finished": "Habis",
   "First aid": "Pertolongan cemas",
+  "First-aid kits and tools": "Kit dan alatan pertolongan cemas",
   "Fix the lines in red.": "Betulkan baris merah.",
+  "Flash cards and posters": "Kad imbasan dan poster",
   "Flashlight": "Lampu suluh",
   "Flashlight on": "Lampu suluh dipasang",
   "For a delivery or a box. One line each: type the name, or type the barcode number and tap Look up.": "Untuk penghantaran atau kotak. Satu baris satu: taip nama, atau nombor kod bar dan ketik Cari.",
@@ -2942,12 +2974,16 @@ L.ms = {
   "Furniture and fittings": "Perabot dan kelengkapan",
   "Getting requests…": "Mendapatkan permohonan…",
   "Getting your list…": "Mendapatkan senarai…",
+  "Gifts and prizes": "Hadiah",
+  "Gloves and masks": "Sarung tangan dan pelitup muka",
+  "Glue, tape and staples": "Gam, pita dan staples",
   "Half left": "Separuh",
   "How do you want to keep track of it?": "Bagaimana anda mahu pantau?",
   "How is it kept track of?": "Bagaimana dipantau?",
   "How many": "Berapa banyak",
   "How many are you taking?": "Berapa yang diambil?",
   "How many did you get?": "Berapa yang diterima?",
+  "How many do you have?": "Berapa yang anda ada?",
   "How many {name} are here?": "Berapa {name} di sini?",
   "How many, line": "Berapa banyak, baris",
   "How many?": "Berapa banyak?",
@@ -2966,6 +3002,7 @@ L.ms = {
   "Just how much is left": "Hanya berapa yang tinggal",
   "Keep at least {n}": "Simpan sekurang-kurangnya {n}",
   "Kept somewhere else too?": "Disimpan di tempat lain juga?",
+  "Labels, stickers and stamps": "Label, pelekat dan setem",
   "Language": "Bahasa",
   "Language, colours, text size": "Bahasa, warna, saiz tulisan",
   "Large": "Besar",
@@ -2975,6 +3012,7 @@ L.ms = {
   "Least left first": "Paling sedikit dahulu",
   "Least: {level}": "Paling sedikit: {level}",
   "Leave admin": "Keluar admin",
+  "Letters and phonics": "Huruf dan fonik",
   "Level set": "Jumlah ditetapkan",
   "Light": "Cerah",
   "Link copied.": "Pautan disalin.",
@@ -2985,15 +3023,20 @@ L.ms = {
   "Look up": "Cari",
   "Looked at recently": "Baru dilihat",
   "Looking it up…": "Mencari…",
+  "Looks like {type}.": "Nampak seperti {type}.",
   "Low": "Kurang",
   "Mark as bought": "Tandakan dibeli",
   "Mark as bought?": "Tandakan sudah dibeli?",
+  "Mats and mattresses": "Tikar dan tilam",
   "Me": "Saya",
   "More detail:": "Butiran lanjut:",
   "More details": "Butiran lanjut",
+  "Music and instruments": "Muzik dan alat muzik",
   "My centre": "Pusat saya",
   "Name": "Nama",
+  "Name saved.": "Nama disimpan.",
   "Nearly out": "Hampir habis",
+  "Needs a name": "Perlu nama",
   "Needs fixing": "Perlu dibaiki",
   "Needs the admin PIN": "Perlu PIN admin",
   "New item": "Barang baru",
@@ -3015,7 +3058,9 @@ L.ms = {
   "None yet.": "Belum ada.",
   "Normal": "Biasa",
   "Not approved": "Tidak diluluskan",
+  "Not confirmed · 0 in stock": "Belum disahkan · 0 dalam stok",
   "Not found online. Type the name.": "Tidak dijumpai dalam talian. Taip nama.",
+  "Not sure": "Tidak pasti",
   "Not what you wanted?": "Bukan yang dicari?",
   "Note": "Nota",
   "Note for whoever asked": "Nota untuk pemohon",
@@ -3024,8 +3069,13 @@ L.ms = {
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
   "Nothing listed at this centre yet.": "Belum ada barang di pusat ini.",
+  "Nothing needs a name.": "Tiada yang perlu nama.",
+  "Nothing new to offer.": "Tiada yang baharu.",
   "Nothing yet.": "Belum ada.",
   "Now using “{name}”. Use that sheet’s admin PIN.": "Kini guna “{name}”. Guna PIN admin helaian itu.",
+  "Offer a centre the usual essentials to confirm": "Tawarkan pusat barang keperluan biasa untuk disahkan",
+  "Offer the list": "Tawarkan senarai",
+  "On your starter list, not confirmed": "Dalam senarai permulaan, belum disahkan",
   "One less": "Kurang satu",
   "One more": "Tambah satu",
   "One per item": "Satu setiap barang",
@@ -3035,11 +3085,17 @@ L.ms = {
   "Only {n} here.": "Hanya ada {n} di sini.",
   "Open the Google Sheet": "Buka Google Sheet",
   "Open the link your admin sent you. If you only have the long code, paste it here.": "Buka pautan yang admin hantar. Kalau ada kod panjang sahaja, tampal di sini.",
+  "Other": "Lain-lain",
   "Other names": "Nama lain",
+  "Outdoor and sports": "Luar dan sukan",
+  "Paints and brushes": "Cat dan berus",
+  "Paper (A4, rolls)": "Kertas (A4, gulung)",
+  "Pens and pencils": "Pen dan pensel",
   "Photo": "Gambar",
   "Pick “how much is left” for things used a bit at a time, like paper, glue or soap. Nobody has to count.": "Pilih “berapa yang tinggal” untuk barang yang digunakan sedikit demi sedikit, seperti kertas, gam atau sabun. Tak perlu kira.",
   "Pieces missing": "Ada bahagian hilang",
   "Place, notes, photo": "Tempat, nota, gambar",
+  "Plasters and bandages": "Plaster dan pembalut",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "Mohon beli {qty} {unit} {name} untuk {centre}.",
   "Plenty": "Banyak",
   "Point the camera at a barcode.": "Halakan kamera ke kod bar.",
@@ -3049,8 +3105,11 @@ L.ms = {
   "Print 1 sticker": "Cetak 1 pelekat",
   "Print them for items or shelves": "Cetak untuk barang atau rak",
   "Print {n} stickers": "Cetak {n} pelekat",
+  "Printer ink and toner": "Dakwat dan toner pencetak",
   "Printing and electronics": "Percetakan dan elektronik",
   "Problem reported": "Masalah dilaporkan",
+  "Projectors and screens": "Projektor dan skrin",
+  "Puzzles": "Puzzle",
   "QR stickers": "Pelekat QR",
   "Read {code}…": "Dibaca {code}…",
   "Reading the barcode…": "Membaca kod bar…",
@@ -3075,6 +3134,7 @@ L.ms = {
   "Requests": "Permohonan",
   "Retake": "Ambil semula",
   "Review copy: this language isn’t signed off yet.": "Salinan semakan: bahasa ini belum disahkan.",
+  "Role-play and dolls": "Main peranan dan anak patung",
   "Room added": "Bilik ditambah",
   "Room name": "Nama bilik",
   "Room removed": "Bilik dibuang",
@@ -3086,9 +3146,12 @@ L.ms = {
   "Running low here": "Tinggal sedikit di sini",
   "Same as my phone": "Ikut telefon",
   "Same item, another place.": "Barang sama, tempat lain.",
+  "Sand and water play": "Main pasir dan air",
+  "Sanitiser and disinfectant": "Pensanitasi dan pembasmi kuman",
   "Save": "Simpan",
   "Save ({n} changed)": "Simpan ({n} berubah)",
   "Save changes": "Simpan perubahan",
+  "Save the barcode, name it later": "Simpan kod bar, namakan kemudian",
   "Saved {n}. The lines below need fixing.": "Disimpan {n}. Baris di bawah perlu dibetulkan.",
   "Saved, but the photo didn’t save.": "Disimpan, tetapi gambar tidak disimpan.",
   "Saved.": "Disimpan.",
@@ -3100,6 +3163,8 @@ L.ms = {
   "Scan an item": "Imbas barang",
   "Scan barcodes": "Imbas kod bar",
   "Scanning doesn’t work in this view. Use the normal page, or add items by typing.": "Pengimbasan tidak berfungsi di sini. Guna halaman biasa, atau tambah dengan menaip.",
+  "Science and nature": "Sains dan alam",
+  "Scissors and cutting": "Gunting dan pemotong",
   "Search again": "Cari semula",
   "Search first. If we don’t have it, you can ask to buy it.": "Cari dahulu. Kalau tiada, boleh mohon beli.",
   "Search for an item": "Cari barang",
@@ -3124,18 +3189,25 @@ L.ms = {
   "Share this list on WhatsApp": "Kongsi senarai ini di WhatsApp",
   "Share {n} on WhatsApp": "Kongsi {n} di WhatsApp",
   "Sheet edit": "Ubah dalam helaian",
+  "Shelves and storage": "Rak dan simpanan",
   "Show recent changes": "Tunjuk perubahan terkini",
   "Showing the first 30. Type more to narrow it down.": "Menunjukkan 30 pertama. Taip lagi untuk menapis.",
+  "Skip for now": "Langkau dahulu",
+  "Soap and hand wash": "Sabun dan pencuci tangan",
   "Some changes haven’t sent yet. Send them first, then switch.": "Ada perubahan belum dihantar. Hantar dahulu, kemudian tukar.",
   "Some of these are already listed in “{name}”. Move them first.": "Sebahagian sudah ada dalam “{name}”. Alihkan dahulu.",
   "Some pieces are missing": "Ada bahagian hilang",
   "Something not on the list yet": "Barang yang belum ada dalam senarai",
   "Something went wrong. Try again.": "Ada masalah. Cuba lagi.",
   "Something wrong with it?": "Ada masalah?",
+  "Speakers and microphones": "Pembesar suara dan mikrofon",
+  "Stage items and flags": "Barang pentas dan bendera",
+  "Start from a list of the usual things": "Mula dengan senarai barang biasa",
   "Start scanning": "Mula mengimbas",
   "Stationery and paper": "Alat tulis dan kertas",
   "Stick one on an item or shelf. Scan it with your phone camera to open it here.": "Lekatkan pada barang atau rak. Imbas dengan kamera untuk buka di sini.",
   "Switch Google Sheet": "Tukar Google Sheet",
+  "Tables and chairs": "Meja dan kerusi",
   "Take": "Ambil",
   "Take a photo": "Ambil gambar",
   "Take a photo of the barcode instead": "Ambil gambar kod bar sebagai ganti",
@@ -3149,9 +3221,11 @@ L.ms = {
   "That isn’t a Google Sheets link. Open the sheet, copy the address from the top of the browser and paste it here.": "Itu bukan pautan Google Sheets. Buka helaian, salin alamat di bahagian atas pelayar dan tampal di sini.",
   "That isn’t available.": "Itu tidak tersedia.",
   "That isn’t the right link. Ask your admin to send it again.": "Pautan ini tidak betul. Minta admin hantar semula.",
+  "That item already has a name.": "Barang itu sudah ada nama.",
   "That item has already been removed.": "Barang itu sudah dibuang.",
   "That item isn’t on the list any more.": "Barang ini sudah tiada dalam senarai.",
   "That leaves {n}.": "Baki {n}.",
+  "That one has already been answered.": "Yang itu sudah dijawab.",
   "That one is tracked by how much is left, not counted.": "Itu dipantau ikut baki, bukan dikira.",
   "That photo didn’t work. Try another one.": "Gambar itu tidak dapat digunakan. Cuba yang lain.",
   "That price doesn’t look right.": "Harga nampak tidak betul.",
@@ -3177,7 +3251,10 @@ L.ms = {
   "There are none here to take.": "Tiada barang di sini untuk diambil.",
   "There’s already a room called “{name}”.": "Sudah ada bilik bernama “{name}”.",
   "There’s no such room.": "Tiada bilik itu.",
+  "Thermometers and ice packs": "Termometer dan pek ais",
+  "These are things most centres have. Nothing is counted until you confirm it.": "Ini barang yang biasa ada di pusat. Tiada yang dikira sehingga anda sahkan.",
   "These stickers open:": "Pelekat ini membuka:",
+  "These were added by barcode. Type what each one is.": "Ini ditambah melalui kod bar. Taip nama setiap satu.",
   "This item can’t go back to counting. Add a new item instead.": "Barang ini tidak boleh kembali dikira. Tambah barang baru.",
   "This might already be on the list. Tap it instead.": "Mungkin sudah ada dalam senarai. Ketik yang itu.",
   "This one is counted by number. Use “Add more” or “Take some”.": "Ini dikira ikut bilangan. Guna “Tambah” atau “Ambil”.",
@@ -3185,7 +3262,10 @@ L.ms = {
   "This one is tracked by how much is left. Tap Plenty, Half left, Nearly out or Finished.": "Ini dipantau ikut baki. Ketik Banyak, Separuh, Hampir habis atau Habis.",
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
   "Time to count": "Masa mengira",
+  "Tissues and wipes": "Tisu dan tuala basah",
+  "To confirm ({n})": "Untuk disahkan ({n})",
   "To remove a wrong item, open it and tap “Edit item”.": "Untuk buang barang yang salah, buka dan ketik “Ubah barang”.",
+  "Toilet supplies": "Keperluan tandas",
   "Too many tries. Wait 10 minutes and try again.": "Terlalu banyak percubaan. Tunggu 10 minit, kemudian cuba lagi.",
   "Took {n}. {total} left.": "Diambil {n}. Baki {total}.",
   "Toys and play": "Mainan dan permainan",
@@ -3215,16 +3295,20 @@ L.ms = {
   "Undone.": "Sudah dibuat asal.",
   "Updated {when}": "Dikemas kini {when}",
   "Use a different sheet for the whole list": "Guna helaian lain untuk seluruh senarai",
+  "Use this": "Guna ini",
   "Use this for a mistake or a duplicate. It can’t be undone, but the activity log keeps a note.": "Guna untuk kesilapan atau pendua. Tidak boleh dibuat asal, tetapi log aktiviti menyimpan nota.",
   "Use this sheet": "Guna helaian ini",
   "Used stock": "Stok diambil",
   "Using:": "Kini:",
+  "Vehicles and figures": "Kenderaan dan patung",
   "Waiting": "Menunggu",
   "Warn me when fewer than": "Beritahu saya bila kurang daripada",
   "We already have {amount}.": "Kita sudah ada {amount}.",
   "We already have:": "Sudah ada:",
   "We couldn’t find this one online. Type its name once and the list will remember it.": "Tidak dijumpai dalam talian. Taip namanya sekali, senarai akan ingat.",
+  "We don’t have it": "Tiada",
   "We don’t have “{name}”.": "Kita tiada “{name}”.",
+  "We have it": "Ada",
   "We have it — add it to the list": "Kita ada — tambah ke senarai",
   "We have {n} like this:": "Ada {n} barang seperti ini:",
   "Welcome": "Selamat datang",
@@ -3243,11 +3327,14 @@ L.ms = {
   "Where will it go there?": "Di mana ia akan disimpan?",
   "Which centre are you at?": "Anda di pusat mana?",
   "Which centre?": "Pusat mana?",
+  "Which one?": "Yang mana satu?",
   "Which room are you counting?": "Bilik mana yang dikira?",
   "Which room?": "Bilik mana?",
+  "Whiteboard and chalk": "Papan putih dan kapur",
   "Whole numbers only.": "Nombor bulat sahaja.",
   "Why do you need it?": "Kenapa perlu?",
   "Why: {why}.": "Sebab: {why}.",
+  "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down. You’ll also find it in the sheet’s Setup tab, where you can change it and rename the centres.": "Tulis dan simpan. Ada juga di tab Setup, tempat anda boleh tukar dan namakan semula pusat.",
   "Yes, we have this:": "Ada:",
   "You can add up to 100 at a time.": "Boleh tambah sehingga 100 sekali gus.",
@@ -3257,6 +3344,7 @@ L.ms = {
   "Your centre": "Pusat anda",
   "Your data": "Data anda",
   "Your list is up to date.": "Senarai anda sudah terkini.",
+  "Your starter list is finished.": "Senarai permulaan anda selesai.",
   "about RM {price}": "kira-kira RM {price}",
   "all centres": "semua pusat",
   "at {centre} · {place}": "di {centre} · {place}",
@@ -3294,12 +3382,15 @@ L.ms = {
   "{centre} has {amount}": "{centre} ada {amount}",
   "{centre} keeps it in {place}. Leave empty to use {first}.": "{centre} menyimpannya di {place}. Biarkan kosong untuk guna {first}.",
   "{centre} will have {amount} left.": "{centre} akan ada {amount} tinggal.",
+  "{name} is on your starter list. Confirm it instead?": "{name} ada dalam senarai permulaan. Sahkan yang itu?",
   "{n} added": "{n} ditambah",
   "{n} changes are saved on this phone. They will send when you have signal.": "{n} perubahan disimpan dalam telefon. Ia akan dihantar bila ada isyarat.",
   "{n} days ago": "{n} hari lalu",
   "{n} items": "{n} barang",
+  "{n} need a name": "{n} perlu nama",
   "{n} of {total} checked": "{n} daripada {total} disemak",
   "{n} running low": "{n} tinggal sedikit",
+  "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting for you": "{n} menunggu keputusan",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
   "“How much is left” means nobody counts. Staff tap Plenty, Half left, Nearly out or Finished. You can’t change it back later.": "“Berapa yang tinggal” bermakna tiada kiraan. Staf ketik Banyak, Separuh, Hampir habis atau Habis. Tidak boleh ditukar semula.",
@@ -3345,6 +3436,7 @@ L.zh = {
   "Already saved.": "之前已保存。",
   "Already sent.": "之前已发送。",
   "Also send on WhatsApp": "也用 WhatsApp 发送",
+  "Antiseptic and creams": "消毒药水与药膏",
   "Any centre": "所有分园",
   "Anyone with this link can use the list. Share it only with staff.": "任何拿到链接的人都能使用清单，只发给员工。",
   "Approve": "批准",
@@ -3358,14 +3450,23 @@ L.zh = {
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
   "Asked to buy": "申请购买",
   "Back": "返回",
+  "Balloons and banners": "气球与横幅",
   "Barcode {code}": "条码 {code}",
+  "Baskets and bins": "篮子与垃圾桶",
   "Best match": "最相关",
+  "Board and card games": "棋牌游戏",
+  "Boards and notice boards": "展示板与布告栏",
+  "Books": "图书",
   "Bought": "已购买",
   "Broken or missing pieces": "损坏或缺零件",
   "Broken or missing pieces:": "损坏或缺零件：",
   "Browse by type": "按类别浏览",
+  "Brushes, mops and bins": "刷子、拖把与垃圾桶",
+  "Building blocks": "积木",
+  "Cables, chargers and batteries": "线材、充电器与电池",
   "Cancel": "取消",
   "Can’t reach the list.": "连不上清单。",
+  "Certificates and graduation": "证书与毕业用品",
   "Check again": "再看一次",
   "Check the spelling, or try another language.": "请检查拼写，或换一种语言试试。",
   "Check your internet and try again.": "请检查网络后再试。",
@@ -3383,13 +3484,20 @@ L.zh = {
   "Choose which centre it’s at.": "请选择在哪个分园。",
   "Choose which centre it’s for.": "请选择是给哪个分园。",
   "Choose which centre this room is in.": "请选择这个房间属于哪个分园。",
+  "Clay and dough": "黏土与面团",
+  "Cleaning liquids": "清洁液",
   "Clear": "清除",
   "Closest matches:": "最接近的：",
+  "Coloured paper and card": "彩纸与卡纸",
   "Colours": "颜色",
+  "Computers and tablets": "电脑与平板",
+  "Confirm it": "确认它",
+  "Confirmed {name}.": "已确认 {name}。",
   "Connect": "连接",
   "Connect to your list": "连接你的清单",
   "Continue": "继续",
   "Copy": "复制",
+  "Costumes and props": "服装与道具",
   "Could another centre share?": "能不能请别的分园分一些？",
   "Couldn’t look it up. Type the name.": "查不到，请输入名称。",
   "Couldn’t read that barcode. Try again, closer and flat.": "读不出这个条形码。请靠近并放平再试。",
@@ -3403,10 +3511,15 @@ L.zh = {
   "Counted in": "单位",
   "Counted in “books”, type “{type}” · change": "单位“本”，类别“{type}” · 修改",
   "Counted {when}": "{when} 盘点过",
+  "Counting and maths": "数数与数学",
   "Counting packs? Only take one when you open a new pack. No need to count sheets.": "按包计数？打开新的一包时才取一包，不用数张数。",
+  "Craft bits": "手工小材料",
+  "Crayons, pencils and markers": "蜡笔、铅笔与彩笔",
+  "Curtains and blinds": "窗帘与百叶窗",
   "Dark": "深色",
   "Decline": "拒绝",
   "Decline this request?": "拒绝这个申请？",
+  "Decorations and lanterns": "装饰与灯笼",
   "Details changed": "信息已修改",
   "Do we have it?": "我们有吗？",
   "Done": "完成",
@@ -3423,12 +3536,16 @@ L.zh = {
   "Everything else is right": "其余都没问题",
   "Everything is above its warning number.": "所有物品都够用。",
   "Everything there moves to the new name.": "那里所有物品会改用新名称。",
+  "Fans and lights": "风扇与灯",
   "Festival and event items": "节庆与活动用品",
+  "Files, folders and books": "文件夹与簿本",
   "Fill in every number": "请填好每个数字",
   "Find": "查找",
   "Finished": "用完了",
   "First aid": "急救用品",
+  "First-aid kits and tools": "急救包与工具",
   "Fix the lines in red.": "请修正标红的行。",
+  "Flash cards and posters": "识字卡和海报",
   "Flashlight": "手电筒",
   "Flashlight on": "手电筒已开",
   "For a delivery or a box. One line each: type the name, or type the barcode number and tap Look up.": "用于一批到货或一箱。每行一件：输入名称，或输入条码数字后点“查找”。",
@@ -3438,12 +3555,16 @@ L.zh = {
   "Furniture and fittings": "家具与设施",
   "Getting requests…": "正在获取申请…",
   "Getting your list…": "正在获取清单…",
+  "Gifts and prizes": "礼物与奖品",
+  "Gloves and masks": "手套与口罩",
+  "Glue, tape and staples": "胶水、胶带与订书钉",
   "Half left": "还剩一半",
   "How do you want to keep track of it?": "你想怎么记录？",
   "How is it kept track of?": "怎么记录？",
   "How many": "数量",
   "How many are you taking?": "取走多少？",
   "How many did you get?": "收到多少？",
+  "How many do you have?": "你有多少？",
   "How many {name} are here?": "这里有多少 {name}？",
   "How many, line": "数量，行",
   "How many?": "数量",
@@ -3462,6 +3583,7 @@ L.zh = {
   "Just how much is left": "只记录还剩多少",
   "Keep at least {n}": "至少保留 {n}",
   "Kept somewhere else too?": "别处也放了吗？",
+  "Labels, stickers and stamps": "标签、贴纸与印章",
   "Language": "语言",
   "Language, colours, text size": "语言、颜色、字体大小",
   "Large": "大",
@@ -3471,6 +3593,7 @@ L.zh = {
   "Least left first": "最少的在前",
   "Least: {level}": "最少：{level}",
   "Leave admin": "退出管理员",
+  "Letters and phonics": "字母与拼读",
   "Level set": "已设定数量",
   "Light": "浅色",
   "Link copied.": "链接已复制。",
@@ -3481,15 +3604,20 @@ L.zh = {
   "Look up": "查找",
   "Looked at recently": "最近看过",
   "Looking it up…": "查找中…",
+  "Looks like {type}.": "看起来像 {type}。",
   "Low": "不足",
   "Mark as bought": "标记为已购买",
   "Mark as bought?": "标记为已购买？",
+  "Mats and mattresses": "垫子与床垫",
   "Me": "我的",
   "More detail:": "详细信息：",
   "More details": "更多信息",
+  "Music and instruments": "音乐与乐器",
   "My centre": "我的分园",
   "Name": "名称",
+  "Name saved.": "名称已保存。",
   "Nearly out": "快没了",
+  "Needs a name": "待命名",
   "Needs fixing": "需要修理",
   "Needs the admin PIN": "需要管理员 PIN",
   "New item": "新物品",
@@ -3511,7 +3639,9 @@ L.zh = {
   "None yet.": "还没有。",
   "Normal": "标准",
   "Not approved": "未批准",
+  "Not confirmed · 0 in stock": "未确认 · 库存 0",
   "Not found online. Type the name.": "网上没找到，请输入名称。",
+  "Not sure": "不确定",
   "Not what you wanted?": "都不是？",
   "Note": "备注",
   "Note for whoever asked": "给申请人的留言",
@@ -3520,8 +3650,13 @@ L.zh = {
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
   "Nothing listed at this centre yet.": "这个分园还没有物品。",
+  "Nothing needs a name.": "没有待命名的。",
+  "Nothing new to offer.": "没有新的可提供。",
   "Nothing yet.": "暂时没有。",
   "Now using “{name}”. Use that sheet’s admin PIN.": "现在使用“{name}”，请用那张表的管理员 PIN。",
+  "Offer a centre the usual essentials to confirm": "给分园一份常见必备品清单来确认",
+  "Offer the list": "提供清单",
+  "On your starter list, not confirmed": "在起步清单里，尚未确认",
   "One less": "减一",
   "One more": "加一",
   "One per item": "每件物品一张",
@@ -3531,11 +3666,17 @@ L.zh = {
   "Only {n} here.": "这里只有 {n}。",
   "Open the Google Sheet": "打开 Google Sheet",
   "Open the link your admin sent you. If you only have the long code, paste it here.": "请打开管理员发来的链接。如果只有那串长代码，请粘贴在这里。",
+  "Other": "其他",
   "Other names": "其他名称",
+  "Outdoor and sports": "户外与运动",
+  "Paints and brushes": "颜料与画笔",
+  "Paper (A4, rolls)": "纸张（A4、卷纸）",
+  "Pens and pencils": "笔类",
   "Photo": "照片",
   "Pick “how much is left” for things used a bit at a time, like paper, glue or soap. Nobody has to count.": "纸张、胶水、肥皂这类一点点用的东西，选“还剩多少”，不用数。",
   "Pieces missing": "缺少零件",
   "Place, notes, photo": "位置、备注、照片",
+  "Plasters and bandages": "创可贴与绷带",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "申请为 {centre} 购买 {qty} {unit} {name}。",
   "Plenty": "还很多",
   "Point the camera at a barcode.": "请对准条形码。",
@@ -3545,8 +3686,11 @@ L.zh = {
   "Print 1 sticker": "打印 1 张贴纸",
   "Print them for items or shelves": "为物品或架子打印",
   "Print {n} stickers": "打印 {n} 张贴纸",
+  "Printer ink and toner": "打印机墨水与碳粉",
   "Printing and electronics": "打印与电子产品",
   "Problem reported": "已报告问题",
+  "Projectors and screens": "投影仪与屏幕",
+  "Puzzles": "拼图",
   "QR stickers": "二维码贴纸",
   "Read {code}…": "已读取 {code}…",
   "Reading the barcode…": "正在读取条形码…",
@@ -3571,6 +3715,7 @@ L.zh = {
   "Requests": "申请",
   "Retake": "重拍",
   "Review copy: this language isn’t signed off yet.": "审阅版本：这种语言尚未审核通过。",
+  "Role-play and dolls": "角色扮演与娃娃",
   "Room added": "已添加房间",
   "Room name": "房间名称",
   "Room removed": "已删除房间",
@@ -3582,9 +3727,12 @@ L.zh = {
   "Running low here": "这里快不够的",
   "Same as my phone": "跟随手机",
   "Same item, another place.": "同一物品，另一个位置。",
+  "Sand and water play": "玩沙玩水",
+  "Sanitiser and disinfectant": "消毒液",
   "Save": "保存",
   "Save ({n} changed)": "保存（改了 {n} 项）",
   "Save changes": "保存更改",
+  "Save the barcode, name it later": "先存条码，以后再命名",
   "Saved {n}. The lines below need fixing.": "已保存 {n} 项，下面几行需要修改。",
   "Saved, but the photo didn’t save.": "已保存，但照片没存上。",
   "Saved.": "已保存。",
@@ -3596,6 +3744,8 @@ L.zh = {
   "Scan an item": "扫描物品",
   "Scan barcodes": "扫条形码",
   "Scanning doesn’t work in this view. Use the normal page, or add items by typing.": "此处不支持扫描。请用正常页面，或手动输入添加。",
+  "Science and nature": "科学与自然",
+  "Scissors and cutting": "剪刀与裁剪",
   "Search again": "重新搜索",
   "Search first. If we don’t have it, you can ask to buy it.": "先搜索一下，没有的话可以申请购买。",
   "Search for an item": "搜索物品",
@@ -3620,18 +3770,25 @@ L.zh = {
   "Share this list on WhatsApp": "用 WhatsApp 分享这份清单",
   "Share {n} on WhatsApp": "用 WhatsApp 分享 {n} 项",
   "Sheet edit": "表格里的修改",
+  "Shelves and storage": "架子与收纳",
   "Show recent changes": "查看最近变动",
   "Showing the first 30. Type more to narrow it down.": "只显示前 30 项。多输入几个字可缩小范围。",
+  "Skip for now": "先跳过",
+  "Soap and hand wash": "肥皂与洗手液",
   "Some changes haven’t sent yet. Send them first, then switch.": "还有更改没发送。请先发送，再更换表格。",
   "Some of these are already listed in “{name}”. Move them first.": "其中一些在“{name}”已经有了，请先移走。",
   "Some pieces are missing": "缺了一些零件",
   "Something not on the list yet": "清单里还没有的东西",
   "Something went wrong. Try again.": "出了点问题，请再试一次。",
   "Something wrong with it?": "有问题吗？",
+  "Speakers and microphones": "音响与麦克风",
+  "Stage items and flags": "舞台用品与旗帜",
+  "Start from a list of the usual things": "从常见物品清单开始",
   "Start scanning": "开始扫描",
   "Stationery and paper": "文具与纸张",
   "Stick one on an item or shelf. Scan it with your phone camera to open it here.": "贴在物品或架子上，用手机相机一扫就能在这里打开。",
   "Switch Google Sheet": "更换 Google Sheet",
+  "Tables and chairs": "桌椅",
   "Take": "取用",
   "Take a photo": "拍照",
   "Take a photo of the barcode instead": "改为拍摄条形码照片",
@@ -3645,9 +3802,11 @@ L.zh = {
   "That isn’t a Google Sheets link. Open the sheet, copy the address from the top of the browser and paste it here.": "这不是 Google Sheets 的链接。请打开表格，复制浏览器顶部的地址再粘贴。",
   "That isn’t available.": "这个操作不可用。",
   "That isn’t the right link. Ask your admin to send it again.": "这个链接不对。请管理员重新发给你。",
+  "That item already has a name.": "这个物品已经有名称了。",
   "That item has already been removed.": "这个物品已经被删除了。",
   "That item isn’t on the list any more.": "这个物品已不在清单里。",
   "That leaves {n}.": "之后还剩 {n}。",
+  "That one has already been answered.": "这一项已经处理过了。",
   "That one is tracked by how much is left, not counted.": "那个按剩余量记录，不按数量。",
   "That photo didn’t work. Try another one.": "这张照片用不了，请换一张。",
   "That price doesn’t look right.": "价格看起来不对。",
@@ -3673,7 +3832,10 @@ L.zh = {
   "There are none here to take.": "这里已经没有可取的了。",
   "There’s already a room called “{name}”.": "已经有叫“{name}”的房间了。",
   "There’s no such room.": "没有这个房间。",
+  "Thermometers and ice packs": "体温计与冰袋",
+  "These are things most centres have. Nothing is counted until you confirm it.": "这些是大多数分园都有的东西。你确认之前不会计入数量。",
   "These stickers open:": "这些贴纸会打开：",
+  "These were added by barcode. Type what each one is.": "这些是扫码添加的，请输入各自的名称。",
   "This item can’t go back to counting. Add a new item instead.": "这个物品不能改回按数量记录，请新建一个。",
   "This might already be on the list. Tap it instead.": "清单里可能已有。请点那一项，不要重复添加。",
   "This one is counted by number. Use “Add more” or “Take some”.": "这个按数量计算，请用“增加”或“取用”。",
@@ -3681,7 +3843,10 @@ L.zh = {
   "This one is tracked by how much is left. Tap Plenty, Half left, Nearly out or Finished.": "这个按剩余量记录，请点“还很多／还剩一半／快没了／用完了”。",
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
   "Time to count": "该盘点了",
+  "Tissues and wipes": "纸巾与湿巾",
+  "To confirm ({n})": "待确认（{n}）",
   "To remove a wrong item, open it and tap “Edit item”.": "要删除输错的物品，请打开它并点“编辑物品”。",
+  "Toilet supplies": "厕所用品",
   "Too many tries. Wait 10 minutes and try again.": "试错次数太多。请等 10 分钟再试。",
   "Took {n}. {total} left.": "已取 {n}，还剩 {total}。",
   "Toys and play": "玩具与游戏",
@@ -3711,16 +3876,20 @@ L.zh = {
   "Undone.": "已撤销。",
   "Updated {when}": "{when} 更新",
   "Use a different sheet for the whole list": "整个清单改用另一张表",
+  "Use this": "用这个",
   "Use this for a mistake or a duplicate. It can’t be undone, but the activity log keeps a note.": "用于输入错误或重复的物品。无法撤销，但活动记录会留下一条说明。",
   "Use this sheet": "使用这张表",
   "Used stock": "取用",
   "Using:": "当前：",
+  "Vehicles and figures": "玩具车与人偶",
   "Waiting": "等待中",
   "Warn me when fewer than": "少于此数时提醒我",
   "We already have {amount}.": "我们已有 {amount}。",
   "We already have:": "已有：",
   "We couldn’t find this one online. Type its name once and the list will remember it.": "网上没找到这件物品。输入一次名称，清单会记住。",
+  "We don’t have it": "没有",
   "We don’t have “{name}”.": "我们没有“{name}”。",
+  "We have it": "有",
   "We have it — add it to the list": "我们有——添加到清单",
   "We have {n} like this:": "有 {n} 件类似的：",
   "Welcome": "欢迎",
@@ -3739,11 +3908,14 @@ L.zh = {
   "Where will it go there?": "放在哪里？",
   "Which centre are you at?": "你在哪个分园？",
   "Which centre?": "哪个分园？",
+  "Which one?": "具体是哪种？",
   "Which room are you counting?": "盘点哪个房间？",
   "Which room?": "哪个房间？",
+  "Whiteboard and chalk": "白板与粉笔",
   "Whole numbers only.": "只能填整数。",
   "Why do you need it?": "为什么需要？",
   "Why: {why}.": "原因：{why}。",
+  "Worksheets and activity books": "练习纸与活动书",
   "Write it down. You’ll also find it in the sheet’s Setup tab, where you can change it and rename the centres.": "请记下来。它也在该表的 Setup 页，可在那里修改，并改分园名称。",
   "Yes, we have this:": "有：",
   "You can add up to 100 at a time.": "一次最多添加 100 件。",
@@ -3753,6 +3925,7 @@ L.zh = {
   "Your centre": "你的分园",
   "Your data": "你的数据",
   "Your list is up to date.": "清单已是最新。",
+  "Your starter list is finished.": "起步清单已全部处理。",
   "about RM {price}": "约 RM {price}",
   "all centres": "所有分园",
   "at {centre} · {place}": "在 {centre} · {place}",
@@ -3790,12 +3963,15 @@ L.zh = {
   "{centre} has {amount}": "{centre} 有 {amount}",
   "{centre} keeps it in {place}. Leave empty to use {first}.": "{centre} 放在 {place}。留空则使用 {first}。",
   "{centre} will have {amount} left.": "{centre} 将剩下 {amount}。",
+  "{name} is on your starter list. Confirm it instead?": "{name} 在起步清单里。直接确认它吧？",
   "{n} added": "已加 {n}",
   "{n} changes are saved on this phone. They will send when you have signal.": "有 {n} 项更改存在这部手机里，有信号后会自动发送。",
   "{n} days ago": "{n} 天前",
   "{n} items": "{n} 件",
+  "{n} need a name": "{n} 件待命名",
   "{n} of {total} checked": "已核对 {n}/{total}",
   "{n} running low": "{n} 件快不够",
+  "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting for you": "{n} 个等你处理",
   "{n} waiting to send": "{n} 项待发送",
   "“How much is left” means nobody counts. Staff tap Plenty, Half left, Nearly out or Finished. You can’t change it back later.": "“还剩多少”不用数数，员工点“还很多／还剩一半／快没了／用完了”。设定后不能改回去。",
@@ -3841,7 +4017,7 @@ function shown(it) { var g = S.gmap[RMSearch.norm(it.name)]; return (g && g.dnam
 var S = {
   loaded: false, failed: false, offline: false, refreshing: false, flushing: false,
   base: [], items: [], byId: {}, groups: [], gmap: {},
-  centres: [], categories: [], rooms: [], org: '', syncedAt: 0, appUrl: '', fresh: false,
+  centres: [], categories: [], subtypes: {}, starter: [], skipped: {}, rooms: [], org: '', syncedAt: 0, appUrl: '', fresh: false,
   me: store.get('rm_me', null), outbox: store.get('rm_outbox', []),
   admin: null, pin: '', requests: null, history: {}, localPhoto: {},
   stack: [{ name: 'home' }], q: '', lowAll: false
@@ -3955,6 +4131,8 @@ function applyData(d) {
   S.base = d.items || [];
   S.centres = d.centres || [];
   S.categories = d.categories || [];
+  S.subtypes = d.subtypes || {};
+  S.starter = d.starter || [];
   S.rooms = d.rooms || [];
   S.org = d.org || '';
   S.appUrl = HOSTED ? location.origin + location.pathname : (d.appUrl || S.appUrl);
@@ -3963,7 +4141,7 @@ function applyData(d) {
   rebuild();
 }
 function saveData() {
-  store.set('rm_data', { items: S.base, centres: S.centres, categories: S.categories, rooms: S.rooms, org: S.org, appUrl: S.appUrl, now: S.syncedAt });
+  store.set('rm_data', { items: S.base, centres: S.centres, categories: S.categories, subtypes: S.subtypes, rooms: S.rooms, org: S.org, appUrl: S.appUrl, now: S.syncedAt });
 }
 function mergeItems(list) {
   (list || []).forEach(function (it) {
@@ -4025,7 +4203,7 @@ function rebuild() {
     g.lowest = Math.min.apply(null, g.rows.filter(isLevel).map(function (r) { return r.qty; }));
     g.photoRow = g.rows.filter(function (r) { return r.photo || S.localPhoto[r.id]; })[0] || g.rows[0];
     RMSearch.index(g, g.name + ' ' + g.alt,
-      g.cat + ' ' + g.rows.map(function (r) { return r.centre + ' ' + r.loc + ' ' + r.notes; }).join(' '));
+      g.cat + ' ' + g.rows.map(function (r) { return r.centre + ' ' + r.loc + ' ' + r.notes + ' ' + (r.barcode || ''); }).join(' '));
     return g;
   }).sort(function (a, b) { return a.name.localeCompare(b.name); });
   S.items = items;
@@ -4150,7 +4328,7 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vCount,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels, bulk: vBulk,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vNeedName, starter: vStarter };
   app.innerHTML = (views[v.name] || vHome)(v);
   drawChrome(v);
   if (v.name === 'home' && window.matchMedia && matchMedia('(pointer:fine)').matches && byIdEl('q')) byIdEl('q').focus();
@@ -4167,7 +4345,7 @@ function drawChrome(v) {
   var nav = byIdEl('nav');
   nav.hidden = v.name === 'pick';
   var tab = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'count',
-    countList: 'count', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'more', room: 'more', adminRooms: 'more', scanBooks: 'add' }[v.name];
+    countList: 'count', needName: 'home', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'more', room: 'more', adminRooms: 'more', scanBooks: 'add' }[v.name];
   var lows = S.items.filter(function (it) { return it.centre === myCentre() && low(it); }).length;
   var ICON = {
     home: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>',
@@ -4252,6 +4430,61 @@ function lowStripHtml() {
   }).join('') + '</div>' +
     (lows.length > 3 ? '<button class="btn quiet" data-act="nav" data-to="low">' + tl('See all') + ' ' + lows.length + '</button>' : '');
 }
+function starterMine() {
+  return (S.starter || []).filter(function (s) { return s.centre === myCentre() && !S.skipped[s.id]; });
+}
+function starterGroups() {
+  return starterMine().map(function (s) {
+    var g = { key: 'st:' + s.id, name: s.name, rows: [], cat: s.cat, st: s };
+    RMSearch.index(g, s.name + ' ' + s.alt, s.cat);
+    return g;
+  });
+}
+// things from the starter list that match a search: shown apart, marked, and never counted
+function starterHits(q) {
+  var gs = starterGroups();
+  if (!gs.length || !q.trim()) return '';
+  var r = RMSearch.search(gs, q).strong.slice(0, 5);
+  if (!r.length) return '';
+  return '<h2 class="sec">' + tl('On your starter list, not confirmed') + '</h2><div class="list">' + r.map(function (g) {
+    return '<button class="card item starter" data-act="starterOpen" data-id="' + esc(g.st.id) + '">' + tile(null, g.st.cat) +
+      '<span class="body"><span class="name">' + esc(g.st.name) + '</span><span class="line"><span class="badge plain">' + tl('Not confirmed · 0 in stock') + '</span></span></span></button>';
+  }).join('') + '</div>';
+}
+function starterWarn(text) {
+  var gs = starterGroups();
+  if (!gs.length || !text.trim()) return '';
+  var r = RMSearch.search(gs, text).strong[0];
+  return r ? '<div class="similar">' + esc(tl('{name} is on your starter list. Confirm it instead?', { name: r.st.name })) +
+    ' <button type="button" class="chip" data-act="starterOpen" data-id="' + esc(r.st.id) + '">' + tl('Confirm it') + '</button></div>' : '';
+}
+function starterStrip() {
+  var n = starterMine().length;
+  return n ? '<button class="btn" data-act="go" data-to="starter" style="margin-top:var(--s4)">' + esc(tl('To confirm ({n})', { n: n })) + '</button>' : '';
+}
+function vStarter() {
+  var list = starterMine();
+  return top(true) + '<h1 class="title">' + esc(tl('To confirm ({n})', { n: list.length })) + '</h1><p class="sub">' + tl('These are things most centres have. Nothing is counted until you confirm it.') + '</p>' +
+    (list.length ? '<div class="rows">' + list.map(function (s) {
+      return '<div class="brow"><p class="name">' + esc(tl(s.name)) + '</p><p class="line">' + esc(s.alt) + '</p><span class="badge plain">' + tl('Not confirmed · 0 in stock') + '</span>' +
+        '<div class="two" style="margin-top:var(--s2)"><button class="btn primary" data-act="starterOpen" data-id="' + esc(s.id) + '">' + tl('We have it') + '</button>' +
+        '<button class="btn" data-act="starterNo" data-id="' + esc(s.id) + '">' + tl('We don’t have it') + '</button></div>' +
+        '<button class="btn quiet" data-act="starterSkip" data-id="' + esc(s.id) + '">' + tl('Skip for now') + '</button></div>';
+    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Your starter list is finished.') + '</h2></div>');
+}
+function needNameStrip() {
+  var n = needNameItems().length;
+  return n ? '<button class="btn" data-act="go" data-to="needName" style="margin-top:var(--s4)">' + esc(tl('{n} need a name', { n: n })) + '</button>' : '';
+}
+function vNeedName() {
+  var list = needNameItems();
+  return top(true) + '<h1 class="title">' + tl('Needs a name') + '</h1><p class="sub">' + tl('These were added by barcode. Type what each one is.') + '</p>' +
+    (list.length ? '<div class="rows">' + list.map(function (it) {
+      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
+        '<input id="nn-' + esc(it.id) + '" class="inp" maxlength="80" autocomplete="off" aria-label="' + esc(tl('Name')) + '">' +
+        '<button class="btn primary" data-act="nameGo" data-id="' + esc(it.id) + '">' + tl('Save') + '</button></div>';
+    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing needs a name.') + '</h2></div>');
+}
 function vHome(v) {
   return top(false) +
     '<h1 class="hero">' + tl('Do we have it?') + '</h1>' +
@@ -4272,16 +4505,23 @@ function resultsHtml(v) {
     var all = S.groups.filter(function (g) { return g.cat === v.cat; });
     var lowN = all.filter(function (g) { return g.rows.some(low); }).length;
     var inCat = v.lowOnly ? all.filter(function (g) { return g.rows.some(low); }) : all;
+    var usedSubs = {};
+    all.forEach(function (g) { g.rows.forEach(function (r) { if (r.subtype) usedSubs[r.subtype] = 1; }); });
+    var subRow = ((S.subtypes || {})[v.cat] || []).filter(function (x) { return usedSubs[x]; });
+    if (v.sub) inCat = inCat.filter(function (g) { return g.rows.some(function (r) { return r.subtype === v.sub; }); });
     return '<button class="pillx" data-act="clearCat">' + esc(tl(v.cat)) + ' ' + ICON.x + '</button>' +
       '<div class="seg" data-group="catFilter"><button class="chip' + (v.lowOnly ? '' : ' on') + '" data-act="catFilter" data-val="">' + tl('All ({n})', { n: all.length }) + '</button>' +
       '<button class="chip' + (v.lowOnly ? ' on' : '') + '" data-act="catFilter" data-val="1">' + tl('Running low ({n})', { n: lowN }) + '</button></div>' +
+      (subRow.length ? '<div class="seg" data-group="subFilter">' + subRow.map(function (x) {
+        return '<button class="chip' + (v.sub === x ? ' on' : '') + '" data-act="subFilter" data-val="' + esc(x) + '">' + esc(tl(x)) + '</button>';
+      }).join('') + '</div>' : '') +
       (inCat.length ? '<div class="list">' + inCat.map(card).join('') + '</div>'
         : '<div class="card empty"><h2>' + tl('Nothing here is running low.') + '</h2></div>');
   }
   if (!q) {
     var counts = {};
     S.groups.forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
-    return lowStripHtml() + recentHtml() +
+    return needNameStrip() + starterStrip() + lowStripHtml() + recentHtml() +
       '<h2 class="sec">' + tl('Browse by type') + '</h2><div class="cats">' +
       S.categories.filter(function (c) { return counts[c]; }).map(function (c) {
         return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span class="lbl2">' + esc(tl(c)) + '</span><small>' + counts[c] + '</small></button>';
@@ -4289,9 +4529,9 @@ function resultsHtml(v) {
       '<button class="btn" data-act="addNew" style="margin-top:var(--s5)">' + tl('Add an item') + '</button>' +
       '<button class="btn quiet" data-act="go" data-to="scanBooks">' + tl('Adding books? Scan the barcodes') + '</button>';
   }
-  var r = RMSearch.search(S.groups, RMIsbn.clean(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
+  var r = RMSearch.search(S.groups, anyBarcode(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
   if (!r.strong.length) {
-    return '<div class="card empty" style="margin-top:14px"><h2>' + esc(tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
+    return starterHits(q) + '<div class="card empty" style="margin-top:14px"><h2>' + esc(tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
       '<p>' + tl('Check the spelling, or try another language.') + '</p>' +
       '<button class="btn primary" data-act="toRequest">' + tl('Ask to buy it') + '</button>' +
       '<button class="btn quiet" data-act="toAdd">' + tl('We have it — add it to the list') + '</button></div>' +
@@ -4315,7 +4555,7 @@ function resultsHtml(v) {
     : '';
   return '<p class="count">' + (r.strong.length === 1 ? tl('Yes, we have this:') : tl('We have {n} like this:', { n: r.strong.length })) + '</p>' + ctl +
     (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + esc(tl('None at {centre}.', { centre: S.qCentre })) + '</h2></div>') +
-    (found.length > shown.length ? '<p class="hint">' + tl('Showing the first 30. Type more to narrow it down.') + '</p>' : '') +
+    (found.length > shown.length ? '<p class="hint">' + tl('Showing the first 30. Type more to narrow it down.') + '</p>' : '') + starterHits(q) +
     '<div class="after"><p>' + tl('Not what you wanted?') + '</p>' +
     '<button class="btn" data-act="toRequest">' + tl('Ask to buy it') + '</button>' +
     '<button class="btn quiet" data-act="toAdd">' + tl('We have it — add it to the list') + '</button></div>';
@@ -4499,6 +4739,48 @@ function openProblem() {
 }
 
 // ----- Add something we already have -----
+function typeInner() {
+  var tiles = '<div class="tgrid">' + S.categories.map(function (c) {
+    return '<button type="button" class="tgt' + (F.cat === c ? ' on' : '') + '" data-act="catPick" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span>' + esc(tl(c)) + '</span></button>';
+  }).join('') + '</div>';
+  var list = (S.subtypes || {})[F.cat] || [];
+  var subs = F.cat && list.length ? '<label class="lab">' + tl('Which one?') + '</label><div class="chips" data-group="sub">' + list.map(function (v) {
+    return '<button type="button" class="chip' + (F.sub === v ? ' on' : '') + '" data-act="subPick" data-val="' + esc(v) + '">' + esc(tl(v)) + '</button>';
+  }).join('') + '<button type="button" class="chip" data-act="subPick" data-val="">' + tl('Not sure') + '</button></div>' : '';
+  return tiles + subs;
+}
+function typePicker() { return '<div id="f-type">' + typeInner() + '</div><div id="f-suggest"></div>'; }
+// words that point at a type, in the three languages; the things already on the list are asked first
+var TYPE_WORDS = [
+  [/scissor|gunting|剪刀/i, 'Art and craft', 'Scissors and cutting'], [/crayon|krayon|pensel|pencil|marker|蜡笔|铅笔|彩笔/i, 'Art and craft', 'Crayons, pencils and markers'],
+  [/glue|\bgam\b|selotep|tape|stapl|胶水|胶带/i, 'Art and craft', 'Glue, tape and staples'], [/paint|brush|berus|颜料|画笔/i, 'Art and craft', 'Paints and brushes'],
+  [/clay|plastisin|dough|\bdoh\b|黏土|橡皮泥/i, 'Art and craft', 'Clay and dough'], [/puzzle|拼图/i, 'Toys and play', 'Puzzles'],
+  [/\bblock|\bblok|积木|lego/i, 'Toys and play', 'Building blocks'], [/\bbook|\bbuku|图书/i, 'Learning materials', 'Books'],
+  [/flash ?card|kad imbasan|识字卡|poster|海报/i, 'Learning materials', 'Flash cards and posters'], [/soap|sabun|肥皂|洗手液|sanitis|sanitiz/i, 'Hygiene and cleaning', 'Soap and hand wash'],
+  [/tissue|tisu|纸巾|wipe/i, 'Hygiene and cleaning', 'Tissues and wipes'], [/plaster|bandage|pembalut|创可贴|绷带/i, 'First aid', 'Plasters and bandages'],
+  [/thermometer|termometer|体温计|ice pack/i, 'First aid', 'Thermometers and ice packs'], [/\ba4\b|paper|kertas|纸/i, 'Stationery and paper', 'Paper (A4, rolls)'],
+  [/whiteboard|chalk|kapur|白板|粉笔/i, 'Stationery and paper', 'Whiteboard and chalk'], [/\bink\b|toner|dakwat|墨/i, 'Printing and electronics', 'Printer ink and toner'],
+  [/chair|kerusi|\btable|meja|桌|椅/i, 'Furniture and fittings', 'Tables and chairs'], [/balloon|belon|气球/i, 'Festival and event items', 'Balloons and banners'],
+  [/lantern|tanglung|灯笼/i, 'Festival and event items', 'Decorations and lanterns']
+];
+function guessType(name) {
+  var r = RMSearch.search(S.groups, name), g = r.strong[0];
+  if (g && g.cat) return { cat: g.cat, sub: (g.rows.filter(function (x) { return x.subtype; })[0] || {}).subtype || '' };
+  for (var i = 0; i < TYPE_WORDS.length; i++) {
+    if (TYPE_WORDS[i][0].test(name) && S.categories.indexOf(TYPE_WORDS[i][1]) >= 0) {
+      var ok = ((S.subtypes || {})[TYPE_WORDS[i][1]] || []).indexOf(TYPE_WORDS[i][2]) >= 0;
+      return { cat: TYPE_WORDS[i][1], sub: ok ? TYPE_WORDS[i][2] : '' };
+    }
+  }
+  return null;
+}
+function suggestType(name) {
+  var box = byIdEl('f-suggest');
+  if (!box) return;
+  var gt = !F.cat && name.length >= 3 ? guessType(name) : null;
+  box.innerHTML = gt ? '<div class="similar"><span>' + esc(tl('Looks like {type}.', { type: tl(gt.cat) + (gt.sub ? ' › ' + tl(gt.sub) : '') })) + '</span> ' +
+    '<button type="button" class="chip" data-act="suggestYes" data-cat="' + esc(gt.cat) + '" data-sub="' + esc(gt.sub) + '">' + tl('Use this') + '</button></div>' : '';
+}
 function chips(group, list, selected, label) {
   return '<div class="chips" data-group="' + group + '">' + list.map(function (v, i) {
     return '<button type="button" class="chip' + (v === selected ? ' on' : '') + '" data-act="chip" data-val="' + esc(v) + '">' + esc(label ? label(v, i) : v) + '</button>';
@@ -4529,12 +4811,13 @@ function photoField() {
 }
 function vAdd(v) {
   var g = v.key ? S.gmap[v.key] : null;
-  F = { centre: myCentre(), cat: g ? g.cat : '', photo: '', tracking: 'count', level: 'Plenty', fixedLevel: !!(g && isLevel(g.rows[0])) };
+  F = { centre: myCentre(), cat: g ? g.cat : '', sub: g ? ((g.rows.filter(function (x) { return x.subtype; })[0] || {}).subtype || '') : '', photo: '', tracking: 'count', level: 'Plenty', fixedLevel: !!(g && isLevel(g.rows[0])) };
   return top(true) + '<h1 class="title">' + (g ? tl('Kept somewhere else too?') : tl('Add an item')) + '</h1>' +
     '<p class="sub">' + (g ? tl('Same item, another place.') : tl('Only the first three questions are needed.')) + '</p>' +
     '<label class="lab" for="f-name">' + tl('What is it?') + '</label>' +
     '<input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(g ? g.name : v.text || '') + '"' + (g ? ' readonly' : '') + '>' +
     '<div id="similar">' + (g ? '' : similarHtml(v.text || '')) + '</div>' +
+    (g ? '' : '<label class="lab">' + tl('What type is it?') + '</label>' + typePicker()) +
     (g ? '' : '<label class="lab">' + tl('How do you want to keep track of it?') + '</label>' + chips('tracking', ['count', 'level'], F.tracking, TRACK_LABEL) +
       '<p class="help">' + tl('Pick “how much is left” for things used a bit at a time, like paper, glue or soap. Nobody has to count.') + '</p>') +
     '<div id="f-count"' + (levelOn() ? ' hidden' : '') + '><div class="qtyunit"><div><label class="lab" for="f-qty">' + tl('How many?') + '</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
@@ -4548,8 +4831,7 @@ function vAdd(v) {
     '<details><summary>' + tl('More details') + '</summary>' +
     (g ? '' : '<label class="lab" for="f-alt">' + tl('Other names') + '</label>' +
       '<input id="f-alt" class="inp" maxlength="200" autocomplete="off" placeholder="' + tl('e.g. kertas A4, 复印纸') + '">' +
-      '<p class="help">' + tl('Add the BM and Chinese names so everyone can find it.') + '</p>' +
-      '<label class="lab">' + tl('What type is it?') + '</label>' + chips('cat', S.categories, F.cat, CAT_LABEL)) +
+      '<p class="help">' + tl('Add the BM and Chinese names so everyone can find it.') + '</p>') +
     '<div id="f-minbox"' + (levelOn() ? ' hidden' : '') + '><label class="lab" for="f-min">' + tl('Warn me when fewer than') + '</label>' +
     '<input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="0">' +
     '<p class="help">' + tl('We’ll tell you when there are fewer than this. Leave empty if it doesn’t run out.') + '</p></div>' +
@@ -4563,6 +4845,7 @@ function similarHtml(text) {
   if (!r.length) return '';
   return '<div class="similar">' + tl('This might already be on the list. Tap it instead.') + '<div class="list">' + r.map(card).join('') + '</div></div>';
 }
+function similarAll(text) { return similarHtml(text) + starterWarn(text); }
 
 // ----- Ask to buy -----
 function vRequest(v) {
@@ -4597,11 +4880,11 @@ function vRequest(v) {
 function vEdit(v) {
   var it = S.byId[v.id];
   if (!it) return top(true) + '<div class="card empty"><h2>' + tl('That item isn’t on the list any more.') + '</h2></div>';
-  F = { centre: it.centre, cat: it.cat, photo: '', tracking: 'count' };
+  F = { centre: it.centre, cat: it.cat, sub: it.subtype || '', photo: '', tracking: 'count' };
   var admin = S.admin ?
     '<label class="lab" for="f-name">' + tl('Name') + '</label><input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(it.name) + '">' +
     '<label class="lab" for="f-alt">' + tl('Other names') + '</label><input id="f-alt" class="inp" maxlength="200" autocomplete="off" value="' + esc(it.alt) + '">' +
-    '<label class="lab">' + tl('What type is it?') + '</label>' + chips('cat', S.categories, F.cat, CAT_LABEL) +
+    '<label class="lab">' + tl('What type is it?') + '</label>' + typePicker() +
     '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
     (isLevel(it) ? '' : '<label class="lab">' + tl('How is it kept track of?') + '</label>' + chips('tracking', ['count', 'level'], F.tracking, TRACK_LABEL) +
       '<p class="help">' + tl('“How much is left” means nobody counts. Staff tap Plenty, Half left, Nearly out or Finished. You can’t change it back later.') + '</p>') +
@@ -4898,6 +5181,7 @@ function vAdmin() {
     '</div>' +
     '<h2 class="sec">' + tl('Set up') + '</h2><div class="card rows">' +
       row('addNew', '', tl('Add an item'), tl('Something not on the list yet')) +
+      row('starterAdmin', '', tl('Start from a list of the usual things'), tl('Offer a centre the usual essentials to confirm')) +
       row('go', 'adminRooms', tl('Rooms'), tl('Add, rename or remove rooms')) +
       row('go', 'labels', tl('QR stickers'), tl('Print them for items or shelves')) +
       row('go', 'bulk', tl('Add a batch'), tl('A delivery or a box')) +
@@ -4945,7 +5229,8 @@ function scanListHtml() {
     if (st === 'needTitle') {
       return '<div class="brow"><p class="name">' + esc(e.isbn) + '</p><p class="line">' + esc(e.centre) + ' · ' + esc(e.loc) + '</p><p class="help">' + tl('We couldn’t find this one online. Type its name once and the list will remember it.') + '</p>' +
         '<input id="sc-t-' + i + '" class="inp" maxlength="80" autocomplete="off" aria-label="Title for ISBN ' + esc(e.isbn) + '">' +
-        '<button class="btn primary" data-act="scanTitle" data-i="' + i + '">' + tl('Save') + '</button></div>';
+        '<button class="btn primary" data-act="scanTitle" data-i="' + i + '">' + tl('Save') + '</button>' +
+        '<button class="btn quiet" data-act="scanLater" data-i="' + i + '">' + tl('Save the barcode, name it later') + '</button></div>';
     }
     return '<div class="cline">' + head + (st === 'saved' ? '<span class="badge ok">' + (e.n === 1 ? tl('1 added') : tl('{n} added', { n: e.n })) + '</span>'
       : st === 'error' ? '<button class="chip" data-act="scanRetry" data-i="' + i + '">' + tl('Try again') + '</button>'
@@ -4987,7 +5272,7 @@ function scanBook(isbn, ctx) {
   var key = ctx.centre + '|' + ctx.loc.toLowerCase() + '|' + isbn;
   var e = SC.scans.filter(function (x) { return x.key === key; })[0];
   if (!e) {
-    e = { key: key, isbn: isbn, centre: ctx.centre, loc: ctx.loc, cat: ctx.cat, title: '', n: 0, want: 0, inflight: 0, err: '', needTitle: false };
+    e = { key: key, isbn: isbn, centre: ctx.centre, loc: ctx.loc, cat: isBookCode(isbn) ? ctx.cat : '', unit: isBookCode(isbn) ? 'books' : 'pcs', title: '', n: 0, want: 0, inflight: 0, err: '', needTitle: false };
     SC.scans.unshift(e);
   }
   e.want++;
@@ -5010,7 +5295,7 @@ function scanSave(e) {
   e.inflight += q; e.err = '';
   drawScanList();
   SC.queue = SC.queue.then(function () {
-    return call('addMany', { centre: e.centre, location: e.loc, unit: 'books', cat: e.cat, rows: [{ name: e.title, isbn: e.isbn, qty: q }], actionId: uid() });
+    return call('addMany', { centre: e.centre, location: e.loc, unit: e.unit || 'books', cat: e.cat, rows: [{ name: e.title, barcode: e.isbn, qty: q }], actionId: uid() });
   }).then(function (res) {
     e.inflight -= q;
     if (res.problems && res.problems.length) { e.want -= q; e.err = res.problems[0].error; }
@@ -5040,7 +5325,7 @@ function camTick() {
   c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
   SC.detector.detect(c).then(function (codes) {
     var isbn = '';
-    (codes || []).forEach(function (code) { var x = RMIsbn.clean(code.rawValue); if (x && !isbn) isbn = x; });
+    (codes || []).forEach(function (code) { var x = anyBarcode(code.rawValue); if (x && !isbn) isbn = x; });
     var now = Date.now();
     if (isbn) {
       var fresh = isbn !== SC.lastIsbn || now - SC.lastSeen > 1500;   // the same code staying in view is one copy; take it away and show it again for the next
@@ -5109,9 +5394,21 @@ function vBulk() {   // (typing the lines by hand; scanning is on its own screen
     '<p class="err" id="f-err" hidden></p>' +
     '<div class="formend"><button class="btn primary" id="f-go" data-act="bulkGo">' + tl('Add to the list') + '</button></div>';
 }
-function listHasIsbn(isbn) {
-  return S.items.filter(function (it) { return String(it.alt || '').indexOf('ISBN ' + isbn) >= 0; })[0] || null;
+// any product barcode: a book comes back as its 13-digit ISBN; EAN-13, UPC-A and EAN-8 need a right check digit
+function anyBarcode(raw) {
+  var b = RMIsbn.clean(raw);
+  if (b) return b;
+  var d = String(raw == null ? '' : raw).replace(/[\s-]/g, '');
+  if (!d) return '';                                   // nothing typed
+  if (!/^(\d{8}|\d{12}|\d{13})$/.test(d) || /^97[89]/.test(d)) return null;
+  var s = d.slice(0, -1).split('').reverse().reduce(function (a, c, i) { return a + Number(c) * (i % 2 ? 1 : 3); }, 0);
+  return (10 - s % 10) % 10 === Number(d.slice(-1)) ? d : null;   // null = typed, but it does not add up
 }
+function listHasIsbn(code) {
+  return S.items.filter(function (it) { return it.barcode === code || String(it.alt || '').indexOf('ISBN ' + code) >= 0; })[0] || null;
+}
+function isBookCode(code) { return /^97[89]/.test(code); }
+function needNameItems() { return S.items.filter(function (it) { return /^Barcode [A-Z0-9]{4,20}$/.test(it.name); }); }
 // Title from Open Library (free). If it is not reachable or does not know the book, the person types the title.
 // Three free catalogues are asked at once: Open Library, Google Books, and openBD (Japanese books, which the other two often lack).
 // The first of them, in that order, that knows the book wins. Resolves {title}, {missing} (all answered, none knew it) or {error} (none could be reached).
@@ -5131,6 +5428,11 @@ function lookupTitle(isbn) {
       var b = j && j[0] && j[0].summary;
       return b && b.title ? String(b.title) + (b.volume ? ' ' + b.volume : '') : '';
     }]);
+  }
+  if (!/^97[89]/.test(isbn)) {
+    var prod = function (j) { return j && j.status === 1 && j.product && j.product.product_name ? String(j.product.product_name) : ''; };
+    asks = [['https://world.openfoodfacts.org/api/v2/product/' + isbn + '.json?fields=product_name', prod],
+            ['https://world.openproductsfacts.org/api/v2/product/' + isbn + '.json?fields=product_name', prod]];
   }
   return new Promise(function (resolve) {
     var done = false, got = [], answered = 0, reached = 0;
@@ -5271,6 +5573,15 @@ var ACT = {
 
   clearQ: function () { S.q = ''; byIdEl('q').value = ''; drawResults(); byIdEl('q').focus(); },
   cat: function (el) { go({ name: 'home', cat: el.dataset.val }); },
+  catPick: function (el) {
+    var v = el.dataset.val;
+    F.cat = F.cat === v ? '' : v; F.sub = '';
+    byIdEl('f-type').innerHTML = typeInner();
+    suggestType('');
+  },
+  subPick: function (el) { F.sub = F.sub === el.dataset.val ? '' : el.dataset.val; byIdEl('f-type').innerHTML = typeInner(); },
+  suggestYes: function (el) { F.cat = el.dataset.cat; F.sub = el.dataset.sub || ''; byIdEl('f-type').innerHTML = typeInner(); suggestType(''); },
+  subFilter: function (el) { var v = cur(); v.sub = v.sub === el.dataset.val ? '' : el.dataset.val; drawResults(); },
   clearCat: function () { back(); },
   catFilter: function (el) { cur().lowOnly = !!el.dataset.val; drawResults(); },
   open: function (el) { rememberOpened(el.dataset.key); go({ name: 'item', key: el.dataset.key, id: el.dataset.id || '' }); },
@@ -5349,7 +5660,7 @@ var ACT = {
   rowDel: function (el) { F.rows.splice(Number(el.dataset.i), 1); drawRows(); },
   isbnLook: function (el) {
     var i = Number(el.dataset.i), row = F.rows[i];
-    var isbn = RMIsbn.clean(row.isbn);
+    var isbn = anyBarcode(row.isbn);
     if (isbn === '') return setRowMsg(i, tl('Type the barcode first.'));
     if (isbn === null) return setRowMsg(i, tl('That barcode looks wrong. Check the digits.'));
     var known = listHasIsbn(isbn);
@@ -5359,7 +5670,7 @@ var ACT = {
     }
     setRowMsg(i, tl('Looking it up…'));
     lookupTitle(isbn).then(function (res) {
-      if (!F.rows[i] || RMIsbn.clean(F.rows[i].isbn) !== isbn) return;   // the line changed meanwhile
+      if (!F.rows[i] || anyBarcode(F.rows[i].isbn) !== isbn) return;   // the line changed meanwhile
       if (res.title) {
         if (!F.rows[i].name.trim()) setRowName(i, res.title.slice(0, 80));
         setRowMsg(i, tl('Found: {name}', { name: res.title }));
@@ -5375,7 +5686,7 @@ var ACT = {
       : Promise.reject(new Error('no camera'));
     Promise.all([asking, loadReader()]).then(function (a) {
       SC.stream = a[0];
-      SC.detector = new a[1]({ formats: ['ean_13'] });
+      SC.detector = new a[1]({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
       var v = byIdEl('cam-v');
       v.srcObject = SC.stream;
       var p = v.play(); if (p && p.catch) p.catch(function () { /* autoplay is allowed for a muted video */ });
@@ -5421,6 +5732,73 @@ var ACT = {
     e.title = t.slice(0, 80); e.needTitle = false;
     scanSave(e);
   },
+  starterOpen: function (el) {
+    var s = (S.starter || []).filter(function (x) { return x.id === el.dataset.id; })[0];
+    if (!s) return;
+    M = { type: 'starter', id: s.id };
+    openSheet('<h2>' + esc(s.name) + '</h2><p class="sub">' + tl('Not confirmed · 0 in stock') + '</p>' +
+      '<label class="lab">' + tl('How many do you have?') + '</label>' + stepper('st-n', 1, 0, 99999, tl('How many?')) +
+      '<label class="lab" for="st-loc">' + tl('Where is it kept?') + '</label>' +
+      '<input id="st-loc" class="inp" maxlength="60" autocomplete="off" placeholder="' + esc(tl('e.g. Store room, top shelf')) + '">' + locChips(s.centre) +
+      '<p class="err" id="m-err" hidden></p>' +
+      '<button class="btn primary" id="m-go" data-act="starterYes">' + tl('We have it') + '</button>' +
+      '<button class="btn" data-act="starterNo" data-id="' + esc(s.id) + '">' + tl('We don’t have it') + '</button>' +
+      '<button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'st-loc');
+  },
+  starterYes: function () {
+    var s = (S.starter || []).filter(function (x) { return x.id === M.id; })[0], qty = parseQty(val('st-n')), loc = val('st-loc'), err = byIdEl('m-err');
+    var bad = function (m) { err.textContent = m; err.hidden = false; };
+    if (!s) return;
+    if (isNaN(qty)) return bad(tl('Type a number.'));
+    if (!loc) return bad(tl('Type where it’s kept.'));
+    busy(true, tl('Saving…'));
+    call('starterConfirm', { id: s.id, qty: qty, location: loc, actionId: uid() }).then(function (res) {
+      busy(false); S.starter = res.starter || []; mergeItems(res.items); saveData(); rebuild(); closeSheet(); softRender();
+      toast(tl('Confirmed {name}.', { name: s.name }));
+    }).catch(function (e) { busy(false); bad(e.network ? tl('No signal. Try again.') : e.message); });
+  },
+  starterNo: function (el) {
+    var id = el.dataset.id;
+    busy(true, tl('Saving…'));
+    call('starterDecline', { id: id }).then(function (res) {
+      busy(false); S.starter = res.starter || []; saveData(); closeSheet(); softRender();
+    }).catch(function (e) { busy(false); toast(e.network ? tl('No signal. Try again.') : e.message); });
+  },
+  starterSkip: function (el) { S.skipped[el.dataset.id] = 1; render(); },
+  starterAdmin: function () {
+    M = { type: 'starterAdmin', centre: myCentre() };
+    openSheet('<h2>' + tl('Start from a list of the usual things') + '</h2><p class="sub">' + tl('These are things most centres have. Nothing is counted until you confirm it.') + '</p>' +
+      '<label class="lab">' + tl('Which centre?') + '</label><div class="chips" data-group="stc">' + S.centres.map(function (c) {
+        return '<button type="button" class="chip' + (c === M.centre ? ' on' : '') + '" data-act="starterCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
+      }).join('') + '</div><p class="err" id="m-err" hidden></p>' +
+      '<button class="btn primary" id="m-go" data-act="starterGo">' + tl('Offer the list') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
+  },
+  starterCentre: function (el) {
+    M.centre = el.dataset.val;
+    Array.prototype.forEach.call(document.querySelectorAll('#sheet [data-act=starterCentre]'), function (c) { c.classList.toggle('on', c === el); });
+  },
+  starterGo: function () {
+    busy(true, tl('Saving…'));
+    call('starterStart', { pin: S.pin, centre: M.centre }).then(function (res) {
+      busy(false); S.starter = res.starter || []; saveData(); closeSheet(); softRender();
+      toast(res.offered ? tl('{n} things offered to confirm.', { n: res.offered }) : tl('Nothing new to offer.'));
+    }).catch(function (e) { busy(false); var er = byIdEl('m-err'); if (er) { er.textContent = e.network ? tl('No signal. Try again.') : e.message; er.hidden = false; } });
+  },
+  nameGo: function (el) {
+    var id = el.dataset.id, name = val('nn-' + id);
+    if (!name) return toast(tl('Type a name for the item.'));
+    busy(true, tl('Saving…'));
+    call('nameItem', { itemId: id, name: name }).then(function (res) {
+      busy(false); mergeItems(res.items); rebuild(); render();
+      toast(tl('Name saved.'));
+    }).catch(function (e) { busy(false); toast(e.network ? tl('No signal. Try again.') : e.message); });
+  },
+  scanLater: function (el) {
+    var e = SC.scans[Number(el.dataset.i)];
+    if (!e) return;
+    e.title = 'Barcode ' + e.isbn; e.needTitle = false;
+    scanSave(e);
+  },
   scanRetry: function (el) { var e = SC.scans[Number(el.dataset.i)]; if (e) { e.err = ''; scanSave(e); } },
   scanIsbn: function (el) {
     F.scanFor = Number(el.dataset.i);
@@ -5435,7 +5813,7 @@ var ACT = {
     var rows = [], map = [], bad = false;
     F.rows.forEach(function (r, i) {
       r.err = '';
-      var name = String(r.name || '').trim(), typedIsbn = String(r.isbn || '').trim(), isbn = RMIsbn.clean(r.isbn), q = parseQty(r.qty);
+      var name = String(r.name || '').trim(), typedIsbn = String(r.isbn || '').trim(), isbn = anyBarcode(r.isbn), q = parseQty(r.qty);
       if (!name && !typedIsbn) return;                                     // an empty line is not a mistake
       if (isbn === null) { r.err = tl('That barcode looks wrong. Check the digits.'); bad = true; return; }
       if (isNaN(q) || q < 1) { r.err = tl('Enter 1 or more.'); bad = true; return; }
@@ -5537,7 +5915,7 @@ var ACT = {
     var photo = F.photo;
     call('addItem', {
       name: g.name || name, qty: lv ? '' : qty, centre: F.centre, location: loc, unit: lv ? '' : (val('f-unit') || g.unit || ''),
-      alt: val('f-alt') || g.alt || '', cat: F.cat || g.cat || '', min: lv ? '' : (min || (g.min && !here ? g.min : '')), notes: val('f-notes'),
+      alt: val('f-alt') || g.alt || '', cat: F.cat || g.cat || '', subtype: F.sub || '', min: lv ? '' : (min || (g.min && !here ? g.min : '')), notes: val('f-notes'),
       tracking: lv ? 'Level' : '', level: lv ? Math.max(0, LEVEL_NAMES.indexOf(F.level)) : '',
       photoData: photo
     }).then(function (res) {
@@ -5590,6 +5968,7 @@ var ACT = {
       if (val('f-name') !== it.name) f.name = val('f-name');
       if (val('f-alt') !== it.alt) f.alt = val('f-alt');
       if (F.cat !== it.cat) f.cat = F.cat;
+      if (F.cat !== it.cat || (F.sub || '') !== (it.subtype || '')) f.subtype = F.sub || '';
       if (F.centre !== it.centre) f.centre = F.centre;
       if (!isLevel(it) && (val('f-unit') || 'pcs') !== it.unit) f.unit = val('f-unit');
       if (!isLevel(it) && (parseQty(min) || 0) !== it.min) f.min = parseQty(min) || 0;
@@ -5830,7 +6209,7 @@ document.addEventListener('input', function (e) {
   var t = e.target;
   if (t.id === 'q') { S.q = t.value; drawResults(); }
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
-  else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) byIdEl('similar').innerHTML = similarHtml(t.value);
+  else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id && t.id.indexOf('c-') === 0) countChanges();
   else if (t.id && /^b-(isbn|name|qty)-\d+$/.test(t.id)) {
     var m = /^b-(isbn|name|qty)-(\d+)$/.exec(t.id);
@@ -5885,9 +6264,9 @@ byIdEl('scan').addEventListener('change', function () {
     SC.photoMode = false;
     if (!file) return;
     toast(tl('Reading the barcode…'));
-    Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8'] }).detect(fitForReader(a[0])); })
+    Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] }).detect(fitForReader(a[0])); })
       .then(function (codes) {
-        var isbn = RMIsbn.clean(codes && codes[0] && codes[0].rawValue);
+        var isbn = anyBarcode(codes && codes[0] && codes[0].rawValue);
         if (!isbn) return toast(tl('Couldn’t read that barcode. Try again, closer and flat.'));
         scanBook(isbn, SC.ctx);
       }).catch(function () { toast(tl('Couldn’t read that barcode. Try again, closer and flat.')); });
@@ -5895,9 +6274,9 @@ byIdEl('scan').addEventListener('change', function () {
   }
   if (!file || !F.rows || !F.rows[i]) return;
   setRowMsg(i, tl('Reading the barcode…'));
-  Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8'] }).detect(fitForReader(a[0])); })
+  Promise.all([createImageBitmap(file), loadReader()]).then(function (a) { return new a[1]({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] }).detect(fitForReader(a[0])); })
     .then(function (codes) {
-      var isbn = RMIsbn.clean(codes && codes[0] && codes[0].rawValue);
+      var isbn = anyBarcode(codes && codes[0] && codes[0].rawValue);
       if (!isbn) return setRowMsg(i, tl('Couldn’t read that barcode. Try again, or type the number.'));
       F.rows[i].isbn = isbn;
       var el = byIdEl('b-isbn-' + i);
