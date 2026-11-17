@@ -507,6 +507,28 @@ details.settings summary{flex-direction:row!important;align-items:center!importa
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
 .grid2 .chip{justify-content:space-between;text-align:left;min-width:0;gap:6px}
 .grid2 .chip > span{overflow-wrap:anywhere;white-space:normal;line-height:1.2;text-align:left}
+/* v26: layouts that hold at Large and Larger text (the page is zoomed, so it is narrower in CSS pixels) */
+.item .name{overflow-wrap:break-word;hyphens:auto}
+.places .pl{white-space:normal;max-width:100%;overflow-wrap:break-word}
+.item .badge{white-space:normal;max-width:100%}
+.item .line{overflow-wrap:break-word}
+.titlerow h1{min-width:0;flex:1;overflow-wrap:break-word}
+.titlerow .tools{flex:none;flex-wrap:nowrap}
+.place{flex-wrap:wrap;align-items:flex-start}
+.place .where{flex:1 1 9em}
+.place .where .badge{white-space:normal}
+.place .qty{margin-left:auto}
+.cline .cctl{flex-wrap:wrap}
+.cline .cctl .stepper{flex:1 1 150px}
+.cline .okb{flex:1 1 88px}
+#toast button{color:inherit}
+html[data-text="1"] .tile,html[data-text="2"] .tile:not(.big){width:44px;height:44px}
+html[data-text="1"] .tile:not(.big) .emo,html[data-text="2"] .tile:not(.big) .emo{font-size:24px}
+html[data-text="1"] .lowwrap .card.item,html[data-text="2"] .lowwrap .card.item{padding-right:0;border-bottom:0;padding-bottom:var(--s2)}
+html[data-text="1"] .lowwrap .askb,html[data-text="2"] .lowwrap .askb{position:static;transform:none;margin:0 0 var(--s3) calc(44px + var(--s3));width:auto;border-bottom:0}
+html[data-text="1"] .lowwrap,html[data-text="2"] .lowwrap{border-bottom:1px solid var(--line)}
+html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
+html[data-text="1"] .roomrow .rowmain,html[data-text="2"] .roomrow .rowmain{padding:var(--s2)}
 #cam .camwait{inset:auto;left:10%;right:10%;top:28%;height:28%;position:absolute}
 .tilebtn{position:relative;flex:none;background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
@@ -3059,6 +3081,7 @@ L.ms = {
   "1 change will send when you’re online.": "1 perubahan akan dihantar apabila dalam talian.",
   "1 item": "1 barang",
   "100 at most.": "Paling banyak 100.",
+  "A name or a type is missing. Fill it in here, or open the item.": "Nama atau jenis belum ada. Isi di sini, atau buka barang.",
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
   "A set": "Satu set",
@@ -3076,6 +3099,7 @@ L.ms = {
   "Add more": "Tambah",
   "Add room": "Tambah bilik",
   "Add something here": "Tambah sesuatu di sini",
+  "Add the name later": "Tambah nama kemudian",
   "Add, rename or remove centres": "Tambah, tukar nama atau buang pusat",
   "Add, rename or remove rooms": "Tambah, namakan semula atau buang bilik",
   "Added stock": "Stok ditambah",
@@ -3089,11 +3113,10 @@ L.ms = {
   "Admin mode": "Mod admin",
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
+  "All done.": "Semua siap.",
   "All fine, save": "Semua betul, simpan",
   "All here": "Semua ada",
-  "All named.": "Semua sudah bernama.",
   "All rooms": "Semua bilik",
-  "All sorted.": "Semua sudah diasingkan.",
   "Almost out": "Hampir habis",
   "Already have:": "Sudah ada:",
   "Already here. Use Add more.": "Sudah ada. Guna Tambah.",
@@ -3103,7 +3126,7 @@ L.ms = {
   "Also kept elsewhere?": "Disimpan di tempat lain juga?",
   "Also send on WhatsApp": "Hantar juga melalui WhatsApp",
   "Antiseptic and creams": "Antiseptik dan krim",
-  "Anything you leave goes to “need a name” on Home.": "Yang ditinggalkan akan masuk ke “perlu nama” di Utama.",
+  "Anything you leave goes to “Needs details” on Rooms.": "Yang ditinggalkan akan masuk ke “Perlu butiran” di Bilik.",
   "Apply": "Guna",
   "Approve": "Luluskan",
   "Approve?": "Luluskan?",
@@ -3245,6 +3268,7 @@ L.ms = {
   "How to check it?": "Cara semak?",
   "Hygiene and cleaning": "Kebersihan dan pembersihan",
   "In each set": "Isi setiap set",
+  "Is everything in {room} as listed?": "Semua di {room} seperti yang tersenarai?",
   "Item removed": "Barang dibuang",
   "Its items move too.": "Barangnya turut berpindah.",
   "It’s already on the list here. Use “Add more”.": "Sudah ada di sini. Guna “Tambah”.",
@@ -3280,7 +3304,6 @@ L.ms = {
   "Match my phone": "Ikut telefon saya",
   "Mats and mattresses": "Tikar dan tilam",
   "Me": "Saya",
-  "Missing details": "Butiran belum lengkap",
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
   "Music and instruments": "Muzik dan alat muzik",
@@ -3288,10 +3311,10 @@ L.ms = {
   "My requests": "Permintaan saya",
   "Name": "Nama",
   "Name it": "Namakan",
-  "Name it later": "Namakan nanti",
+  "Name missing": "Nama tiada",
   "Name them ({n})": "Namakan ({n})",
   "Name this item": "Namakan barang ini",
-  "Needs a name": "Perlu nama",
+  "Needs details": "Perlu butiran",
   "Needs fixing": "Perlu dibaiki",
   "New PIN": "PIN baru",
   "New item": "Barang baru",
@@ -3311,13 +3334,12 @@ L.ms = {
   "Not confirmed · 0 in stock": "Belum disahkan · 0 dalam stok",
   "Not found online. Name it once.": "Tiada dalam talian. Namakan sekali.",
   "Not here?": "Tiada di sini?",
-  "Not sorted": "Belum diasingkan",
-  "Not sorted yet": "Belum ada jenis",
   "Not sure": "Tidak pasti",
   "Not what you need?": "Bukan yang anda cari?",
   "Note": "Nota",
   "Note for them": "Nota untuk mereka",
   "Notes": "Catatan",
+  "Nothing changed": "Tiada perubahan",
   "Nothing here yet.": "Belum ada barang.",
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
@@ -3344,7 +3366,6 @@ L.ms = {
   "Only empty centres can be removed.": "Hanya pusat yang kosong boleh dibuang.",
   "Only empty rooms can be removed.": "Hanya bilik kosong boleh dibuang.",
   "Only {n} here.": "Hanya ada {n} di sini.",
-  "Open an item to set its type.": "Buka barang untuk tetapkan jenisnya.",
   "Open the Google Sheet": "Buka Google Sheet",
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
@@ -3411,6 +3432,7 @@ L.ms = {
   "Running low": "Tinggal sedikit",
   "Running low ({n})": "Tinggal sedikit ({n})",
   "Running low at {where} ({date}):": "Tinggal sedikit di {where} ({date}):",
+  "Same as last time: {type}.": "Sama seperti kali lepas: {type}.",
   "Same item, new place.": "Barang sama, tempat baru.",
   "Sand and water play": "Main pasir dan air",
   "Sanitiser and disinfectant": "Pensanitasi dan pembasmi kuman",
@@ -3424,7 +3446,6 @@ L.ms = {
   "Scan a sticker to open it here.": "Imbas pelekat untuk buka di sini.",
   "Scan an item": "Imbas barang",
   "Scan with camera": "Imbas dengan kamera",
-  "Scanned with no name. What are they?": "Diimbas tanpa nama. Apakah ini?",
   "Scanning isn’t available here. Type items instead.": "Pengimbasan tidak tersedia di sini. Taip barang sebaliknya.",
   "Science and nature": "Sains dan alam",
   "Scissors and cutting": "Gunting dan pemotong",
@@ -3537,6 +3558,7 @@ L.ms = {
   "Type how many there are.": "Taip berapa banyak.",
   "Type how many to send.": "Taip berapa yang hendak dihantar.",
   "Type how many you need.": "Taip berapa yang diperlukan.",
+  "Type missing": "Jenis tiada",
   "Type the centre name.": "Taip nama pusat.",
   "Type the item’s name.": "Taip nama barang.",
   "Type the name first.": "Taip nama dahulu.",
@@ -3586,6 +3608,7 @@ L.ms = {
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
+  "Yes, nothing changed": "Ya, tiada perubahan",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
   "about RM {price}": "kira-kira RM {price}",
@@ -3636,8 +3659,7 @@ L.ms = {
   "{n} items": "{n} barang",
   "{n} left": "{n} lagi",
   "{n} matches:": "{n} padanan:",
-  "{n} need a name": "{n} perlu nama",
-  "{n} not sorted": "{n} belum diasingkan",
+  "{n} need details": "{n} perlu butiran",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
@@ -3650,6 +3672,7 @@ L.zh = {
   "1 change will send when you’re online.": "1 项更改联网后会发送。",
   "1 item": "1 件",
   "100 at most.": "最多 100 个。",
+  "A name or a type is missing. Fill it in here, or open the item.": "缺少名称或类型。在这里填写，或打开物品。",
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
   "A set": "一套",
@@ -3667,6 +3690,7 @@ L.zh = {
   "Add more": "增加",
   "Add room": "添加房间",
   "Add something here": "在这里添加东西",
+  "Add the name later": "稍后再加名称",
   "Add, rename or remove centres": "添加、改名或删除分园",
   "Add, rename or remove rooms": "添加、改名或删除房间",
   "Added stock": "增加数量",
@@ -3680,11 +3704,10 @@ L.zh = {
   "Admin mode": "管理员模式",
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
+  "All done.": "全部完成。",
   "All fine, save": "全部没问题，保存",
   "All here": "都在",
-  "All named.": "都已命名。",
   "All rooms": "所有房间",
-  "All sorted.": "都已分类。",
   "Almost out": "快没了",
   "Already have:": "已有：",
   "Already here. Use Add more.": "已经有了，请用“增加”。",
@@ -3694,7 +3717,7 @@ L.zh = {
   "Also kept elsewhere?": "别处也有存放？",
   "Also send on WhatsApp": "也用 WhatsApp 发送",
   "Antiseptic and creams": "消毒药水与药膏",
-  "Anything you leave goes to “need a name” on Home.": "没起名的会放进首页的“需要名称”。",
+  "Anything you leave goes to “Needs details” on Rooms.": "留下的会放进“房间”里的“需要补充资料”。",
   "Apply": "应用",
   "Approve": "批准",
   "Approve?": "批准？",
@@ -3836,6 +3859,7 @@ L.zh = {
   "How to check it?": "怎么核对？",
   "Hygiene and cleaning": "卫生与清洁",
   "In each set": "每套包含",
+  "Is everything in {room} as listed?": "{room} 里的一切都和清单一致吗？",
   "Item removed": "物品已删除",
   "Its items move too.": "里面的物品也会跟着改。",
   "It’s already on the list here. Use “Add more”.": "这里已经有了，请用“增加”。",
@@ -3871,7 +3895,6 @@ L.zh = {
   "Match my phone": "跟随手机",
   "Mats and mattresses": "垫子与床垫",
   "Me": "我的",
-  "Missing details": "资料不全",
   "More": "更多",
   "More detail:": "详细信息：",
   "Music and instruments": "音乐与乐器",
@@ -3879,10 +3902,10 @@ L.zh = {
   "My requests": "我的申请",
   "Name": "名称",
   "Name it": "起名",
-  "Name it later": "稍后命名",
+  "Name missing": "缺少名称",
   "Name them ({n})": "逐个起名（{n}）",
   "Name this item": "给这件东西起名",
-  "Needs a name": "待命名",
+  "Needs details": "需要补充资料",
   "Needs fixing": "需要修理",
   "New PIN": "新 PIN",
   "New item": "新物品",
@@ -3902,13 +3925,12 @@ L.zh = {
   "Not confirmed · 0 in stock": "未确认 · 库存 0",
   "Not found online. Name it once.": "网上没有，命名一次即可。",
   "Not here?": "没找到？",
-  "Not sorted": "未分类",
-  "Not sorted yet": "还没有类型",
   "Not sure": "不确定",
   "Not what you need?": "不是你要找的？",
   "Note": "备注",
   "Note for them": "给对方的备注",
   "Notes": "备注",
+  "Nothing changed": "没有变化",
   "Nothing here yet.": "这里还没有物品。",
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
@@ -3935,7 +3957,6 @@ L.zh = {
   "Only empty centres can be removed.": "只有空的分园才能删除。",
   "Only empty rooms can be removed.": "只能删除空房间。",
   "Only {n} here.": "这里只有 {n}。",
-  "Open an item to set its type.": "打开物品来设定类型。",
   "Open the Google Sheet": "打开 Google Sheet",
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
@@ -4002,6 +4023,7 @@ L.zh = {
   "Running low": "快不够了",
   "Running low ({n})": "快不够（{n}）",
   "Running low at {where} ({date}):": "{where} 快不够了（{date}）：",
+  "Same as last time: {type}.": "和上次一样：{type}。",
   "Same item, new place.": "同一物品，新地点。",
   "Sand and water play": "玩沙玩水",
   "Sanitiser and disinfectant": "消毒液",
@@ -4015,7 +4037,6 @@ L.zh = {
   "Scan a sticker to open it here.": "扫描贴纸即可在此打开。",
   "Scan an item": "扫描物品",
   "Scan with camera": "用相机扫描",
-  "Scanned with no name. What are they?": "扫描后没有名称。这些是什么？",
   "Scanning isn’t available here. Type items instead.": "这里不能扫描。请改为输入。",
   "Science and nature": "科学与自然",
   "Scissors and cutting": "剪刀与裁剪",
@@ -4128,6 +4149,7 @@ L.zh = {
   "Type how many there are.": "请输入数量。",
   "Type how many to send.": "请输入要送多少。",
   "Type how many you need.": "请输入需要多少。",
+  "Type missing": "缺少类型",
   "Type the centre name.": "请输入分园名称。",
   "Type the item’s name.": "请输入物品名称。",
   "Type the name first.": "请先输入名称。",
@@ -4177,6 +4199,7 @@ L.zh = {
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
   "Yes": "好",
+  "Yes, nothing changed": "是的，没有变化",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
   "about RM {price}": "约 RM {price}",
@@ -4227,8 +4250,7 @@ L.zh = {
   "{n} items": "{n} 件",
   "{n} left": "还剩 {n} 个",
   "{n} matches:": "{n} 个相符：",
-  "{n} need a name": "{n} 件待命名",
-  "{n} not sorted": "{n} 件未分类",
+  "{n} need details": "{n} 件需要补充资料",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
@@ -4443,7 +4465,7 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame };
+window.RMPoll = { now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -4667,9 +4689,9 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vRooms,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vNeedName, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vNeedDetails, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
   delete views.bulk;
-  views.unsorted = vUnsorted;
+  views.unsorted = vNeedDetails;
   app.innerHTML = (views[v.name] || vHome)(v);
   restoreOpen();
   afterRender(v);
@@ -4760,7 +4782,7 @@ function badges(it) {
   var out = '';
   if (low(it)) out += '<span class="badge low">' + tl('Running low') + '</span> ';
   if (STATUS_LABEL[it.status]) out += '<span class="badge warn">' + STATUS_LABEL[it.status] + '</span> ';
-  if (!it.cat) out += '<span class="badge plain">' + tl('Not sorted') + '</span> ';
+  if (!it.cat) out += '<span class="badge plain">' + tl('Needs details') + '</span> ';
   return out;
 }
 
@@ -4852,14 +4874,22 @@ function vStarter() {
         '<button class="btn quiet" data-act="starterSkip" data-id="' + esc(s.id) + '">' + tl('Skip for now') + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Your starter list is finished.') + '</h2></div>');
 }
-function vNeedName() {
-  var list = needNameItems(myCentre());
-  return top(true) + '<h1 class="title">' + tl('Needs a name') + '</h1><p class="sub">' + tl('Scanned with no name. What are they?') + '</p>' +
-    (list.length ? '<div class="rows">' + list.map(function (it) {
-      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line">' + esc(it.loc) + '</p>' +
+function vNeedDetails() {
+  var centre = myCentre(), names = needNameItems(centre), types = unsortedItems(centre).filter(function (it) { return names.indexOf(it) < 0; })
+    .sort(function (a, b) { return a.name.localeCompare(b.name); });
+  var typeRow = function (it) {
+    return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
+      '<span class="body"><span class="name">' + esc(shown(it)) + '</span><span class="line"><span class="badge plain">' + tl('Type missing') + '</span></span><span class="line">' + esc(it.loc) + '</span></span>' +
+      '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
+  };
+  return top(true) + '<h1 class="title">' + tl('Needs details') + '</h1><p class="sub">' + tl('A name or a type is missing. Fill it in here, or open the item.') + '</p>' +
+    (names.length ? '<div class="rows">' + names.map(function (it) {
+      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line"><span class="badge plain">' + tl('Name missing') + '</span> ' + esc(it.loc) + '</p>' +
         '<input id="nn-' + esc(it.id) + '" class="inp" maxlength="80" autocomplete="off" aria-label="' + esc(tl('Name')) + '">' +
         '<button class="btn primary" data-act="nameGo" data-id="' + esc(it.id) + '">' + tl('Save') + '</button></div>';
-    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('All named.') + '</h2></div>');
+    }).join('') + '</div>' : '') +
+    (types.length ? '<div class="list">' + types.map(typeRow).join('') + '</div>' : '') +
+    (!names.length && !types.length ? '<div class="card empty"><h2>' + tl('All done.') + '</h2></div>' : '');
 }
 function vHome(v) {
   return top(false) +
@@ -4919,7 +4949,7 @@ function filterChipsHtml() {
     return '<button class="fchip" data-act="filterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>';
   }).join('') + '</div>' : '';
 }
-function STATUS_NAME() { return { low: tl('Running low'), attn: tl('Broken or missing'), unsorted: tl('Not sorted') }; }
+function STATUS_NAME() { return { low: tl('Running low'), attn: tl('Broken or missing'), unsorted: tl('Needs details') }; }
 function filterSheet() {
   var f = S.fil || {}, chip = function (act, val, label, on, extra) {
     return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span>' + esc(label) + '</span>' + (extra || '') + '</button>';
@@ -5011,7 +5041,7 @@ function card(g) {
       return '<span class="pl' + (per[c].low ? ' low' : '') + (c === mine ? ' mine' : '') + '">' + esc(c) + ' <b>' + (per[c].lv !== null && !per[c].qty ? LEVEL_LABELS[per[c].lv] : per[c].qty) + '</b></span>';
     }).join('');
   }
-  var flags = g.rows.length && !g.cat ? ' <span class="badge plain">' + tl('Not sorted') + '</span>' : '';
+  var flags = g.rows.length && !g.cat ? ' <span class="badge plain">' + tl('Needs details') + '</span>' : '';
   g.rows.forEach(function (r) {
     if (STATUS_LABEL[r.status] && flags.indexOf(STATUS_LABEL[r.status]) < 0) flags += ' <span class="badge warn">' + STATUS_LABEL[r.status] + '</span>';
   });
@@ -5061,7 +5091,7 @@ function vItem(v) {
     (!isLevel(sel) && sel.qty > 0 && S.centres.length > 1
       ? '<button class="rowbtn" data-act="moveOpen"><span>' + tl('Send to another centre') + '</span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="addPlace"><span>' + tl('Also kept elsewhere') + '</span>' + ICON.go + '</button>' +
-    (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Not sorted yet') + '</small></span>' + ICON.go + '</button>' : '') +
+    (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Needs details') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div></details>' +
     '<h2 class="sec">' + tl('History') + '</h2>' +
     (past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>'
@@ -5221,11 +5251,20 @@ function guessType(name) {
   }
   return null;
 }
+function typeMemory() { var m = store.get('rm_typemem', {}); return m && typeof m === 'object' ? m : {}; }
+function rememberType(name, cat, sub) {
+  var k = RMSearch.norm(name || '');
+  if (!k || !cat) return;
+  var m = typeMemory(); m[k] = { cat: cat, sub: sub || '' };
+  var keys = Object.keys(m); if (keys.length > 300) delete m[keys[0]];
+  store.set('rm_typemem', m);
+}
 function suggestType(name) {
   var box = byIdEl('f-suggest');
   if (!box) return;
-  var gt = !F.cat && name.length >= 3 ? guessType(name) : null;
-  box.innerHTML = gt ? '<div class="similar"><span>' + esc(tl('Looks like {type}.', { type: tl(gt.cat) + (gt.sub ? ' › ' + tl(gt.sub) : '') })) + '</span> ' +
+  var mem = !F.cat && name.length >= 2 ? typeMemory()[RMSearch.norm(name)] : null;
+  var gt = mem && S.categories.indexOf(mem.cat) >= 0 ? { cat: mem.cat, sub: mem.sub, mem: true } : (!F.cat && name.length >= 3 ? guessType(name) : null);
+  box.innerHTML = gt ? '<div class="similar"><span>' + esc(gt.mem ? tl('Same as last time: {type}.', { type: tl(gt.cat) + (gt.sub ? ' › ' + tl(gt.sub) : '') }) : tl('Looks like {type}.', { type: tl(gt.cat) + (gt.sub ? ' › ' + tl(gt.sub) : '') })) + '</span> ' +
     '<button type="button" class="chip" data-act="suggestYes" data-cat="' + esc(gt.cat) + '" data-sub="' + esc(gt.sub) + '">' + tl('Yes') + '</button></div>' : '';
 }
 function chips(group, list, selected, label) {
@@ -5582,19 +5621,8 @@ function vRooms(v) {
         (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) : tl('Empty')) + '</small></span>' +
         (p.n && days > 30 ? '<span class="due"><i></i>' + tl('Overdue') + '</span>' : '') + ICON.go + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
-    (nn || us ? '<h2 class="sec">' + tl('Missing details') + '</h2><div class="card rows tidy">' +
-      (nn ? '<button class="rowbtn" data-act="go" data-to="needName"><span>' + esc(tl('{n} need a name', { n: nn })) + '</span>' + ICON.go + '</button>' : '') +
-      (us ? '<button class="rowbtn" data-act="go" data-to="unsorted"><span>' + esc(tl('{n} not sorted', { n: us })) + '</span>' + ICON.go + '</button>' : '') + '</div>' : '');
-}
-// the items with no type yet, in this centre; each opens its page, where "Set the type" is
-function vUnsorted() {
-  var list = unsortedItems(myCentre()).sort(function (a, b) { return a.name.localeCompare(b.name); });
-  return top(true) + '<h1 class="title">' + tl('Not sorted') + '</h1><p class="sub">' + tl('Open an item to set its type.') + '</p>' +
-    (list.length ? '<div class="list">' + list.map(function (it) {
-      return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
-        '<span class="body"><span class="name">' + esc(shown(it)) + '</span><span class="line">' + esc(it.loc) + '</span></span>' +
-        '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
-    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('All sorted.') + '</h2></div>');
+    (nn || us ? '<h2 class="sec">' + tl('Needs details') + '</h2><div class="card rows tidy">' +
+      '<button class="rowbtn" data-act="go" data-to="needName"><span>' + esc(tl('{n} need details', { n: tidyCount(centre) })) + '</span>' + ICON.go + '</button></div>' : '');
 }
 function roomRowOk(it, f) {
   if (f.cat && it.cat !== f.cat) return false;
@@ -5622,7 +5650,8 @@ function vRoom(v) {
         (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
         '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
     }).join('') + '</div>' : (all.length ? '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>' : '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>')) +
-    (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button></div>' : '');
+    (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button>' +
+      '<button class="btn" data-act="roomNoChange" data-val="' + esc(v.loc) + '">' + tl('Nothing changed') + '</button></div>' : '');
 }
 function roomFilterSheet(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), counts = {};
@@ -5786,7 +5815,7 @@ function typeEditable(e) {
   return e.inflight === 0 && e.n > 0 && !e.cat && !e.fixed;     // saved: only a type that was never set can still be set
 }
 function scanRowHtml(e, i) {
-  var st = scanStateOf(e), label = scanLabel(e) || tl('Not sorted');
+  var st = scanStateOf(e), label = scanLabel(e) || tl('Needs details');
   var head = '<span class="cname">' + esc(e.title || e.isbn) + '<small>' + esc(e.centre) + ' · ' + esc(e.loc) + ' · ' + esc(tl('Barcode {code}', { code: e.isbn })) + ' · ' + esc(label) + '</small></span>';
   return '<div class="cline">' + head + (st === 'saved' ? '<span class="badge ok">' + (e.n === 1 ? tl('1 added') : tl('{n} added', { n: e.n })) + '</span>'
     : st === 'error' ? '<button class="chip" data-act="scanRetry" data-i="' + i + '">' + tl('Try again') + '</button>'
@@ -5800,10 +5829,10 @@ function scanListHtml() {
   SC.scans.forEach(function (e, i) { (e.needTitle ? need : rest).push([e, i]); });
   var out = '';
   if (need.length) {
-    out += '<div class="needbox" role="group" aria-label="' + tl('Needs a name') + '"><h2>' + tl('Needs a name') + ' (' + need.length + ')</h2>' +
+    out += '<div class="needbox" role="group" aria-label="' + tl('Needs details') + '"><h2>' + tl('Needs details') + ' (' + need.length + ')</h2>' +
       need.map(function (x) { return '<div class="cline"><span class="cname">' + esc(x[0].isbn) + '<small>' + esc(x[0].centre) + ' · ' + esc(x[0].loc) + '</small></span></div>'; }).join('') +
       '<button class="btn primary" data-act="nameStep">' + (need.length === 1 ? tl('Name it') : tl('Name them ({n})', { n: need.length })) + '</button>' +
-      '<p class="help">' + tl('Anything you leave goes to “need a name” on Home.') + '</p></div>';
+      '<p class="help">' + tl('Anything you leave goes to “Needs details” on Rooms.') + '</p></div>';
   }
   if (rest.length) out += '<div class="rows">' + rest.map(function (x) { return scanRowHtml(x[0], x[1]); }).join('') + '</div>';
   return out;
@@ -5846,7 +5875,7 @@ function scanTotals() {
 }
 function scanSummary() {
   var t = scanTotals(), s = t.n === 1 ? tl('1 added') : tl('{n} added', { n: t.n });
-  return t.name ? s + ' · ' + tl('{n} need a name', { n: t.name }) : s;
+  return t.name ? s + ' · ' + tl('{n} need details', { n: t.name }) : s;
 }
 function nameSheet() {
   var left = SC.scans.filter(function (x) { return x.needTitle; }), e = left[0];
@@ -5854,7 +5883,7 @@ function nameSheet() {
   M = { type: 'namestep' };
   openSheet('<h2>' + tl('Name this item') + '</h2><p class="sub">' + esc(tl('Barcode {code}', { code: e.isbn })) + (left.length > 1 ? ' · ' + esc(tl('{n} left', { n: left.length })) : '') + '</p>' +
     '<input id="ns-name" class="inp" maxlength="80" autocomplete="off" aria-label="' + tl('Name') + '">' +
-    '<button class="btn primary" id="m-go" data-act="nameStepSave">' + tl('Save') + '</button><button class="btn quiet" data-act="nameStepLater">' + tl('Name it later') + '</button>', 'ns-name');
+    '<button class="btn primary" id="m-go" data-act="nameStepSave">' + tl('Save') + '</button><button class="btn quiet" data-act="nameStepLater">' + tl('Add the name later') + '</button>', 'ns-name');
 }
 function camUpdate() {
   var el = byIdEl('cam-n'), sum = byIdEl('sc-sum');
@@ -6046,7 +6075,7 @@ function cardShow(e) {
   if (!box) return;
   SC.last = e;
   var lbl = scanLabel(e), pending = e.want - e.n - e.inflight >= 1;
-  box.innerHTML = '<div class="cardmain"><b>✓ ' + esc(e.title) + '</b><small>' + esc((e.want === 1 ? '+1' : '+' + e.want) + ' · ' + (lbl || tl('Not sorted'))) + '</small></div>' +
+  box.innerHTML = '<div class="cardmain"><b>✓ ' + esc(e.title) + '</b><small>' + esc((e.want === 1 ? '+1' : '+' + e.want) + ' · ' + (lbl || tl('Needs details'))) + '</small></div>' +
     (typeEditable(e) ? '<button type="button" class="chip" data-act="cardChange">' + (e.cat ? tl('Change type') : tl('Set type')) + '</button>' : '') +
     (pending ? '<button type="button" class="chip" data-act="scanUndo">' + tl('Undo') + '</button>' : '');
   box.hidden = false;
@@ -6059,7 +6088,7 @@ function nameOpen(e) {
   SC.paused = true; SC.naming = e;
   p.innerHTML = '<h2>' + esc(tl('Not found online. Name it once.')) + '</h2><small>' + esc(e.isbn) + '</small>' +
     '<input id="cam-name" class="inp" maxlength="80" autocomplete="off" aria-label="' + tl('Name') + '">' +
-    '<button class="btn primary" data-act="nameSave">' + tl('Save') + '</button><button class="btn quiet" data-act="nameLater">' + tl('Name it later') + '</button>';
+    '<button class="btn primary" data-act="nameSave">' + tl('Save') + '</button><button class="btn quiet" data-act="nameLater">' + tl('Add the name later') + '</button>';
   p.hidden = false;
   setTimeout(function () { var i = byIdEl('cam-name'); if (i) i.focus(); }, 60);
 }
@@ -6117,7 +6146,10 @@ function listHasIsbn(code) {
 function isBookCode(code) { return /^97[89]/.test(code); }
 function needNameItems(centre) { return S.items.filter(function (it) { return /^Barcode [A-Z0-9]{4,20}$/.test(it.name) && (!centre || it.centre === centre); }); }
 function unsortedItems(centre) { return S.items.filter(function (it) { return !it.cat && (!centre || it.centre === centre); }); }
-function tidyCount(centre) { return needNameItems(centre).length + unsortedItems(centre).length; }
+function tidyCount(centre) {
+  var n = needNameItems(centre);
+  return n.length + unsortedItems(centre).filter(function (it) { return n.indexOf(it) < 0; }).length;
+}
 // Title from Open Library (free). If it is not reachable or does not know the book, the person types the title.
 // Three free catalogues are asked at once: Open Library, Google Books, and openBD (Japanese books, which the other two often lack).
 // The first of them, in that order, that knows the book wins. Resolves {title}, {missing} (all answered, none knew it) or {error} (none could be reached).
@@ -6667,6 +6699,7 @@ var ACT = {
       var it = res.items[0];
       if (photo && !res.photoFailed) S.localPhoto[it.id] = photo;
       mergeItems(res.items); rebuild();
+      rememberType(it.name, it.cat, it.subtype);
       if (from.fromAdd) store.set('rm_adddraft', null);
       if (another) {
         render();
@@ -6821,6 +6854,18 @@ var ACT = {
     });
   },
   countPlace: function (el) { go({ name: 'countList', centre: myCentre(), loc: el.dataset.val }); },
+  roomNoChange: function (el) {
+    var v = cur(); M = { type: 'nochange', centre: v.centre, loc: el.dataset.val };
+    openSheet('<h2>' + esc(tl('Is everything in {room} as listed?', { room: v.loc })) + '</h2>' +
+      '<button class="btn primary" id="m-go" data-act="roomNoChangeGo">' + tl('Yes, nothing changed') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-go');
+  },
+  roomNoChangeGo: function () {
+    var m = M, total = itemsIn(m.centre, m.loc).length;
+    enqueue('saveCount', { centre: m.centre, location: m.loc, counts: [] });
+    if (S.checkDraft) delete S.checkDraft[m.centre + '|' + m.loc];
+    closeSheet();
+    toast(tl('Checked {total}.', { total: total }));
+  },
   countGo: function () {
     var v = cur(), changes = countChanges();
     if (!changes) return;
