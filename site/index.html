@@ -5549,7 +5549,8 @@ function ctxSheet() {
     '<input id="ctx-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" aria-label="' + tl('Which room?') + '" value="' + esc(roomsFor(c.centre).some(function (l) { return sameRoom(l, c.loc); }) ? '' : c.loc) + '">' +
     '<p class="err" id="ctx-err" hidden></p><button class="btn primary" data-act="ctxDone">' + tl('Done') + '</button>';
 }
-function openCtx() { M = { type: 'ctx' }; openSheet(ctxSheet(), 'ctx-room'); }
+// (no focus on the text box: the keyboard comes up only when someone taps it)
+function openCtx() { M = { type: 'ctx' }; openSheet(ctxSheet()); }
 function vScanBooks() {
   return top(true) + '<h1 class="title">' + tl('Scan') + '</h1>' + modeStrip('scan') +
     '<button class="btn ctxchip" id="sc-ctx" data-act="ctxOpen" title="' + esc(ctxLabel()) + '">' + ctxHtml() + '</button>' +
@@ -5815,8 +5816,7 @@ function vBulk() {   // Type mode: one line to start, "+ Add a line" for a box o
     '<input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="books" placeholder="books">' +
     '<label class="lab">' + tl('Type') + '</label>' + chips('cat', S.categories, F.cat, CAT_LABEL) + '</details>' +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="addbar"><button class="btn primary" id="f-go" data-act="bulkGo">' + addLabel() + '</button></div>' +
-    '<button class="btn quiet" data-act="addNew">' + tl('Add an item') + '</button>';
+    '<div class="addbar"><button class="btn primary" id="f-go" data-act="bulkGo">' + addLabel() + '</button></div>';
 }
 // a whole, valid barcode in a line looks itself up (after a short pause, so typing is not interrupted)
 function lookRow(i) {
