@@ -506,7 +506,7 @@ details.settings summary{flex-direction:row!important;align-items:center!importa
 #sheet .sheetfoot{position:static;margin:0;padding:var(--s3) 0 calc(var(--s3) + env(safe-area-inset-bottom));background:var(--paper);flex:none}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
 .grid2 .chip{justify-content:space-between;text-align:left;min-width:0;gap:6px}
-.grid2 .chip > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid2 .chip > span{overflow-wrap:anywhere;white-space:normal;line-height:1.2;text-align:left}
 #cam .camwait{inset:auto;left:10%;right:10%;top:28%;height:28%;position:absolute}
 .tilebtn{position:relative;flex:none;background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
