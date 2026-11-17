@@ -234,7 +234,6 @@ details[open] summary::after{content:"–"}
 #f-thumb:empty{display:none}
 .photorow .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
 .photorow .btn svg{width:20px;height:20px;flex:none}
-.ib.spin svg{animation:spin .8s linear infinite}
 .formend{margin-top:var(--s5)}
 .err{color:var(--alert);font-size:15px;font-weight:600;margin-top:var(--s3)}
 
@@ -477,15 +476,31 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .rowbtn .lead{display:inline-grid;place-items:center;width:32px;margin-right:var(--s3);flex:none}
 .rowbtn .lead svg{width:22px;height:22px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.rowbtn.spin .lead svg{animation:spin .8s linear infinite}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+@keyframes show{to{opacity:1}}
+@keyframes slide{0%{left:-40%}100%{left:100%}}
+/* the refresh arrows run counter-clockwise, so the spin does too */
+.ib.spin svg,.rowbtn.spin .lead svg{animation:spinr .8s linear infinite}
+/* a button that is waiting: a spinner shows after a third of a second, so quick taps do not flicker */
+.btn.loading::before,.chip.loading::before{content:"";flex:none;width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;opacity:0;animation:spin .8s linear infinite,show 0s .3s forwards;margin-right:8px}
+#loadbar{position:fixed;left:0;right:0;top:0;height:3px;z-index:60;overflow:hidden;background:transparent}
+#loadbar::after{content:"";position:absolute;top:0;height:100%;width:40%;background:var(--brand);animation:slide 1s ease-in-out infinite}
+.splash:not(:has(.btn))::before{content:"";display:block;width:28px;height:28px;margin:0 auto var(--s3);border:3px solid var(--line-strong);border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite}
 .roomrow{display:flex;align-items:center;gap:var(--s2);border-bottom:1px solid var(--line);padding-right:var(--s3)}
 .roomrow:last-child{border-bottom:0}
 .roomrow .rowmain{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:var(--s2);text-align:left;min-height:58px;background:transparent;border:0;color:inherit;padding:var(--s2) var(--s3);cursor:pointer;font:inherit}
 .roomrow .rowmain small{display:block;color:var(--muted);font-size:13px}
 .roomrow .chip{flex:none}
-.lowwrap{position:relative}
-.lowwrap .card.item{padding-right:116px}
-.lowwrap .askb{position:absolute;right:var(--s3);top:50%;transform:translateY(-50%);min-height:44px;padding:0 var(--s3);font-size:14px}
+.lowwrap{padding-bottom:var(--s4);border-bottom:1px solid var(--line)}
+.lowwrap .card.item{border-bottom:0;padding-bottom:var(--s3)}
+.lowwrap .askb{margin-top:0;min-height:48px;font-size:15px}
+.lowlist .lowwrap:last-child{border-bottom:0}
+.lowbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin:var(--s3) 0 var(--s4)}
+.lowbar .count{font-size:15px;color:var(--muted);font-weight:600}
+.lowbar .tools{gap:var(--s2)}
+.chip.tbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3)}
+.chip.tbtn svg{width:18px;height:18px;flex:none}
+#share{margin-bottom:var(--s4)}
 details.more{margin-top:var(--s3)}
 details.more summary{min-height:48px;display:flex;align-items:center;color:var(--muted);cursor:pointer}
 .tidy h2{font-size:16px;margin:0}
@@ -501,14 +516,17 @@ details.settings summary{flex-direction:row!important;align-items:center!importa
 #sheet .chip.fchip{border:2px solid transparent;background:var(--wash);box-shadow:none}
 #sheet .chip.fchip.on{background:color-mix(in srgb,var(--brand) 16%,transparent);border:2px solid var(--brand);color:inherit;font-weight:700}
 .chip.fchip.on::before{content:none}
-#sheet .panel.has-foot{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
-#sheet .panel.has-foot .sheetbody{overflow:auto;flex:1 1 auto;min-height:0}
-#sheet .sheetfoot{position:static;margin:0;padding:var(--s3) 0 calc(var(--s3) + env(safe-area-inset-bottom));background:var(--paper);flex:none}
+#sheet .panel.has-foot{display:flex;flex-direction:column;overflow:hidden;padding:0}
+#sheet .panel.has-foot .sheetbody{overflow:auto;flex:1 1 auto;min-height:0;padding:var(--s5) var(--s4) var(--s3)}
+#sheet .sheetfoot{position:static;margin:0;padding:var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom));background:var(--paper);flex:none}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
 .grid2 .chip{justify-content:space-between;text-align:left;min-width:0;gap:6px}
 .grid2 .chip > span{overflow-wrap:anywhere;white-space:normal;line-height:1.2;text-align:left}
 /* v26: layouts that hold at Large and Larger text (the page is zoomed, so it is narrower in CSS pixels) */
 .item .name{overflow-wrap:break-word;hyphens:auto}
+.tidyhead{display:flex;align-items:center;gap:var(--s2)}
+.pn{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:var(--mark);color:var(--on-mark);font-size:14px;font-weight:700;line-height:1}
+.due i{margin:0}
 .places .pl{white-space:normal;max-width:100%;overflow-wrap:break-word}
 .item .badge{white-space:normal;max-width:100%}
 .item .line{overflow-wrap:break-word}
@@ -524,9 +542,6 @@ details.settings summary{flex-direction:row!important;align-items:center!importa
 #toast button{color:inherit}
 html[data-text="1"] .tile,html[data-text="2"] .tile:not(.big){width:44px;height:44px}
 html[data-text="1"] .tile:not(.big) .emo,html[data-text="2"] .tile:not(.big) .emo{font-size:24px}
-html[data-text="1"] .lowwrap .card.item,html[data-text="2"] .lowwrap .card.item{padding-right:0;border-bottom:0;padding-bottom:var(--s2)}
-html[data-text="1"] .lowwrap .askb,html[data-text="2"] .lowwrap .askb{position:static;transform:none;margin:0 0 var(--s3) calc(44px + var(--s3));width:auto;border-bottom:0}
-html[data-text="1"] .lowwrap,html[data-text="2"] .lowwrap{border-bottom:1px solid var(--line)}
 html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 html[data-text="1"] .roomrow .rowmain,html[data-text="2"] .roomrow .rowmain{padding:var(--s2)}
 #cam .camwait{inset:auto;left:10%;right:10%;top:28%;height:28%;position:absolute}
@@ -538,6 +553,7 @@ html[data-text="1"] .roomrow .rowmain,html[data-text="2"] .roomrow .rowmain{padd
 </style>
 </head>
 <body>
+<div id="loadbar" hidden role="progressbar" aria-label="Loading"></div>
 <div id="banner"></div>
 <div id="app"><div class="splash">Getting the list…</div></div>
 <nav id="nav" hidden></nav>
@@ -3055,6 +3071,7 @@ var ICON = {
   ICON.trash = s('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>');
   ICON.pencil = s('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>');
   ICON.barcode = s('<path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/>');
+  ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
   ICON.refresh = s('<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>');
   ICON.torch = s('<path d="M8 3h8l-1.5 5h-5z"/><path d="M9.5 8v2.5L8 13v8h8v-8l-1.5-2.5V8"/>');
@@ -3114,7 +3131,6 @@ L.ms = {
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
-  "All fine, save": "Semua betul, simpan",
   "All here": "Semua ada",
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
@@ -3268,7 +3284,6 @@ L.ms = {
   "How to check it?": "Cara semak?",
   "Hygiene and cleaning": "Kebersihan dan pembersihan",
   "In each set": "Isi setiap set",
-  "Is everything in {room} as listed?": "Semua di {room} seperti yang tersenarai?",
   "Item removed": "Barang dibuang",
   "Its items move too.": "Barangnya turut berpindah.",
   "It’s already on the list here. Use “Add more”.": "Sudah ada di sini. Guna “Tambah”.",
@@ -3307,7 +3322,6 @@ L.ms = {
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
   "Music and instruments": "Muzik dan alat muzik",
-  "My centre": "Pusat saya",
   "My requests": "Permintaan saya",
   "Name": "Nama",
   "Name it": "Namakan",
@@ -3339,7 +3353,7 @@ L.ms = {
   "Note": "Nota",
   "Note for them": "Nota untuk mereka",
   "Notes": "Catatan",
-  "Nothing changed": "Tiada perubahan",
+  "Nothing changed, save": "Tiada perubahan, simpan",
   "Nothing here yet.": "Belum ada barang.",
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
@@ -3477,7 +3491,6 @@ L.ms = {
   "Share {n}": "Kongsi {n}",
   "Sheet edit": "Ubah dalam helaian",
   "Shelves and storage": "Rak dan simpanan",
-  "Show all centres": "Tunjuk semua pusat",
   "Show history": "Tunjuk sejarah",
   "Sign out": "Log keluar",
   "Skip for now": "Langkau dahulu",
@@ -3608,11 +3621,9 @@ L.ms = {
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
-  "Yes, nothing changed": "Ya, tiada perubahan",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
   "about RM {price}": "kira-kira RM {price}",
-  "all centres": "semua pusat",
   "at {centre} · {place}": "di {centre} · {place}",
   "bottle": "botol",
   "box": "kotak",
@@ -3661,6 +3672,7 @@ L.ms = {
   "{n} matches:": "{n} padanan:",
   "{n} need details": "{n} perlu butiran",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
+  "{n} running low": "{n} hampir habis",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
@@ -3705,7 +3717,6 @@ L.zh = {
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
-  "All fine, save": "全部没问题，保存",
   "All here": "都在",
   "All rooms": "所有房间",
   "Almost out": "快没了",
@@ -3859,7 +3870,6 @@ L.zh = {
   "How to check it?": "怎么核对？",
   "Hygiene and cleaning": "卫生与清洁",
   "In each set": "每套包含",
-  "Is everything in {room} as listed?": "{room} 里的一切都和清单一致吗？",
   "Item removed": "物品已删除",
   "Its items move too.": "里面的物品也会跟着改。",
   "It’s already on the list here. Use “Add more”.": "这里已经有了，请用“增加”。",
@@ -3898,7 +3908,6 @@ L.zh = {
   "More": "更多",
   "More detail:": "详细信息：",
   "Music and instruments": "音乐与乐器",
-  "My centre": "我的分园",
   "My requests": "我的申请",
   "Name": "名称",
   "Name it": "起名",
@@ -3930,7 +3939,7 @@ L.zh = {
   "Note": "备注",
   "Note for them": "给对方的备注",
   "Notes": "备注",
-  "Nothing changed": "没有变化",
+  "Nothing changed, save": "没有变化，保存",
   "Nothing here yet.": "这里还没有物品。",
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
@@ -4068,7 +4077,6 @@ L.zh = {
   "Share {n}": "分享 {n} 项",
   "Sheet edit": "表格里的修改",
   "Shelves and storage": "架子与收纳",
-  "Show all centres": "显示所有分园",
   "Show history": "查看历史",
   "Sign out": "退出登录",
   "Skip for now": "先跳过",
@@ -4199,11 +4207,9 @@ L.zh = {
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
   "Yes": "好",
-  "Yes, nothing changed": "是的，没有变化",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
   "about RM {price}": "约 RM {price}",
-  "all centres": "所有分园",
   "at {centre} · {place}": "在 {centre} · {place}",
   "bottle": "瓶",
   "box": "盒",
@@ -4252,6 +4258,7 @@ L.zh = {
   "{n} matches:": "{n} 个相符：",
   "{n} need details": "{n} 件需要补充资料",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
+  "{n} running low": "{n} 件快用完",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
@@ -4426,7 +4433,19 @@ function hostedCall(fn, data) {
       .catch(function (e) { WHY = String(e && e.name ? e.name + ': ' : '') + String(e && e.message || e).slice(0, 140); finish(reject, offline()); });
   });
 }
+// anything that waits on the sheet for more than a moment shows a thin bar under the top edge (the quiet version check does not)
+var pending = 0, barT = 0;
+function loadBar(on) {
+  var b = byIdEl('loadbar'); if (!b) return;
+  if (on) { pending++; if (pending === 1) { clearTimeout(barT); barT = setTimeout(function () { b.hidden = false; }, 300); } }
+  else { pending = Math.max(0, pending - 1); if (!pending) { clearTimeout(barT); b.hidden = true; } }
+}
 function call(fn, data) {
+  if (fn === 'version') return callRaw(fn, data);
+  loadBar(true);
+  return callRaw(fn, data).then(function (v) { loadBar(false); return v; }, function (e) { loadBar(false); throw e; });
+}
+function callRaw(fn, data) {
   if (HOSTED) return hostedCall(fn, data);
   return new Promise(function (resolve, reject) {
     var done = false;
@@ -4465,7 +4484,7 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType };
+window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, loadBar: loadBar };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -4647,6 +4666,7 @@ function setStack(stack) {
 function popView() {
   if (S.stack.length > 1) S.stack.pop(); else S.stack = [{ name: 'home' }];
   render();
+  window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0);
 }
 function back() {
   if (S.stack.length > 1 && (S.hdepth || 0) > 0 && hist) { try { history.back(); return; } catch (e) { /* fall through */ } }
@@ -4662,7 +4682,7 @@ try {
     if (S.skipPop > 0) { S.skipPop--; var f = S.afterRewind; S.afterRewind = null; if (f) f(); return; }
     S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
     if (!byIdEl('sheet').hidden) { closeSheet(); histPush(); return; }   // the sheet closes; the screen stays, so the entry is put back
-    if (S.stack.length > 1) { S.stack.pop(); render(); }
+    if (S.stack.length > 1) { S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); }
   });
 } catch (e) { /* no history support */ }
 
@@ -4898,7 +4918,6 @@ function vHome(v) {
     '<input id="q" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + tl('Search for an item') + '" placeholder="' + tl('Search…') + '" value="' + esc(S.q) + '">' +
     '<button class="clear" data-act="clearQ" aria-label="' + tl('Clear') + '"' + (S.q ? '' : ' hidden') + '>' + ICON.x + '</button>' +
     '<button class="filt" data-act="filterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '<span class="fdot"' + (filterCount() ? '' : ' hidden') + '>' + filterCount() + '</span></button></div>' +
-    scopeChips() +
     '<div id="results">' + resultsHtml(v) + '</div>';
 }
 function drawResults() {
@@ -5004,8 +5023,7 @@ function resultsHtml(v) {
       var og = elsewhere[0];
       return starterHits(q) + '<div class="card empty" style="margin-top:14px"><h2>' + esc(tl('Not at {centre}.', { centre: myCentre() })) + '</h2>' +
         '<p>' + esc(og.rows.filter(function (r) { return r.centre !== myCentre(); }).slice(0, 3).map(function (r) { return tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) + (isLevel(r) ? '' : ' ' + unitFor(r.qty, r.unit)) }); }).join(' · ')) + '</p>' +
-        '<button class="btn primary" data-act="scope" data-val="1">' + tl('Show all centres') + '</button>' +
-        '<button class="btn quiet" data-act="toRequest">' + tl('Ask to buy') + '</button></div>';
+        '<button class="btn primary" data-act="toRequest">' + tl('Ask to buy') + '</button></div>';
     }
     var sh = starterHits(q);
     return sh + '<div class="card empty" style="margin-top:14px"><h2>' + esc(sh ? tl('Not here?') : tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
@@ -5454,45 +5472,40 @@ function shoppingText(lows, broken, scopeLabel) {
 }
 function vLow() {
   var mine = myCentre();
-  var scope = function (it) { return S.lowAll || it.centre === mine; };
-  var lows = S.items.filter(function (it) { return scope(it) && low(it); })
+  var lows = S.items.filter(function (it) { return it.centre === mine && low(it); })
     .sort(function (a, b) {
       if (S.lowSort === 'u') {   // emptiest first: how much of the minimum is left
         var ua = a.qty / a.min, ub = b.qty / b.min;
         if (ua !== ub) return ua - ub;
       }
-      return (a.centre === mine ? 0 : 1) - (b.centre === mine ? 0 : 1) || a.centre.localeCompare(b.centre) || a.name.localeCompare(b.name);
+      return a.name.localeCompare(b.name);
     });
-  var broken = S.items.filter(function (it) { return scope(it) && STATUS_LABEL[it.status]; });
+  var broken = S.items.filter(function (it) { return it.centre === mine && STATUS_LABEL[it.status]; });
   var off = S.lowOff || (S.lowOff = {}), pick = !!S.lowPick;
-  var row = function (it, extra) {
-    var btn = '<button class="card item' + (pick ? ' pickrow' + (off[it.id] ? ' off' : '') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
+  var card = function (it, lines) {
+    var main = '<button class="card item' + (pick ? ' pickrow' + (off[it.id] ? ' off' : '') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
       (pick ? ' role="checkbox" aria-checked="' + (off[it.id] ? 'false' : 'true') + '"' : '') + '>' +
-      (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + extra +
-      '<span class="line">' + esc(S.lowAll ? it.centre + ' · ' + it.loc : it.loc) + '</span></span></button>';
-    return pick ? btn : '<div class="lowwrap">' + btn + '<button type="button" class="chip askb" data-act="askFromLow" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tl('Ask to buy') + '</button></div>';
+      (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + lines +
+      '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
+    return pick ? main : '<div class="lowwrap">' + main + '<button type="button" class="btn askb" data-act="askFromLow" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tl('Ask to buy') + '</button></div>';
   };
+  var n = lows.length + broken.length;
+  var sl = pick ? lows.filter(function (it) { return !off[it.id]; }) : lows, sb = pick ? broken.filter(function (it) { return !off[it.id]; }) : broken, shareN = sl.length + sb.length;
   return top(false) + '<h1 class="title">' + tl('Running low') + '</h1>' +
-    '<div class="toolrow"><div class="seg" data-group="lowAll">' +
-    '<button class="chip' + (S.lowAll ? '' : ' on') + '" data-act="lowScope" data-val="">' + esc(mine || tl('My centre')) + '</button>' +
-    '<button class="chip' + (S.lowAll ? ' on' : '') + '" data-act="lowScope" data-val="1">' + tl('All centres') + '</button></div>' +
-    '<div class="tools">' + (lows.length > 1 ? '<button type="button" class="ib" data-act="lowSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.sort + '</button>' : '') +
-    (lows.length || broken.length ? '<button type="button" class="ib' + (pick ? ' on' : '') + '" data-act="lowPick" aria-label="' + (pick ? tl('Done') : tl('Choose')) + '" title="' + (pick ? tl('Done') : tl('Choose')) + '" aria-pressed="' + (pick ? 'true' : 'false') + '">' + ICON.count + '</button>' : '') + '</div></div>' +
-    (lows.length || broken.length ? (function () {
-      var sl = pick ? lows.filter(function (it) { return !off[it.id]; }) : lows, sb = pick ? broken.filter(function (it) { return !off[it.id]; }) : broken, n = sl.length + sb.length;
-      return '<a class="btn" id="share" target="_blank" rel="noopener"' + (pick && !n ? ' aria-disabled="true" style="opacity:.45;pointer-events:none"' : '') + ' href="https://wa.me/?text=' +
-        encodeURIComponent(shoppingText(sl, sb, S.lowAll ? tl('all centres') : (mine || tl('my centre')))) + '">' + (pick ? tl('Share {n}', { n: n }) : tl('Share on WhatsApp')) + '</a>' +
-        '';
-    })() : '') +
-    (lows.length ? '<div class="list">' + lows.map(function (it) {
+    (n ? '<div class="lowbar"><p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p><div class="tools">' +
+      (lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
+      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + ICON.pick + '<span>' + (pick ? tl('Done') : tl('Choose')) + '</span></button></div></div>' +
+      '<a class="btn" id="share" target="_blank" rel="noopener"' + (pick && !shareN ? ' aria-disabled="true" style="opacity:.45;pointer-events:none"' : '') + ' href="https://wa.me/?text=' +
+        encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + (pick ? tl('Share {n}', { n: shareN }) : tl('Share on WhatsApp')) + '</a>' : '') +
+    (lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
       var spare = spareOf(it);
-      return row(it, (isLevel(it)
+      return card(it, (isLevel(it)
         ? '<span class="line"><span class="badge low">' + LEVEL_LABELS[it.qty] + '</span></span>'
         : '<span class="line"><span class="badge low">' + tl('{amount} left', { amount: amount(it.qty, it.unit) }) + '</span> ' + esc(tl('needs {min}', { min: it.min })) + '</span>') +
-        (spare.length ? '<span class="line"><span class="badge ok">' + spare.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) })); }).join(' · ') + '</span></span>' : ''));
+        (spare.length ? '<span class="line">' + spare.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) })); }).join(' · ') + '</span>' : ''));
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing is running low.') + '</h2></div>') +
-    (broken.length ? '<h2 class="sec">' + tl('Broken or missing') + '</h2><div class="list">' + broken.map(function (it) {
-      return row(it, '<span class="line"><span class="badge warn">' + STATUS_LABEL[it.status] + '</span>' + (it.notes ? ' ' + esc(it.notes) : '') + '</span>');
+    (broken.length ? '<h2 class="sec">' + tl('Broken or missing') + '</h2><div class="list lowlist">' + broken.map(function (it) {
+      return card(it, '<span class="line"><span class="badge warn">' + STATUS_LABEL[it.status] + '</span></span>' + (it.notes ? '<span class="line">' + esc(it.notes) + '</span>' : ''));
     }).join('') + '</div>' : '');
 }
 
@@ -5505,7 +5518,6 @@ function vCountList(v) {
   return top(true) + '<div class="titlerow"><h1 class="title">' + esc(v.loc) + '</h1><div class="tools">' +
       '<button type="button" class="ib" data-act="countSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.sort + '</button>' +
       '<button type="button" class="ib' + (S.checkHide ? ' on' : '') + '" data-act="countHide" aria-label="' + tl('Hide checked') + '" title="' + tl('Hide checked') + '" aria-pressed="' + (S.checkHide ? 'true' : 'false') + '">' + (S.checkHide ? ICON.eyeoff : ICON.eye) + '</button></div></div>' +
-    '<p class="sub">' + esc(v.centre) + '</p>' +
     '<p class="prog" id="c-prog" style="margin-top:var(--s3)">' + tl('{n} of {total} confirmed', { n: 0, total: rows.length }) + '</p><div class="progbar"><i id="c-bar"></i></div>' +
     '<div class="card' + (S.checkHide ? ' hidechecked' : '') + '" id="checklist">' + rows.map(function (it) {
       var okTxt = it.kind === 'Equipment' && !isLevel(it) ? tl('All here') : tl('OK');
@@ -5517,7 +5529,7 @@ function vCountList(v) {
         '<button type="button" class="okb tk" data-act="countTick" aria-label="' + esc(okTxt + ' · ' + shown(it)) + '"><span>' + okTxt + '</span></button></div></div>';
     }).join('') + '</div>' +
     '<button class="btn quiet" data-act="addHere">' + tl('Add something here') + '</button>' +
-    '<div class="savebar"><button class="btn primary" id="c-go" data-act="countGo">' + tl('All fine, save') + '</button></div>';
+    '<div class="savebar"><button class="btn primary" id="c-go" data-act="countGo">' + tl('Nothing changed, save') + '</button></div>';
 }
 function restoreCheck(v) {
   var d = (S.checkDraft || {})[v.centre + '|' + v.loc];
@@ -5557,7 +5569,7 @@ function countChanges() {
   var btn = byIdEl('c-go');
   if (btn) {
     btn.disabled = bad;
-    btn.textContent = bad ? tl('Fill in every number') : out.length ? tl('Save ({n} changed)', { n: out.length }) : tl('All fine, save');
+    btn.textContent = bad ? tl('Fill in every number') : out.length ? tl('Save ({n} changed)', { n: out.length }) : tl('Nothing changed, save');
   }
   return bad ? null : out;
 }
@@ -5589,7 +5601,7 @@ function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
 function vSettings() {
   var waiting = S.outbox.length;
-  return top(true) + '<div class="titlerow"><h1 class="title">' + tl('Settings') + '</h1><button type="button" class="ib" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
+  return top(true) + '<div class="titlerow"><h1 class="title">' + tl('Settings') + '</h1><button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
     '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p>' +
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Match my phone')], ['light', tl('Light')], ['dark', tl('Dark')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[1] + '</button>';
@@ -5614,14 +5626,14 @@ function vRooms(v) {
   roomsFor(centre).forEach(function (n) { if (!places[n]) { places[n] = { n: 0, oldest: 0 }; names.push(n); } });
   names.sort(function (a, b) { return places[a].oldest - places[b].oldest || a.localeCompare(b); });
   var nn = needNameItems(centre).length, us = unsortedItems(centre).length;
-  return top(false) + '<h1 class="title">' + tl('Rooms') + '</h1><p class="sub">' + esc(centre) + '</p>' +
+  return top(false) + '<h1 class="title">' + tl('Rooms') + '</h1>' +
     (names.length ? '<div class="card rows">' + names.map(function (loc) {
       var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
       return '<div class="roomrow"><button class="rowmain" data-act="roomOpen" data-val="' + esc(loc) + '"><span>' + esc(loc) + '<small>' +
         (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) : tl('Empty')) + '</small></span>' +
-        (p.n && days > 30 ? '<span class="due"><i></i>' + tl('Overdue') + '</span>' : '') + ICON.go + '</button></div>';
+        (p.n && days > 30 ? '<span class="due" role="img" aria-label="' + esc(tl('Overdue')) + '"><i></i></span>' : '') + ICON.go + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
-    (nn || us ? '<h2 class="sec">' + tl('Needs details') + '</h2><div class="card rows tidy">' +
+    (nn || us ? '<h2 class="sec tidyhead">' + tl('Needs details') + '<span class="pn">' + tidyCount(centre) + '</span></h2><div class="card rows tidy">' +
       '<button class="rowbtn" data-act="go" data-to="needName"><span>' + esc(tl('{n} need details', { n: tidyCount(centre) })) + '</span>' + ICON.go + '</button></div>' : '');
 }
 function roomRowOk(it, f) {
@@ -5641,7 +5653,7 @@ function vRoom(v) {
   });
   var chipsOn = (f.cat ? [['cat', f.cat, tl(f.cat)]] : []).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
   return top(true) + '<div class="titlerow"><h1 class="title">' + esc(v.loc) + '</h1>' +
-    (all.length > 1 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
+    (all.length > 6 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
     '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p>' +
     (chipsOn.length ? '<div class="seg fchips">' + chipsOn.map(function (o) { return '<button class="fchip" data-act="roomFilterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>'; }).join('') + '</div>' : '') +
     (list.length ? '<div class="list">' + list.map(function (it) {
@@ -5650,8 +5662,7 @@ function vRoom(v) {
         (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
         '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
     }).join('') + '</div>' : (all.length ? '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>' : '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>')) +
-    (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button>' +
-      '<button class="btn" data-act="roomNoChange" data-val="' + esc(v.loc) + '">' + tl('Nothing changed') + '</button></div>' : '');
+    (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button></div>' : '');
 }
 function roomFilterSheet(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), counts = {};
@@ -6264,11 +6275,21 @@ function formError(msg) {
   if (e) { e.textContent = msg; e.hidden = !msg; if (msg) e.scrollIntoView({ block: 'center' }); }
   else if (msg) toast(msg);
 }
+// the button that was just tapped shows a spinner and its label changes; a form's own save button if the tap was not on a button
+var busyEl = null;
 function busy(on, label) {
-  var b = byIdEl('f-go') || byIdEl('m-go');
-  if (!b) return;
-  if (on) { b.dataset.label = b.textContent; b.textContent = label || tl('Saving…'); b.disabled = true; }
-  else { b.textContent = b.dataset.label || b.textContent; b.disabled = false; }
+  if (on) {
+    var b = S.lastBtn && S.lastBtnAt > Date.now() - 1500 && document.body.contains(S.lastBtn) && /^(BUTTON|A)$/.test(S.lastBtn.tagName) ? S.lastBtn : (byIdEl('f-go') || byIdEl('m-go'));
+    busyEl = b;
+    if (!b) return;
+    if (!b.classList.contains('ib') && String(b.textContent).trim()) { b.dataset.label = b.textContent; b.textContent = label || tl('Saving…'); }
+    b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true');
+  } else {
+    var e = busyEl; busyEl = null;
+    if (!e) return;
+    if (e.dataset.label !== undefined) { e.textContent = e.dataset.label; delete e.dataset.label; }
+    e.classList.remove('loading'); e.disabled = false; e.removeAttribute('aria-busy');
+  }
 }
 function failed(e) {
   busy(false);
@@ -6293,10 +6314,23 @@ function shrink(file) {
 
 // ---------- what each tap does ----------
 var ACT = {
-  nav: function (el) { S.lowPick = false; S.lowOff = {}; if (el.dataset.to === 'home') { S.fil = {}; S.qSort = ''; } root(el.dataset.to); },
+  nav: function (el) {
+    var to = el.dataset.to, TABS = { home: 1, low: 1, rooms: 1, more: 1 };
+    S.lowPick = false; S.lowOff = {};
+    if (to === 'home') { S.fil = {}; S.qSort = ''; S.q = ''; }
+    var from = tabRootOf(cur().name);
+    (S.scrollAt || (S.scrollAt = {}))[from] = window.scrollY;
+    // the tabs visited so far (the start of the stack), then the one left, without repeats: Back walks back through them
+    var seen = S.stack.filter(function (v) { return TABS[v.name] && !v.cat && !v.key && !v.id; }).map(function (v) { return v.name; });
+    if (TABS[from]) seen.push(from);
+    var trail = [];
+    seen.forEach(function (t) { if (t !== to) { trail = trail.filter(function (x) { return x !== t; }); trail.push(t); } });
+    trail = trail.slice(-3);
+    setStack(trail.map(function (t) { return { name: t }; }).concat([{ name: to }]));
+  },
   go: function (el) { if (el.dataset.to === 'requests') loadRequests(); go({ name: el.dataset.to }); },
   back: back,
-  refresh: function (el) { if (el && el.classList) el.classList.add('spin'); refresh(true); },
+  refresh: function (el) { if (el && el.classList) { el.classList.add('spin'); setTimeout(function () { el.classList.remove('spin'); }, 900); } refresh(true); },
   flushNow: function () { flush(); },
   toastAct: function () { byIdEl('toast').hidden = true; if (toastFn) toastFn(); },
   closeSheet: closeSheet,
@@ -6854,18 +6888,6 @@ var ACT = {
     });
   },
   countPlace: function (el) { go({ name: 'countList', centre: myCentre(), loc: el.dataset.val }); },
-  roomNoChange: function (el) {
-    var v = cur(); M = { type: 'nochange', centre: v.centre, loc: el.dataset.val };
-    openSheet('<h2>' + esc(tl('Is everything in {room} as listed?', { room: v.loc })) + '</h2>' +
-      '<button class="btn primary" id="m-go" data-act="roomNoChangeGo">' + tl('Yes, nothing changed') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-go');
-  },
-  roomNoChangeGo: function () {
-    var m = M, total = itemsIn(m.centre, m.loc).length;
-    enqueue('saveCount', { centre: m.centre, location: m.loc, counts: [] });
-    if (S.checkDraft) delete S.checkDraft[m.centre + '|' + m.loc];
-    closeSheet();
-    toast(tl('Checked {total}.', { total: total }));
-  },
   countGo: function () {
     var v = cur(), changes = countChanges();
     if (!changes) return;
@@ -7118,6 +7140,7 @@ document.addEventListener('click', function (e) {
   // the next tap anywhere puts the last message away, so it never sits on top of a button
   if (!e.target.closest('#toast')) byIdEl('toast').hidden = true;
   if (!el || el.disabled) return;
+  S.lastBtn = el; S.lastBtnAt = Date.now();
   var fn = ACT[el.dataset.act];
   if (fn) { if (el.tagName !== 'A') e.preventDefault(); fn(el, e); if (cur().name === 'add' && cur().fromAdd && el.dataset.act !== 'addGo' && el.dataset.act !== 'addGoMore' && el.dataset.act !== 'addDraftClear') addDraftSave(); }
 });
