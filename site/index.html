@@ -276,7 +276,7 @@ details.settings summary small{color:var(--muted);font-size:13px}
 #nav button.on[data-to=low] svg{fill:var(--mark)}
 #nav .n{position:absolute;top:-6px;left:16px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--mark);box-shadow:0 0 0 1.5px var(--ink);color:var(--on-mark);font-size:12px;font-weight:700;line-height:18px;text-align:center}
 
-#sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center}
+#sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
 #sheet .scrim{position:absolute;inset:0;background:var(--scrim)}
 #sheet .panel{position:relative;width:100%;max-width:560px;max-height:92vh;overflow:auto;background:var(--paper);border-radius:var(--r-sheet) var(--r-sheet) 0 0;padding:var(--s5) var(--s4) calc(var(--s4) + env(safe-area-inset-bottom))}
 #sheet h2{font-size:22px;line-height:1.2;margin-bottom:var(--s1)}
@@ -300,8 +300,28 @@ details.settings summary small{color:var(--muted);font-size:13px}
 #cam .camtop .btn,#cam .camtop .btn + .btn{flex:none;margin:0;width:auto;min-height:44px;background:#fff;border-color:#fff;color:#16181d}
 #cam .camlog{position:absolute;left:0;right:0;bottom:0;padding:var(--s5) var(--s4) var(--s5);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.85))}
 #cam .camlog p{margin:var(--s1) 0}
-#cam .camalt{display:flex;gap:var(--s2);margin-top:var(--s3)}
-#cam .camalt .btn,#cam .camalt .btn + .btn{margin:0;flex:1;min-height:48px;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.5);color:#fff;font-size:15px}
+#cam .camtop .ctx{flex:1;min-width:0;margin:0;min-height:44px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:0 var(--s4);font-weight:600}
+#cam .camtop .ctx + .btn{margin-left:0}
+.modestrip{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--chip-bg,rgba(0,0,0,.07));margin:12px 0}
+.modestrip button{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;border:0;border-radius:999px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}
+.modestrip button.on{background:var(--ink,#16181d);color:var(--paper,#fff)}
+#cam .modestrip{margin:var(--s3) 0 0;background:rgba(255,255,255,.18)}
+#cam .modestrip button{color:#fff}
+#cam .modestrip button.on{background:#fff;color:#16181d}
+.ctxchip{display:block;width:100%;text-align:left;margin:0 0 12px}
+#cam .camcard,#cam .campanel{position:absolute;left:var(--s3);right:var(--s3);background:#fff;color:#16181d;border-radius:14px;padding:var(--s3) var(--s4);box-shadow:0 6px 24px rgba(0,0,0,.4)}
+#cam .camcard{bottom:150px;display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+#cam .camcard .cardmain{flex:1;min-width:0}
+#cam .camcard b{display:block;font-size:17px}
+#cam .camcard small{color:#555;font-size:14px}
+#cam .camcard .chip,#cam .campanel .chip{color:#16181d;border-color:#16181d;background:#fff;min-height:44px}
+#cam .campanel .chip.on{background:#16181d;color:#fff}
+#cam .campanel{bottom:var(--s3);max-height:70vh;overflow:auto}
+#cam .campanel h2{font-size:18px;margin:0 0 var(--s2)}
+#cam .campanel .inp{width:100%;margin:var(--s2) 0}
+#cam .campanel .btn{margin:var(--s2) 0 0;width:100%}
+#cam .campanel .btn.primary{background:#16181d;color:#fff}
+#cam .campanel .btn.quiet{color:#16181d}
 #cam .camlog .got{display:inline-block;background:var(--mark);color:var(--on-mark);font-weight:700;padding:var(--s1) var(--s2);border-radius:2px}
 @media (min-width:700px){#app{padding-top:var(--s5)}.hero{font-size:40px}}
 
@@ -384,9 +404,11 @@ div.card.empty{padding:var(--s5) var(--s4)}
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
 <div id="cam" hidden role="dialog" aria-label="Scan books"><video id="cam-v" playsinline muted></video><div class="aim"></div>
-<div class="camtop"><span id="cam-n">0 recorded</span><button class="btn" id="cam-torch" data-act="camTorch" hidden>Flashlight</button><button class="btn" data-act="camDone">Done</button></div>
-<div class="camlog"><p id="cam-msg">Point the camera at a barcode.</p><p id="cam-last"></p>
-<div class="camalt"><button class="btn" data-act="camType">Type it instead</button><button class="btn" data-act="camBatch">Add a batch</button></div></div></div>
+<div class="camtop"><button class="btn ctx" id="cam-ctx" data-act="ctxOpen"></button><button class="btn" id="cam-torch" data-act="camTorch" hidden>Flashlight</button><button class="btn" data-act="camDone">Finish</button></div>
+<div class="camcard" id="cam-card" hidden></div>
+<div class="campanel" id="cam-panel" hidden></div>
+<div class="camlog"><p id="cam-msg">Point the camera at a barcode.</p><p id="cam-n">0 recorded</p>
+<div class="modestrip" role="group" aria-label="How to add"><button class="on" data-act="modeScan" aria-pressed="true">Scan</button><button data-act="modeType" aria-pressed="false">Type</button></div></div></div>
 <input type="file" accept="image/*" id="file" hidden>
 <input type="file" accept="image/*" capture="environment" id="scan" hidden>
 
@@ -2895,7 +2917,6 @@ L.ms = {
   "1 item": "1 barang",
   "100 at most.": "Paling banyak 100.",
   "100 lines at most.": "Paling banyak 100 baris.",
-  "A delivery or a box": "Penghantaran atau kotak",
   "A piece is missing": "Ada bahagian hilang",
   "A set": "Satu set",
   "A to Z": "A hingga Z",
@@ -2903,7 +2924,6 @@ L.ms = {
   "About RM {price}.": "Anggaran RM {price}.",
   "Add": "Tambah",
   "Add Malay and Chinese names too.": "Tambah nama Melayu dan Cina juga.",
-  "Add a batch": "Tambah banyak",
   "Add a room": "Tambah bilik",
   "Add an item": "Tambah barang",
   "Add at least one item.": "Tambah sekurang-kurangnya satu barang.",
@@ -2971,6 +2991,7 @@ L.ms = {
   "Can’t reach the list.": "Tidak dapat capai senarai.",
   "Centre": "Pusat",
   "Certificates and graduation": "Sijil dan konvokesyen",
+  "Change type": "Tukar jenis",
   "Check": "Semak",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
@@ -2987,6 +3008,7 @@ L.ms = {
   "Choose Full, Half, Almost out or Empty.": "Pilih Penuh, Separuh, Hampir habis atau Kosong.",
   "Choose a centre": "Pilih pusat",
   "Choose a centre first.": "Pilih pusat dahulu.",
+  "Choose a room": "Pilih bilik",
   "Choose a room first.": "Pilih bilik dahulu.",
   "Choose another centre.": "Pilih pusat lain.",
   "Choose supplies or equipment.": "Pilih bekalan atau peralatan.",
@@ -3048,6 +3070,7 @@ L.ms = {
   "Files, folders and books": "Fail, folder dan buku",
   "Fill in every number": "Isi semua nombor",
   "Find": "Cari",
+  "Finish": "Selesai",
   "First 30 shown. Type more.": "30 pertama ditunjuk. Taip lagi.",
   "First aid": "Pertolongan cemas",
   "First-aid kits and tools": "Kit dan alatan pertolongan cemas",
@@ -3074,6 +3097,7 @@ L.ms = {
   "How many, line": "Berapa banyak, baris",
   "How many?": "Berapa banyak?",
   "How much is left?": "Berapa yang tinggal?",
+  "How to add": "Cara menambah",
   "How to check it?": "Cara semak?",
   "Hygiene and cleaning": "Kebersihan dan pembersihan",
   "In each set": "Isi setiap set",
@@ -3126,7 +3150,6 @@ L.ms = {
   "Next.": "Seterusnya.",
   "No answer. Check the link and sharing, and your signal, then try again.": "Tiada jawapan. Semak pautan, perkongsian dan isyarat, kemudian cuba lagi.",
   "No centres yet.": "Belum ada pusat.",
-  "No name found for {code}. You can type it when you’re done.": "Tiada nama untuk {code}. Anda boleh taip kemudian.",
   "No requests yet.": "Belum ada permohonan.",
   "No rooms yet.": "Belum ada bilik.",
   "None": "Tiada",
@@ -3329,6 +3352,7 @@ L.ms = {
   "Thermometers and ice packs": "Termometer dan pek ais",
   "These stickers open:": "Pelekat ini membuka:",
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
+  "Tip: hold Add to type instead.": "Petua: tekan lama Tambah untuk menaip.",
   "Tissues and wipes": "Tisu dan tuala basah",
   "To confirm ({n})": "Untuk disahkan ({n})",
   "Toilet supplies": "Keperluan tandas",
@@ -3357,7 +3381,6 @@ L.ms = {
   "Type what you need.": "Taip apa yang diperlukan.",
   "Type what you want to buy.": "Taip apa yang mahu dibeli.",
   "Type where it’s kept.": "Taip tempat simpanan.",
-  "Type where they go first.": "Taip tempat simpanan dahulu.",
   "Type where they go.": "Taip tempat simpanan.",
   "Type where they’re kept.": "Taip tempat simpanan.",
   "Undo": "Buat asal",
@@ -3458,7 +3481,6 @@ L.zh = {
   "1 item": "1 件",
   "100 at most.": "最多 100 个。",
   "100 lines at most.": "最多 100 行。",
-  "A delivery or a box": "一批到货或一箱",
   "A piece is missing": "缺了一个零件",
   "A set": "一套",
   "A to Z": "A 到 Z",
@@ -3466,7 +3488,6 @@ L.zh = {
   "About RM {price}.": "大约 RM {price}。",
   "Add": "添加",
   "Add Malay and Chinese names too.": "也加上马来文和中文名称。",
-  "Add a batch": "批量添加",
   "Add a room": "添加房间",
   "Add an item": "添加物品",
   "Add at least one item.": "至少添加一件。",
@@ -3534,6 +3555,7 @@ L.zh = {
   "Can’t reach the list.": "连不上清单。",
   "Centre": "分园",
   "Certificates and graduation": "证书与毕业用品",
+  "Change type": "更改类型",
   "Check": "核对",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
@@ -3550,6 +3572,7 @@ L.zh = {
   "Choose Full, Half, Almost out or Empty.": "请选择满的、一半、快没了或空的。",
   "Choose a centre": "选择分园",
   "Choose a centre first.": "请先选择分园。",
+  "Choose a room": "选择房间",
   "Choose a room first.": "请先选择房间。",
   "Choose another centre.": "请选择别的分园。",
   "Choose supplies or equipment.": "请选择耗材或设备。",
@@ -3611,6 +3634,7 @@ L.zh = {
   "Files, folders and books": "文件夹与簿本",
   "Fill in every number": "请填好每个数字",
   "Find": "查找",
+  "Finish": "完成",
   "First 30 shown. Type more.": "显示前 30 个。多输入几个字。",
   "First aid": "急救用品",
   "First-aid kits and tools": "急救包与工具",
@@ -3637,6 +3661,7 @@ L.zh = {
   "How many, line": "数量，行",
   "How many?": "数量",
   "How much is left?": "还剩多少？",
+  "How to add": "添加方式",
   "How to check it?": "怎么核对？",
   "Hygiene and cleaning": "卫生与清洁",
   "In each set": "每套包含",
@@ -3689,7 +3714,6 @@ L.zh = {
   "Next.": "下一个。",
   "No answer. Check the link and sharing, and your signal, then try again.": "没有回应。请检查链接、分享设置和信号后再试。",
   "No centres yet.": "还没有分园。",
-  "No name found for {code}. You can type it when you’re done.": "没找到 {code} 的名称，扫完后可以手动输入。",
   "No requests yet.": "还没有申请。",
   "No rooms yet.": "还没有房间。",
   "None": "全不选",
@@ -3892,6 +3916,7 @@ L.zh = {
   "Thermometers and ice packs": "体温计与冰袋",
   "These stickers open:": "这些贴纸会打开：",
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
+  "Tip: hold Add to type instead.": "小提示：长按“添加”可改为输入。",
   "Tissues and wipes": "纸巾与湿巾",
   "To confirm ({n})": "待确认（{n}）",
   "Toilet supplies": "厕所用品",
@@ -3920,7 +3945,6 @@ L.zh = {
   "Type what you need.": "请输入需要的物品。",
   "Type what you want to buy.": "请输入想买的东西。",
   "Type where it’s kept.": "请输入放置位置。",
-  "Type where they go first.": "请先填写放置位置。",
   "Type where they go.": "请填写放置位置。",
   "Type where they’re kept.": "请输入放置位置。",
   "Undo": "撤销",
@@ -5272,7 +5296,6 @@ function vAdmin() {
       row('starterAdmin', '', tl('Starter list'), '') +
       row('go', 'adminRooms', tl('Rooms'), tl('Add, rename or remove rooms')) +
       row('go', 'labels', tl('QR stickers'), '') +
-      row('go', 'bulk', tl('Add a batch'), tl('A delivery or a box')) +
     '</div>' +
     '<details class="settings" id="adm-sheet"><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
       '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
@@ -5295,9 +5318,11 @@ function fillStatic() {
   var set = function (sel, fn) { var e = document.querySelector(sel); if (e) fn(e); };
   set('#cam', function (e) { e.setAttribute('aria-label', tl('Scan an item')); });
   set('#cam-torch', function (e) { e.textContent = SC.torch ? tl('Flashlight on') : tl('Flashlight'); });
-  set('[data-act=camDone]', function (e) { e.textContent = tl('Done'); });
-  set('[data-act=camType]', function (e) { e.textContent = tl('Type it'); });
-  set('[data-act=camBatch]', function (e) { e.textContent = tl('Add a batch'); });
+  set('[data-act=camDone]', function (e) { e.textContent = tl('Finish'); });
+  set('#cam [data-act=modeScan]', function (e) { e.textContent = tl('Scan'); });
+  set('#cam [data-act=modeType]', function (e) { e.textContent = tl('Type'); });
+  set('#cam .modestrip', function (e) { e.setAttribute('aria-label', tl('How to add')); });
+  drawCtx();
   set('#app .splash', function (e) { if (!S.loaded) e.textContent = tl('Getting your list…'); });
 }
 var SC = { scans: [], queue: Promise.resolve(), stream: null, timer: 0, detector: null, lastIsbn: '', lastSeen: 0, reading: false, ctx: null, photoMode: false };
@@ -5324,64 +5349,128 @@ function scanListHtml() {
       (st === 'error' ? '<p class="err" style="margin-top:0">' + esc(e.err) + '</p>' : '');
   }).join('') + '</div>';
 }
-function drawScanList() { var el = byIdEl('scan-list'); if (el) el.innerHTML = scanListHtml(); camUpdate(); }
-function camUpdate() {
-  var n = SC.scans.reduce(function (a, e) { return a + e.n; }, 0), el = byIdEl('cam-n');
-  if (el) el.textContent = (n === 1 ? tl('1 added') : tl('{n} added', { n: n }));
+// switch between the two ways of adding without piling up screens: Scan and Type replace each other
+function showAdd(name) {
+  var n = cur().name;
+  if (n === name) { render(); return; }
+  go({ name: name }, n === 'scanBooks' || n === 'bulk');
 }
+function drawScanList() { var el = byIdEl('scan-list'); if (el) el.innerHTML = scanListHtml(); camUpdate(); }
+function scanTotals() {
+  return { n: SC.scans.reduce(function (a, e) { return a + e.want; }, 0), name: SC.scans.filter(function (e) { return e.needTitle; }).length };
+}
+function scanSummary() {
+  var t = scanTotals(), s = t.n === 1 ? tl('1 added') : tl('{n} added', { n: t.n });
+  return t.name ? s + ' · ' + tl('{n} need a name', { n: t.name }) : s;
+}
+function camUpdate() {
+  var el = byIdEl('cam-n'), sum = byIdEl('sc-sum');
+  if (el) el.textContent = scanSummary();
+  if (sum) sum.textContent = SC.scans.length ? scanSummary() : '';
+}
+// ----- where the next scans go: the centre and room, shown as one chip, changed in a sheet -----
+function ctxNow() { return { centre: SC.centre || myCentre(), loc: store.get('rm_scanloc', '') }; }
+function ctxLabel() { var c = ctxNow(); return c.centre + ' · ' + (c.loc || tl('Choose a room')) + ' ▾'; }
+function drawCtx() {
+  ['cam-ctx', 'sc-ctx'].forEach(function (id) { var el = byIdEl(id); if (el) el.textContent = ctxLabel(); });
+}
+function ctxSheet() {
+  var c = ctxNow();
+  return '<h2>' + tl('Where do they go?') + '</h2>' +
+    (S.centres.length > 1 ? '<label class="lab">' + tl('Which centre?') + '</label><div class="chips">' + S.centres.map(function (n) {
+      return '<button type="button" class="chip' + (n === c.centre ? ' on' : '') + '" data-act="ctxCentre" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+    '<label class="lab">' + tl('Which room?') + '</label><div class="chips">' + roomsFor(c.centre).map(function (l) {
+      return '<button type="button" class="chip' + (sameRoom(l, c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '">' + esc(l) + '</button>'; }).join('') + '</div>' +
+    '<input id="ctx-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" aria-label="' + tl('Which room?') + '" value="' + esc(roomsFor(c.centre).some(function (l) { return sameRoom(l, c.loc); }) ? '' : c.loc) + '">' +
+    '<p class="err" id="ctx-err" hidden></p><button class="btn primary" data-act="ctxDone">' + tl('Done') + '</button>';
+}
+function openCtx() { M = { type: 'ctx' }; openSheet(ctxSheet(), 'ctx-room'); }
 function vScanBooks() {
-  F = { centre: myCentre(), cat: S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : '' };
-  return top(true) + '<h1 class="title">' + tl('Scan') + '</h1>' +
-    '<p class="sub">' + tl('Point at a barcode.') + '</p>' +
-    '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
-    '<label class="lab" for="f-loc">' + tl('Where do they go?') + '</label>' +
-    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" value="' + esc(store.get('rm_scanloc', '')) + '">' +
-    '<div id="f-locs">' + locChips(F.centre) + '</div>' +
+  return top(true) + '<h1 class="title">' + tl('Scan') + '</h1>' + modeStrip('scan') +
+    '<button class="btn ctxchip" id="sc-ctx" data-act="ctxOpen">' + esc(ctxLabel()) + '</button>' +
     '<p class="err" id="f-err" hidden></p>' +
     (scanOk() ? '<div class="formend"><button class="btn primary" data-act="camStart">' + tl('Scan with camera') + '</button>' +
       '<button class="btn quiet" data-act="camPhoto">' + tl('Photo of a barcode') + '</button></div>'
       : '<div class="note">' + tl('Scanning isn’t available here. Type items instead.') + '</div>') +
-    '<button class="btn quiet" data-act="addNew">' + tl('Type it') + '</button>' +
-    '<button class="btn quiet" data-act="go" data-to="bulk">' + tl('Add a batch') + '</button>' +
-    '<h2 class="sec">' + tl('Just added') + '</h2><div id="scan-list">' + scanListHtml() + '</div>';
+    '<h2 class="sec">' + tl('Just added') + '</h2><p class="sub" id="sc-sum">' + esc(SC.scans.length ? scanSummary() : '') + '</p><div id="scan-list">' + scanListHtml() + '</div>';
+}
+// Scan · Type: always visible, never hidden behind a press. Only offered where a camera can work.
+function modeStrip(active) {
+  if (!scanOk()) return '';
+  return '<div class="modestrip" role="group" aria-label="' + tl('How to add') + '"><button data-act="modeScan" class="' + (active === 'scan' ? 'on' : '') + '" aria-pressed="' + (active === 'scan') + '">' + tl('Scan') + '</button>' +
+    '<button data-act="modeType" class="' + (active === 'type' ? 'on' : '') + '" aria-pressed="' + (active === 'type') + '">' + tl('Type') + '</button></div>';
 }
 function scanContext() {
-  var loc = val('f-loc').trim();
-  if (!F.centre) { formError(tl('Choose a centre first.')); return null; }
-  if (!loc) { formError(tl('Type where they go first.')); return null; }
-  formError('');
-  store.set('rm_scanloc', loc);
-  return { centre: F.centre, loc: loc, cat: F.cat || '' };
+  var c = ctxNow();
+  if (!c.centre || !c.loc) { openCtx(); return null; }
+  return c;
 }
-// Record one more copy of this book. The title comes from our own list, then Open Library; only an unknown book asks for typing.
+// What kind of thing a barcode is, best evidence first: our own list (shared by every centre), the ISBN prefix,
+// the catalogue that answered (food = supplies), then the words in the name. The person only confirms or taps Change.
+function kindOfType(cat) {
+  var n = { Supplies: 0, Equipment: 0 };
+  S.items.forEach(function (it) { if (it.cat === cat && n[it.kind] !== undefined) n[it.kind]++; });
+  return n.Supplies === n.Equipment ? '' : n.Supplies > n.Equipment ? 'Supplies' : 'Equipment';
+}
+function scanGuess(e) {
+  var known = listHasIsbn(e.isbn);
+  if (known) return { cat: known.cat || '', kind: known.kind || '', fixed: true };
+  var cat = '', kind = '';
+  if (isBookCode(e.isbn)) { cat = S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : ''; kind = 'Equipment'; }
+  else if (e.hint === 'food') kind = 'Supplies';
+  if (!cat && e.title) { var gt = guessType(e.title); if (gt) cat = gt.cat; }
+  if (!kind && cat) kind = kindOfType(cat);
+  return { cat: cat, kind: kind, fixed: false };
+}
+function scanLabel(e) {
+  var bits = [];
+  if (e.cat) bits.push(tl(e.cat));
+  if (e.kind) bits.push(tl(e.kind));
+  return bits.join(' · ');
+}
+// Record one more copy of this item. The title comes from our own list, then the free catalogues; only an unknown one asks for typing.
 function scanBook(isbn, ctx) {
   var key = ctx.centre + '|' + ctx.loc.toLowerCase() + '|' + isbn;
   var e = SC.scans.filter(function (x) { return x.key === key; })[0];
   if (!e) {
-    e = { key: key, isbn: isbn, centre: ctx.centre, loc: ctx.loc, cat: isBookCode(isbn) ? ctx.cat : '', unit: isBookCode(isbn) ? 'books' : 'pcs', title: '', n: 0, want: 0, inflight: 0, err: '', needTitle: false };
+    e = { key: key, isbn: isbn, centre: ctx.centre, loc: ctx.loc, cat: '', kind: '', unit: isBookCode(isbn) ? 'books' : 'pcs', title: '', n: 0, want: 0, inflight: 0, err: '', needTitle: false, fixed: false };
     SC.scans.unshift(e);
   }
   e.want++;
   var known = listHasIsbn(isbn);
   if (!e.title && known) e.title = known.name;
-  if (e.title) { drawScanList(); scanSave(e); return Promise.resolve(e); }
+  if (e.title) { scanClassify(e); drawScanList(); scanSoon(e); return Promise.resolve(e); }
   drawScanList();
   if (e.looking) return e.looking;
   e.looking = lookupTitle(isbn).then(function (res) {
     e.looking = null;
-    if (res.title) { e.title = res.title.slice(0, 80); scanSave(e); } else e.needTitle = true;
+    if (res.title) { e.title = res.title.slice(0, 80); e.hint = res.hint || ''; scanClassify(e); scanSoon(e); } else e.needTitle = true;
     drawScanList();
     return e;
   });
   return e.looking;
 }
+function scanClassify(e) {
+  if (e.picked) return;                                   // the person chose it; leave it
+  var g = scanGuess(e);
+  e.cat = g.cat; e.kind = g.kind; e.fixed = g.fixed;
+}
+// A scan is saved a few seconds later, so Undo is just taking it back before it leaves; Finish and leaving the page save at once.
+function scanSoon(e) {
+  clearTimeout(e.hold);
+  e.hold = setTimeout(function () { e.hold = 0; scanSave(e); }, 4000);
+}
+function scanFlush() {
+  SC.scans.forEach(function (e) { if (e.hold) { clearTimeout(e.hold); e.hold = 0; scanSave(e); } });
+}
 function scanSave(e) {
   var q = e.want - e.n - e.inflight;
   if (q < 1 || !e.title) return;
+  clearTimeout(e.hold); e.hold = 0;
   e.inflight += q; e.err = '';
   drawScanList();
   SC.queue = SC.queue.then(function () {
-    return call('addMany', { centre: e.centre, location: e.loc, unit: e.unit || 'books', cat: e.cat, rows: [{ name: e.title, barcode: e.isbn, qty: q }], actionId: uid() });
+    return call('addMany', { centre: e.centre, location: e.loc, unit: e.unit || 'books', cat: e.cat, rows: [{ name: e.title, barcode: e.isbn, qty: q, cat: e.cat, kind: e.kind }], actionId: uid() });
   }).then(function (res) {
     e.inflight -= q;
     if (res.problems && res.problems.length) { e.want -= q; e.err = res.problems[0].error; }
@@ -5398,13 +5487,16 @@ function camStop() {
   if (SC.stream) { SC.stream.getTracks().forEach(function (t) { t.stop(); }); SC.stream = null; }
   var v = byIdEl('cam-v'); if (v) v.srcObject = null;
   byIdEl('cam').hidden = true;
-  SC.reading = false;
+  SC.reading = false; SC.paused = false; SC.last = null;
+  clearTimeout(SC.cardTimer);
+  byIdEl('cam-card').hidden = true; byIdEl('cam-panel').hidden = true;
+  scanFlush();
 }
 function camTick() {
   if (!SC.stream) return;
   if (cur().name !== 'scanBooks') return camStop();
   var v = byIdEl('cam-v');
-  if (v.readyState < 2 || !v.videoWidth || SC.reading) { SC.timer = setTimeout(camTick, 250); return; }
+  if (SC.paused || v.readyState < 2 || !v.videoWidth || SC.reading) { SC.timer = setTimeout(camTick, 250); return; }
   SC.reading = true;
   var k = Math.min(1, 1100 / Math.max(v.videoWidth, v.videoHeight)), c = SC.canvas || (SC.canvas = document.createElement('canvas'));
   c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
@@ -5437,13 +5529,46 @@ function camGot(isbn) {
   beep();
   try { if (navigator.vibrate) navigator.vibrate(80); } catch (e) { /* no vibration */ }
   byIdEl('cam-msg').textContent = tl('Read {code}…', { code: isbn });
-  byIdEl('cam-last').innerHTML = '';
-  scanBook(isbn, SC.ctx).then(function (e) {
-    var last = byIdEl('cam-last');
-    if (!last) return;
-    last.innerHTML = e.title ? '<span class="got">' + esc(e.title) + '</span>' : esc(tl('No name found for {code}. You can type it when you’re done.', { code: isbn }));
+  SC.last = null; byIdEl('cam-card').hidden = true;
+  scanBook(isbn, ctxNow()).then(function (e) {
+    if (!SC.stream) return;
     byIdEl('cam-msg').textContent = tl('Next.');
+    if (e.needTitle) return nameOpen(e);
+    cardShow(e);
   });
+}
+// the card over the camera: what was just recorded, with Undo and a way to fix the type
+function cardShow(e) {
+  var box = byIdEl('cam-card');
+  if (!box) return;
+  SC.last = e;
+  var lbl = scanLabel(e);
+  box.innerHTML = '<div class="cardmain"><b>✓ ' + esc(e.title) + '</b><small>' + esc((e.want === 1 ? '+1' : '+' + e.want) + (lbl ? ' · ' + lbl : '')) + '</small></div>' +
+    (e.fixed ? '' : '<button type="button" class="chip" data-act="cardChange">' + tl('Change type') + '</button>') +
+    '<button type="button" class="chip" data-act="scanUndo">' + tl('Undo') + '</button>';
+  box.hidden = false;
+  clearTimeout(SC.cardTimer);
+  SC.cardTimer = setTimeout(function () { box.hidden = true; SC.last = null; }, 4500);
+}
+// a barcode nobody knows: ask for a name over the live camera, then carry on
+function nameOpen(e) {
+  var p = byIdEl('cam-panel');
+  SC.paused = true; SC.naming = e;
+  p.innerHTML = '<h2>' + esc(tl('Not found online. Name it once.')) + '</h2><small>' + esc(e.isbn) + '</small>' +
+    '<input id="cam-name" class="inp" maxlength="80" autocomplete="off" aria-label="' + tl('Name') + '">' +
+    '<button class="btn primary" data-act="nameSave">' + tl('Save') + '</button><button class="btn quiet" data-act="nameLater">' + tl('Name it later') + '</button>';
+  p.hidden = false;
+  setTimeout(function () { var i = byIdEl('cam-name'); if (i) i.focus(); }, 60);
+}
+function panelClose() { var p = byIdEl('cam-panel'); p.hidden = true; p.innerHTML = ''; SC.paused = false; SC.naming = null; }
+function typePanel(e) {
+  var p = byIdEl('cam-panel');
+  p.innerHTML = '<h2>' + esc(e.title) + '</h2><label class="lab">' + tl('Type') + '</label><div class="chips">' + S.categories.map(function (c) {
+    return '<button type="button" class="chip' + (c === e.cat ? ' on' : '') + '" data-act="pickCat" data-val="' + esc(c) + '">' + esc(tl(c)) + '</button>'; }).join('') + '</div>' +
+    '<label class="lab">' + tl('Supplies or equipment?') + '</label><div class="chips">' + ['Supplies', 'Equipment'].map(function (k) {
+    return '<button type="button" class="chip' + (k === e.kind ? ' on' : '') + '" data-act="pickKind" data-val="' + k + '">' + esc(tl(k)) + '</button>'; }).join('') + '</div>' +
+    '<button class="btn primary" data-act="pickDone">' + tl('Done') + '</button>';
+  p.hidden = false;
 }
 
 // ----- Add many things at once -----
@@ -5463,13 +5588,13 @@ function rowsHtml() {
   }).join('');
 }
 function drawRows() { var box = byIdEl('b-rows'); if (box) box.innerHTML = rowsHtml(); }
-function vBulk() {   // (typing the lines by hand; scanning is on its own screen, vScanBooks)
-  F = { centre: myCentre(), cat: S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : '', rows: [newRow(), newRow(), newRow()] };
-  return top(true) + '<h1 class="title">' + tl('Add a batch') + '</h1>' +
+function vBulk() {   // Type mode: one line to start, "Add another" for a box or a delivery (scanning is vScanBooks)
+  F = { centre: myCentre(), cat: S.categories.indexOf('Learning materials') >= 0 ? 'Learning materials' : '', rows: [newRow()] };
+  return top(true) + '<h1 class="title">' + tl('Type it') + '</h1>' + modeStrip('type') +
     '<p class="sub">' + tl('One line each. Type a name, or a barcode and tap Look up.') + '</p>' +
     '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
     '<label class="lab" for="f-loc">' + tl('Where do they go?') + '</label>' +
-    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '">' +
+    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" value="' + esc(store.get('rm_scanloc', '')) + '">' +
     '<div id="f-locs">' + locChips(F.centre) + '</div>' +
     '<details><summary>' + esc(tl('Counted in “books”, type “{type}” · change', { type: F.cat ? tl(F.cat) : tl('none') })) + '</summary>' +
     '<label class="lab" for="f-unit">' + tl('Unit') + '</label>' +
@@ -5478,7 +5603,8 @@ function vBulk() {   // (typing the lines by hand; scanning is on its own screen
     '<div id="b-rows">' + rowsHtml() + '</div>' +
     '<button class="btn" data-act="rowAdd" style="margin-top:10px">' + tl('+ Add a line') + '</button>' +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="formend"><button class="btn primary" id="f-go" data-act="bulkGo">' + tl('Add') + '</button></div>';
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="bulkGo">' + tl('Add') + '</button>' +
+    '<button class="btn quiet" data-act="addNew">' + tl('Add an item') + '</button></div>';
 }
 // any product barcode: a book comes back as its 13-digit ISBN; EAN-13, UPC-A and EAN-8 need a right check digit
 function anyBarcode(raw) {
@@ -5517,8 +5643,8 @@ function lookupTitle(isbn) {
   }
   if (!/^97[89]/.test(isbn)) {
     var prod = function (j) { return j && j.status === 1 && j.product && j.product.product_name ? String(j.product.product_name) : ''; };
-    asks = [['https://world.openfoodfacts.org/api/v2/product/' + isbn + '.json?fields=product_name', prod],
-            ['https://world.openproductsfacts.org/api/v2/product/' + isbn + '.json?fields=product_name', prod]];
+    asks = [['https://world.openfoodfacts.org/api/v2/product/' + isbn + '.json?fields=product_name', prod, 'food'],
+            ['https://world.openproductsfacts.org/api/v2/product/' + isbn + '.json?fields=product_name', prod, 'product']];
   }
   return new Promise(function (resolve) {
     var done = false, got = [], answered = 0, reached = 0;
@@ -5527,7 +5653,7 @@ function lookupTitle(isbn) {
       if (done) return;
       for (var i = 0; i < asks.length; i++) {                       // in order: a faster, later answer waits for an earlier one
         if (got[i] === undefined) { if (!force) return; continue; }
-        if (got[i]) { done = true; clearTimeout(timer); return resolve({ title: got[i] }); }
+        if (got[i]) { done = true; clearTimeout(timer); return resolve({ title: got[i], hint: asks[i][2] || '' }); }
       }
       if (answered === asks.length || force) { done = true; clearTimeout(timer); resolve(reached ? { missing: true } : { error: true }); }
     }
@@ -5765,8 +5891,8 @@ var ACT = {
   },
   camStart: function () {
     var ctx = scanContext();
-    if (!ctx) return;
-    SC.ctx = ctx; SC.lastIsbn = ''; SC.lastSeen = 0;
+    if (!ctx) { SC.wantCam = true; return; }
+    SC.lastIsbn = ''; SC.lastSeen = 0; SC.paused = false;
     var asking = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
       ? navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false })
       : Promise.reject(new Error('no camera'));
@@ -5777,9 +5903,9 @@ var ACT = {
       v.srcObject = SC.stream;
       var p = v.play(); if (p && p.catch) p.catch(function () { /* autoplay is allowed for a muted video */ });
       byIdEl('cam-msg').textContent = tl('Point at a barcode.');
-      byIdEl('cam-last').innerHTML = '';
-      camUpdate();
+      camUpdate(); drawCtx();
       byIdEl('cam').hidden = false;
+      if (!store.get('rm_tip_hold', '')) { store.set('rm_tip_hold', '1'); toast(tl('Tip: hold Add to type instead.')); }
       try {   // a torch button only where the phone's camera has one
         var tr = SC.stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
         SC.torch = false;
@@ -5802,10 +5928,70 @@ var ACT = {
       .catch(function () { SC.torch = false; byIdEl('cam-torch').hidden = true; });
   },
   camDone: function () { camStop(); drawScanList(); },
+  modeScan: function () {
+    if (!scanOk()) return toast(tl('Scanning isn’t available here. Type items instead.'));
+    store.set('rm_scanmode', 'scan');
+    camStop();
+    showAdd('scanBooks');
+    ACT.camStart();
+  },
+  modeType: function () {
+    store.set('rm_scanmode', 'type');
+    camStop();
+    showAdd('bulk');
+  },
+  ctxOpen: function () { openCtx(); },
+  ctxCentre: function (el) {
+    SC.centre = el.dataset.val;
+    if (!roomsFor(SC.centre).some(function (l) { return sameRoom(l, store.get('rm_scanloc', '')); })) store.set('rm_scanloc', '');
+    $('#sheet .panel').innerHTML = ctxSheet(); drawCtx();
+  },
+  ctxRoom: function (el) { store.set('rm_scanloc', el.dataset.val); $('#sheet .panel').innerHTML = ctxSheet(); drawCtx(); },
+  ctxDone: function () {
+    var typed = val('ctx-room');
+    if (typed) store.set('rm_scanloc', typed);
+    if (!store.get('rm_scanloc', '')) { var er = byIdEl('ctx-err'); er.textContent = tl('Choose a room first.'); er.hidden = false; return; }
+    closeSheet(); drawCtx();
+    if (SC.wantCam) { SC.wantCam = false; ACT.camStart(); }
+  },
+  scanUndo: function () {
+    var e = SC.last;
+    if (!e || e.want - e.n - e.inflight < 1) { byIdEl('cam-card').hidden = true; return; }
+    e.want--;
+    if (!e.want && !e.n && !e.inflight) { clearTimeout(e.hold); e.hold = 0; SC.scans.splice(SC.scans.indexOf(e), 1); }
+    else if (e.want - e.n - e.inflight > 0) scanSoon(e); else { clearTimeout(e.hold); e.hold = 0; }
+    SC.last = null; byIdEl('cam-card').hidden = true;
+    drawScanList(); toast(tl('Undone.'));
+  },
+  cardChange: function () {
+    var e = SC.last;
+    if (!e) return;
+    clearTimeout(e.hold); clearTimeout(SC.cardTimer);
+    SC.paused = true; SC.naming = null; SC.picking = e;
+    byIdEl('cam-card').hidden = true;
+    typePanel(e);
+  },
+  pickCat: function (el) { var e = SC.picking; if (!e) return; e.cat = el.dataset.val; e.picked = true; if (!e.kind) e.kind = kindOfType(e.cat); typePanel(e); },
+  pickKind: function (el) { var e = SC.picking; if (!e) return; e.kind = el.dataset.val; e.picked = true; typePanel(e); },
+  pickDone: function () { var e = SC.picking; SC.picking = null; panelClose(); if (e) { scanSoon(e); drawScanList(); } },
+  nameSave: function () {
+    var e = SC.naming, t = val('cam-name');
+    if (!e) return;
+    if (!t) return toast(tl('Type the name first.'));
+    e.title = t.slice(0, 80); e.needTitle = false; scanClassify(e);
+    panelClose(); scanSoon(e); drawScanList();
+    cardShow(e);
+  },
+  nameLater: function () {
+    var e = SC.naming;
+    if (!e) return;
+    e.title = 'Barcode ' + e.isbn; e.needTitle = false;
+    panelClose(); scanSave(e); drawScanList();
+  },
   camPhoto: function () {
     var ctx = scanContext();
     if (!ctx) return;
-    SC.ctx = ctx; SC.photoMode = true;
+    SC.photoMode = true;
     byIdEl('scan').value = '';
     byIdEl('scan').click();
     loadReader().catch(function () { /* said when the photo comes back */ });
@@ -5815,7 +6001,7 @@ var ACT = {
     t = t.trim();
     if (!e) return;
     if (!t) return toast(tl('Type the name first.'));
-    e.title = t.slice(0, 80); e.needTitle = false;
+    e.title = t.slice(0, 80); e.needTitle = false; scanClassify(e);
     scanSave(e);
   },
   pieceOpen: function () {
@@ -5920,6 +6106,7 @@ var ACT = {
     var loc = val('f-loc');
     if (!F.centre) return formError(tl('Choose a centre first.'));
     if (!loc) return formError(tl('Type where they go.'));
+    store.set('rm_scanloc', loc);
     var rows = [], map = [], bad = false;
     F.rows.forEach(function (r, i) {
       r.err = '';
@@ -6194,13 +6381,11 @@ var ACT = {
   scope: function (el) { S.allCentres = !!el.dataset.val; render(); },
   qSort: function (el) { S.qSort = el.dataset.val; drawResults(); },
   qCentre: function (el) { S.qCentre = el.dataset.val; drawResults(); },
+  // One tap on Add: the camera, or the typing page if that was the last way it was used (or there is no camera here)
   addOpen: function () {
     S.lowPick = false; S.lowOff = {};
-    go({ name: 'scanBooks' });
-    if (scanOk() && myCentre() && store.get('rm_scanloc', '')) ACT.camStart();
+    if (scanOk() && store.get('rm_scanmode', 'scan') !== 'type') ACT.modeScan(); else showAdd('bulk');
   },
-  camType: function () { camStop(); drawScanList(); ACT.addNew(); },
-  camBatch: function () { camStop(); drawScanList(); go({ name: 'bulk' }); },
   setLang: function (el) {
     var v = el.dataset.val;
     if (LANGS_ON.indexOf(v) < 0 && v !== REVIEW) return;
@@ -6325,6 +6510,18 @@ function loadRequests() {
 }
 
 // ---------- listeners ----------
+// Holding the Add button goes straight to Type. It is only a shortcut: the Scan · Type strip does the same thing in plain sight.
+(function () {
+  var timer = 0, fired = false;
+  var onAdd = function (e) { return e.target.closest && e.target.closest('#nav [data-act=addOpen]'); };
+  document.addEventListener('pointerdown', function (e) {
+    if (!onAdd(e)) return;
+    fired = false; clearTimeout(timer);
+    timer = setTimeout(function () { fired = true; if (navigator.vibrate) { try { navigator.vibrate(30); } catch (x) { /* none */ } } ACT.modeType(); }, 600);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { document.addEventListener(n, function () { clearTimeout(timer); }, true); });
+  document.addEventListener('click', function (e) { if (fired && onAdd(e)) { fired = false; e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+})();
 document.addEventListener('click', function (e) {
   var el = e.target.closest('[data-act]');
   // the next tap anywhere puts the last message away, so it never sits on top of a button
@@ -6397,7 +6594,7 @@ byIdEl('scan').addEventListener('change', function () {
       .then(function (codes) {
         var isbn = anyBarcode(codes && codes[0] && codes[0].rawValue);
         if (!isbn) return toast(tl('Couldn’t read it. Move closer.'));
-        scanBook(isbn, SC.ctx);
+        scanBook(isbn, ctxNow());
       }).catch(function () { toast(tl('Couldn’t read it. Move closer.')); });
     return;
   }
