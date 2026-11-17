@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <base target="_top">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfbf9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1815" media="(prefers-color-scheme: dark)">
 <title>Ada Tak?</title>
 <style>
 /* Atkinson Hyperlegible Next, SIL Open Font License 1.1, (c) The Atkinson Hyperlegible Next Project Authors. Latin subset, embedded. */
@@ -21,6 +24,7 @@
   --font:'Atkinson Hyperlegible Next','Noto Sans CJK SC','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
 }
 :root{color-scheme:light}
+html{background:var(--paper)}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;
   --paper:#15171c; --ink:#eceef2; --muted:#a2a8b5; --line:#2e323b; --line-strong:#5b616e; --wash:#232730;
   --brand:#8d9cff; --alert:#ff8a80; --surface:#1d2027; --on-brand:#0b1260; --scrim:rgba(0,0,0,.65);}}
@@ -226,8 +230,11 @@ summary::after{content:"+";margin-left:auto;font-size:24px;font-weight:400}
 details[open] summary::after{content:"–"}
 .similar{margin-top:var(--s3);padding:var(--s3);border-radius:var(--r);background:var(--mark);color:var(--on-mark);font-size:15px}
 .similar .list{margin-top:var(--s2);background:var(--paper);padding:0 var(--s3);border-radius:var(--r)}
-.photorow{display:flex;gap:var(--s3);align-items:center}
-.photorow .btn{flex:1}
+.photorow{display:grid;gap:var(--s3);justify-items:stretch}
+#f-thumb:empty{display:none}
+.photorow .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.photorow .btn svg{width:20px;height:20px;flex:none}
+.ib.spin svg{animation:spin .8s linear infinite}
 .formend{margin-top:var(--s5)}
 .err{color:var(--alert);font-size:15px;font-weight:600;margin-top:var(--s3)}
 
@@ -489,8 +496,10 @@ details.more summary{min-height:48px;display:flex;align-items:center;color:var(-
 .rowbtn > .lead{flex:none!important}
 .rowbtn > .lead + span{flex:1;min-width:0}
 details.settings summary{flex-direction:row!important;align-items:center!important;justify-content:space-between}
-.fchip{border:1px solid var(--brand);background:color-mix(in srgb,var(--brand) 16%,transparent)}
-.chip.fchip.on{background:color-mix(in srgb,var(--brand) 16%,transparent);border:2px solid var(--brand);color:inherit;font-weight:700}
+.fchips .fchip{border:1px solid var(--brand);background:color-mix(in srgb,var(--brand) 16%,transparent)}
+/* in the sheets a chip has no outline until it is chosen */
+#sheet .chip.fchip{border:2px solid transparent;background:var(--wash);box-shadow:none}
+#sheet .chip.fchip.on{background:color-mix(in srgb,var(--brand) 16%,transparent);border:2px solid var(--brand);color:inherit;font-weight:700}
 .chip.fchip.on::before{content:none}
 #sheet .panel.has-foot{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
 #sheet .panel.has-foot .sheetbody{overflow:auto;flex:1 1 auto;min-height:0}
@@ -2956,6 +2965,17 @@ function esc(s) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
   });
 }
+// the phone's top bar (and the system bars) take the page's own background, in whichever theme is on
+function syncThemeColor() {
+  try {
+    var n = getComputedStyle(document.body).backgroundColor.match(/\d+/g);
+    if (!n || n.length < 3) return;
+    var hex = '#' + [0, 1, 2].map(function (i) { return ('0' + Number(n[i]).toString(16)).slice(-2); }).join('');
+    var tc = document.querySelector('meta[name=theme-color][data-live]');
+    if (!tc) { tc = document.createElement('meta'); tc.name = 'theme-color'; tc.setAttribute('data-live', '1'); document.head.insertBefore(tc, document.head.firstChild); }
+    tc.content = hex;
+  } catch (e) { /* the static tags still apply */ }
+}
 function applyLook() {
   var h = document.documentElement, st = function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
   var th = st('rm_theme', ''), tx = st('rm_text', 0);
@@ -3013,6 +3033,7 @@ var ICON = {
   ICON.trash = s('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>');
   ICON.pencil = s('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>');
   ICON.barcode = s('<path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/>');
+  ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
   ICON.refresh = s('<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>');
   ICON.torch = s('<path d="M8 3h8l-1.5 5h-5z"/><path d="M9.5 8v2.5L8 13v8h8v-8l-1.5-2.5V8"/>');
 })();
@@ -4407,7 +4428,25 @@ function call(fn, data) {
   });
 }
 
+// Every 30 s (while the app is open, online, in use and not on the camera) ask the sheet only for its version number;
+// the whole list is fetched only when that number moved. Also asked the moment the app comes back to the front.
+function pollNow() {
+  if (document.hidden || S.offline || !S.loaded || S.refreshing || (SC && SC.stream)) return Promise.resolve();
+  if (Date.now() - (S.touched || 0) > 600000) return Promise.resolve();
+  return call('version', {}).then(function (res) {
+    if (S.ver == null) { S.ver = res.v; return; }
+    if (res.v !== S.ver) { S.ver = res.v; refresh(false); }
+  }).catch(function () { /* the next tick tries again */ });
+}
+function pollTick() {
+  clearTimeout(S.pollT);
+  S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
+  pollNow();
+}
+window.RMPoll = { now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame };
+['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
+  if (d.ver != null) S.ver = d.ver;
   S.base = d.items || [];
   S.centres = d.centres || [];
   S.categories = d.categories || [];
@@ -4697,7 +4736,7 @@ function top(hasBack, noMe) {
   var me = S.me && !noMe ? '<button class="me" data-act="centrePick" aria-label="' + esc(tl('Centre')) + '">' + esc(S.me.centre) + '</button>' : '';
   return '<header class="top">' + (hasBack
     ? '<button class="back" data-act="back">' + ICON.back + '<span>' + tl('Back') + '</span></button>'
-    : '<span class="brand"><svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#f7f856"/><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></svg><b>Ada Tak?</b></span>') + me + '</header>';
+    : '<span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span>') + me + '</header>';
 }
 
 function photoSrc(it, w) {
@@ -4795,7 +4834,7 @@ function starterHits(q) {
 function starterWarn(text) {
   var gs = starterGroups();
   if (!gs.length || !text.trim()) return '';
-  var r = RMSearch.search(gs, text).strong[0];
+  var r = gs.filter(function (g) { return namesOfGroup(g).concat([g.st && g.st.name, g.st && g.st.alt]).filter(Boolean).some(function (n) { return looksSame(text, n); }); })[0];
   return r ? '<div class="similar">' + esc(tl('{name} is on the starter list. Confirm it?', { name: r.st.name })) +
     ' <button type="button" class="chip" data-act="starterOpen" data-id="' + esc(r.st.id) + '">' + tl('Confirm it') + '</button></div>' : '';
 }
@@ -4814,11 +4853,10 @@ function vStarter() {
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Your starter list is finished.') + '</h2></div>');
 }
 function vNeedName() {
-  var all = !!S.nnAll, list = needNameItems(all ? '' : myCentre());
+  var list = needNameItems(myCentre());
   return top(true) + '<h1 class="title">' + tl('Needs a name') + '</h1><p class="sub">' + tl('Scanned with no name. What are they?') + '</p>' +
-    (S.centres.length > 1 ? '<div class="seg"><button class="chip' + (all ? '' : ' on') + '" data-act="nnScope" data-val="">' + esc(myCentre() || tl('My centre')) + '</button><button class="chip' + (all ? ' on' : '') + '" data-act="nnScope" data-val="1">' + tl('All centres') + '</button></div>' : '') +
     (list.length ? '<div class="rows">' + list.map(function (it) {
-      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
+      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line">' + esc(it.loc) + '</p>' +
         '<input id="nn-' + esc(it.id) + '" class="inp" maxlength="80" autocomplete="off" aria-label="' + esc(tl('Name')) + '">' +
         '<button class="btn primary" data-act="nameGo" data-id="' + esc(it.id) + '">' + tl('Save') + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('All named.') + '</h2></div>');
@@ -4842,17 +4880,17 @@ function drawResults() {
   if (d) { d.textContent = filterCount(); d.hidden = !filterCount(); }
 }
 // ----- sort and filter (the icon at the end of the search bar) -----
-function filtersActive() { var f = S.fil || {}; return !!(Object.keys(f.cats || {}).length || f.status || f.room); }
-function filterCount() { var f = S.fil || {}; return Object.keys(f.cats || {}).length + (f.status ? 1 : 0) + (f.room ? 1 : 0) + (S.qSort ? 1 : 0); }
+function filtersActive() { var f = S.fil || {}; return !!(f.cat || f.status || f.room); }
+function filterCount() { var f = S.fil || {}; return (f.cat ? 1 : 0) + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.room ? 1 : 0) + (S.qSort ? 1 : 0); }
 function applyFilters(list) {
-  var f = S.fil || {}, cats = Object.keys(f.cats || {});
+  var f = S.fil || {};
   return list.filter(function (g) {
-    if (cats.length && cats.indexOf(g.cat) < 0) return false;
+    if (f.cat && g.cat !== f.cat) return false;
+    if (f.sub && !g.rows.some(function (r) { return r.subtype === f.sub; })) return false;
     if (f.status === 'low' && !g.rows.some(low)) return false;
     if (f.status === 'attn' && !g.rows.some(function (r) { return STATUS_LABEL[r.status]; })) return false;
     if (f.status === 'unsorted' && g.cat) return false;
     if (f.room && !g.rows.some(function (r) { return sameRoom(r.loc, f.room); })) return false;
-    if (f.sub && !g.rows.some(function (r) { return r.subtype === f.sub; })) return false;
     return true;
   });
 }
@@ -4865,24 +4903,20 @@ function sortGroups(list, dflt) {
   }
   return out;
 }
+// the subtypes in use for one type, in the sheet's own order
+function subtypesUsed(cat, rows) {
+  var used = {};
+  rows.forEach(function (r) { if (r.cat === cat && r.subtype) used[r.subtype] = 1; });
+  return ((S.subtypes || {})[cat] || []).filter(function (x) { return used[x]; });
+}
 function filterChipsHtml() {
   var f = S.fil || {}, out = [];
-  Object.keys(f.cats || {}).forEach(function (c) { out.push(['cat', c, tl(c)]); });
+  if (f.cat) out.push(['cat', f.cat, tl(f.cat)]);
+  if (f.sub) out.push(['sub', f.sub, tl(f.sub)]);
   if (f.status) out.push(['status', f.status, STATUS_NAME()[f.status]]);
   if (f.room) out.push(['room', f.room, f.room]);
   return out.length ? '<div class="seg fchips">' + out.map(function (o) {
     return '<button class="fchip" data-act="filterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>';
-  }).join('') + '</div>' + subChipsHtml() : subChipsHtml();
-}
-// a type with subtypes in use: one chip row to narrow it further
-function subChipsHtml() {
-  var f = S.fil || {}, cats = Object.keys(f.cats || {});
-  if (cats.length !== 1) return '';
-  var used = {};
-  scoped(S.groups).forEach(function (g) { if (g.cat === cats[0]) g.rows.forEach(function (r) { if (r.subtype) used[r.subtype] = 1; }); });
-  var subs = ((S.subtypes || {})[cats[0]] || []).filter(function (x) { return used[x]; });
-  return subs.length ? '<div class="seg" data-group="filterSub">' + subs.map(function (x) {
-    return '<button class="chip fchip' + (f.sub === x ? ' on' : '') + '" data-act="filterSub" data-val="' + esc(x) + '">' + esc(tl(x)) + '</button>';
   }).join('') + '</div>' : '';
 }
 function STATUS_NAME() { return { low: tl('Running low'), attn: tl('Broken or missing'), unsorted: tl('Not sorted') }; }
@@ -4891,9 +4925,11 @@ function filterSheet() {
     return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span>' + esc(label) + '</span>' + (extra || '') + '</button>';
   }, counts = {};
   scoped(S.groups).forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
+  var subs = f.cat ? subtypesUsed(f.cat, [].concat.apply([], scoped(S.groups).map(function (g) { return g.rows; }))) : [];
   return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2>' +
     '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('Best match')], ['az', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('qSort', o[0], o[1], (S.qSort || '') === o[0]); }).join('') + '</div>' +
-    '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + S.categories.map(function (c) { return chip('filterCat', c, (CAT_ICON[c] || '') + ' ' + tl(c), (f.cats || {})[c], '<small>' + (counts[c] || 0) + '</small>'); }).join('') + '</div>' +
+    '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + S.categories.map(function (c) { return chip('filterCat', c, (CAT_ICON[c] || '') + ' ' + tl(c), f.cat === c, '<small>' + (counts[c] || 0) + '</small>'); }).join('') + '</div>' +
+    (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('filterSub', x, tl(x), f.sub === x); }).join('') + '</div>' : '') +
     '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('filterStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div>' +
     (roomsFor(myCentre()).length ? '<label class="lab">' + tl('Room') + '</label><div class="grid2">' + roomsFor(myCentre()).map(function (r) { return chip('filterRoom', r, r, f.room && sameRoom(f.room, r)); }).join('') + '</div>' : '') + '</div>' +
     '<div class="sheetfoot"><button class="btn primary" data-act="closeSheet">' + tl('Apply') + '</button>' +
@@ -5019,14 +5055,13 @@ function vItem(v) {
     (sel && sel.parts ? '<button class="rowbtn" data-act="pieceOpen"><span>' + tl('A piece is missing') + '<small>' + esc(sel.parts.split(';').join(' +')) + '</small></span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="problem"><span>' + tl('Report a problem') + '<small>' + tl('Broken or missing') + '</small></span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="requestMore"><span>' + tl('Ask to buy more') + '</span>' + ICON.go + '</button>' +
-    (S.admin ? '' : '<button class="rowbtn" data-act="toEdit"><span>' + tl('Photo and notes') + '</span>' + ICON.go + '</button>') +
+    '<button class="rowbtn" data-act="toEdit"><span>' + tl('Edit item') + '</span>' + ICON.go + '</button>' +
     '</div>' +
     '<details class="more" data-keep="item-more"><summary>' + tl('More') + '</summary><div class="card rows">' +
     (!isLevel(sel) && sel.qty > 0 && S.centres.length > 1
       ? '<button class="rowbtn" data-act="moveOpen"><span>' + tl('Send to another centre') + '</span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="addPlace"><span>' + tl('Also kept elsewhere') + '</span>' + ICON.go + '</button>' +
     (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Not sorted yet') + '</small></span>' + ICON.go + '</button>' : '') +
-    (S.admin ? '<button class="rowbtn" data-act="toEdit"><span>' + tl('Edit item') + '</span>' + ICON.go + '</button>' : '') +
     '</div></details>' +
     '<h2 class="sec">' + tl('History') + '</h2>' +
     (past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>'
@@ -5219,7 +5254,7 @@ function locChips(centre) {
 function photoField() {
   return '<label class="lab">' + tl('Photo') + ' <i>' + tl('(optional)') + '</i></label><div class="photorow"><span id="f-thumb">' +
     (F.photo ? '<span class="tile"><img alt="" src="' + F.photo + '"></span>' : '') + '</span>' +
-    '<button type="button" class="btn" data-act="photo">' + (F.photo ? tl('Retake') : tl('Take photo')) + '</button></div>';
+    '<button type="button" class="btn" data-act="photo">' + ICON.camera + '<span>' + (F.photo ? tl('Retake') : tl('Take photo')) + '</span></button></div>';
 }
 function vAdd(v) {
   var g = v.key ? S.gmap[v.key] : null;
@@ -5259,8 +5294,38 @@ function vAdd(v) {
     '<div class="formend"><button class="btn primary" id="f-go" data-act="addGo">' + tl('Add') + '</button>' +
     (v.fromAdd ? '<button class="btn" data-act="addGoMore">' + tl('Add and add another') + '</button>' : '') + '</div>';
 }
+// Two names look the same when they have the same words (a typo is allowed in longer words, and the last word may still be
+// being typed). A one- or two-letter word or a number must match exactly, so "Test C" is not "Test A".
+function lev(a, b) {
+  var d = [], i, j;
+  for (i = 0; i <= a.length; i++) d[i] = [i];
+  for (j = 1; j <= b.length; j++) d[0][j] = j;
+  for (i = 1; i <= a.length; i++) for (j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function nameTokens(t) { return RMSearch.norm(String(t || '')).split(/\s+/).filter(Boolean); }
+function tokenClose(a, b, last) {
+  if (a === b) return true;
+  if (a.length <= 2 || b.length <= 2 || /\d/.test(a) || /\d/.test(b)) return false;
+  if (last && a.length >= 3 && b.indexOf(a) === 0) return true;
+  return a.length >= 4 && b.length >= 4 && lev(a, b) <= 1;
+}
+function looksSame(typed, name) {
+  var t = nameTokens(typed), n = nameTokens(name);
+  if (!t.length || t.length > n.length) return false;
+  var used = {};
+  return t.every(function (w, i) {
+    for (var j = 0; j < n.length; j++) if (!used[j] && tokenClose(w, n[j], i === t.length - 1)) { used[j] = 1; return true; }
+    return false;
+  });
+}
+function namesOfGroup(g) { return [g.name, g.dname].concat(String((g.rows && g.rows[0] && g.rows[0].alt) || g.alt || '').split(/[,;]/)).filter(Boolean); }
+function similarGroups(text) {
+  if (!String(text).trim()) return [];
+  return S.groups.filter(function (g) { return namesOfGroup(g).some(function (n) { return looksSame(text, n); }); });
+}
 function similarHtml(text) {
-  var r = text.trim() ? RMSearch.search(S.groups, text).strong.slice(0, 3) : [];
+  var r = similarGroups(text).slice(0, 3);
   if (!r.length) return '';
   return '<div class="similar">' + tl('Already here? Tap it.') + '<div class="list">' + r.map(card).join('') + '</div></div>';
 }
@@ -5308,13 +5373,13 @@ function vEdit(v) {
   var admin = S.admin ?
     '<label class="lab" for="f-name">' + tl('Name') + '</label><input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(it.name) + '">' +
     '<label class="lab" for="f-alt">' + tl('Other names') + '</label><input id="f-alt" class="inp" maxlength="200" autocomplete="off" value="' + esc(it.alt) + '">' +
-    '<label class="lab">' + tl('Type') + '</label>' + typePicker() +
     '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
     '<label class="lab">' + tl('Supplies or equipment?') + '</label><p class="kindfixed">' + esc(tl('{kind}. Can’t be changed.', { kind: tl(it.kind) + (isLevel(it) ? ' · ' + tl('Estimate it') : '') })) + '</p>' +
     (isLevel(it) ? '' : '<div class="qtyunit">' + (it.kind === 'Equipment' ? '<input id="f-min" type="hidden" value="0">' : '<div><label class="lab" for="f-min">' + tl('Tell me when below') + '</label><input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + it.min + '"></div>') +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(it.unit) + '"></div></div>') : '';
-  return top(true) + '<h1 class="title">' + (S.admin ? tl('Edit item') : tl('Photo and notes')) + '</h1><p class="sub">' + esc(shown(it)) + ' · ' + esc(it.centre) + '</p>' +
-    admin +
+  return top(true) + '<h1 class="title">' + tl('Edit item') + '</h1><p class="sub">' + esc(shown(it)) + ' · ' + esc(it.centre) + '</p>' +
+    (S.admin ? admin.split('<label class="lab">' + tl('Which centre?')).join('<label class="lab">' + tl('Which centre?')) : '') +
+    '<label class="lab">' + tl('Type') + '</label>' + typePicker() +
     '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
     '<div id="f-locs">' + locChips(it.centre) + '</div>' +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
@@ -5485,16 +5550,15 @@ function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
 function vSettings() {
   var waiting = S.outbox.length;
-  return top(true) + '<h1 class="title">' + tl('Settings') + '</h1>' +
+  return top(true) + '<div class="titlerow"><h1 class="title">' + tl('Settings') + '</h1><button type="button" class="ib" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
+    '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p>' +
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Match my phone')], ['light', tl('Light')], ['dark', tl('Dark')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Larger')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
-    '<div class="card rows settings-card">' +
-    '<button class="rowbtn" data-act="refresh"><span class="lead">' + ICON.refresh + '</span><span>' + tl('Refresh') + '<small>' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) +
-    (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</small></span></button></div>';
+    '';
 }
 // ----- Rooms: what is kept where -----
 function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
@@ -5533,20 +5597,21 @@ function vUnsorted() {
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('All sorted.') + '</h2></div>');
 }
 function roomRowOk(it, f) {
-  if (f.cats && Object.keys(f.cats).length && !f.cats[it.cat]) return false;
+  if (f.cat && it.cat !== f.cat) return false;
+  if (f.sub && it.subtype !== f.sub) return false;
   if (f.status === 'low' && !low(it)) return false;
   if (f.status === 'attn' && !STATUS_LABEL[it.status]) return false;
   if (f.status === 'unsorted' && it.cat) return false;
   return true;
 }
-function roomFilterCount() { var f = S.rfil || {}; return Object.keys(f.cats || {}).length + (f.status ? 1 : 0) + (f.sort ? 1 : 0); }
+function roomFilterCount() { var f = S.rfil || {}; return (f.cat ? 1 : 0) + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.sort ? 1 : 0); }
 function vRoom(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc);
   var list = all.filter(function (it) { return roomRowOk(it, f); }).sort(function (a, b) {
     if (f.sort === 'low') { var ra = a.min > 0 ? a.qty / a.min : Infinity, rb = b.min > 0 ? b.qty / b.min : Infinity; if (ra !== rb) return ra - rb; }
     return a.name.localeCompare(b.name);
   });
-  var chipsOn = Object.keys(f.cats || {}).map(function (c) { return ['cat', c, tl(c)]; }).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
+  var chipsOn = (f.cat ? [['cat', f.cat, tl(f.cat)]] : []).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
   return top(true) + '<div class="titlerow"><h1 class="title">' + esc(v.loc) + '</h1>' +
     (all.length > 1 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
     '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p>' +
@@ -5564,9 +5629,11 @@ function roomFilterSheet(v) {
   all.forEach(function (it) { counts[it.cat] = (counts[it.cat] || 0) + 1; });
   var chip = function (act, val, label, on, extra) { return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span>' + esc(label) + '</span>' + (extra || '') + '</button>'; };
   var cats = S.categories.filter(function (c) { return counts[c]; });
+  var subs = f.cat ? subtypesUsed(f.cat, all) : [];
   return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2>' +
     '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('roomSort', o[0], o[1], (f.sort || '') === o[0]); }).join('') + '</div>' +
-    (cats.length > 1 ? '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + cats.map(function (c) { return chip('roomCat', c, (CAT_ICON[c] || '') + ' ' + tl(c), (f.cats || {})[c], '<small>' + counts[c] + '</small>'); }).join('') + '</div>' : '') +
+    (cats.length > 1 ? '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + cats.map(function (c) { return chip('roomCat', c, (CAT_ICON[c] || '') + ' ' + tl(c), f.cat === c, '<small>' + counts[c] + '</small>'); }).join('') + '</div>' : '') +
+    (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('roomSub', x, tl(x), f.sub === x); }).join('') + '</div>' : '') +
     '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('roomStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div></div>' +
     '<div class="sheetfoot"><button class="btn primary" data-act="closeSheet">' + tl('Apply') + '</button><button class="btn quiet" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>';
 }
@@ -6641,14 +6708,14 @@ var ACT = {
     if (!loc) return formError(tl('Type where it’s kept.'));
     if (loc !== it.loc) f.loc = loc;
     if (val('f-notes') !== it.notes) f.notes = val('f-notes');
+    if (F.cat !== it.cat) f.cat = F.cat;
+    if (F.cat !== it.cat || (F.sub || '') !== (it.subtype || '')) f.subtype = F.sub || '';
     if (S.admin) {
       var min = val('f-min');
       if (!val('f-name')) return formError(tl('Type a name for the item.'));
       if (!isLevel(it) && min && isNaN(parseQty(min))) return formError(tl('Enter a number.'));
       if (val('f-name') !== it.name) f.name = val('f-name');
       if (val('f-alt') !== it.alt) f.alt = val('f-alt');
-      if (F.cat !== it.cat) f.cat = F.cat;
-      if (F.cat !== it.cat || (F.sub || '') !== (it.subtype || '')) f.subtype = F.sub || '';
       if (F.centre !== it.centre) f.centre = F.centre;
       if (!isLevel(it) && (val('f-unit') || 'pcs') !== it.unit) f.unit = val('f-unit');
       if (!isLevel(it) && (parseQty(min) || 0) !== it.min) f.min = parseQty(min) || 0;
@@ -6714,10 +6781,11 @@ var ACT = {
   roomOpen: function (el) { S.rfil = {}; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
   roomSort: function (el) { (S.rfil || (S.rfil = {})).sort = el.dataset.val; redrawRoomFilter(); },
-  roomCat: function (el) { var f = S.rfil || (S.rfil = {}); f.cats = f.cats || {}; if (f.cats[el.dataset.val]) delete f.cats[el.dataset.val]; else f.cats[el.dataset.val] = 1; redrawRoomFilter(); },
+  roomCat: function (el) { var f = S.rfil || (S.rfil = {}); f.cat = f.cat === el.dataset.val ? '' : el.dataset.val; f.sub = ''; redrawRoomFilter(); },
+  roomSub: function (el) { var f = S.rfil || (S.rfil = {}); f.sub = f.sub === el.dataset.val ? '' : el.dataset.val; redrawRoomFilter(); },
   roomStatus: function (el) { var f = S.rfil || (S.rfil = {}); f.status = f.status === el.dataset.val ? '' : el.dataset.val; redrawRoomFilter(); },
   roomFilterClear: function () { S.rfil = {}; redrawRoomFilter(); },
-  roomFilterDrop: function (el) { var f = S.rfil || (S.rfil = {}), k = el.dataset.k; if (k === 'cat') { if (f.cats) delete f.cats[el.dataset.val]; } else f[k] = ''; render(); },
+  roomFilterDrop: function (el) { var f = S.rfil || (S.rfil = {}), k = el.dataset.k; if (k === 'cat') { f.cat = ''; f.sub = ''; } else f[k] = ''; render(); },
   countPlaceHere: function (el) { go({ name: 'countList', centre: cur().centre, loc: el.dataset.val }); },
   roomAdd: function (el) {
     M = { type: 'room', op: 'add', centre: el.dataset.centre };
@@ -6776,14 +6844,14 @@ var ACT = {
   qSort: function (el) { S.qSort = el.dataset.val; redrawFilter(); },
   qCentre: function (el) { S.qCentre = el.dataset.val; drawResults(); },
   filterOpen: function () { M = { type: 'filter' }; openSheet(filterSheet(), null, 'has-foot'); },
-  filterCat: function (el) { var f = S.fil || (S.fil = {}); f.cats = f.cats || {}; if (f.cats[el.dataset.val]) delete f.cats[el.dataset.val]; else f.cats[el.dataset.val] = 1; f.sub = ''; redrawFilter(); },
-  filterSub: function (el) { var f = S.fil || (S.fil = {}); f.sub = f.sub === el.dataset.val ? '' : el.dataset.val; drawResults(); },
+  filterCat: function (el) { var f = S.fil || (S.fil = {}); f.cat = f.cat === el.dataset.val ? '' : el.dataset.val; f.sub = ''; redrawFilter(); },
+  filterSub: function (el) { var f = S.fil || (S.fil = {}); f.sub = f.sub === el.dataset.val ? '' : el.dataset.val; redrawFilter(); },
   filterStatus: function (el) { var f = S.fil || (S.fil = {}); f.status = f.status === el.dataset.val ? '' : el.dataset.val; redrawFilter(); },
   filterRoom: function (el) { var f = S.fil || (S.fil = {}); f.room = f.room && sameRoom(f.room, el.dataset.val) ? '' : el.dataset.val; redrawFilter(); },
   filterClear: function () { S.fil = {}; S.qSort = ''; redrawFilter(); },
   filterDrop: function (el) {
     var f = S.fil || (S.fil = {}), k = el.dataset.k;
-    if (k === 'cat') { if (f.cats) delete f.cats[el.dataset.val]; f.sub = ''; } else f[k] = '';
+    if (k === 'cat') { f.cat = ''; f.sub = ''; } else f[k] = '';
     drawResults();
   },
   // One tap on Add: the camera, or the typing page if that was the last way it was used (or there is no camera here)
@@ -6802,7 +6870,7 @@ var ACT = {
   setLook: function (el) {
     var k = el.dataset.k, v = el.dataset.val;
     store.set(k, k === 'rm_text' ? Number(v) : v);
-    applyLook(); render();
+    applyLook(); render(); syncThemeColor();
   },
   countSortOpen: function () {
     M = { type: 'checksort' };
@@ -6919,7 +6987,6 @@ var ACT = {
     openSheet('<h2>' + tl('Add a centre') + '</h2><label class="lab" for="m-centre">' + tl('Centre name') + '</label><input id="m-centre" class="inp" maxlength="40" autocomplete="off">' +
       '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="centreGo">' + tl('Add centre') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-centre');
   },
-  nnScope: function (el) { S.nnAll = !!el.dataset.val; render(); },
   centreRename: function (el) {
     M = { type: 'centre', op: 'rename', name: el.dataset.val };
     openSheet('<h2>' + esc(tl('Rename “{name}”', { name: M.name })) + '</h2><p class="sub">' + tl('Its items move too.') + '</p>' +
@@ -7103,8 +7170,12 @@ byIdEl('file').addEventListener('change', function () {
 });
 window.addEventListener('online', function () { flush(); });
 document.addEventListener('visibilitychange', function () {
-  if (!document.hidden && Date.now() - S.syncedAt > 120000) refresh();
+  if (document.hidden) return;
+  S.touched = Date.now();
+  if (Date.now() - S.syncedAt > 120000) refresh(); else pollNow();
 });
+S.touched = Date.now();
+S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
 
 // ---------- start ----------
 // a phone that stored a name from an earlier version forgets it
@@ -7125,6 +7196,8 @@ if (HOSTED) {
   });
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
 }
+syncThemeColor();
+try { if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor); } catch (e) { /* older browsers */ }
 var cached = store.get('rm_data', null);
 if (cached && cached.staff) { delete cached.staff; store.set('rm_data', cached); }
 if (cached && cached.items) applyData(cached);
