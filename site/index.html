@@ -255,7 +255,7 @@ html[data-text] .search input{font-size:16px}
 .cline.changed small,.cline.changed .cname small{color:#16181d}
 .cline.changed .stepper button,.cline.changed .stepper .num{background:#fff;color:#16181d;border-color:#8a8f9c}
 .cline.changed{background:var(--mark);color:var(--on-mark);margin:0 calc(-1 * var(--s2));padding-left:var(--s2);padding-right:var(--s2)}
-.cline.changed .cname small{color:var(--ink);font-weight:600}
+.cline.changed .cname small{color:var(--on-mark);font-weight:600}
 .savebar{position:fixed;left:0;right:0;bottom:65px;z-index:5;padding:var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--paper) 72%,transparent)}
 .savebar .btn{max-width:528px;margin:0 auto}
 
@@ -417,6 +417,36 @@ div.card.empty{padding:var(--s5) var(--s4)}
 .chkbar{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center;margin:var(--s2) 0 var(--s3)}
 .chkbar .lbl2{font-size:14px;color:var(--muted);margin-right:var(--s1)}
 #checklist.hidechecked .cline.ticked:not(.changed){display:none}
+/* text on a yellow fill is always dark, in light and dark mode */
+.cline.changed .tkt,.cline.changed .tkt small,.cline.changed .cname small,.pl.low,.pl.low *,.badge.low,.badge.low *,.place .qty.low,.place .qty.low *{color:var(--on-mark)}
+/* round icon buttons */
+.ib{flex:none;width:44px;height:44px;display:inline-grid;place-items:center;padding:0;margin:0;border:1px solid var(--line,rgba(0,0,0,.25));border-radius:999px;background:var(--surface);color:inherit;cursor:pointer}
+.ib svg{width:22px;height:22px}
+.ib.on{background:var(--ink);color:var(--paper)}
+.progrow{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s2)}
+.progrow .prog{margin:0}
+.tools{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.tools .chip{display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.tools .chip svg{width:20px;height:20px}
+.toolrow{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;margin:var(--s2) 0 var(--s3)}
+.toolrow .seg{margin:0}
+.seg.fit,.chips.fit{display:flex;flex-wrap:nowrap}
+.fit .chip{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:var(--s2);padding-right:var(--s2)}
+.due{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.due i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mark)}
+.search .filt{position:absolute;right:var(--s1);top:var(--s1);width:48px;height:48px;display:grid;place-items:center;color:var(--ink);background:transparent;border:0}
+.search .filt svg{width:24px;height:24px}
+.search .filt .fdot{position:absolute;top:4px;right:2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--mark);color:var(--on-mark);font-size:12px;font-weight:700;display:grid;place-items:center}
+.search .filt .fdot[hidden]{display:none}
+.search .clear{right:52px}
+.search input{padding-right:104px}
+.fchips{margin-top:0}
+details.notwhat{margin-top:var(--s4)}
+details.notwhat summary{min-height:48px;display:flex;align-items:center;color:var(--muted);cursor:pointer}
+body.navless .savebar{bottom:0}
+body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
+#cam .camtop .btn.ib{width:44px;min-height:44px;background:#fff;color:#16181d;border-color:#fff}
+#cam .camtop .btn.ib.on{background:var(--mark);color:#16181d}
 </style>
 </head>
 <body>
@@ -426,7 +456,7 @@ div.card.empty{padding:var(--s5) var(--s4)}
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
 <div id="cam" hidden role="dialog" aria-label="Scan books"><video id="cam-v" playsinline muted></video><div class="aim"></div><div class="camwait" id="cam-wait">Starting camera…</div>
-<div class="camtop"><button class="btn ctx" id="cam-ctx" data-act="ctxOpen"></button><button class="btn" id="cam-torch" data-act="camTorch" hidden>Flashlight</button><button class="btn" data-act="camDone">Finish</button></div>
+<div class="camtop"><button class="btn ctx" id="cam-ctx" data-act="ctxOpen"></button><button class="btn ib" id="cam-torch" data-act="camTorch" hidden aria-label="Flashlight" title="Flashlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3h8l-1.5 5h-5z"/><path d="M9.5 8v2.5L8 13v8h8v-8l-1.5-2.5V8"/></svg></button><button class="btn" data-act="camDone">Finish</button></div>
 <div class="camcard" id="cam-card" hidden></div>
 <div class="campanel" id="cam-panel" hidden></div>
 <div class="camlog"><p id="cam-msg">Point the camera at a barcode.</p><p id="cam-n">0 recorded</p>
@@ -2916,6 +2946,18 @@ var ICON = {
   more: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.500 7 5.500"/></svg>',
   gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
+(function () {
+  var s = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + d + '</svg>'; };
+  ICON.tickall = s('<path d="M3 13l4 4 8-9M12 16l1.5 1.5L21 8"/>');
+  ICON.sort = s('<path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/>');
+  ICON.eye = s('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>');
+  ICON.eyeoff = s('<path d="M2 12s3.6-7 10-7c2 0 3.7.6 5.1 1.5M22 12s-3.6 7-10 7c-2 0-3.7-.6-5.1-1.5"/><path d="M3 3l18 18"/>');
+  ICON.filter = s('<path d="M4 6h8M18 6h2M4 12h2M12 12h8M4 18h10M20 18h0"/><circle cx="15" cy="6" r="2.2"/><circle cx="9" cy="12" r="2.2"/><circle cx="17" cy="18" r="2.2"/>');
+  ICON.trash = s('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>');
+  ICON.pencil = s('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>');
+  ICON.barcode = s('<path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/>');
+  ICON.torch = s('<path d="M8 3h8l-1.5 5h-5z"/><path d="M9.5 8v2.5L8 13v8h8v-8l-1.5-2.5V8"/>');
+})();
 
 // one small picture per type: it is the item's picture until someone adds a photo
 var CAT_ICON = {
@@ -2965,7 +3007,6 @@ L.ms = {
   "Added {n}. {total} now.": "Ditambah {n}. Kini {total}.",
   "Added, but the photo didn’t save.": "Ditambah, tetapi gambar tidak disimpan.",
   "Added.": "Ditambah.",
-  "Adding books? Scan the barcodes": "Tambah buku? Imbas kod bar",
   "Admin": "Admin",
   "Admin PIN": "PIN admin",
   "Admin PIN:": "PIN admin:",
@@ -3058,6 +3099,7 @@ L.ms = {
   "Clay and dough": "Tanah liat dan doh",
   "Cleaning liquids": "Cecair pencuci",
   "Clear": "Kosongkan",
+  "Clear all": "Kosongkan semua",
   "Closest:": "Paling hampir:",
   "Coloured paper and card": "Kertas dan kad warna",
   "Colours": "Warna",
@@ -3114,7 +3156,6 @@ L.ms = {
   "Fix the lines in red.": "Betulkan baris merah.",
   "Flash cards and posters": "Kad imbasan dan poster",
   "Flashlight": "Lampu suluh",
-  "Flashlight on": "Lampu suluh dipasang",
   "For mistakes or duplicates. Can’t be undone.": "Untuk kesilapan atau pendua. Tidak boleh dibatalkan.",
   "Found: {name}": "Dijumpai: {name}",
   "Full": "Penuh",
@@ -3164,6 +3205,7 @@ L.ms = {
   "Looking up…": "Mencari…",
   "Looks like {type}.": "Nampak seperti {type}.",
   "Low": "Kurang",
+  "Low at {n}": "Rendah pada {n}",
   "Low first": "Kurang dahulu",
   "Lowest first": "Paling sedikit dahulu",
   "Mark as bought": "Tandakan dibeli",
@@ -3184,6 +3226,7 @@ L.ms = {
   "Name them ({n})": "Namakan ({n})",
   "Name this item": "Namakan barang ini",
   "Needs a name": "Perlu nama",
+  "Needs attention": "Perlu perhatian",
   "Needs fixing": "Perlu dibaiki",
   "New PIN": "PIN baru",
   "New item": "Barang baru",
@@ -3195,7 +3238,6 @@ L.ms = {
   "No requests yet.": "Belum ada permohonan.",
   "No rooms yet.": "Belum ada bilik.",
   "None": "Tiada",
-  "None at {centre}.": "Tiada di {centre}.",
   "None here.": "Tiada di sini.",
   "None yet.": "Belum ada.",
   "Normal": "Biasa",
@@ -3209,12 +3251,14 @@ L.ms = {
   "Not sorted": "Belum diasingkan",
   "Not sorted yet": "Belum ada jenis",
   "Not sure": "Tidak pasti",
+  "Not what you need?": "Bukan yang anda cari?",
   "Note": "Nota",
   "Note for them": "Nota untuk mereka",
   "Notes": "Catatan",
   "Nothing here yet.": "Belum ada barang.",
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
+  "Nothing matches the filters.": "Tiada yang sepadan dengan penapis.",
   "Nothing new to offer.": "Tiada yang baharu.",
   "Nothing running low.": "Tiada yang tinggal sedikit.",
   "Nothing yet.": "Belum ada.",
@@ -3244,6 +3288,7 @@ L.ms = {
   "Other": "Lain-lain",
   "Other names": "Nama lain",
   "Outdoor and sports": "Luar dan sukan",
+  "Overdue": "Lewat",
   "PIN changed.": "PIN ditukar.",
   "Paints and brushes": "Cat dan berus",
   "Paper (A4, rolls)": "Kertas (A4, gulung)",
@@ -3289,10 +3334,10 @@ L.ms = {
   "Request declined": "Permohonan ditolak",
   "Request sent": "Permohonan dihantar",
   "Requests": "Permohonan",
-  "Rest are fine": "Yang lain betul",
   "Retake": "Ambil semula",
   "Review copy: this language isn’t signed off yet.": "Salinan semakan: bahasa ini belum disahkan.",
   "Role-play and dolls": "Main peranan dan anak patung",
+  "Room": "Bilik",
   "Room added": "Bilik ditambah",
   "Room name": "Nama bilik",
   "Room removed": "Bilik dibuang",
@@ -3348,17 +3393,20 @@ L.ms = {
   "Shelves and storage": "Rak dan simpanan",
   "Show all centres": "Tunjuk semua pusat",
   "Show history": "Tunjuk sejarah",
+  "Show results": "Tunjuk hasil",
   "Sign out": "Log keluar",
   "Skip for now": "Langkau dahulu",
   "Soap and hand wash": "Sabun dan pencuci tangan",
   "Something went wrong. Try again.": "Ada masalah. Cuba lagi.",
   "Sort": "Isih",
+  "Sort and filter": "Isih dan tapis",
   "Speakers and microphones": "Pembesar suara dan mikrofon",
   "Staff link (share only with staff)": "Pautan kakitangan (kongsi dengan kakitangan sahaja)",
   "Stage items and flags": "Barang pentas dan bendera",
   "Starter list": "Senarai permulaan",
   "Starting camera…": "Memulakan kamera…",
   "Stationery and paper": "Alat tulis dan kertas",
+  "Status": "Status",
   "Subtype": "Subjenis",
   "Supplies": "Bekalan",
   "Supplies or equipment?": "Bekalan atau peralatan?",
@@ -3369,7 +3417,6 @@ L.ms = {
   "Take some": "Ambil",
   "Tap Full, Half, Almost out or Empty.": "Ketik Penuh, Separuh, Hampir habis atau Kosong.",
   "Tap to skip one.": "Ketik untuk langkau.",
-  "Tell me below {n}": "Beritahu bila kurang daripada {n}",
   "Tell me when below": "Beritahu saya bila kurang daripada",
   "Text size": "Saiz tulisan",
   "Thanks, saved.": "Terima kasih, disimpan.",
@@ -3406,6 +3453,7 @@ L.ms = {
   "Thermometers and ice packs": "Termometer dan pek ais",
   "These stickers open:": "Pelekat ini membuka:",
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
+  "Tick all": "Tanda semua",
   "Tip: hold Add to type instead.": "Petua: tekan lama Tambah untuk menaip.",
   "Tissues and wipes": "Tisu dan tuala basah",
   "To confirm ({n})": "Untuk disahkan ({n})",
@@ -3564,7 +3612,6 @@ L.zh = {
   "Added {n}. {total} now.": "已增加 {n}，现在共 {total}。",
   "Added, but the photo didn’t save.": "已添加，但照片没存上。",
   "Added.": "已添加。",
-  "Adding books? Scan the barcodes": "添加图书？扫条形码",
   "Admin": "管理员",
   "Admin PIN": "管理员 PIN",
   "Admin PIN:": "管理员 PIN：",
@@ -3657,6 +3704,7 @@ L.zh = {
   "Clay and dough": "黏土与面团",
   "Cleaning liquids": "清洁液",
   "Clear": "清除",
+  "Clear all": "全部清除",
   "Closest:": "最接近：",
   "Coloured paper and card": "彩纸与卡纸",
   "Colours": "颜色",
@@ -3713,7 +3761,6 @@ L.zh = {
   "Fix the lines in red.": "请修正标红的行。",
   "Flash cards and posters": "识字卡和海报",
   "Flashlight": "手电筒",
-  "Flashlight on": "手电筒已开",
   "For mistakes or duplicates. Can’t be undone.": "用于错误或重复。无法撤销。",
   "Found: {name}": "找到了：{name}",
   "Full": "满的",
@@ -3763,6 +3810,7 @@ L.zh = {
   "Looking up…": "查找中…",
   "Looks like {type}.": "看起来像 {type}。",
   "Low": "不足",
+  "Low at {n}": "少于 {n} 就算少",
   "Low first": "不足的在前",
   "Lowest first": "最少的在前",
   "Mark as bought": "标记为已购买",
@@ -3783,6 +3831,7 @@ L.zh = {
   "Name them ({n})": "逐个起名（{n}）",
   "Name this item": "给这件东西起名",
   "Needs a name": "待命名",
+  "Needs attention": "需要处理",
   "Needs fixing": "需要修理",
   "New PIN": "新 PIN",
   "New item": "新物品",
@@ -3794,7 +3843,6 @@ L.zh = {
   "No requests yet.": "还没有申请。",
   "No rooms yet.": "还没有房间。",
   "None": "全不选",
-  "None at {centre}.": "{centre} 没有。",
   "None here.": "这里没有。",
   "None yet.": "还没有。",
   "Normal": "标准",
@@ -3808,12 +3856,14 @@ L.zh = {
   "Not sorted": "未分类",
   "Not sorted yet": "还没有类型",
   "Not sure": "不确定",
+  "Not what you need?": "不是你要找的？",
   "Note": "备注",
   "Note for them": "给对方的备注",
   "Notes": "备注",
   "Nothing here yet.": "这里还没有物品。",
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
+  "Nothing matches the filters.": "没有符合筛选的项目。",
   "Nothing new to offer.": "没有新的可提供。",
   "Nothing running low.": "没有快不够的。",
   "Nothing yet.": "暂时没有。",
@@ -3843,6 +3893,7 @@ L.zh = {
   "Other": "其他",
   "Other names": "其他名称",
   "Outdoor and sports": "户外与运动",
+  "Overdue": "已逾期",
   "PIN changed.": "PIN 已更改。",
   "Paints and brushes": "颜料与画笔",
   "Paper (A4, rolls)": "纸张（A4、卷纸）",
@@ -3888,10 +3939,10 @@ L.zh = {
   "Request declined": "申请已拒绝",
   "Request sent": "申请已提交",
   "Requests": "申请",
-  "Rest are fine": "其余都没问题",
   "Retake": "重拍",
   "Review copy: this language isn’t signed off yet.": "审阅版本：这种语言尚未审核通过。",
   "Role-play and dolls": "角色扮演与娃娃",
+  "Room": "房间",
   "Room added": "已添加房间",
   "Room name": "房间名称",
   "Room removed": "已删除房间",
@@ -3947,17 +3998,20 @@ L.zh = {
   "Shelves and storage": "架子与收纳",
   "Show all centres": "显示所有分园",
   "Show history": "查看历史",
+  "Show results": "显示结果",
   "Sign out": "退出登录",
   "Skip for now": "先跳过",
   "Soap and hand wash": "肥皂与洗手液",
   "Something went wrong. Try again.": "出了点问题，请再试一次。",
   "Sort": "排序",
+  "Sort and filter": "排序与筛选",
   "Speakers and microphones": "音响与麦克风",
   "Staff link (share only with staff)": "员工链接（仅与员工分享）",
   "Stage items and flags": "舞台用品与旗帜",
   "Starter list": "起步清单",
   "Starting camera…": "正在启动相机…",
   "Stationery and paper": "文具与纸张",
+  "Status": "状态",
   "Subtype": "细类",
   "Supplies": "耗材",
   "Supplies or equipment?": "耗材还是设备？",
@@ -3968,7 +4022,6 @@ L.zh = {
   "Take some": "取用",
   "Tap Full, Half, Almost out or Empty.": "请点“满的”“一半”“快没了”或“空的”。",
   "Tap to skip one.": "点一下可跳过。",
-  "Tell me below {n}": "低于 {n} 时告诉我",
   "Tell me when below": "低于此数时告诉我",
   "Text size": "字体大小",
   "Thanks, saved.": "谢谢，已保存。",
@@ -4005,6 +4058,7 @@ L.zh = {
   "Thermometers and ice packs": "体温计与冰袋",
   "These stickers open:": "这些贴纸会打开：",
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
+  "Tick all": "全部勾选",
   "Tip: hold Add to type instead.": "小提示：长按“添加”可改为输入。",
   "Tissues and wipes": "纸巾与湿巾",
   "To confirm ({n})": "待确认（{n}）",
@@ -4542,7 +4596,9 @@ function softRender() {
 }
 function drawChrome(v) {
   var nav = byIdEl('nav');
-  nav.hidden = v.name === 'pick';
+  var task = ['countList', 'bulk', 'add', 'request', 'edit'].indexOf(v.name) >= 0;   // a focused task: no tabs, just Back and Save
+  nav.hidden = v.name === 'pick' || task;
+  document.body.classList.toggle('navless', task);
   var tab = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'count',
     countList: 'count', needName: 'home', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'more', room: 'more', adminRooms: 'more', settings: 'more', adminCentres: 'more', scanBooks: 'add' }[v.name];
   var lows = S.items.filter(function (it) { return it.centre === myCentre() && low(it); }).length;
@@ -4558,7 +4614,7 @@ function drawChrome(v) {
       (n ? '<span class="n">' + n + '</span>' : '') + '</span><span class="lb">' + label + '</span></button>';
   };
   var addBtn = '<button data-act="addOpen" aria-label="' + tl('Add') + '" class="addb' + (tab === 'add' ? ' on' : '') + '"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15"/><path d="M12 9.2v5.6M9.2 12h5.6"/></svg></span><span class="lb">' + tl('Add') + '</span></button>';
-  nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('count', tl('Check')) + b('more', tl('Me')) + '</div>';
+  nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('count', tl('Check')) + b('more', tl('Me'), needNameItems().length) + '</div>';
   var n = S.outbox.length, msg = '';
   if (n && S.offline) {
     msg = '<div class="notice"><span>' + (n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
@@ -4570,8 +4626,8 @@ function drawChrome(v) {
   if (REVIEW && LANGS_ON.indexOf(LANG) < 0) msg += '<div class="notice"><span>' + esc(tl('Review copy: this language isn’t signed off yet.')) + '</span></div>';
   byIdEl('banner').innerHTML = msg;
 }
-function top(hasBack) {
-  var me = S.me ? '<button class="me" data-act="nav" data-to="more">' + esc(S.me.centre) + '</button>' : '';
+function top(hasBack, noMe) {
+  var me = S.me && !noMe ? '<button class="me" data-act="nav" data-to="more">' + esc(S.me.centre) + '</button>' : '';
   return '<header class="top">' + (hasBack
     ? '<button class="back" data-act="back">' + ICON.back + '<span>' + tl('Back') + '</span></button>'
     : '<span class="brand"><svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#f7f856"/><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></svg><b>Ada Tak?</b></span>') + me + '</header>';
@@ -4641,12 +4697,12 @@ function lowStripHtml() {
   var lows = S.items.filter(function (it) { return it.centre === mine && low(it); })
     .sort(function (a, b) { return (a.qty / (a.min || 1)) - (b.qty / (b.min || 1)); });
   if (!lows.length) return '';
-  return '<h2 class="sec">' + tl('Running low') + '</h2><div class="list">' + lows.slice(0, 3).map(function (it) {
+  return '<h2 class="sec">' + tl('Running low') + '</h2><div class="list">' + lows.slice(0, 2).map(function (it) {
     return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' +
       tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span><span class="line"><span class="badge low">' +
       (isLevel(it) ? LEVEL_LABELS[it.qty] : tl('{amount} left', { amount: amount(it.qty, it.unit) })) + '</span> ' + esc(it.loc) + '</span></span></button>';
   }).join('') + '</div>' +
-    (lows.length > 3 ? '<button class="btn quiet" data-act="nav" data-to="low">' + tl('See all') + ' ' + lows.length + '</button>' : '');
+    (lows.length > 2 ? '<button class="btn quiet" data-act="nav" data-to="low">' + tl('See all') + ' ' + lows.length + '</button>' : '');
 }
 function starterMine() {
   return (S.starter || []).filter(function (s) { return s.centre === myCentre() && !S.skipped[s.id]; });
@@ -4690,10 +4746,6 @@ function vStarter() {
         '<button class="btn quiet" data-act="starterSkip" data-id="' + esc(s.id) + '">' + tl('Skip for now') + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Your starter list is finished.') + '</h2></div>');
 }
-function needNameStrip() {
-  var n = needNameItems().length;
-  return n ? '<button class="btn" data-act="go" data-to="needName" style="margin-top:var(--s4)">' + esc(tl('{n} need a name', { n: n })) + '</button>' : '';
-}
 function vNeedName() {
   var list = needNameItems();
   return top(true) + '<h1 class="title">' + tl('Needs a name') + '</h1><p class="sub">' + tl('Scanned with no name. What are they?') + '</p>' +
@@ -4708,7 +4760,8 @@ function vHome(v) {
     '<h1 class="hero">' + tl('Do we have it?') + '</h1>' +
     '<div class="search">' + ICON.search +
     '<input id="q" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + tl('Search for an item') + '" placeholder="' + tl('Search…') + '" value="' + esc(S.q) + '">' +
-    '<button class="clear" data-act="clearQ" aria-label="' + tl('Clear') + '"' + (S.q ? '' : ' hidden') + '>' + ICON.x + '</button></div>' +
+    '<button class="clear" data-act="clearQ" aria-label="' + tl('Clear') + '"' + (S.q ? '' : ' hidden') + '>' + ICON.x + '</button>' +
+    '<button class="filt" data-act="filterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '<span class="fdot"' + (filterCount() ? '' : ' hidden') + '>' + filterCount() + '</span></button></div>' +
     scopeChips() +
     '<div id="results">' + resultsHtml(v) + '</div>';
 }
@@ -4717,7 +4770,55 @@ function drawResults() {
   if (box) box.innerHTML = resultsHtml(cur());
   var c = $('.search .clear');
   if (c) c.hidden = !S.q;
+  var d = $('.search .filt .fdot');
+  if (d) { d.textContent = filterCount(); d.hidden = !filterCount(); }
 }
+// ----- sort and filter (the icon at the end of the search bar) -----
+function filtersActive() { var f = S.fil || {}; return !!(Object.keys(f.cats || {}).length || f.status || f.room); }
+function filterCount() { var f = S.fil || {}; return Object.keys(f.cats || {}).length + (f.status ? 1 : 0) + (f.room ? 1 : 0) + (S.qSort ? 1 : 0); }
+function applyFilters(list) {
+  var f = S.fil || {}, cats = Object.keys(f.cats || {});
+  return list.filter(function (g) {
+    if (cats.length && cats.indexOf(g.cat) < 0) return false;
+    if (f.status === 'low' && !g.rows.some(low)) return false;
+    if (f.status === 'attn' && !g.rows.some(function (r) { return STATUS_LABEL[r.status]; })) return false;
+    if (f.status === 'unsorted' && g.cat) return false;
+    if (f.room && !g.rows.some(function (r) { return sameRoom(r.loc, f.room); })) return false;
+    return true;
+  });
+}
+function sortGroups(list, dflt) {
+  var by = S.qSort || dflt || '', out = list.slice();
+  if (by === 'az') out.sort(function (a, b) { return a.dname.localeCompare(b.dname); });
+  else if (by === 'low') {
+    var fill = function (g) { var m = Infinity; g.rows.forEach(function (x) { if (x.min > 0) m = Math.min(m, x.qty / x.min); }); return m; };
+    out.sort(function (a, b) { return fill(a) - fill(b); });
+  }
+  return out;
+}
+function filterChipsHtml() {
+  var f = S.fil || {}, out = [];
+  Object.keys(f.cats || {}).forEach(function (c) { out.push(['cat', c, tl(c)]); });
+  if (f.status) out.push(['status', f.status, STATUS_NAME()[f.status]]);
+  if (f.room) out.push(['room', f.room, f.room]);
+  return out.length ? '<div class="seg fchips">' + out.map(function (o) {
+    return '<button class="chip on" data-act="filterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>';
+  }).join('') + '</div>' : '';
+}
+function STATUS_NAME() { return { low: tl('Running low'), attn: tl('Needs attention'), unsorted: tl('Not sorted') }; }
+function filterSheet() {
+  var f = S.fil || {}, chip = function (act, val, label, on) {
+    return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '">' + esc(label) + '</button>';
+  };
+  return '<h2>' + tl('Sort and filter') + '</h2>' +
+    '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('Best match')], ['az', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('qSort', o[0], o[1], (S.qSort || '') === o[0]); }).join('') + '</div>' +
+    '<label class="lab">' + tl('Type') + '</label><div class="chips">' + S.categories.map(function (c) { return chip('filterCat', c, tl(c), (f.cats || {})[c]); }).join('') + '</div>' +
+    '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('filterStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div>' +
+    (roomsFor(myCentre()).length ? '<label class="lab">' + tl('Room') + '</label><div class="chips">' + roomsFor(myCentre()).map(function (r) { return chip('filterRoom', r, r, f.room && sameRoom(f.room, r)); }).join('') + '</div>' : '') +
+    '<button class="btn primary" data-act="closeSheet">' + tl('Show results') + '</button>' +
+    '<button class="btn quiet" data-act="filterClear">' + tl('Clear all') + '</button>';
+}
+function redrawFilter() { drawResults(); if (M.type === 'filter') openSheet(filterSheet()); }
 function resultsHtml(v) {
   var q = S.q.trim();
   if (!q && v.cat) {
@@ -4737,16 +4838,20 @@ function resultsHtml(v) {
       (inCat.length ? '<div class="list">' + inCat.map(card).join('') + '</div>'
         : '<div class="card empty"><h2>' + tl('Nothing running low.') + '</h2></div>');
   }
+  var fchips = filterChipsHtml();
+  if (!q && filtersActive()) {
+    var fl = sortGroups(applyFilters(scoped(S.groups)), 'az');
+    return fchips + (fl.length ? '<div class="list">' + fl.map(card).join('') + '</div>'
+      : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>');
+  }
   if (!q) {
     var counts = {};
     scoped(S.groups).forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
-    return needNameStrip() + starterStrip() + lowStripHtml() + recentHtml() +
+    return starterStrip() + lowStripHtml() + recentHtml() +
       '<h2 class="sec">' + tl('By type') + '</h2><div class="cats">' +
       S.categories.filter(function (c) { return counts[c]; }).map(function (c) {
         return '<button class="cat" data-act="cat" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span class="lbl2">' + esc(tl(c)) + '</span><small>' + counts[c] + '</small></button>';
-      }).join('') + '</div>' +
-      '<button class="btn" data-act="addNew" style="margin-top:var(--s5)">' + tl('Add an item') + '</button>' +
-      '<button class="btn quiet" data-act="go" data-to="scanBooks">' + tl('Adding books? Scan the barcodes') + '</button>';
+      }).join('') + '</div>';
   }
   var r = RMSearch.search(scoped(S.groups), anyBarcode(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
   var elsewhere = !S.allCentres && !r.strong.length ? RMSearch.search(S.groups, anyBarcode(q) || q).strong : [];
@@ -4765,25 +4870,14 @@ function resultsHtml(v) {
       '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></div>' +
       (r.weak.length ? '<p class="count">' + tl('Closest:') + '</p><div class="list">' + r.weak.map(card).join('') + '</div>' : '');
   }
-  var found = r.strong.slice();
-  if (S.qSort === 'az') found.sort(function (a, b) { return a.dname.localeCompare(b.dname); });
-  else if (S.qSort === 'low') {
-    var fill = function (g) { var m = Infinity; g.rows.forEach(function (x) { if (x.min > 0) m = Math.min(m, x.qty / x.min); }); return m; };
-    found.sort(function (a, b) { return fill(a) - fill(b); });
-  }
+  var found = sortGroups(applyFilters(r.strong));
   var shown = found.slice(0, 30);
-  var ctl = r.strong.length > 1
-    ? '<div class="seg" data-group="qSort">' + [['', tl('Best match')], ['az', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) {
-        return '<button class="chip' + ((S.qSort || '') === o[0] ? ' on' : '') + '" data-act="qSort" data-val="' + o[0] + '">' + o[1] + '</button>';
-      }).join('') + '</div>' +
-      ''
-    : '';
-  return '<p class="count">' + (r.strong.length === 1 ? tl('We have it:') : tl('{n} matches:', { n: r.strong.length })) + '</p>' + ctl +
-    (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + esc(tl('None at {centre}.', { centre: S.qCentre })) + '</h2></div>') +
+  return filterChipsHtml() + '<p class="count">' + (found.length === 1 ? tl('We have it:') : tl('{n} matches:', { n: found.length })) + '</p>' +
+    (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>') +
     (found.length > shown.length ? '<p class="hint">' + tl('First 30 shown. Type more.') + '</p>' : '') + starterHits(q) +
-    '<div class="after"><p>' + tl('Not here?') + '</p>' +
+    '<details class="notwhat"><summary>' + tl('Not what you need?') + '</summary>' +
     '<button class="btn" data-act="toRequest">' + tl('Ask to buy') + '</button>' +
-    '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></div>';
+    '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></details>';
 }
 function card(g) {
   var mine = myCentre(), places;
@@ -4831,7 +4925,7 @@ function vItem(v) {
       (many ? '<span class="dot"></span>' : '') +
       '<span class="where">' + esc(r.centre) + ' · ' + esc(r.loc) +
       (badges(r) ? '<small>' + badges(r) + '</small>' : '') +
-      '<small>' + (r.parts ? r.parts.split(';').join(' +') + ' · ' : '') + (!isLevel(r) && r.min > 0 ? tl('Tell me below {n}', { n: r.min }) + ' · ' : '') + (isLevel(r) ? tl('Checked {when}', { when: ago(r.counted) }) : tl('Checked {when}', { when: ago(r.counted) })) + '</small></span>' +
+      '<small>' + (r.parts ? r.parts.split(';').join(' +') + ' · ' : '') + (!isLevel(r) && r.min > 0 ? tl('Low at {n}', { n: r.min }) + ' · ' : '') + (isLevel(r) ? tl('Checked {when}', { when: ago(r.counted) }) : tl('Checked {when}', { when: ago(r.counted) })) + '</small></span>' +
       '<span class="qty' + (low(r) ? ' low' : '') + '">' + (isLevel(r) ? LEVEL_LABELS[r.qty] : r.qty + '<small>' + esc(unitFor(r.qty, r.unit)) + '</small>') + '</span>' +
       '</' + (many ? 'button' : 'div') + '>';
   }).join('');
@@ -4840,14 +4934,9 @@ function vItem(v) {
     '<div class="headcard">' + tile(g.photoRow, g.cat, true) + '<div style="min-width:0"><h1 class="name">' + esc(g.dname) + '</h1>' +
     (g.dalt ? '<p class="line">' + esc(g.dalt) + '</p>' : '') +
     (many ? '<p class="line"><b>' + groupSummary(g) + '</b> ' + esc(tl('in {n} places', { n: g.rows.length })) + '</p>' : '') + '</div></div>' +
-    '<div class="card">' + places + '</div>' +
+    (many ? '' : itemActions(sel, many)) + '<div class="card">' + places + '</div>' +
     (sel.notes ? '<p class="note">' + esc(sel.notes) + '</p>' : '') +
-    (isLevel(sel)
-      ? '<div class="levels" role="group" aria-label="' + tl('How much is left?') + '">' + levelButtons('setLevel', sel.qty) + '</div>' +
-        (many ? '<p class="forwhere">' + esc(tl('at {centre} · {place}', { centre: sel.centre, place: sel.loc })) + '</p>' : '')
-      : '<div class="two"><button class="btn big add" data-act="stock" data-dir="1"><span class="sign">+</span>' + tl('Add more') + '</button>' +
-        '<button class="btn big" data-act="stock" data-dir="-1"><span class="sign">−</span>' + tl('Take some') + '</button></div>' +
-        (many ? '<p class="forwhere">' + esc(tl('at {centre} · {place}', { centre: sel.centre, place: sel.loc })) + '</p>' : '')) +
+    (many ? itemActions(sel, many) : '') +
     '<div class="card rows">' +
     (sel && sel.parts ? '<button class="rowbtn" data-act="pieceOpen"><span>' + tl('A piece is missing') + '<small>' + esc(sel.parts.split(';').join(' +')) + '</small></span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="problem"><span>' + tl('Report a problem') + '<small>' + tl('Broken or missing') + '</small></span>' + ICON.go + '</button>' +
@@ -4861,6 +4950,14 @@ function vItem(v) {
     '<h2 class="sec">' + tl('History') + '</h2>' +
     (past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>'
       : '<button class="btn" data-act="history">' + tl('Show history') + '</button>');
+}
+function itemActions(sel, many) {
+  return isLevel(sel)
+    ? '<div class="levels" role="group" aria-label="' + tl('How much is left?') + '">' + levelButtons('setLevel', sel.qty) + '</div>' +
+      (many ? '<p class="forwhere">' + esc(tl('at {centre} · {place}', { centre: sel.centre, place: sel.loc })) + '</p>' : '')
+    : '<div class="two"><button class="btn big add" data-act="stock" data-dir="1"><span class="sign">+</span>' + tl('Add more') + '</button>' +
+      '<button class="btn big" data-act="stock" data-dir="-1"><span class="sign">−</span>' + tl('Take some') + '</button></div>' +
+      (many ? '<p class="forwhere">' + esc(tl('at {centre} · {place}', { centre: sel.centre, place: sel.loc })) + '</p>' : '');
 }
 function histLine(h) {
   var what = tl(h.action);
@@ -5076,7 +5173,12 @@ function similarHtml(text) {
   if (!r.length) return '';
   return '<div class="similar">' + tl('Already here? Tap it.') + '<div class="list">' + r.map(card).join('') + '</div></div>';
 }
-function similarAll(text) { return similarHtml(text) + starterWarn(text); }
+// at least 3 English letters, or 2 Chinese characters, before the "already here" menu appears
+function enoughToMatch(text) {
+  var latin = (String(text).match(/[A-Za-z]/g) || []).length, cjk = (String(text).match(/[\u3400-\u9fff]/g) || []).length;
+  return latin >= 3 || cjk >= 2;
+}
+function similarAll(text) { return enoughToMatch(text) ? similarHtml(text) + starterWarn(text) : ''; }
 
 // ----- Ask to buy -----
 function vRequest(v) {
@@ -5176,16 +5278,16 @@ function vLow() {
       '<span class="line">' + esc(S.lowAll ? it.centre + ' · ' + it.loc : it.loc) + '</span></span></button>';
   };
   return top(false) + '<h1 class="title">' + tl('Running low') + '</h1>' +
-    '<div class="seg" data-group="lowAll">' +
+    '<div class="toolrow"><div class="seg" data-group="lowAll">' +
     '<button class="chip' + (S.lowAll ? '' : ' on') + '" data-act="lowScope" data-val="">' + esc(mine || tl('My centre')) + '</button>' +
     '<button class="chip' + (S.lowAll ? ' on' : '') + '" data-act="lowScope" data-val="1">' + tl('All centres') + '</button></div>' +
-    (lows.length > 1 ? '<div class="seg" data-group="lowSort"><button class="chip' + (S.lowSort === 'u' ? '' : ' on') + '" data-act="lowSort" data-val="">' + tl('A to Z') + '</button>' +
-      '<button class="chip' + (S.lowSort === 'u' ? ' on' : '') + '" data-act="lowSort" data-val="u">' + tl('Lowest first') + '</button></div>' : '') +
+    '<div class="tools">' + (lows.length > 1 ? '<button type="button" class="ib" data-act="lowSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.sort + '</button>' : '') +
+    (lows.length || broken.length ? '<button type="button" class="ib' + (pick ? ' on' : '') + '" data-act="lowPick" aria-label="' + (pick ? tl('Done') : tl('Choose')) + '" title="' + (pick ? tl('Done') : tl('Choose')) + '" aria-pressed="' + (pick ? 'true' : 'false') + '">' + ICON.count + '</button>' : '') + '</div></div>' +
     (lows.length || broken.length ? (function () {
       var sl = pick ? lows.filter(function (it) { return !off[it.id]; }) : lows, sb = pick ? broken.filter(function (it) { return !off[it.id]; }) : broken, n = sl.length + sb.length;
       return '<a class="btn" id="share" target="_blank" rel="noopener"' + (pick && !n ? ' aria-disabled="true" style="opacity:.45;pointer-events:none"' : '') + ' href="https://wa.me/?text=' +
         encodeURIComponent(shoppingText(sl, sb, S.lowAll ? tl('all centres') : (mine || tl('my centre')))) + '">' + (pick ? tl('Share {n}', { n: n }) : tl('Share on WhatsApp')) + '</a>' +
-        '<button class="btn quiet" data-act="lowPick">' + (pick ? tl('Done') : tl('Choose')) + '</button>';
+        '';
     })() : '') +
     (lows.length ? '<div class="list">' + lows.map(function (it) {
       var spare = spareOf(it);
@@ -5212,14 +5314,14 @@ function vCount(v) {
   });
   names.sort(function (a, b) { return places[a].oldest - places[b].oldest; });
   return top(false) + '<h1 class="title">' + tl('Check') + '</h1><p class="sub">' + tl('Which room?') + '</p>' +
-    '<div class="seg" data-group="countCentre">' + S.centres.map(function (c) {
+    '<div class="seg' + fit() + '" data-group="countCentre">' + S.centres.map(function (c) {
       return '<button class="chip' + (c === centre ? ' on' : '') + '" data-act="countCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
     }).join('') + '</div>' +
     (names.length ? '<div class="card">' + names.map(function (loc) {
       var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
       return '<button class="rowbtn" data-act="countPlace" data-val="' + esc(loc) + '"><span>' + esc(loc) +
         '<small>' + (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) + '</small></span>' +
-        (days > 30 ? '<span class="badge warn">' + tl('Check this room') + '</span>' : '') + ICON.go + '</button>';
+        (days > 30 ? '<span class="due"><i></i>' + tl('Overdue') + '</span>' : '') + ICON.go + '</button>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>');
 }
 function vCountList(v) {
@@ -5228,11 +5330,10 @@ function vCountList(v) {
   F = { was: {} };
   rows.forEach(function (it) { F.was[it.id] = it.qty; });
   return top(true) + '<h1 class="title">' + esc(v.loc) + '</h1><p class="sub">' + esc(v.centre) + '</p>' +
-    '<p class="prog" id="c-prog">' + tl('{n} of {total} checked', { n: 0, total: rows.length }) + '</p><div class="progbar"><i id="c-bar"></i></div>' +
-    '<div class="chkbar" id="chkbar"><span class="lbl2">' + tl('Sort') + '</span>' +
-      [['name', tl('Name')], ['cat', tl('Type')], ['low', tl('Low first')]].map(function (o) {
-        return '<button type="button" class="chip' + (o[0] === (S.checkSort || 'name') ? ' on' : '') + '" data-act="countSort" data-val="' + o[0] + '">' + o[1] + '</button>';
-      }).join('') + '<button type="button" class="chip' + (S.checkHide ? ' on' : '') + '" data-act="countHide">' + tl('Hide checked') + '</button></div>' +
+    '<div class="progrow"><p class="prog" id="c-prog">' + tl('{n} of {total} checked', { n: 0, total: rows.length }) + '</p><div class="tools">' +
+      '<button type="button" class="chip" data-act="countRest">' + ICON.tickall + tl('Tick all') + '</button>' +
+      '<button type="button" class="ib" data-act="countSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.sort + '</button>' +
+      '<button type="button" class="ib' + (S.checkHide ? ' on' : '') + '" data-act="countHide" aria-label="' + tl('Hide checked') + '" title="' + tl('Hide checked') + '" aria-pressed="' + (S.checkHide ? 'true' : 'false') + '">' + (S.checkHide ? ICON.eyeoff : ICON.eye) + '</button></div></div><div class="progbar"><i id="c-bar"></i></div>' +
     '<div class="card' + (S.checkHide ? ' hidechecked' : '') + '" id="checklist">' + rows.map(function (it) {
       var okTxt = it.kind === 'Equipment' && !isLevel(it) ? tl('All here') : tl('OK');
       return '<div class="cline' + (isLevel(it) ? ' lvrow' : '') + '" data-row="' + esc(it.id) + '" data-name="' + esc(shown(it).toLowerCase()) + '" data-cat="' + esc((it.cat || '').toLowerCase()) + '" data-low="' + (low(it) ? 1 : 0) + '"><div class="cname"><span class="tkt">' + esc(shown(it)) +
@@ -5242,7 +5343,6 @@ function vCountList(v) {
           : stepper('c-' + it.id, it.qty, 0, 99999, tl('How many {name} are here?', { name: shown(it) }))) +
         '<button type="button" class="okb tk" data-act="countTick" aria-label="' + esc(okTxt + ' · ' + shown(it)) + '"><span>' + okTxt + '</span></button></div></div>';
     }).join('') + '</div>' +
-    '<button class="btn" data-act="countRest" style="margin-top:var(--s3)">' + tl('Rest are fine') + '</button>' +
     '<p class="hint">' + tl('Not on the list? Search, then add.') + '</p>' +
     '<div class="savebar"><button class="btn primary" id="c-go" data-act="countGo">' + tl('All fine, save') + '</button></div>';
 }
@@ -5280,17 +5380,21 @@ function langChips() {
   }).join('') + '</div>';
 }
 function vMore() {
-  return top(false) + '<div class="titlerow"><h1 class="title">' + tl('Me') + '</h1><button class="gear" data-act="go" data-to="settings" aria-label="' + tl('Settings') + '">' + ICON.gear + '</button></div>' +
-    '<label class="lab">' + tl('Centre') + '</label>' + '<div class="chips" data-group="myCentre">' + S.centres.map(function (c) {
+  var nn = needNameItems().length;
+  return top(false, true) + '<h1 class="title">' + tl('Me') + '</h1>' +
+    '<label class="lab">' + tl('Centre') + '</label>' + '<div class="chips' + fit() + '" data-group="myCentre">' + S.centres.map(function (c) {
       return '<button class="chip' + (c === S.me.centre ? ' on' : '') + '" data-act="myCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
     }).join('') + '</div>' +
     '<div class="card rows" style="margin-top:var(--s4)">' +
     '<button class="rowbtn" data-act="addNew"><span>' + tl('Add an item') + '</span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="requests"><span>' + tl('My requests') + '</span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="rooms"><span>' + tl('Rooms') + '</span>' + ICON.go + '</button>' +
+    (nn ? '<button class="rowbtn" data-act="go" data-to="needName"><span>' + tl('Needs a name') + '</span><span class="badge low">' + nn + '</span>' + ICON.go + '</button>' : '') +
+    '<button class="rowbtn" data-act="go" data-to="settings"><span>' + tl('Settings') + '</span>' + ICON.go + '</button>' +
     (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span>' + tl('Admin') + '<small>' + tl('Settings, requests and the Google Sheet') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div>';
 }
+function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
 function vSettings() {
   var waiting = S.outbox.length;
@@ -5312,7 +5416,7 @@ function vRooms(v) {
   v.centre = centre;
   var names = roomsFor(centre);
   return top(true) + '<h1 class="title">' + tl('Rooms') + '</h1>' +
-    '<div class="seg" data-group="roomsCentre">' + S.centres.map(function (c) {
+    '<div class="seg' + fit() + '" data-group="roomsCentre">' + S.centres.map(function (c) {
       return '<button class="chip' + (c === centre ? ' on' : '') + '" data-act="roomsCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
     }).join('') + '</div>' +
     (names.length ? '<div class="rows">' + names.map(function (n) {
@@ -5346,8 +5450,8 @@ function vAdminRooms() {
         (mine.length ? mine.map(function (r) {
           var n = c === ALL_CENTRES ? S.items.filter(function (it) { return sameRoom(it.loc, r.name); }).length : itemsIn(c, r.name).length;
           return '<div class="rowbtn"><span>' + esc(r.name) + '<small>' + (n ? (n === 1 ? tl('1 item') : tl('{n} items', { n: n })) : tl('Empty')) + '</small></span>' +
-            '<span class="chips"><button class="chip" data-act="roomRename" data-centre="' + esc(c) + '" data-val="' + esc(r.name) + '">' + tl('Rename') + '</button>' +
-            '<button class="chip" data-act="roomRemove" data-centre="' + esc(c) + '" data-val="' + esc(r.name) + '">' + tl('Remove') + '</button></span></div>';
+            '<span class="chips"><button class="ib" data-act="roomRename" data-centre="' + esc(c) + '" data-val="' + esc(r.name) + '" aria-label="' + tl('Rename') + '" title="' + tl('Rename') + '">' + ICON.pencil + '</button>' +
+            '<button class="ib" data-act="roomRemove" data-centre="' + esc(c) + '" data-val="' + esc(r.name) + '" aria-label="' + tl('Remove') + '" title="' + tl('Remove') + '">' + ICON.trash + '</button></span></div>';
         }).join('') : '<p class="hint" style="margin:12px 0">' + tl('None yet.') + '</p>') + '</div>' +
         '<button class="btn" style="margin-top:12px" data-act="roomAdd" data-centre="' + esc(c) + '">' + tl('Add a room') + '' + (c === ALL_CENTRES ? '' : ' to ' + esc(c)) + '</button>';
     }).join('');
@@ -5360,8 +5464,8 @@ function vAdminCentres() {
     '<div class="rows">' + S.centres.map(function (c) {
       var n = S.items.filter(function (it) { return it.centre === c; }).length;
       return '<div class="rowbtn"><span>' + esc(c) + '<small>' + (n ? (n === 1 ? tl('1 item') : tl('{n} items', { n: n })) : tl('Empty')) + '</small></span>' +
-        '<span class="chips"><button class="chip" data-act="centreRename" data-val="' + esc(c) + '">' + tl('Rename') + '</button>' +
-        '<button class="chip" data-act="centreRemove" data-val="' + esc(c) + '">' + tl('Remove') + '</button></span></div>';
+        '<span class="chips"><button class="ib" data-act="centreRename" data-val="' + esc(c) + '" aria-label="' + tl('Rename') + '" title="' + tl('Rename') + '">' + ICON.pencil + '</button>' +
+        '<button class="ib" data-act="centreRemove" data-val="' + esc(c) + '" aria-label="' + tl('Remove') + '" title="' + tl('Remove') + '">' + ICON.trash + '</button></span></div>';
     }).join('') + '</div>' +
     '<button class="btn" style="margin-top:12px" data-act="centreAdd">' + tl('Add a centre') + '</button>';
 }
@@ -5455,7 +5559,7 @@ function vAdmin() {
 function fillStatic() {
   var set = function (sel, fn) { var e = document.querySelector(sel); if (e) fn(e); };
   set('#cam', function (e) { e.setAttribute('aria-label', tl('Scan an item')); });
-  set('#cam-torch', function (e) { e.textContent = SC.torch ? tl('Flashlight on') : tl('Flashlight'); });
+  set('#cam-torch', function (e) { e.setAttribute('aria-label', tl('Flashlight')); e.title = tl('Flashlight'); });
   set('#cam-wait', function (e) { e.textContent = tl('Starting camera…'); });
   set('[data-act=camDone]', function (e) { e.textContent = tl('Finish'); });
   set('#cam [data-act=modeScan]', function (e) { e.textContent = tl('Scan'); });
@@ -5795,8 +5899,8 @@ function rowsHtml() {
       '<input id="b-name-' + i + '" class="inp" maxlength="80" autocomplete="off" placeholder="' + esc(tl('Name or title')) + '" value="' + esc(r.name) + '" aria-label="' + esc(tl('Name or title')) + ', ' + (i + 1) + '">' +
       '<p class="help" id="b-msg-' + i + '">' + esc(r.msg) + '</p>' +
       '<div class="rowtools">' + stepper('b-qty-' + i, r.qty, 1, 99999, tl('How many, line') + ' ' + (i + 1)) +
-        '<button type="button" class="chip' + (open ? ' on' : '') + '" data-act="barToggle" data-i="' + i + '" aria-expanded="' + open + '">' + tl('Barcode') + '</button>' +
-        (F.rows.length > 1 ? '<button type="button" class="chip" data-act="rowDel" data-i="' + i + '">' + tl('Remove line') + '</button>' : '') + '</div>' +
+        '<button type="button" class="ib' + (open ? ' on' : '') + '" data-act="barToggle" data-i="' + i + '" aria-expanded="' + open + '" aria-label="' + tl('Barcode') + '" title="' + tl('Barcode') + '">' + ICON.barcode + '</button>' +
+        (F.rows.length > 1 ? '<button type="button" class="ib" data-act="rowDel" data-i="' + i + '" aria-label="' + tl('Remove line') + '" title="' + tl('Remove line') + '">' + ICON.trash + '</button>' : '') + '</div>' +
       '<div class="isbnline" id="b-bar-' + i + '"' + (open ? '' : ' hidden') + '><input id="b-isbn-' + i + '" class="inp" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="' + esc(tl('Barcode (optional)')) + '" value="' + esc(r.isbn) + '" aria-label="' + esc(tl('Barcode')) + ', ' + (i + 1) + '">' +
       (canScan ? '<button type="button" class="btn" data-act="scanIsbn" data-i="' + i + '">' + tl('Scan') + '</button>' : '') + '</div>' +
       (r.err ? '<p class="err" style="margin:0">' + esc(r.err) + '</p>' : '') + '</div>';
@@ -6143,7 +6247,7 @@ var ACT = {
         var tr = SC.stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
         SC.torch = false;
         byIdEl('cam-torch').hidden = !caps.torch;
-        byIdEl('cam-torch').textContent = tl('Flashlight');
+        byIdEl('cam-torch').classList.remove('on');
       } catch (e) { byIdEl('cam-torch').hidden = true; }
       SC.timer = setTimeout(camTick, 300);
     }).catch(function (e) {
@@ -6157,7 +6261,7 @@ var ACT = {
     var tr = SC.stream && SC.stream.getVideoTracks()[0];
     if (!tr) return;
     SC.torch = !SC.torch;
-    tr.applyConstraints({ advanced: [{ torch: SC.torch }] }).then(function () { byIdEl('cam-torch').textContent = SC.torch ? tl('Flashlight on') : tl('Flashlight'); })
+    tr.applyConstraints({ advanced: [{ torch: SC.torch }] }).then(function () { byIdEl('cam-torch').classList.toggle('on', SC.torch); byIdEl('cam-torch').setAttribute('aria-pressed', SC.torch ? 'true' : 'false'); })
       .catch(function () { SC.torch = false; byIdEl('cam-torch').hidden = true; });
   },
   camDone: function () { camStop(); drawScanList(); },
@@ -6541,7 +6645,13 @@ var ACT = {
     }).catch(failed);
   },
 
-  lowSort: function (el) { S.lowSort = el.dataset.val; render(); },
+  lowSortOpen: function () {
+    M = { type: 'lowsort' };
+    openSheet('<h2>' + tl('Sort') + '</h2>' + [['', tl('A to Z')], ['u', tl('Lowest first')]].map(function (o) {
+      return '<button type="button" class="opt' + ((S.lowSort || '') === o[0] ? ' on' : '') + '" data-act="lowSort" data-val="' + o[0] + '">' + o[1] + '</button>';
+    }).join(''));
+  },
+  lowSort: function (el) { S.lowSort = el.dataset.val; if (!byIdEl('sheet').hidden) closeSheet(); render(); },
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
   removeItem: function () {
@@ -6633,8 +6743,18 @@ var ACT = {
   lowPick: function () { S.lowPick = !S.lowPick; if (!S.lowPick) S.lowOff = {}; render(); },
   lowTog: function (el) { var o = S.lowOff || (S.lowOff = {}), id = el.dataset.id; if (o[id]) delete o[id]; else o[id] = 1; var y = window.scrollY; render(); window.scrollTo(0, y); },
   scope: function (el) { S.allCentres = !!el.dataset.val; render(); },
-  qSort: function (el) { S.qSort = el.dataset.val; drawResults(); },
+  qSort: function (el) { S.qSort = el.dataset.val; redrawFilter(); },
   qCentre: function (el) { S.qCentre = el.dataset.val; drawResults(); },
+  filterOpen: function () { M = { type: 'filter' }; openSheet(filterSheet()); },
+  filterCat: function (el) { var f = S.fil || (S.fil = {}); f.cats = f.cats || {}; if (f.cats[el.dataset.val]) delete f.cats[el.dataset.val]; else f.cats[el.dataset.val] = 1; redrawFilter(); },
+  filterStatus: function (el) { var f = S.fil || (S.fil = {}); f.status = f.status === el.dataset.val ? '' : el.dataset.val; redrawFilter(); },
+  filterRoom: function (el) { var f = S.fil || (S.fil = {}); f.room = f.room && sameRoom(f.room, el.dataset.val) ? '' : el.dataset.val; redrawFilter(); },
+  filterClear: function () { S.fil = {}; S.qSort = ''; redrawFilter(); },
+  filterDrop: function (el) {
+    var f = S.fil || (S.fil = {}), k = el.dataset.k;
+    if (k === 'cat') { if (f.cats) delete f.cats[el.dataset.val]; } else f[k] = '';
+    drawResults();
+  },
   // One tap on Add: the camera, or the typing page if that was the last way it was used (or there is no camera here)
   addOpen: function () {
     S.lowPick = false; S.lowOff = {};
@@ -6653,9 +6773,16 @@ var ACT = {
     store.set(k, k === 'rm_text' ? Number(v) : v);
     applyLook(); render();
   },
+  countSortOpen: function () {
+    M = { type: 'checksort' };
+    var cur0 = S.checkSort || 'name';
+    openSheet('<h2>' + tl('Sort') + '</h2>' + [['name', tl('Name')], ['cat', tl('Type')], ['low', tl('Low first')]].map(function (o) {
+      return '<button type="button" class="opt' + (o[0] === cur0 ? ' on' : '') + '" data-act="countSort" data-val="' + o[0] + '">' + o[1] + '</button>';
+    }).join(''));
+  },
   countSort: function (el) {
     S.checkSort = el.dataset.val;
-    Array.prototype.forEach.call(document.querySelectorAll('#chkbar [data-act=countSort]'), function (c) { c.classList.toggle('on', c === el); });
+    closeSheet();
     var box = byIdEl('checklist'), by = S.checkSort;
     var rows = Array.prototype.slice.call(box.querySelectorAll('.cline'));
     rows.sort(function (a, b) {
@@ -6666,7 +6793,7 @@ var ACT = {
     });
     rows.forEach(function (r) { box.appendChild(r); });
   },
-  countHide: function (el) { S.checkHide = !S.checkHide; el.classList.toggle('on', S.checkHide); byIdEl('checklist').classList.toggle('hidechecked', S.checkHide); },
+  countHide: function (el) { S.checkHide = !S.checkHide; el.classList.toggle('on', S.checkHide); el.setAttribute('aria-pressed', S.checkHide ? 'true' : 'false'); el.innerHTML = S.checkHide ? ICON.eyeoff : ICON.eye; byIdEl('checklist').classList.toggle('hidechecked', S.checkHide); },
   countTick: function (el) { var l = el.closest('.cline'); l.classList.toggle('ticked'); countChanges(); },
   countRest: function () { Array.prototype.forEach.call(document.querySelectorAll('.cline'), function (l) { l.classList.add('ticked'); }); countChanges(); },
   myCentre: function (el) { S.me = { centre: el.dataset.val }; store.set('rm_me', S.me); render(); },
