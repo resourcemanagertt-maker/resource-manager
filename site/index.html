@@ -580,8 +580,10 @@ details.histfold{margin-top:var(--s5)}
 .btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
 .btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
 /* v31: while one thing is saving, ONE layer covers everything (page, bar, sheets), so it all dims and releases in the same frame */
-#lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 55%,transparent);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);cursor:progress}
-html.locked,html.locked body{overflow:hidden}
+#lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 55%,transparent);cursor:progress;touch-action:none}
+html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavior:none}
+/* the button that started the save keeps its normal look (the dim layer has a hole where it is) */
+.btn.loading,.btn.loading[disabled],.chip.loading,.chip.loading[disabled],.ib.loading,.ib.loading[disabled]{opacity:1}
 #lock[hidden]{display:none}
 /* v29: skeletons (they appear after 150 ms, so a fast load never flashes) */
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -593,6 +595,10 @@ html.locked,html.locked body{overflow:hidden}
 .list .skelcard{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
 .list .skelcard:last-child{border-bottom:0}
 .verline{margin-top:var(--s5);text-align:center}
+.pickfield{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);width:100%;min-height:52px;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left;font-size:16px}
+.pickfield svg{width:20px;height:20px;flex:none}
+.opt .ri{margin-right:var(--s3)}
+.ri{display:inline-grid;place-items:center;width:32px;margin-right:var(--s3);font-size:22px;line-height:1;flex:none}
 .formend.pair{display:flex;gap:var(--s3)}
 .formend.pair .btn{flex:1 1 0;min-width:0;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
 details.more summary,details.histfold summary,details[data-keep] summary,details.notwhat summary,details.settings summary{color:var(--ink);font-weight:600}
@@ -615,9 +621,6 @@ details > summary::after{color:var(--ink)}
 /* v29: launch animation: three blocks fall into place, the last one tilts, over about a second */
 #launch{display:none}
 #launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.6s forwards}
-#launch.go.short{animation:lfade .15s .45s forwards}
-#launch.go.short .blk,#launch.go.short .dot,#launch.go.short .tick,#launch.go.short .st1,#launch.go.short .st2{animation:none}
-#launch.go.short .st1,#launch.go.short .st2{opacity:0}
 #launch svg{width:128px;height:128px;overflow:visible}
 #launch .blk{transform-box:fill-box;transform-origin:center}
 #launch.go .b1{animation:ldrop .38s .05s cubic-bezier(.3,.7,.4,1) both}
@@ -663,7 +666,7 @@ html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 .tilebtn{position:relative;flex:none;background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
 .roomrow .rowmain svg{flex:none;width:20px;height:20px;color:var(--ink)}
-.roomrow .rowmain > span:first-child{flex:1;min-width:0}
+.roomrow .rowmain > .rtext{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -3227,6 +3230,15 @@ var ICON = {
   ICON.moon = s('<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>');
   ICON.auto = s('<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>');
   ICON.done = s('<path d="M5 12.5l4.5 4.5L19 7.5"/>');
+  ICON.pin = s('<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>');
+  ICON.receipt = s('<path d="M5 4h14v17l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M8.5 9h7M8.5 13h5"/>');
+  ICON.cog = s('<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>');
+  ICON.shield = s('<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>');
+  ICON.plus = s('<path d="M12 5v14M5 12h14"/>');
+  ICON.list = s('<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>');
+  ICON.door = s('<path d="M6 21V4h9l3 2v15M4 21h16"/><circle cx="13" cy="12.5" r=".9"/>');
+  ICON.key = s('<circle cx="8" cy="15" r="3.5"/><path d="M10.5 12.5 20 3M16 7l3 3"/>');
+  ICON.qr = s('<rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM18 14h2"/>');
   ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
   ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
@@ -3356,6 +3368,7 @@ L.ms = {
   "Choose a centre first.": "Pilih pusat dahulu.",
   "Choose a room": "Pilih bilik",
   "Choose a room first.": "Pilih bilik dahulu.",
+  "Choose a subtype": "Pilih subjenis",
   "Choose a type.": "Pilih jenis.",
   "Choose another centre.": "Pilih pusat lain.",
   "Choose supplies or equipment.": "Pilih bekalan atau peralatan.",
@@ -3587,6 +3600,7 @@ L.ms = {
   "QR stickers": "Pelekat QR",
   "Read {code}…": "Dibaca {code}…",
   "Reading the barcode…": "Membaca kod bar…",
+  "Received": "Diterima",
   "Received from another centre": "Diterima daripada pusat lain",
   "Recent": "Terkini",
   "Refresh": "Muat semula",
@@ -3747,6 +3761,7 @@ L.ms = {
   "Type": "Jenis",
   "Type a name for the item.": "Taip nama barang.",
   "Type a name — this barcode isn’t on the list yet.": "Taip nama — kod bar ini belum ada.",
+  "Type a new room in the box above.": "Taip nama bilik baharu dalam kotak di atas.",
   "Type a number, like 24 pens.": "Taip nombor, cth. 24 batang pen.",
   "Type a number.": "Taip nombor.",
   "Type and subtype are shared by all centres.": "Jenis dan subjenis dikongsi oleh semua pusat.",
@@ -3974,6 +3989,7 @@ L.zh = {
   "Choose a centre first.": "请先选择分园。",
   "Choose a room": "选择房间",
   "Choose a room first.": "请先选择房间。",
+  "Choose a subtype": "选择子类型",
   "Choose a type.": "请选择类型。",
   "Choose another centre.": "请选择别的分园。",
   "Choose supplies or equipment.": "请选择耗材或设备。",
@@ -4205,6 +4221,7 @@ L.zh = {
   "QR stickers": "二维码贴纸",
   "Read {code}…": "已读取 {code}…",
   "Reading the barcode…": "正在读取条形码…",
+  "Received": "已收到",
   "Received from another centre": "收到别的分园送来的",
   "Recent": "最近",
   "Refresh": "刷新",
@@ -4365,6 +4382,7 @@ L.zh = {
   "Type": "类别",
   "Type a name for the item.": "请输入物品名称。",
   "Type a name — this barcode isn’t on the list yet.": "请输入名称——这个条码还没有记录。",
+  "Type a new room in the box above.": "在上面的框里输入新房间名称。",
   "Type a number, like 24 pens.": "输入数字，如 24 支笔。",
   "Type a number.": "请输入数字。",
   "Type and subtype are shared by all centres.": "类型和子类型由所有中心共用。",
@@ -4701,11 +4719,12 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType,
+window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIcon,
   pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
-  lock: lockUI };
+  lock: lockUI,
+  lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true, b); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -4989,7 +5008,7 @@ function drawChrome(v) {
       (n ? '<span class="n">' + n + '</span>' : '') + '</span><span class="lb">' + label + '</span></button>';
   };
   var addBtn = '<button data-act="addOpen" aria-label="' + tl('Add') + '" class="addb' + (tab === 'add' ? ' on' : '') + '"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15"/><path d="M12 9.2v5.6M9.2 12h5.6"/></svg></span><span class="lb">' + tl('Add') + '</span></button>';
-  nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), tidyCount(myCentre())) + b('more', tl('Me')) + '</div>';
+  nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), roomsBadge(myCentre())) + b('more', tl('Me')) + '</div>';
   var n = S.outbox.length, msg = '';
   if (n && S.offline) {
     msg = '<div class="notice"><span>' + (n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
@@ -5481,7 +5500,8 @@ function typeInner() {
     return '<button type="button" class="tgt' + (F.cat === c ? ' on' : '') + '" data-act="catPick" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[c] || '📦') + '</span><span>' + esc(tl(c)) + '</span></button>';
   }).join('') + '</div>';
   var list = (S.subtypes || {})[F.cat] || [];
-  var subs = F.cat && list.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips" data-group="sub">' + list.map(function (v) {
+  var subs = F.cat && list.length > 4 ? '<label class="lab">' + tl('Subtype') + '</label><button type="button" class="pickfield" data-act="subOpen"><span>' + esc(F.sub ? tl(F.sub) : tl('Choose a subtype')) + '</span>' + ICON.go + '</button>'
+    : F.cat && list.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips" data-group="sub">' + list.map(function (v) {
     return '<button type="button" class="chip' + (F.sub === v ? ' on' : '') + '" data-act="subPick" data-val="' + esc(v) + '">' + esc(tl(v)) + '</button>';
   }).join('') + '<button type="button" class="chip" data-act="subPick" data-val="">' + tl('Not sure') + '</button></div>' : '';
   return tiles + subs;
@@ -5545,14 +5565,31 @@ function roomsFor(centre) {
   return out.sort(function (a, b) { return a.localeCompare(b); });
 }
 // "Received" is where stock sent from another centre lands until it is put away: never offered as a place to choose, never typed in by hand
+// an icon for a room, from words in its name (a Rooms-sheet column can come later); every emoji is old enough for any phone
+var ROOM_ICONS = [[/receiv/i, '📥'], [/store|storage|stock/i, '🗄️'], [/hall|lobby|assembly/i, '🏛️'], [/entrance|gate|front|door/i, '🚪'], [/sick|clinic|first.?aid|medic/i, '🏥'],
+  [/class|kelas/i, '✏️'], [/office|admin|pejabat|staff/i, '🗂️'], [/play|garden|yard|outdoor|taman/i, '🎠'], [/read|library|book|perpustakaan/i, '📚'], [/art|craft|seni/i, '🎨'],
+  [/kitchen|pantry|dining|canteen|dapur|makan/i, '🍽️'], [/toilet|wash|bath|tandas|sink/i, '🚿'], [/music|muzik|piano/i, '🎵'], [/nap|sleep|rest|tidur/i, '🛏️'],
+  [/shed|workshop|maintenance|tool|garage/i, '🔧'], [/science|lab/i, '🔬'], [/computer|it room|tech/i, '💻'], [/laundry|cuci/i, '🧺'], [/toy|block|sand|water/i, '🧸']];
+function roomIcon(name) {
+  for (var i = 0; i < ROOM_ICONS.length; i++) if (ROOM_ICONS[i][0].test(String(name || ''))) return ROOM_ICONS[i][1];
+  return '🚪';
+}
 function isReceivedRoom(n) { return String(n || '').trim().toLowerCase() === 'received'; }
 function pickRooms(centre) { return roomsFor(centre).filter(function (n) { return !isReceivedRoom(n); }); }
 function reservedMsg() { return tl('“Received” is kept for stock sent from another centre. Choose a room.'); }
 function locChips(centre) {
-  var locs = pickRooms(centre);
-  return locs.length ? '<div class="chips" style="margin-top:8px">' + locs.map(function (l) {
-    return '<button type="button" class="chip" data-act="locPick" data-val="' + esc(l) + '">' + esc(l) + '</button>';
-  }).join('') + '</div>' : '';
+  var rooms = pickRooms(centre), use = {};
+  S.items.forEach(function (it) { if (it.centre === centre && !isReceivedRoom(it.loc)) use[it.loc] = (use[it.loc] || 0) + 1; });
+  rooms.sort(function (a, b) { return (use[b] || 0) - (use[a] || 0) || a.localeCompare(b); });
+  var top4 = rooms.slice(0, 4);
+  return rooms.length ? '<div class="chips" style="margin-top:8px">' + top4.map(function (l) {
+    return '<button type="button" class="chip" data-act="locPick" data-val="' + esc(l) + '"><span aria-hidden="true">' + roomIcon(l) + '</span> ' + esc(l) + '</button>';
+  }).join('') + (rooms.length > 4 ? '<button type="button" class="chip" data-act="roomsAll" data-centre="' + esc(centre) + '">' + esc(tl('All rooms')) + ' ›</button>' : '') + '</div>' : '';
+}
+function roomsSheetHtml(centre, current) {
+  return '<h2>' + tl('Rooms') + '</h2><p class="help">' + tl('Type a new room in the box above.') + '</p>' + pickRooms(centre).map(function (l) {
+    return '<button type="button" class="opt' + (sameRoom(l, current) ? ' on' : '') + '" data-act="roomSet" data-val="' + esc(l) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span><span>' + esc(l) + '</span></button>';
+  }).join('');
 }
 function photoField() {
   return '<label class="lab">' + tl('Photo') + ' <i>' + tl('(optional)') + '</i></label><div class="photorow"><span id="f-thumb">' +
@@ -5886,10 +5923,10 @@ function langChips() {
 function vMore() {
   return top(false, true) + '<h1 class="title">' + tl('Me') + '</h1>' +
     '<div class="card rows" style="margin-top:var(--s3)">' +
-    '<button class="rowbtn" data-act="centrePick"><span>' + tl('Centre') + '<small>' + esc(S.me.centre) + '</small></span>' + ICON.go + '</button>' +
-    '<button class="rowbtn" data-act="go" data-to="requests"><span>' + tl('My requests') + '</span>' + ICON.go + '</button>' +
-    '<button class="rowbtn" data-act="go" data-to="settings"><span>' + tl('Settings') + '</span>' + ICON.go + '</button>' +
-    (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span>' + tl('Admin') + '<small>' + tl('Settings, requests and the Google Sheet') + '</small></span>' + ICON.go + '</button>' : '') +
+    '<button class="rowbtn" data-act="centrePick"><span class="lead">' + ICON.pin + '</span><span>' + tl('Centre') + '<small>' + esc(S.me.centre) + '</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + tl('My requests') + '</span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="settings"><span class="lead">' + ICON.cog + '</span><span>' + tl('Settings') + '</span>' + ICON.go + '</button>' +
+    (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin') + '<small>' + tl('Settings, requests and the Google Sheet') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div>';
 }
 function centreSheet(act, current) {
@@ -5917,23 +5954,40 @@ function vSettings() {
 }
 // ----- Rooms: what is kept where -----
 function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
+// the number on the Rooms tab: stock waiting in "Received" plus items that need details, each counted once
+function roomsBadge(centre) {
+  var seen = {}, n = 0;
+  S.items.forEach(function (it) { if (it.centre === centre && isReceivedRoom(it.loc) && !seen[it.id]) { seen[it.id] = 1; n++; } });
+  needNameItems(centre).concat(unsortedItems(centre)).forEach(function (it) { if (!seen[it.id]) { seen[it.id] = 1; n++; } });
+  return n;
+}
+function recvRow(it) {
+  return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
+    '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
+    '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
+}
 function vRooms(v) {
   var centre = myCentre() || S.centres[0];
   v.centre = centre;
   var places = {}, names = [];
   S.items.forEach(function (it) {
-    if (it.centre !== centre) return;
+    if (it.centre !== centre || isReceivedRoom(it.loc)) return;
     if (!places[it.loc]) { places[it.loc] = { n: 0, oldest: Infinity }; names.push(it.loc); }
     places[it.loc].n++;
     places[it.loc].oldest = Math.min(places[it.loc].oldest, it.counted || 0);
   });
-  roomsFor(centre).forEach(function (n) { if (!places[n]) { places[n] = { n: 0, oldest: 0 }; names.push(n); } });
+  roomsFor(centre).forEach(function (n) { if (!isReceivedRoom(n) && !places[n]) { places[n] = { n: 0, oldest: 0 }; names.push(n); } });
   names.sort(function (a, b) { return places[a].oldest - places[b].oldest || a.localeCompare(b); });
+  var recv = S.items.filter(function (it) { return it.centre === centre && isReceivedRoom(it.loc); }).sort(function (a, b) { return a.name.localeCompare(b.name); });
   var nn = needNameItems(centre).length, us = unsortedItems(centre).length;
   return top(false) + '<h1 class="title">' + tl('Rooms') + '</h1>' +
+    (recv.length ? '<h2 class="sec tidyhead recvhead"><span class="ri" aria-hidden="true">' + roomIcon('received') + '</span>' + tl('Received') + '<span class="pn">' + recv.length + '</span></h2>' +
+      '<div class="list">' + recv.map(recvRow).join('') + '</div>' +
+      '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(recv[0].loc) + '">' + tl('Start checking') + '</button></div>' +
+      '<h2 class="sec">' + tl('Rooms') + '</h2>' : '') +
     (names.length ? '<div class="card rows">' + names.map(function (loc) {
       var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
-      return '<div class="roomrow"><button class="rowmain" data-act="roomOpen" data-val="' + esc(loc) + '"><span>' + esc(loc) + '<small>' +
+      return '<div class="roomrow"><button class="rowmain" data-act="roomOpen" data-val="' + esc(loc) + '"><span class="ri" aria-hidden="true">' + roomIcon(loc) + '</span><span class="rtext">' + esc(loc) + '<small>' +
         (p.n && days > 30 ? '<span class="due" role="img" aria-label="' + esc(tl('Overdue')) + '"><i></i></span>' : '') +
         (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) : tl('Empty')) + '</small></span>' + ICON.go + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
@@ -6103,8 +6157,10 @@ function vAdmin() {
   var tile = function (n, label, to) {
     return '<button class="stat" data-act="go" data-to="' + to + '"><b>' + n + '</b><span>' + label + '</span></button>';
   };
+  var ROW_ICON = { addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, pinChange: ICON.key, labels: ICON.qr };
   var row = function (act, to, title, note, extra) {
-    return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '><span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + (extra || '') + ICON.go + '</button>';
+    var ic = ROW_ICON[to || act];
+    return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '>' + (ic ? '<span class="lead">' + ic + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + (extra || '') + ICON.go + '</button>';
   };
   var link = HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : '';
   return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
@@ -6618,10 +6674,26 @@ function formError(msg) {
 var busyEl = null;
 // The lock belongs to ONE call: the first call made after busy(true). When that call has answered, the lock is released a moment
 // after the screen has been redrawn (render() releases it too), so the layer lifts together with the new screen.
-function lockUI(on) {
+// the dim layer with a rounded hole over the button that is working
+function holePath(r) {
+  var W = window.innerWidth, H = window.innerHeight, x = Math.max(0, r.left), y = Math.max(0, r.top), w = r.width, h = r.height, k = Math.min(12, w / 2, h / 2);
+  return 'path(evenodd, "M0 0H' + W + 'V' + H + 'H0Z M' + (x + k) + ' ' + y + 'H' + (x + w - k) + 'A' + k + ' ' + k + ' 0 0 1 ' + (x + w) + ' ' + (y + k) + 'V' + (y + h - k) + 'A' + k + ' ' + k + ' 0 0 1 ' + (x + w - k) + ' ' + (y + h) + 'H' + (x + k) + 'A' + k + ' ' + k + ' 0 0 1 ' + x + ' ' + (y + h - k) + 'V' + (y + k) + 'A' + k + ' ' + k + ' 0 0 1 ' + (x + k) + ' ' + y + 'Z")';
+}
+var viewportOrig = null;
+function noZoom(on) {
+  var m = document.querySelector('meta[name=viewport]');
+  if (!m) return;
+  if (on) { if (viewportOrig === null) viewportOrig = m.getAttribute('content'); m.setAttribute('content', viewportOrig + ', maximum-scale=1, user-scalable=no'); }
+  else if (viewportOrig !== null) { m.setAttribute('content', viewportOrig); viewportOrig = null; }
+}
+['touchmove', 'wheel'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked && e.cancelable) e.preventDefault(); }, { passive: false }); });
+['gesturestart', 'gesturechange'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked) e.preventDefault(); }); });
+function lockUI(on, holeEl) {
   var el = byIdEl('lock');
   clearTimeout(S.lockWD);
   if (on) {
+    if (el) { try { el.style.clipPath = holeEl ? holePath(holeEl.getBoundingClientRect()) : ''; } catch (e) { el.style.clipPath = ''; } }
+    noZoom(true);
     S.locked = true; S.lockSettled = false; S.lockPending = true;
     if (el) el.hidden = false;
     document.body.classList.add('saving'); document.documentElement.classList.add('locked');
@@ -6631,7 +6703,8 @@ function lockUI(on) {
     S.lockWD = setTimeout(function () { lockUI(false); toast(tl('No reply yet. It may have saved: check before trying again.')); }, 55000);
   } else {
     S.locked = false; S.lockSettled = false; S.lockPending = false;
-    if (el) el.hidden = true;
+    noZoom(false);
+    if (el) { el.hidden = true; el.style.clipPath = ''; }
     document.body.classList.remove('saving'); document.documentElement.classList.remove('locked');
     ['app', 'nav', 'sheet', 'banner'].forEach(function (id) { var x = byIdEl(id); if (x) x.inert = false; });
   }
@@ -6640,9 +6713,8 @@ function busy(on, label) {
   if (on) {
     var b = S.lastBtn && S.lastBtnAt > Date.now() - 1500 && document.body.contains(S.lastBtn) && /^(BUTTON|A)$/.test(S.lastBtn.tagName) ? S.lastBtn : (byIdEl('f-go') || byIdEl('m-go'));
     busyEl = b;
-    lockUI(true);
-    if (!b) return;
-    b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true');
+    if (b) { b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true'); }
+    lockUI(true, b);
   } else {
     lockUI(false);
     var e = busyEl; busyEl = null;
@@ -7102,6 +7174,16 @@ var ACT = {
     if (group === 'centre' && byIdEl('f-locs')) byIdEl('f-locs').innerHTML = locChips(F.centre);
   },
   locPick: function (el) { byIdEl('f-loc').value = el.dataset.val; },
+  roomsAll: function (el) { M = { type: 'rooms-all' }; openSheet(roomsSheetHtml(el.dataset.centre, val('f-loc'))); },
+  roomSet: function (el) { byIdEl('f-loc').value = el.dataset.val; closeSheet(); },
+  subOpen: function () {
+    M = { type: 'sub-open' };
+    var list = (S.subtypes || {})[F.cat] || [];
+    openSheet('<h2>' + tl('Subtype') + '</h2>' + list.concat(['']).map(function (v) {
+      return '<button type="button" class="opt' + ((F.sub || '') === v ? ' on' : '') + '" data-act="subSet" data-val="' + esc(v) + '">' + esc(v ? tl(v) : tl('Not sure')) + '</button>';
+    }).join(''));
+  },
+  subSet: function (el) { F.sub = el.dataset.val; closeSheet(); byIdEl('f-type').innerHTML = typeInner(); autoKind(); },
   photo: function () { S.photoFor = ''; byIdEl('file').value = ''; byIdEl('file').click(); },
   photoItem: function () { var it = S.byId[cur().id]; if (!it) return; S.photoFor = it.id; byIdEl('file').value = ''; byIdEl('file').click(); },
 
@@ -7726,23 +7808,16 @@ if (HOSTED) {
   });
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
 }
-var APP_REL = 'v32';
 var APP_BUILT = '2026-11-18';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
-  var el = document.getElementById('launch'), skip = false, full = true;
+  var el = document.getElementById('launch'), skip = false;
   if (!el) return;
   try { skip = !!(sessionStorage.getItem('rm_launched') || localStorage.getItem('rm_noanim') || /[?&]noanim\b/.test(location.search)); } catch (e) { /* play it */ }
   if (skip) { el.remove(); return; }
-  // the whole animation on the first open of the day and after an update; a short one on other cold starts
-  try {
-    var today = new Date().toDateString(), seen = localStorage.getItem('rm_launchday'), built = localStorage.getItem('rm_launchbuild');
-    full = !(seen === today && built === APP_REL);
-    localStorage.setItem('rm_launchday', today); localStorage.setItem('rm_launchbuild', APP_REL);
-    sessionStorage.setItem('rm_launched', '1');
-  } catch (e) { /* fine */ }
-  el.classList.add('go'); if (!full) el.classList.add('short');
+  try { sessionStorage.setItem('rm_launched', '1'); } catch (e) { /* fine */ }   // once per opening of the app, never per page redraw
+  el.classList.add('go');
   var done = function () { if (el.parentNode) el.remove(); };
-  setTimeout(done, full ? 1900 : 700);
+  setTimeout(done, 1900);
   document.addEventListener('pointerdown', done, { once: true, passive: true });
 })();
 syncThemeColor();
