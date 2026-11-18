@@ -570,6 +570,39 @@ details.more,details[data-keep],details.notwhat{border-top:1px solid var(--line-
 .chip.on.loading{--spin:var(--paper)}
 .btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
 .btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
+/* v29: skeletons (they appear after 150 ms, so a fast load never flashes) */
+@keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
+.skelwrap{opacity:0;animation:show 0s .15s forwards}
+.skel{display:block;border-radius:6px;background:linear-gradient(90deg,var(--wash) 0,color-mix(in srgb,var(--wash) 50%,var(--surface)) 50%,var(--wash) 100%);background-size:600px 100%;animation:shimmer 1.3s linear infinite}
+.skelcard{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4) 0}
+.list .skelcard{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
+.list .skelcard:last-child{border-bottom:0}
+.verline{margin-top:var(--s5);text-align:center}
+#askfirst{margin:var(--s3) 0 var(--s4)}
+/* v29: launch animation: three blocks fall into place, the last one tilts, over about a second */
+#launch{display:none}
+#launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.05s forwards}
+#launch svg{width:128px;height:128px;overflow:visible}
+#launch .blk{transform-box:fill-box;transform-origin:center}
+#launch.go .b1{animation:ldrop .38s .05s cubic-bezier(.3,.7,.4,1) both}
+#launch.go .b2{animation:ldrop .38s .25s cubic-bezier(.3,.7,.4,1) both}
+#launch.go .b3{animation:ldrop3 .42s .45s cubic-bezier(.3,.7,.4,1) both}
+#launch.go .st1{animation:lstreak .3s .05s ease-out both}
+#launch.go .st2{animation:lstreak .3s .25s ease-out both}
+#launch .dot{transform-box:fill-box;transform-origin:center}
+#launch.go .dot{animation:ldot .22s .78s ease-out both}
+#launch.go .tick{stroke-dasharray:20;animation:ltick .25s .85s ease-out both}
+@keyframes ldrop{0%{transform:translateY(-30px);opacity:0}55%{opacity:1}78%{transform:translateY(2px) scale(1.05,.93)}100%{transform:none;opacity:1}}
+@keyframes ldrop3{0%{transform:translateY(-38px) rotate(-18deg);opacity:0}55%{opacity:1}80%{transform:translateY(1px) rotate(2deg)}100%{transform:none;opacity:1}}
+@keyframes lstreak{0%{opacity:0;transform:translateY(-10px)}35%{opacity:.5}100%{opacity:0;transform:translateY(8px)}}
+@keyframes ldot{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes ltick{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
+@keyframes lfade{to{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .skel{animation:none}
+  #launch.go{animation:lfade .2s .5s forwards}
+  #launch.go *{animation:none!important}
+}
 /* v26: layouts that hold at Large and Larger text (the page is zoomed, so it is narrower in CSS pixels) */
 .item .name{overflow-wrap:break-word;hyphens:auto}
 .tidyhead{display:flex;align-items:center;gap:var(--s2)}
@@ -598,6 +631,13 @@ html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 </style>
 </head>
 <body>
+<div id="launch" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)">
+<g class="st1" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M14 14v8M20 11v9M26 14v8"/></g>
+<g class="st2" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M38 14v8M44 11v9M50 14v8"/></g>
+<g class="blk b1"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/></g>
+<g class="blk b2"><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/></g>
+<g transform="rotate(-9 32 20)"><g class="blk b3"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path class="tick" d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<circle class="dot" cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg></div>
 <div id="banner"></div>
 <div id="app"><div class="splash">Getting the list…</div></div>
 <nav id="nav" hidden></nav>
@@ -3191,10 +3231,10 @@ L.ms = {
   "Approve?": "Luluskan?",
   "Approved": "Diluluskan",
   "Art and craft": "Seni dan kraf",
-  "Ask another centre first?": "Tanya pusat lain dahulu?",
   "Ask to buy": "Mohon beli",
   "Ask to buy more": "Mohon beli lagi",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
+  "Ask {centre} first": "Tanya {centre} dahulu",
   "Asked to buy": "Mohon beli",
   "Back": "Kembali",
   "Balloons and banners": "Belon dan sepanduk",
@@ -3223,6 +3263,7 @@ L.ms = {
   "Certificates and graduation": "Sijil dan konvokesyen",
   "Change PIN": "Tukar PIN",
   "Change type": "Tukar jenis",
+  "Changes this item at all centres.": "Mengubah barang ini di semua pusat.",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
   "Check the price.": "Semak harga.",
@@ -3316,6 +3357,7 @@ L.ms = {
   "Glue, tape and staples": "Gam, pita dan staples",
   "Google Sheet": "Google Sheet",
   "Half": "Separuh",
+  "Hi, can {me} borrow some {name} from {centre}?": "Hai, boleh {me} pinjam {name} daripada {centre}?",
   "Hide checked": "Sembunyi yang sudah disemak",
   "History": "Sejarah",
   "How many do you have?": "Berapa yang anda ada?",
@@ -3380,6 +3422,8 @@ L.ms = {
   "Next.": "Seterusnya.",
   "No answer. Check the link and sharing, and your signal, then try again.": "Tiada jawapan. Semak pautan, perkongsian dan isyarat, kemudian cuba lagi.",
   "No centres yet.": "Belum ada pusat.",
+  "No other centre has any": "Tiada pusat lain ada",
+  "No other centre has this.": "Tiada pusat lain ada barang ini.",
   "No requests yet.": "Belum ada permohonan.",
   "No rooms yet.": "Belum ada bilik.",
   "None": "Tiada",
@@ -3401,6 +3445,7 @@ L.ms = {
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
   "Nothing matches the filters.": "Tiada yang sepadan dengan penapis.",
+  "Nothing matches “{q}”.": "Tiada yang sepadan dengan “{q}”.",
   "Nothing new to offer.": "Tiada yang baharu.",
   "Nothing on the list yet.": "Belum ada apa-apa dalam senarai.",
   "Nothing running low.": "Tiada yang tinggal sedikit.",
@@ -3427,6 +3472,7 @@ L.ms = {
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
   "Other": "Lain-lain",
+  "Other centres have some:": "Pusat lain ada sedikit:",
   "Other names": "Nama lain",
   "Outdoor and sports": "Luar dan sukan",
   "Overdue": "Lewat",
@@ -3509,6 +3555,8 @@ L.ms = {
   "Search again": "Cari semula",
   "Search first, then ask to buy.": "Cari dahulu, kemudian mohon beli.",
   "Search for an item": "Cari barang",
+  "Search in this room": "Cari dalam bilik ini",
+  "Search this room…": "Cari dalam bilik ini…",
   "Search…": "Cari…",
   "See all": "Lihat semua",
   "See it under Me › Requests.": "Lihat di Saya › Permohonan.",
@@ -3596,6 +3644,7 @@ L.ms = {
   "Thermometers and ice packs": "Termometer dan pek ais",
   "These stickers open:": "Pelekat ini membuka:",
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
+  "This will be a new purchase.": "Ini akan menjadi pembelian baharu.",
   "Tip: hold Add to type instead.": "Petua: tekan lama Tambah untuk menaip.",
   "Tissues and wipes": "Tisu dan tuala basah",
   "To confirm ({n})": "Untuk disahkan ({n})",
@@ -3637,13 +3686,13 @@ L.ms = {
   "Using:": "Kini:",
   "Usual things. Nothing counts until you confirm.": "Barang biasa. Tiada dikira sehingga anda sahkan.",
   "Vehicles and figures": "Kenderaan dan patung",
+  "Version {n} · updated {date}": "Versi {n} · dikemas kini {date}",
   "Waiting": "Menunggu",
   "We don’t have it": "Tiada",
   "We don’t have “{name}”.": "Kita tiada “{name}”.",
   "We have it": "Ada",
   "We have it. Add it": "Kita ada. Tambahkan",
   "We have it:": "Kita ada:",
-  "We have {amount}.": "Kita ada {amount}.",
   "Welcome": "Selamat datang",
   "What do you need?": "Apa yang anda perlukan?",
   "What to print": "Apa dicetak",
@@ -3664,6 +3713,7 @@ L.ms = {
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
+  "You have {amount} here.": "Anda ada {amount} di sini.",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
   "about RM {price}": "kira-kira RM {price}",
@@ -3695,7 +3745,6 @@ L.ms = {
   "requests waiting": "permohonan menunggu",
   "running low": "tinggal sedikit",
   "scan to count this shelf": "imbas untuk kira rak ini",
-  "some": "sedikit",
   "the original sheet": "helaian asal",
   "today": "hari ini",
   "was {a}, now {b}": "tadi {a}, kini {b}",
@@ -3776,10 +3825,10 @@ L.zh = {
   "Approve?": "批准？",
   "Approved": "已批准",
   "Art and craft": "美术与手工",
-  "Ask another centre first?": "先问问别的分园？",
   "Ask to buy": "申请购买",
   "Ask to buy more": "申请再买",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
+  "Ask {centre} first": "先问问{centre}",
   "Asked to buy": "申请购买",
   "Back": "返回",
   "Balloons and banners": "气球与横幅",
@@ -3808,6 +3857,7 @@ L.zh = {
   "Certificates and graduation": "证书与毕业用品",
   "Change PIN": "更改 PIN",
   "Change type": "更改类型",
+  "Changes this item at all centres.": "会在所有中心修改这件物品。",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
   "Check the price.": "请检查价格。",
@@ -3901,6 +3951,7 @@ L.zh = {
   "Glue, tape and staples": "胶水、胶带与订书钉",
   "Google Sheet": "Google 表格",
   "Half": "一半",
+  "Hi, can {me} borrow some {name} from {centre}?": "你好，{me} 可以向 {centre} 借一些{name}吗？",
   "Hide checked": "隐藏已检查",
   "History": "历史记录",
   "How many do you have?": "你有多少？",
@@ -3965,6 +4016,8 @@ L.zh = {
   "Next.": "下一个。",
   "No answer. Check the link and sharing, and your signal, then try again.": "没有回应。请检查链接、分享设置和信号后再试。",
   "No centres yet.": "还没有分园。",
+  "No other centre has any": "其他中心都没有",
+  "No other centre has this.": "其他中心都没有这件物品。",
   "No requests yet.": "还没有申请。",
   "No rooms yet.": "还没有房间。",
   "None": "全不选",
@@ -3986,6 +4039,7 @@ L.zh = {
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
   "Nothing matches the filters.": "没有符合筛选的项目。",
+  "Nothing matches “{q}”.": "没有与“{q}”匹配的内容。",
   "Nothing new to offer.": "没有新的可提供。",
   "Nothing on the list yet.": "清单里还没有东西。",
   "Nothing running low.": "没有快不够的。",
@@ -4012,6 +4066,7 @@ L.zh = {
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
   "Other": "其他",
+  "Other centres have some:": "其他中心有一些：",
   "Other names": "其他名称",
   "Outdoor and sports": "户外与运动",
   "Overdue": "已逾期",
@@ -4094,6 +4149,8 @@ L.zh = {
   "Search again": "重新搜索",
   "Search first, then ask to buy.": "先搜索，再申请购买。",
   "Search for an item": "搜索物品",
+  "Search in this room": "在这个房间里搜索",
+  "Search this room…": "在这个房间里搜索…",
   "Search…": "搜索…",
   "See all": "查看全部",
   "See it under Me › Requests.": "在“我的”›“申请”里查看。",
@@ -4181,6 +4238,7 @@ L.zh = {
   "Thermometers and ice packs": "体温计与冰袋",
   "These stickers open:": "这些贴纸会打开：",
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
+  "This will be a new purchase.": "这将是一次新的购买。",
   "Tip: hold Add to type instead.": "小提示：长按“添加”可改为输入。",
   "Tissues and wipes": "纸巾与湿巾",
   "To confirm ({n})": "待确认（{n}）",
@@ -4222,13 +4280,13 @@ L.zh = {
   "Using:": "当前：",
   "Usual things. Nothing counts until you confirm.": "常见物品。确认后才算入库存。",
   "Vehicles and figures": "玩具车与人偶",
+  "Version {n} · updated {date}": "版本 {n} · 更新于 {date}",
   "Waiting": "等待中",
   "We don’t have it": "没有",
   "We don’t have “{name}”.": "我们没有“{name}”。",
   "We have it": "有",
   "We have it. Add it": "我们有。添加它",
   "We have it:": "我们有：",
-  "We have {amount}.": "我们有 {amount}。",
   "Welcome": "欢迎",
   "What do you need?": "你需要什么？",
   "What to print": "打印什么",
@@ -4249,6 +4307,7 @@ L.zh = {
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
   "Yes": "好",
+  "You have {amount} here.": "这里有 {amount}。",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
   "about RM {price}": "约 RM {price}",
@@ -4280,7 +4339,6 @@ L.zh = {
   "requests waiting": "个申请待处理",
   "running low": "快不够",
   "scan to count this shelf": "扫码盘点这个架子",
-  "some": "一些",
   "the original sheet": "原来的表格",
   "today": "今天",
   "was {a}, now {b}": "原来 {a}，现在 {b}",
@@ -4514,7 +4572,9 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType };
+window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType,
+  skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
+  skelHist: function (on) { S.histLoading = {}; S.histLoading[cur().id] = !!on; render(); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -5143,7 +5203,7 @@ function vItem(v) {
     '</div></details>' +
     '<h2 class="sec">' + tl('History') + '</h2>' +
     (past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>'
-      : '<button class="btn" data-act="history">' + tl('Show history') + '</button>');
+      : (S.histLoading && S.histLoading[cur().id] ? skelHistory() : '<button class="btn" data-act="history">' + tl('Show history') + '</button>'));
 }
 function itemActions(sel, many) {
   return isLevel(sel)
@@ -5424,16 +5484,31 @@ function enoughToMatch(text) {
 function similarAll(text) { return enoughToMatch(text) ? similarHtml(text) + starterWarn(text) : ''; }
 
 // ----- Ask to buy -----
+// one line per centre: rows of the same unit add up ("15 reams"), anything else is listed side by side
+function centreLines(rows) {
+  var order = [], map = {};
+  rows.forEach(function (r) { if (!map[r.centre]) { map[r.centre] = { centre: r.centre, rows: [] }; order.push(map[r.centre]); } map[r.centre].rows.push(r); });
+  return order.map(function (c) {
+    var same = c.rows.every(function (r) { return !isLevel(r) && r.unit === c.rows[0].unit; });
+    var qty = c.rows.reduce(function (s, r) { return s + (isLevel(r) ? 0 : r.qty); }, 0);
+    return { centre: c.centre, qty: qty, text: same ? amount(qty, c.rows[0].unit) : c.rows.map(amountOf).join(' + ') };
+  });
+}
 function vRequest(v) {
   var g = v.key ? S.gmap[v.key] : null;
   F = { centre: myCentre() };
   var have = '';
   if (g) {
-    var rows = g.rows.filter(function (r) { return r.qty > 0; });
-    if (rows.length) {
-      have = '<div class="similar"><b>' + esc(tl('We have {amount}.', { amount: g.levelOnly ? tl('some') : amount(g.total, g.unit) })) + '</b><br>' +
-        rows.map(function (r) { return esc(r.centre) + ' · ' + esc(r.loc) + ': ' + amountOf(r); }).join('<br>') +
-        '<br>' + tl('Ask another centre first?') + '</div>';
+    var mine = myCentre(), here = centreLines(g.rows.filter(function (r) { return r.centre === mine && r.qty > 0; })),
+      others = centreLines(g.rows.filter(function (r) { return r.centre !== mine && r.qty > 0; })),
+      hereTxt = here.length ? '<br>' + esc(tl('You have {amount} here.', { amount: here[0].text })) : '';
+    if (others.length) {
+      var top1 = others.slice().sort(function (a, b) { return b.qty - a.qty; })[0];
+      have = '<div class="similar"><b>' + esc(tl('Other centres have some:')) + '</b><br>' +
+        others.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: r.text })); }).join('<br>') + hereTxt + '</div>' +
+        '<a class="btn" id="askfirst" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(tl('Hi, can {me} borrow some {name} from {centre}?', { me: mine, name: g.name, centre: top1.centre })) + '">' + esc(tl('Ask {centre} first', { centre: top1.centre })) + '</a>';
+    } else {
+      have = '<div class="similar"><b>' + esc(tl('No other centre has this.')) + '</b><br>' + esc(tl('This will be a new purchase.')) + hereTxt + '</div>';
     }
   }
   return top(true) + '<h1 class="title">' + tl('Ask to buy') + '</h1>' +
@@ -5466,7 +5541,7 @@ function vEdit(v) {
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(it.unit) + '"></div></div>') : '';
   return top(true) + '<h1 class="title">' + tl('Edit item') + '</h1><p class="sub">' + esc(shown(it)) + ' · ' + esc(it.centre) + '</p>' +
     (S.admin ? admin.split('<label class="lab">' + tl('Which centre?')).join('<label class="lab">' + tl('Which centre?')) : '') +
-    '<label class="lab">' + tl('Type') + '</label>' + typePicker() +
+    '<label class="lab">' + tl('Type') + '</label>' + typePicker() + '<p class="help">' + tl('Changes this item at all centres.') + '</p>' +
     '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
     '<div id="f-locs">' + locChips(it.centre) + '</div>' +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
@@ -5532,7 +5607,8 @@ function vLow() {
       return card(it, (isLevel(it)
         ? '<span class="line"><span class="badge low">' + LEVEL_LABELS[it.qty] + '</span></span>'
         : '<span class="line"><span class="badge low">' + tl('{amount} left', { amount: amount(it.qty, it.unit) }) + '</span> ' + esc(tl('needs {min}', { min: it.min })) + '</span>') +
-        (spare.length ? '<span class="line">' + spare.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) })); }).join(' · ') + '</span>' : ''));
+        (spare.length ? '<span class="line">' + spare.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) })); }).join(' · ') + '</span>'
+          : (S.gmap[RMSearch.norm(it.name)] || { rows: [] }).rows.some(function (r) { return r.centre !== it.centre && r.qty > 0; }) ? '' : '<span class="line nootherline">' + esc(tl('No other centre has any')) + '</span>'));
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing is running low.') + '</h2></div>') +
     (broken.length ? '<h2 class="sec">' + tl('Broken or missing') + '</h2><div class="list lowlist">' + broken.map(function (it) {
       return card(it, '<span class="line"><span class="badge warn">' + STATUS_LABEL[it.status] + '</span></span>' + (it.notes ? '<span class="line">' + esc(it.notes) + '</span>' : ''));
@@ -5629,6 +5705,10 @@ function centreSheet(act, current) {
 }
 function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
+var APP_BUILD = 29, APP_BUILT = '2026-11-18';
+function builtText() {
+  try { return new Date(APP_BUILT + 'T12:00:00').toLocaleDateString(LANG === 'ms' ? 'ms-MY' : LANG === 'zh' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return APP_BUILT; }
+}
 function vSettings() {
   var waiting = S.outbox.length;
   return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Settings') + '</h1>' +
@@ -5640,7 +5720,7 @@ function vSettings() {
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Larger')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
-    '';
+    '<p class="help verline">' + esc(tl('Version {n} · updated {date}', { n: APP_BUILD, date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
 function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
@@ -5676,23 +5756,38 @@ function roomRowOk(it, f) {
   return true;
 }
 function roomFilterCount() { var f = S.rfil || {}; return (f.cat ? 1 : 0) + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.sort ? 1 : 0); }
-function vRoom(v) {
-  var f = S.rfil || {}, all = itemsIn(v.centre, v.loc);
-  var list = all.filter(function (it) { return roomRowOk(it, f); }).sort(function (a, b) {
+function roomListHtml(v) {
+  var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), q = RMSearch.norm(S.rq || '').trim(), words = q ? q.split(/\s+/) : [];
+  var list = all.filter(function (it) {
+    if (!roomRowOk(it, f)) return false;
+    if (!words.length) return true;
+    var hay = RMSearch.norm(shown(it) + ' ' + (it.name || '') + ' ' + (it.alt || ''));
+    return words.every(function (w) { return hay.indexOf(w) >= 0; });
+  }).sort(function (a, b) {
     if (f.sort === 'low') { var ra = a.min > 0 ? a.qty / a.min : Infinity, rb = b.min > 0 ? b.qty / b.min : Infinity; if (ra !== rb) return ra - rb; }
     return a.name.localeCompare(b.name);
   });
+  if (list.length) return '<div class="list">' + list.map(function (it) {
+    return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
+      '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' +
+      (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
+      '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
+  }).join('') + '</div>';
+  if (!all.length) return '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>';
+  if (words.length) return '<div class="card empty"><h2>' + esc(tl('Nothing matches “{q}”.', { q: S.rq.trim() })) + '</h2></div>';
+  return '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>';
+}
+function vRoom(v) {
+  var f = S.rfil || {}, all = itemsIn(v.centre, v.loc);
   var chipsOn = (f.cat ? [['cat', f.cat, tl(f.cat)]] : []).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
   return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + esc(v.loc) + '</h1>' +
     '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p></div>' +
     (all.length > 6 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
+    (all.length > 6 ? '<div class="search" id="rsearch">' + ICON.search +
+      '<input id="rq" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + esc(tl('Search in this room')) + '" placeholder="' + esc(tl('Search this room…')) + '" value="' + esc(S.rq || '') + '">' +
+      '<button class="clear" data-act="clearRq" aria-label="' + esc(tl('Clear')) + '"' + (S.rq ? '' : ' hidden') + '>' + ICON.x + '</button></div>' : '') +
     (chipsOn.length ? '<div class="seg fchips">' + chipsOn.map(function (o) { return '<button class="fchip" data-act="roomFilterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>'; }).join('') + '</div>' : '') +
-    (list.length ? '<div class="list">' + list.map(function (it) {
-      return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
-        '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' +
-        (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
-        '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
-    }).join('') + '</div>' : (all.length ? '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>' : '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>')) +
+    '<div id="roomlist">' + roomListHtml(v) + '</div>' +
     (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button></div>' : '');
 }
 function roomFilterSheet(v) {
@@ -5753,9 +5848,13 @@ function vPick() {
     }).join('') + '</div>';
 }
 var REQ_BADGE = { 'New': 'plain', 'Approved': 'ok', 'Bought': 'ok', 'Declined': 'low' };
+function skelCard() { return '<div class="skelcard"><span class="skel" style="height:18px;width:55%"></span><span class="skel" style="height:13px;width:85%"></span><span class="skel" style="height:22px;width:30%"></span></div>'; }
+function skelRequests() { return '<div class="skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="list">' + skelCard() + skelCard() + skelCard() + '</div></div>'; }
+function skelHistory() { return '<div class="card skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="skelcard"><span class="skel" style="height:13px;width:90%"></span><span class="skel" style="height:13px;width:70%"></span><span class="skel" style="height:13px;width:80%"></span></div></div>'; }
 function vRequests() {
   var body;
-  if (!S.requests) body = '<p class="hint">' + tl('Loading…') + '</p>';
+  if (S.reqErr) body = '<div class="card empty"><h2>' + tl('Can’t reach the list.') + '</h2><button class="btn" data-act="reqRetry">' + tl('Try again') + '</button></div>';
+  else if (!S.requests) body = skelRequests();
   else if (!S.requests.length) body = '<div class="card empty"><h2>' + tl('No requests yet.') + '</h2><p style="margin:0">' + tl('Search first, then ask to buy.') + '</p></div>';
   else {
     body = (S.admin ? scopeChips() : '') + '<div class="list">' + S.requests.filter(function (r) { return !S.admin || S.allCentres || r.centre === myCentre(); }).map(function (r) {
@@ -6414,10 +6513,12 @@ var ACT = {
       mergeItems(res.items); rebuild(); closeSheet(); toast(tl('Thanks, saved.'));
     }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again later.') : e.message); });
   },
+  reqRetry: function () { S.reqErr = false; S.requests = null; render(); loadRequests(); },
   history: function () {
     var id = cur().id;
-    call('getHistory', { itemId: id }).then(function (res) { S.history[id] = res.history; softRender(); })
-      .catch(function (e) { toast(e.network ? tl('Offline.') : e.message); });
+    (S.histLoading || (S.histLoading = {}))[id] = true; softRender();
+    call('getHistory', { itemId: id }).then(function (res) { S.histLoading[id] = false; S.history[id] = res.history; softRender(); })
+      .catch(function (e) { S.histLoading[id] = false; softRender(); toast(e.network ? tl('Offline.') : e.message); });
   },
 
   toRequest: function () { go({ name: 'request', text: S.q.trim() }); },
@@ -6874,7 +6975,8 @@ var ACT = {
   },
 
   addHere: function () { var v = cur(); store.set('rm_scanloc', v.loc); SC.centre = v.centre === myCentre() ? '' : v.centre; ACT.addOpen(); },
-  roomOpen: function (el) { S.rfil = {}; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
+  clearRq: function () { S.rq = ''; var i = byIdEl('rq'); if (i) { i.value = ''; i.focus(); } var b = byIdEl('roomlist'); if (b) b.innerHTML = roomListHtml(cur()); var c = $('#rsearch .clear'); if (c) c.hidden = true; },
+  roomOpen: function (el) { S.rfil = {}; S.rq = ''; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
   roomSort: function (el) { (S.rfil || (S.rfil = {})).sort = el.dataset.val; redrawRoomFilter(); },
   roomCat: function (el) { var f = S.rfil || (S.rfil = {}); f.cat = f.cat === el.dataset.val ? '' : el.dataset.val; f.sub = ''; redrawRoomFilter(); },
@@ -7147,8 +7249,14 @@ var ACT = {
   }
 };
 function loadRequests() {
-  call('getRequests', { phone: phoneCode(), pin: S.admin ? S.pin : '' }).then(function (res) { S.requests = res.requests; if (cur().name === 'requests' || cur().name === 'admin') render(); })
-    .catch(function (e) { if (cur().name === 'requests') toast(e.network ? tl('Offline.') : e.message); });
+  var t0 = Date.now();
+  S.reqErr = false;
+  call('getRequests', { phone: phoneCode(), pin: S.admin ? S.pin : '' }).then(function (res) {
+    var show = function () { S.requests = res.requests; if (cur().name === 'requests' || cur().name === 'admin') render(); };
+    var el = Date.now() - t0;
+    if (!S.requests && el > 150 && el < 550) setTimeout(show, 550 - el);   // a skeleton that appeared stays long enough to be read as one
+    else show();
+  }).catch(function (e) { S.reqErr = !S.requests; if (cur().name === 'requests') { if (S.reqErr) render(); else toast(e.network ? tl('Offline.') : e.message); } });
 }
 
 // ---------- listeners ----------
@@ -7181,6 +7289,7 @@ document.addEventListener('keydown', function (e) {
 document.addEventListener('input', function (e) {
   var t = e.target;
   if (t.id === 'q') { S.q = t.value; drawResults(); }
+  else if (t.id === 'rq') { S.rq = t.value; var rl = byIdEl('roomlist'); if (rl) rl.innerHTML = roomListHtml(cur()); var rc = $('#rsearch .clear'); if (rc) rc.hidden = !S.rq; }
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id === 'f-parts') F.parts = t.value;
@@ -7293,6 +7402,17 @@ if (HOSTED) {
   });
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
 }
+(function () {
+  var el = document.getElementById('launch'), skip = false;
+  if (!el) return;
+  try { skip = !!(sessionStorage.getItem('rm_launched') || localStorage.getItem('rm_noanim') || /[?&]noanim\b/.test(location.search)); } catch (e) { /* play it */ }
+  if (skip) { el.remove(); return; }
+  try { sessionStorage.setItem('rm_launched', '1'); } catch (e) { /* fine */ }
+  el.classList.add('go');
+  var done = function () { if (el.parentNode) el.remove(); };
+  setTimeout(done, 1250);
+  document.addEventListener('pointerdown', done, { once: true, passive: true });
+})();
 syncThemeColor();
 try { if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor); } catch (e) { /* older browsers */ }
 var cached = store.get('rm_data', null);
