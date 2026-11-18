@@ -45,7 +45,7 @@ a{color:inherit}
 :focus-visible{outline:3px solid var(--brand);outline-offset:2px}
 
 #banner,#app{max-width:560px;margin:0 auto}
-#app{padding:var(--s2) var(--s4) 104px}
+#app{padding:var(--s2) var(--s4) calc(104px + var(--stripH,0px))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);min-height:48px;margin-bottom:var(--s1)}
 .org{color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .me{font-size:14px;font-weight:600;min-height:44px;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);max-width:62%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -173,7 +173,7 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .rowtools{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2)}
 .rowtools .stepper{flex:1 1 150px;min-width:0}
 .rowtools .chip{flex:none}
-.addbar{position:sticky;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:5;margin-top:var(--s4);padding:var(--s2) 0}
+.addbar{position:sticky;bottom:calc(env(safe-area-inset-bottom) + 92px + var(--stripH,0px));z-index:5;margin-top:var(--s4);padding:var(--s2) 0}
 .addbar .btn{margin:0}
 .needbox{border:2px solid var(--mark);background:var(--surface);border-radius:var(--r);padding:var(--s3) var(--s4);margin:var(--s3) 0}
 .needbox h2{margin:0 0 var(--s2);font-size:18px}
@@ -262,7 +262,7 @@ html[data-text] .search input{font-size:16px}
 .cline.changed .stepper button,.cline.changed .stepper .num{background:#fff;color:#16181d;border-color:#8a8f9c}
 .cline.changed{background:var(--mark);color:var(--on-mark);margin:0 calc(-1 * var(--s2));padding-left:var(--s2);padding-right:var(--s2)}
 .cline.changed .cname small{color:var(--on-mark);font-weight:600}
-.savebar{position:fixed;left:0;right:0;bottom:65px;z-index:5;padding:var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--paper) 72%,transparent)}
+.savebar{position:fixed;left:0;right:0;bottom:calc(65px + var(--stripH,0px));z-index:5;padding:var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--paper) 72%,transparent)}
 .savebar .btn{max-width:528px;margin:0 auto}
 
 /* text-only tabs: no icon set to look generic */
@@ -617,6 +617,35 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 .emptyreq{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2)}
 .emptyic svg{width:36px;height:36px;color:var(--muted)}
 .emptyreq .btn{margin-top:var(--s3)}
+/* every sheet: the page behind is dimmed and lightly blurred (the saving lock stays a plain dim) */
+#sheet .scrim{-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+/* the room picker */
+.roomfield .rf-v{display:flex;align-items:center;min-width:0;overflow-wrap:anywhere}
+.roomfield .ph{color:var(--muted)}
+.opt.rp .rp-n{flex:1;min-width:0;text-align:left;overflow-wrap:anywhere}
+.opt.rp small{display:block;color:var(--muted);font-size:13px;font-weight:400}
+.opt.rp svg{width:20px;height:20px;flex:none}
+#rp-q{margin-top:var(--s2)}
+#rp-new{margin-top:var(--s2)}
+.rp-hide{display:none!important}
+/* the small i next to a label: the note under it is hidden until it is tapped */
+.labrow{display:flex;align-items:center;gap:var(--s1)}
+.info{flex:none;width:44px;height:44px;margin:calc(var(--s2) * -1) 0 calc(var(--s2) * -1) calc(var(--s1) * -1);display:inline-grid;place-items:center;background:none;border:0;padding:0;color:var(--ink)}
+.info i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);font:700 13px/1 var(--font);font-style:normal}
+.info[aria-expanded=true] i{background:var(--brand);color:var(--on-brand)}
+/* what an item still needs */
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;line-height:1.2;padding:2px 8px;border-radius:999px;border:1px solid var(--line-strong);background:var(--wash);color:var(--ink);white-space:nowrap}
+.tag svg{width:13px;height:13px;flex:none}
+.rtext .tags{margin-top:4px}
+.formend .btn.quiet.next{order:-1}
+.chip[data-act=attFilter] b{margin-left:6px}
+/* a thin dark line under our bottom bar in light mode: the phone's own black bar then looks planned */
+:root{--stripH:0px}
+:root[data-strip="1"]{--stripH:8px}
+@media (prefers-color-scheme:dark){:root[data-strip="1"]:not([data-theme=light]){--stripH:0px}}
+:root[data-strip="1"][data-theme=dark]{--stripH:0px}
+#nav::after{content:"";display:block;height:var(--stripH);background:#14120f}
 .pickfield{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);width:100%;min-height:52px;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left;font-size:16px}
 .pickfield svg{width:20px;height:20px;flex:none}
 .opt .ri{margin-right:var(--s3)}
@@ -3163,11 +3192,18 @@ function syncThemeColor() {
     tc.content = hex;
   } catch (e) { /* the static tags still apply */ }
 }
+function applyStrip() {
+  var h = document.documentElement, on = true, inset = 0;
+  try { var v = localStorage.getItem('rm_strip'); on = v == null ? true : JSON.parse(v) !== 'off'; } catch (e) { /* keep the default */ }
+  try { var p = document.createElement('div'); p.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding-bottom:env(safe-area-inset-bottom)'; (document.body || h).appendChild(p); inset = parseFloat(getComputedStyle(p).paddingBottom) || 0; p.parentNode.removeChild(p); } catch (e) { /* no probe: assume no inset */ }
+  if (on && inset === 0) h.setAttribute('data-strip', '1'); else h.removeAttribute('data-strip');   // a phone that already gives us the space under the bar needs no strip
+}
 function applyLook() {
   var h = document.documentElement, st = function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
   var th = st('rm_theme', ''), tx = st('rm_text', 0);
   if (th) h.setAttribute('data-theme', th); else h.removeAttribute('data-theme');
   if (tx) h.setAttribute('data-text', String(tx)); else h.removeAttribute('data-text');
+  applyStrip();
 }
 applyLook();
 var store = {
@@ -3266,6 +3302,7 @@ var ICON = {
   ICON.qr = s('<rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM18 14h2"/>');
   ICON.clock = s('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>');
   ICON.bag = s('<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>');
+  ICON.tag = s('<path d="M4 4h8l8 8-8 8-8-8z"/><circle cx="8.5" cy="8.5" r="1"/>');
   ICON.phone = s('<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>');
   ICON.room = {
     store: s('<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 9h16M4 15h16M10 6h4M10 12h4M10 18h4"/>'),
@@ -3317,11 +3354,11 @@ L.ms = {
   "1 change will send when you’re online.": "1 perubahan akan dihantar apabila dalam talian.",
   "1 item": "1 barang",
   "100 at most.": "Paling banyak 100.",
-  "A name or a type is missing. Fill it in here, or open the item.": "Nama atau jenis belum ada. Isi di sini, atau buka barang.",
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
   "A set": "Satu set",
   "A small test page for the bars at the top and bottom of the phone.": "Halaman ujian kecil untuk bar di atas dan bawah telefon.",
+  "A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.": "Garisan gelap nipis di bawah bar bawah dalam mod cerah, supaya bar hitam telefon nampak dirancang.",
   "A to Z": "A hingga Z",
   "About RM": "Lebih kurang RM",
   "About RM {price}.": "Anggaran RM {price}.",
@@ -3329,6 +3366,7 @@ L.ms = {
   "Add & next item": "Tambah & barang seterusnya",
   "Add Malay and Chinese names too.": "Tambah nama Melayu dan Cina juga.",
   "Add a centre": "Tambah pusat",
+  "Add a new room": "Tambah bilik baru",
   "Add a room": "Tambah bilik",
   "Add an item": "Tambah barang",
   "Add at least one item.": "Tambah sekurang-kurangnya satu barang.",
@@ -3348,6 +3386,7 @@ L.ms = {
   "Admin PIN:": "PIN admin:",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
   "Admin mode": "Mod admin",
+  "All": "Semua",
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
@@ -3389,6 +3428,7 @@ L.ms = {
   "Board and card games": "Permainan papan dan kad",
   "Boards and notice boards": "Papan dan papan kenyataan",
   "Books": "Buku",
+  "Bottom strip": "Jalur bawah",
   "Bought": "Dibeli",
   "Broken": "Rosak",
   "Broken or missing": "Rosak atau hilang",
@@ -3493,6 +3533,7 @@ L.ms = {
   "Fill in every number": "Isi semua nombor",
   "Find": "Cari",
   "Finish": "Selesai",
+  "Finish adding": "Siapkan penambahan",
   "First 30 shown. Type more.": "30 pertama ditunjuk. Taip lagi.",
   "First aid": "Pertolongan cemas",
   "First-aid kits and tools": "Kit dan alatan pertolongan cemas",
@@ -3533,6 +3574,7 @@ L.ms = {
   "Kept at {room}": "Disimpan di {room}",
   "Kept for years, like toys or keys.": "Disimpan bertahun-tahun, seperti mainan atau kunci.",
   "Kept in {place} at {centre}.": "Disimpan di {place} di {centre}.",
+  "Kept under “Needs attention” until someone puts them away.": "Disimpan di bawah “Perlu perhatian” sehingga seseorang menyimpannya.",
   "Kind and checking can’t be changed.": "Jenis dan cara semak tidak boleh diubah.",
   "Labels, stickers and stamps": "Label, pelekat dan setem",
   "Language": "Bahasa",
@@ -3561,16 +3603,20 @@ L.ms = {
   "Minimum": "Minimum",
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
+  "More information": "Maklumat lanjut",
   "Music and instruments": "Muzik dan alat muzik",
   "My requests": "Permintaan saya",
   "Name": "Nama",
   "Name it": "Namakan",
-  "Name missing": "Nama tiada",
   "Name them ({n})": "Namakan ({n})",
   "Name this item": "Namakan barang ini",
   "Need something we don’t have? Ask once and it goes to the admin.": "Perlukan sesuatu yang kita tiada? Tanya sekali dan ia terus ke pentadbir.",
+  "Needs attention": "Perlu perhatian",
   "Needs details": "Perlu butiran",
   "Needs fixing": "Perlu dibaiki",
+  "Needs name": "Perlu nama",
+  "Needs place": "Perlu tempat",
+  "Needs type": "Perlu jenis",
   "New PIN": "PIN baru",
   "New item": "Barang baru",
   "New name": "Nama baru",
@@ -3582,6 +3628,7 @@ L.ms = {
   "No other centre has spare.": "Tiada pusat lain ada lebihan.",
   "No reply yet. It may have saved: check before trying again.": "Belum ada jawapan. Mungkin sudah disimpan: semak sebelum cuba lagi.",
   "No requests yet.": "Belum ada permohonan.",
+  "No room yet": "Belum ada bilik",
   "No rooms yet.": "Belum ada bilik.",
   "None": "Tiada",
   "None here.": "Tiada di sini.",
@@ -3610,12 +3657,14 @@ L.ms = {
   "Nothing yet.": "Belum ada.",
   "Now using “{name}”.": "Kini guna “{name}”.",
   "OK": "OK",
+  "Off": "Mati",
   "Offer the list": "Tawarkan senarai",
   "Offline.": "Luar talian.",
   "Offline. Showing the list from {when}.": "Luar talian. Senarai dari {when}.",
   "Offline. Tap Try again later.": "Luar talian. Ketik Cuba lagi nanti.",
   "Offline. Try again later.": "Luar talian. Cuba lagi nanti.",
   "Offline. Try again.": "Luar talian. Cuba lagi.",
+  "On": "Hidup",
   "On your starter list, not confirmed": "Dalam senarai permulaan, belum disahkan",
   "One item": "Satu barang",
   "One item or a set?": "Satu barang atau satu set?",
@@ -3660,14 +3709,12 @@ L.ms = {
   "Printing and electronics": "Percetakan dan elektronik",
   "Problem reported": "Masalah dilaporkan",
   "Projectors and screens": "Projektor dan skrin",
-  "Put away": "Simpan",
   "Put away in {room}.": "Disimpan di {room}.",
   "Puzzles": "Puzzle",
   "QR stickers": "Pelekat QR",
   "RM {price}": "RM {price}",
   "Read {code}…": "Dibaca {code}…",
   "Reading the barcode…": "Membaca kod bar…",
-  "Received": "Diterima",
   "Received from another centre": "Diterima daripada pusat lain",
   "Recent": "Terkini",
   "Refresh": "Muat semula",
@@ -3706,9 +3753,11 @@ L.ms = {
   "Sand and water play": "Main pasir dan air",
   "Sanitiser and disinfectant": "Pensanitasi dan pembasmi kuman",
   "Save": "Simpan",
+  "Save & next": "Simpan & seterusnya",
   "Save ({n} changed)": "Simpan ({n} berubah)",
   "Saved, but the photo didn’t save.": "Disimpan, tetapi gambar tidak disimpan.",
   "Saved.": "Disimpan.",
+  "Saved. Still needs {what}.": "Disimpan. Masih perlukan {what}.",
   "Saving the photo…": "Menyimpan foto…",
   "Saving…": "Menyimpan…",
   "Saving… one moment.": "Sedang menyimpan… sekejap.",
@@ -3722,9 +3771,11 @@ L.ms = {
   "Search again": "Cari semula",
   "Search for an item": "Cari barang",
   "Search in this room": "Cari dalam bilik ini",
+  "Search rooms": "Cari bilik",
   "Search this room…": "Cari dalam bilik ini…",
   "Search…": "Cari…",
   "See all": "Lihat semua",
+  "See all {n}": "Lihat semua {n}",
   "See it under Me › Requests.": "Lihat di Saya › Permohonan.",
   "Select": "Pilih",
   "Select all": "Pilih semua",
@@ -3776,6 +3827,7 @@ L.ms = {
   "Take photo": "Ambil gambar",
   "Take some": "Ambil",
   "Tap Full, Half, Almost out or Empty.": "Ketik Penuh, Separuh, Hampir habis atau Kosong.",
+  "Tap one to fill in what is missing.": "Ketik satu untuk mengisi yang tertinggal.",
   "Tap to skip one.": "Ketik untuk langkau.",
   "Tell me when below": "Beritahu saya bila kurang daripada",
   "Text size": "Saiz tulisan",
@@ -3829,7 +3881,6 @@ L.ms = {
   "Type": "Jenis",
   "Type a name for the item.": "Taip nama barang.",
   "Type a name — this barcode isn’t on the list yet.": "Taip nama — kod bar ini belum ada.",
-  "Type a new room in the box above.": "Taip nama bilik baharu dalam kotak di atas.",
   "Type a number, like 24 pens.": "Taip nombor, cth. 24 batang pen.",
   "Type a number.": "Taip nombor.",
   "Type and subtype are shared by all centres.": "Jenis dan subjenis dikongsi oleh semua pusat.",
@@ -3837,7 +3888,6 @@ L.ms = {
   "Type how many there are.": "Taip berapa banyak.",
   "Type how many to send.": "Taip berapa yang hendak dihantar.",
   "Type how many you need.": "Taip berapa yang diperlukan.",
-  "Type missing": "Jenis tiada",
   "Type the centre name.": "Taip nama pusat.",
   "Type the item’s name.": "Taip nama barang.",
   "Type the name first.": "Taip nama dahulu.",
@@ -3855,6 +3905,7 @@ L.ms = {
   "Updated by someone else: {fields}. Check it and save again.": "Dikemas kini oleh orang lain: {fields}. Semak dan simpan semula.",
   "Updated {when}": "Dikemas kini {when}",
   "Use Add more or Take some.": "Guna Tambah atau Ambil.",
+  "Use this room": "Guna bilik ini",
   "Use this sheet": "Guna helaian ini",
   "Used stock": "Stok diambil",
   "Used up, like paper or glue.": "Habis digunakan, seperti kertas atau gam.",
@@ -3894,6 +3945,9 @@ L.ms = {
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
+  "a name": "nama",
+  "a place": "tempat",
+  "a type": "jenis",
   "at {centre} · {place}": "di {centre} · {place}",
   "bottle": "botol",
   "box": "kotak",
@@ -3901,9 +3955,7 @@ L.ms = {
   "checked {when}": "disemak {when}",
   "e.g. 2 puzzle pieces lost": "cth. 2 kepingan puzzle hilang",
   "e.g. 3 keys, 3 locks": "cth. 3 kunci, 3 mangga",
-  "e.g. Art corner": "cth. Sudut seni",
   "e.g. Reading corner": "cth. Sudut bacaan",
-  "e.g. Store room": "cth. Bilik stor",
   "e.g. another centre has spare": "cth. pusat lain ada lebihan",
   "e.g. borrowing for the concert": "cth. dipinjam untuk konsert",
   "e.g. concert": "cth. konsert",
@@ -3950,7 +4002,6 @@ L.ms = {
   "{n} selected": "{n} dipilih",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
-  "“Not sorted yet” keeps them in Received until someone puts them away.": "“Belum disusun” menyimpannya dalam Received sehingga seseorang menyimpannya.",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received” dikhaskan untuk stok yang belum disimpan. Pilih bilik.",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
   "…and {n} more. Open the app for the rest.": "…dan {n} lagi. Buka apl untuk selebihnya.",
@@ -3961,11 +4012,11 @@ L.zh = {
   "1 change will send when you’re online.": "1 项更改联网后会发送。",
   "1 item": "1 件",
   "100 at most.": "最多 100 个。",
-  "A name or a type is missing. Fill it in here, or open the item.": "缺少名称或类型。在这里填写，或打开物品。",
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
   "A set": "一套",
   "A small test page for the bars at the top and bottom of the phone.": "一个小测试页，用来检查手机顶部和底部的栏。",
+  "A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.": "浅色模式下在底部栏下加一条深色细线，让手机的黑色栏看起来是设计好的。",
   "A to Z": "A 到 Z",
   "About RM": "大约 RM",
   "About RM {price}.": "大约 RM {price}。",
@@ -3973,6 +4024,7 @@ L.zh = {
   "Add & next item": "添加并继续下一件",
   "Add Malay and Chinese names too.": "也加上马来文和中文名称。",
   "Add a centre": "添加分园",
+  "Add a new room": "添加新房间",
   "Add a room": "添加房间",
   "Add an item": "添加物品",
   "Add at least one item.": "至少添加一件。",
@@ -3992,6 +4044,7 @@ L.zh = {
   "Admin PIN:": "管理员 PIN：",
   "Admin link (keep private)": "管理员链接（请保密）",
   "Admin mode": "管理员模式",
+  "All": "全部",
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
@@ -4033,6 +4086,7 @@ L.zh = {
   "Board and card games": "棋牌游戏",
   "Boards and notice boards": "展示板与布告栏",
   "Books": "图书",
+  "Bottom strip": "底部细条",
   "Bought": "已购买",
   "Broken": "损坏",
   "Broken or missing": "损坏或缺失",
@@ -4137,6 +4191,7 @@ L.zh = {
   "Fill in every number": "请填好每个数字",
   "Find": "查找",
   "Finish": "完成",
+  "Finish adding": "完成添加",
   "First 30 shown. Type more.": "显示前 30 个。多输入几个字。",
   "First aid": "急救用品",
   "First-aid kits and tools": "急救包与工具",
@@ -4177,6 +4232,7 @@ L.zh = {
   "Kept at {room}": "存放在 {room}",
   "Kept for years, like toys or keys.": "长期保留，如玩具或钥匙。",
   "Kept in {place} at {centre}.": "{centre} 放在 {place}。",
+  "Kept under “Needs attention” until someone puts them away.": "会先放在“需要处理”下，直到有人把它们放好。",
   "Kind and checking can’t be changed.": "类型和核对方式不能更改。",
   "Labels, stickers and stamps": "标签、贴纸与印章",
   "Language": "语言",
@@ -4205,16 +4261,20 @@ L.zh = {
   "Minimum": "最低量",
   "More": "更多",
   "More detail:": "详细信息：",
+  "More information": "更多信息",
   "Music and instruments": "音乐与乐器",
   "My requests": "我的申请",
   "Name": "名称",
   "Name it": "起名",
-  "Name missing": "缺少名称",
   "Name them ({n})": "逐个起名（{n}）",
   "Name this item": "给这件东西起名",
   "Need something we don’t have? Ask once and it goes to the admin.": "需要我们没有的东西？提一次，就会送到管理员那里。",
+  "Needs attention": "需要处理",
   "Needs details": "需要补充资料",
   "Needs fixing": "需要修理",
+  "Needs name": "需要名称",
+  "Needs place": "需要位置",
+  "Needs type": "需要类型",
   "New PIN": "新 PIN",
   "New item": "新物品",
   "New name": "新名称",
@@ -4226,6 +4286,7 @@ L.zh = {
   "No other centre has spare.": "其他中心都没有多余的。",
   "No reply yet. It may have saved: check before trying again.": "还没有回应。可能已经保存：请先检查再重试。",
   "No requests yet.": "还没有申请。",
+  "No room yet": "暂无房间",
   "No rooms yet.": "还没有房间。",
   "None": "无",
   "None here.": "这里没有。",
@@ -4254,12 +4315,14 @@ L.zh = {
   "Nothing yet.": "暂时没有。",
   "Now using “{name}”.": "现在使用“{name}”。",
   "OK": "没问题",
+  "Off": "关",
   "Offer the list": "提供清单",
   "Offline.": "离线。",
   "Offline. Showing the list from {when}.": "离线。显示 {when} 的清单。",
   "Offline. Tap Try again later.": "离线，稍后点“重试”。",
   "Offline. Try again later.": "离线，请稍后再试。",
   "Offline. Try again.": "离线，请重试。",
+  "On": "开",
   "On your starter list, not confirmed": "在起步清单里，尚未确认",
   "One item": "单件",
   "One item or a set?": "单件还是一套？",
@@ -4304,14 +4367,12 @@ L.zh = {
   "Printing and electronics": "打印与电子产品",
   "Problem reported": "已报告问题",
   "Projectors and screens": "投影仪与屏幕",
-  "Put away": "放好",
   "Put away in {room}.": "已放在 {room}。",
   "Puzzles": "拼图",
   "QR stickers": "二维码贴纸",
   "RM {price}": "RM {price}",
   "Read {code}…": "已读取 {code}…",
   "Reading the barcode…": "正在读取条形码…",
-  "Received": "已收到",
   "Received from another centre": "收到别的分园送来的",
   "Recent": "最近",
   "Refresh": "刷新",
@@ -4350,9 +4411,11 @@ L.zh = {
   "Sand and water play": "玩沙玩水",
   "Sanitiser and disinfectant": "消毒液",
   "Save": "保存",
+  "Save & next": "保存并继续",
   "Save ({n} changed)": "保存（改了 {n} 项）",
   "Saved, but the photo didn’t save.": "已保存，但照片没存上。",
   "Saved.": "已保存。",
+  "Saved. Still needs {what}.": "已保存。还需要{what}。",
   "Saving the photo…": "正在保存照片…",
   "Saving…": "保存中…",
   "Saving… one moment.": "正在保存…请稍等。",
@@ -4366,9 +4429,11 @@ L.zh = {
   "Search again": "重新搜索",
   "Search for an item": "搜索物品",
   "Search in this room": "在这个房间里搜索",
+  "Search rooms": "搜索房间",
   "Search this room…": "在这个房间里搜索…",
   "Search…": "搜索…",
   "See all": "查看全部",
+  "See all {n}": "查看全部 {n} 项",
   "See it under Me › Requests.": "在“我的”›“申请”里查看。",
   "Select": "选择",
   "Select all": "全选",
@@ -4420,6 +4485,7 @@ L.zh = {
   "Take photo": "拍照",
   "Take some": "取用",
   "Tap Full, Half, Almost out or Empty.": "请点“满的”“一半”“快没了”或“空的”。",
+  "Tap one to fill in what is missing.": "点一项，补上缺少的内容。",
   "Tap to skip one.": "点一下可跳过。",
   "Tell me when below": "低于此数时告诉我",
   "Text size": "字体大小",
@@ -4473,7 +4539,6 @@ L.zh = {
   "Type": "类别",
   "Type a name for the item.": "请输入物品名称。",
   "Type a name — this barcode isn’t on the list yet.": "请输入名称——这个条码还没有记录。",
-  "Type a new room in the box above.": "在上面的框里输入新房间名称。",
   "Type a number, like 24 pens.": "输入数字，如 24 支笔。",
   "Type a number.": "请输入数字。",
   "Type and subtype are shared by all centres.": "类型和子类型由所有中心共用。",
@@ -4481,7 +4546,6 @@ L.zh = {
   "Type how many there are.": "请输入数量。",
   "Type how many to send.": "请输入要送多少。",
   "Type how many you need.": "请输入需要多少。",
-  "Type missing": "缺少类型",
   "Type the centre name.": "请输入分园名称。",
   "Type the item’s name.": "请输入物品名称。",
   "Type the name first.": "请先输入名称。",
@@ -4499,6 +4563,7 @@ L.zh = {
   "Updated by someone else: {fields}. Check it and save again.": "已被别人更新：{fields}。请检查后再保存。",
   "Updated {when}": "{when} 更新",
   "Use Add more or Take some.": "请用“增加”或“取用”。",
+  "Use this room": "使用这个房间",
   "Use this sheet": "使用这张表",
   "Used stock": "取用",
   "Used up, like paper or glue.": "会用完，如纸或胶水。",
@@ -4538,6 +4603,9 @@ L.zh = {
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
+  "a name": "名称",
+  "a place": "位置",
+  "a type": "类型",
   "at {centre} · {place}": "在 {centre} · {place}",
   "bottle": "瓶",
   "box": "盒",
@@ -4545,9 +4613,7 @@ L.zh = {
   "checked {when}": "{when} 核对",
   "e.g. 2 puzzle pieces lost": "例如：丢了 2 块拼图",
   "e.g. 3 keys, 3 locks": "例如：3 把钥匙、3 把锁",
-  "e.g. Art corner": "例如：美术角",
   "e.g. Reading corner": "例如：阅读角",
-  "e.g. Store room": "例：储物间",
   "e.g. another centre has spare": "例：别的分园有多的",
   "e.g. borrowing for the concert": "例如：借去办音乐会",
   "e.g. concert": "例：音乐会",
@@ -4594,7 +4660,6 @@ L.zh = {
   "{n} selected": "已选 {n} 项",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
-  "“Not sorted yet” keeps them in Received until someone puts them away.": "“还没整理”会先放在 Received，直到有人把它们放好。",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received”留给还没放好的物品。请选择一个房间。",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
   "…and {n} more. Open the app for the rest.": "…还有 {n} 项，请打开应用查看。",
@@ -4819,6 +4884,7 @@ window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; 
   pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
+  act: function (name, data) { return ACT[name]({ dataset: data || {} }); },
   lock: lockUI,
   lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true, b); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
@@ -5052,9 +5118,9 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vRooms,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vNeedDetails, allitems: vAllItems, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
   delete views.bulk;
-  views.unsorted = vNeedDetails;
+  views.unsorted = vAttention;
   app.innerHTML = (views[v.name] || vHome)(v);
   restoreOpen();
   afterRender(v);
@@ -5073,7 +5139,7 @@ document.addEventListener('toggle', function (e) {
 function afterRender(v) {
   if (v.name === 'countList') restoreCheck(v);
   if (v.name === 'edit' && !v._focused) {   // an item that still needs a name: the cursor is in the name box, so typing can start at once
-    var nb = byIdEl('f-nname');
+    var nb = byIdEl('f-nname') || (S.byId[v.id] && needsNameText(S.byId[v.id].name) ? byIdEl('f-name') : null);
     if (nb) { v._focused = true; nb.focus(); try { nb.scrollIntoView({ block: 'center' }); } catch (e) { /* older browsers */ } }
   }
   if (v.name === 'add' && v._draft) fillAddDraft(v._draft);
@@ -5254,22 +5320,22 @@ function vStarter() {
         '<button class="btn quiet" data-act="starterSkip" data-id="' + esc(s.id) + '">' + tl('Skip for now') + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Your starter list is finished.') + '</h2></div>');
 }
-function vNeedDetails() {
-  var centre = myCentre(), names = needNameItems(centre), types = unsortedItems(centre).filter(function (it) { return names.indexOf(it) < 0; })
-    .sort(function (a, b) { return a.name.localeCompare(b.name); });
-  var typeRow = function (it) {
-    return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
-      '<span class="body"><span class="name">' + esc(shown(it)) + '</span><span class="line"><span class="badge plain">' + tl('Type missing') + '</span></span><span class="line">' + esc(it.loc) + '</span></span>' +
-      '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
-  };
-  return top(true) + '<h1 class="title">' + tl('Needs details') + '</h1><p class="sub">' + tl('A name or a type is missing. Fill it in here, or open the item.') + '</p>' +
-    (names.length ? '<div class="rows">' + names.map(function (it) {
-      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line"><span class="badge plain">' + tl('Name missing') + '</span> ' + esc(it.loc) + '</p>' +
+function vAttention(v) {
+  var centre = myCentre(), all = attentionItems(centre), f = v.f || 'all';
+  var cnt = { all: all.length, place: 0, name: 0, type: 0 };
+  all.forEach(function (it) { attentionTags(it).forEach(function (t) { cnt[t]++; }); });
+  var list = f === 'all' ? all : all.filter(function (it) { return attentionTags(it).indexOf(f) >= 0; });
+  var chipRow = '<div class="chips" data-group="attf">' + [['all', tl('All')], ['place', tl('Needs place')], ['name', tl('Needs name')], ['type', tl('Needs type')]].map(function (o) {
+    return '<button type="button" class="chip' + (f === o[0] ? ' on' : '') + '" data-act="attFilter" data-val="' + o[0] + '">' + o[1] + ' <b>' + cnt[o[0]] + '</b></button>';
+  }).join('') + '</div>';
+  var body = !list.length ? '<div class="card empty"><h2>' + tl('All done.') + '</h2></div>'
+    : f === 'name' ? '<div class="rows">' + list.map(function (it) {
+      return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line">' + esc(isReceivedRoom(it.loc) ? tl('Not sorted yet') : it.loc) + '</p>' +
         '<input id="nn-' + esc(it.id) + '" class="inp" maxlength="80" autocomplete="off" aria-label="' + esc(tl('Name')) + '">' +
         '<button class="btn primary" data-act="nameGo" data-id="' + esc(it.id) + '">' + tl('Save') + '</button></div>';
-    }).join('') + '</div>' : '') +
-    (types.length ? '<div class="list">' + types.map(typeRow).join('') + '</div>' : '') +
-    (!names.length && !types.length ? '<div class="card empty"><h2>' + tl('All done.') + '</h2></div>' : '');
+    }).join('') + '</div>'
+    : '<div class="card rows">' + list.map(attRow).join('') + '</div>';
+  return top(true) + '<h1 class="title">' + tl('Needs attention') + '</h1><p class="sub">' + tl('Tap one to fill in what is missing.') + '</p>' + chipRow + body;
 }
 function vHome(v) {
   return top(false) +
@@ -5678,19 +5744,51 @@ function roomIcon(name) { return ICON.room[roomIconKey(name)]; }
 function isReceivedRoom(n) { return String(n || '').trim().toLowerCase() === 'received'; }
 function pickRooms(centre) { return roomsFor(centre).filter(function (n) { return !isReceivedRoom(n); }); }
 function reservedMsg() { return tl('“Received” is kept for stock that hasn’t been put away yet. Choose a room.'); }
-function locChips(centre, target) {
-  var rooms = pickRooms(centre), use = {};
-  S.items.forEach(function (it) { if (it.centre === centre && !isReceivedRoom(it.loc)) use[it.loc] = (use[it.loc] || 0) + 1; });
-  rooms.sort(function (a, b) { return (use[b] || 0) - (use[a] || 0) || a.localeCompare(b); });
-  var top4 = rooms.slice(0, 4);
-  return rooms.length ? '<div class="chips" style="margin-top:8px">' + top4.map(function (l) {
-    return '<button type="button" class="chip" data-act="locPick" data-target="' + esc(target || 'f-loc') + '" data-val="' + esc(l) + '"><span class="ri2" aria-hidden="true">' + roomIcon(l) + '</span>' + esc(l) + '</button>';
-  }).join('') + (rooms.length > 4 ? '<button type="button" class="chip" data-act="roomsAll" data-target="' + esc(target || 'f-loc') + '" data-centre="' + esc(centre) + '">' + esc(tl('All rooms')) + ' ›</button>' : '') + '</div>' : '';
+var RP = { target: '', centre: '', none: false };
+function roomFieldInner(value, ph) {
+  return '<span class="rf-v">' + (value ? '<span class="ri2" aria-hidden="true">' + roomIcon(value) + '</span>' + esc(value) : '<span class="ph">' + esc(ph) + '</span>') + '</span>' + ICON.go;
 }
-function roomsSheetHtml(centre, current) {
-  return '<h2>' + tl('Rooms') + '</h2><p class="help">' + tl('Type a new room in the box above.') + '</p>' + pickRooms(centre).map(function (l) {
-    return '<button type="button" class="opt' + (sameRoom(l, current) ? ' on' : '') + '" data-act="roomSet" data-val="' + esc(l) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span><span>' + esc(l) + '</span></button>';
+// one tappable row that shows the room; the value lives in a hidden box so the rest of the form reads it the same way as before
+function roomField(id, value, centre, ph, opts) {
+  opts = opts || {};
+  return '<input type="hidden" class="pickval" id="' + id + '" value="' + esc(value || '') + '" data-ph="' + esc(ph) + '">' +
+    '<button type="button" class="pickfield roomfield" id="' + id + '-btn" data-act="pickRoom" data-target="' + id + '" data-centre="' + esc(centre) + '"' + (opts.none ? ' data-none="1"' : '') + (opts.title ? ' data-title="' + esc(opts.title) + '"' : '') + '>' + roomFieldInner(value, ph) + '</button>';
+}
+function syncPick(id) { var i = byIdEl(id), b = byIdEl(id + '-btn'); if (i && b) b.innerHTML = roomFieldInner(i.value, i.dataset.ph || ''); }
+function roomPickHtml(o) {
+  var rooms = pickRooms(o.centre), use = {};
+  S.items.forEach(function (it) { if (it.centre === o.centre && !isReceivedRoom(it.loc)) use[it.loc] = (use[it.loc] || 0) + 1; });
+  rooms.sort(function (a, b) { return (use[b] || 0) - (use[a] || 0) || a.localeCompare(b); });
+  var rows = rooms.map(function (l) {
+    var on = sameRoom(l, o.current);
+    return '<button type="button" class="opt rp' + (on ? ' on' : '') + '" data-act="roomSet" data-val="' + esc(l) + '" data-name="' + esc(l.toLowerCase()) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span>' +
+      '<span class="rp-n">' + esc(l) + '<small>' + (use[l] ? (use[l] === 1 ? tl('1 item') : tl('{n} items', { n: use[l] })) : tl('Empty')) + '</small></span>' + (on ? ICON.done : '') + '</button>';
   }).join('');
+  return '<h2>' + esc(o.title) + '</h2>' +
+    (rooms.length > 8 ? '<input id="rp-q" class="inp" type="search" autocomplete="off" aria-label="' + esc(tl('Search rooms')) + '" placeholder="' + esc(tl('Search rooms')) + '">' : '') +
+    (o.none ? '<button type="button" class="opt rp' + (o.current ? '' : ' on') + '" data-act="roomSet" data-val=""><span class="ri" aria-hidden="true">' + ICON.x + '</span><span class="rp-n">' + tl('No room yet') + '</span>' + (o.current ? '' : ICON.done) + '</button>' : '') +
+    '<div id="rp-list">' + rows + '</div>' +
+    '<button type="button" class="opt rp" id="rp-add" data-act="roomNew"><span class="ri" aria-hidden="true">' + ICON.plus + '</span><span class="rp-n">' + tl('Add a new room') + '</span></button>' +
+    '<div id="rp-new" hidden><input id="rp-newname" class="inp" maxlength="60" autocomplete="off" placeholder="' + esc(tl('e.g. Reading corner')) + '" aria-label="' + esc(tl('Add a new room')) + '">' +
+    '<p class="err" id="rp-err" hidden></p><button type="button" class="btn primary" data-act="roomNewGo">' + tl('Use this room') + '</button></div>';
+}
+// inside a sheet that is already open (the starter list) the picker takes the sheet's place for a moment, so what was typed there is kept
+function showRoomPick(html) {
+  var panel = $('#sheet .panel');
+  if (byIdEl('sheet').hidden) { M = { type: 'room-pick' }; openSheet(html); return; }
+  [].forEach.call(panel.children, function (c) { c.classList.add('rp-hide'); });
+  var w = document.createElement('div'); w.id = 'rp-wrap'; w.innerHTML = html; panel.appendChild(w);
+}
+function endRoomPick() {
+  var w = byIdEl('rp-wrap');
+  if (!w) return closeSheet();
+  w.parentNode.removeChild(w);
+  [].forEach.call($('#sheet .panel').children, function (c) { c.classList.remove('rp-hide'); });
+}
+function setRoomValue(v) {
+  var i = byIdEl(RP.target);
+  if (i) { i.value = v; syncPick(RP.target); i.dispatchEvent(new Event('input', { bubbles: true })); }
+  endRoomPick();
 }
 function photoField() {
   return '<label class="lab">' + tl('Photo') + ' <i>' + tl('(optional)') + '</i></label><div class="photorow"><span id="f-thumb">' +
@@ -5719,9 +5817,7 @@ function vAdd(v) {
     '<p class="help" id="unit-prev"></p><p class="help">' + tl('Count packs, not pieces.') + '</p></div>' +
     '<div id="f-levelbox"' + (levelOn() ? '' : ' hidden') + '><label class="lab">' + tl('How much is left?') + '</label>' + chips('level', ['Plenty', 'Half', 'Low', 'Out'], F.level, LEVEL_CHIP) + '</div>' +
     (v.fromAdd ? '' : '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
-    '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label>' +
-    '<input id="f-loc" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Store room') + '">' +
-    '<div id="f-locs">' + locChips(F.centre) + '</div>') +
+    '<label class="lab" for="f-loc-btn">' + tl('Where is it?') + '</label>' + roomField('f-loc', '', F.centre, tl('Choose a room'))) +
     '<details data-keep="add-more"><summary>' + tl('More') + '</summary>' +
     (g ? '' : '<label class="lab" for="f-alt">' + tl('Other names') + '</label>' +
       '<input id="f-alt" class="inp" maxlength="200" autocomplete="off" placeholder="' + tl('e.g. kertas A4, 复印纸') + '">' +
@@ -5831,9 +5927,8 @@ function vRequest(v) {
     '<div class="qtyunit"><div><label class="lab" for="f-qty">' + tl('How many?') + '</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g ? g.unit : '') + '" placeholder="pcs"></div></div>' +
     '<p class="unitprev" hidden></p><p class="forline" id="forline">' + forLineHtml() + '</p>' +
-    '<label class="lab" for="f-room">' + tl('Where will it go?') + ' <i>' + tl('(optional)') + '</i></label>' +
-    '<input id="f-room" class="inp" maxlength="60" autocomplete="off" value="' + esc(v.itemId && S.byId[v.itemId] && !isReceivedRoom(S.byId[v.itemId].loc) ? S.byId[v.itemId].loc : '') + '" placeholder="' + esc(tl('e.g. Art corner')) + '">' +
-    '<div id="f-rooms">' + locChips(F.centre, 'f-room') + '</div>' +
+    '<label class="lab" for="f-room-btn">' + tl('Where will it go?') + ' <i>' + tl('(optional)') + '</i></label>' +
+    roomField('f-room', v.itemId && S.byId[v.itemId] && !isReceivedRoom(S.byId[v.itemId].loc) ? S.byId[v.itemId].loc : '', F.centre, tl('Choose a room'), { none: true, title: tl('Where will it go?') }) +
     '<label class="lab" for="f-why">' + tl('Why?') + ' <i>' + tl('(optional)') + '</i></label>' +
     '<input id="f-why" class="inp" maxlength="300" autocomplete="off">' +
     '<label class="lab" for="f-price">' + tl('About RM') + ' <i>' + tl('(optional)') + '</i></label>' +
@@ -5869,19 +5964,21 @@ function vEdit(v) {
     '<label class="lab">' + tl('Supplies or equipment?') + '</label><p class="kindfixed">' + esc(tl('{kind}. Can’t be changed.', { kind: tl(it.kind) + (isLevel(it) ? ' · ' + tl('Estimate it') : '') })) + '</p>' +
     (isLevel(it) ? '' : '<div class="qtyunit">' + (it.kind === 'Equipment' ? '<input id="f-min" type="hidden" value="0">' : '<div><label class="lab" for="f-min">' + tl('Tell me when below') + '</label><input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + it.min + '"></div>') +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(it.unit) + '"></div></div>') : '';
-  return top(true) + '<h1 class="title">' + (isReceivedRoom(it.loc) ? tl('Put away') : tl('Edit item')) + '</h1><p class="sub">' + esc(shown(it)) + ' · ' + esc(it.centre) + '</p>' +
+  var tags = attentionTags(it), more = attentionItems(it.centre).filter(function (x) { return x.id !== it.id; }).length;
+  return top(true) + '<h1 class="title">' + (tags.length ? tl('Finish adding') : tl('Edit item')) + '</h1><p class="sub">' + esc(shown(it)) + ' · ' + esc(it.centre) + '</p>' + (tags.length ? tagsHtml(it) : '') +
     '<p class="note" id="edit-drift" role="status" hidden></p>' +
     (!S.admin && needsNameText(it.name) ? '<label class="lab" for="f-nname">' + tl('Name') + '</label><input id="f-nname" class="inp" maxlength="80" autocomplete="off" placeholder="' + esc(tl('What is it called?')) + '">' : '') +
     (S.admin ? admin.split('<label class="lab">' + tl('Which centre?')).join('<label class="lab">' + tl('Which centre?')) : '') +
-    '<label class="lab">' + tl('Type') + '</label>' +
-    '<p class="typenote" role="note"><span class="ii" aria-hidden="true">i</span><span>' + tl('Type and subtype are shared by all centres.') + '</span></p>' + typePicker() +
-    '<label class="lab" for="f-loc">' + (isReceivedRoom(it.loc) ? tl('Where will it be kept?') : tl('Where is it?')) + '</label>' +
-    '<p class="typenote" role="note"><span class="ii" aria-hidden="true">i</span><span>' + esc(tl('Place and notes stay at {centre}.', { centre: it.centre })) + '</span></p><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(isReceivedRoom(it.loc) ? '' : it.loc) + '" placeholder="' + esc(isReceivedRoom(it.loc) ? tl('e.g. Art corner') : '') + '">' +
-    '<div id="f-locs">' + locChips(it.centre) + '</div>' +
+    '<div class="labrow"><label class="lab">' + tl('Type') + '</label><button type="button" class="info" data-act="infoToggle" data-for="note-type" aria-expanded="false" aria-label="' + esc(tl('More information')) + '"><i aria-hidden="true">i</i></button></div>' +
+    '<p class="typenote" id="note-type" role="note" hidden>' + tl('Type and subtype are shared by all centres.') + '</p>' + typePicker() +
+    '<div class="labrow"><label class="lab" for="f-loc-btn">' + (isReceivedRoom(it.loc) ? tl('Where will it be kept?') : tl('Where is it?')) + '</label><button type="button" class="info" data-act="infoToggle" data-for="note-place" aria-expanded="false" aria-label="' + esc(tl('More information')) + '"><i aria-hidden="true">i</i></button></div>' +
+    '<p class="typenote" id="note-place" role="note" hidden>' + esc(tl('Place and notes stay at {centre}.', { centre: it.centre })) + '</p>' +
+    roomField('f-loc', isReceivedRoom(it.loc) ? '' : it.loc, it.centre, tl('Choose a room')) +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
     photoField() +
     '<p class="err" id="f-err" hidden></p>' +
     '<div class="formend"><button class="btn primary" id="f-go" data-act="editGo">' + tl('Save') + '</button>' +
+    (v.finish && tags.length && more ? '<button type="button" class="btn next" id="f-next" data-act="editNext">' + tl('Save & next') + '</button>' : '') +
     (S.admin ? '<button type="button" class="btn quiet" data-act="removeItem">' + tl('Remove item') + '</button>' : '') + '</div>';
 }
 
@@ -6052,6 +6149,9 @@ function vSettings() {
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Follow theme'), ICON.auto], ['light', tl('Light'), ICON.sun], ['dark', tl('Dark'), ICON.moon]].map(function (o) {
       return '<button class="chip look' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[2] + '<span>' + o[1] + '</span></button>';
     }).join('') + '</div><p class="help">' + tl('Follow theme uses your phone’s light or dark setting.') + '</p>' +
+    '<label class="lab">' + tl('Bottom strip') + '</label><div class="chips" data-group="strip">' + [['on', tl('On')], ['off', tl('Off')]].map(function (o) {
+      return '<button class="chip' + (store.get('rm_strip', 'on') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_strip" data-val="' + o[0] + '">' + o[1] + '</button>';
+    }).join('') + '</div><p class="help">' + tl('A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.') + '</p>' +
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
@@ -6061,16 +6161,7 @@ function vSettings() {
 // ----- Rooms: what is kept where -----
 function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
 // the number on the Rooms tab: stock waiting in "Received" plus items that need details, each counted once
-function roomsBadge(centre) {
-  var seen = {}, n = 0;
-  S.items.forEach(function (it) { if (it.centre === centre && isReceivedRoom(it.loc) && !seen[it.id]) { seen[it.id] = 1; n++; } });
-  needNameItems(centre).concat(unsortedItems(centre)).forEach(function (it) { if (!seen[it.id]) { seen[it.id] = 1; n++; } });
-  return n;
-}
-function recvRow(it) {
-  return '<div class="roomrow"><button class="rowmain" data-act="recvEdit" data-id="' + esc(it.id) + '"><span class="ri" aria-hidden="true">' + (CAT_ICON[it.cat] || '📦') + '</span>' +
-    '<span class="rtext">' + esc(shown(it)) + '<small>' + esc(amountOf(it)) + (it.cat ? ' · ' + esc(tl(it.cat)) : '') + '</small></span>' + ICON.go + '</button></div>';
-}
+function roomsBadge(centre) { return attentionItems(centre).length; }
 function vRooms(v) {
   var centre = myCentre() || S.centres[0];
   v.centre = centre;
@@ -6083,8 +6174,7 @@ function vRooms(v) {
   });
   roomsFor(centre).forEach(function (n) { if (!isReceivedRoom(n) && !places[n]) { places[n] = { n: 0, oldest: 0 }; names.push(n); } });
   names.sort(function (a, b) { return places[a].oldest - places[b].oldest || a.localeCompare(b); });
-  var recv = S.items.filter(function (it) { return it.centre === centre && isReceivedRoom(it.loc); }).sort(function (a, b) { return a.name.localeCompare(b.name); });
-  var nn = needNameItems(centre).length, us = unsortedItems(centre).length;
+  var att = attentionItems(centre);
   return top(false) + '<h1 class="title">' + tl('Rooms') + '</h1>' +
     (names.length ? '<div class="card rows">' + names.map(function (loc) {
       var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
@@ -6092,10 +6182,9 @@ function vRooms(v) {
         (p.n && days > 30 ? '<span class="due" role="img" aria-label="' + esc(tl('Overdue')) + '"><i></i></span>' : '') +
         (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) : tl('Empty')) + '</small></span>' + ICON.go + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
-    (recv.length ? '<h2 class="sec tidyhead recvhead">' + tl('Received') + '<span class="pn">' + recv.length + '</span></h2>' +
-      '<div class="card rows">' + recv.map(recvRow).join('') + '</div>' : '') +
-    (nn || us ? '<h2 class="sec tidyhead">' + tl('Needs details') + '<span class="pn">' + tidyCount(centre) + '</span></h2><div class="card rows tidy">' +
-      '<button class="rowbtn" data-act="go" data-to="needName"><span>' + esc(tl('{n} need details', { n: tidyCount(centre) })) + '</span>' + ICON.go + '</button></div>' : '');
+    (att.length ? '<h2 class="sec tidyhead attnhead">' + tl('Needs attention') + '<span class="pn">' + att.length + '</span></h2>' +
+      '<div class="card rows">' + att.slice(0, 4).map(attRow).join('') +
+      (att.length > 4 ? '<div class="roomrow tidy"><button class="rowmain" data-act="go" data-to="needName"><span class="rtext">' + esc(tl('See all {n}', { n: att.length })) + '</span>' + ICON.go + '</button></div>' : '') + '</div>' : '');
 }
 function roomRowOk(it, f) {
   var cats = selCats(f);
@@ -6439,10 +6528,11 @@ function ctxSheet() {
   return '<h2>' + tl('Where do they go?') + '</h2>' + (c.loc ? '<p class="sub">' + esc(ctxLabel()) + '</p>' : '') +
     (S.centres.length > 1 ? '<label class="lab">' + tl('Which centre?') + '</label><div class="chips">' + S.centres.map(function (n) {
       return '<button type="button" class="chip' + (n === c.centre ? ' on' : '') + '" data-act="ctxCentre" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
-    '<label class="lab">' + tl('Which room?') + '</label><div class="chips">' + pickRooms(c.centre).map(function (l) {
-      return '<button type="button" class="chip' + (sameRoom(l, c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '">' + esc(l) + '</button>'; }).join('') +
-      '<button type="button" class="chip' + (isReceivedRoom(c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="Received">' + tl('Not sorted yet') + '</button></div>' +
-    '<p class="help">' + tl('“Not sorted yet” keeps them in Received until someone puts them away.') + '</p>' +
+    '<label class="lab">' + tl('Which room?') + '</label>' +
+    '<button type="button" class="opt rp' + (isReceivedRoom(c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="Received"><span class="ri" aria-hidden="true">' + ICON.room.received + '</span><span class="rp-n">' + tl('Not sorted yet') + '<small>' + tl('Kept under “Needs attention” until someone puts them away.') + '</small></span>' + (isReceivedRoom(c.loc) ? ICON.done : '') + '</button>' +
+    pickRooms(c.centre).map(function (l) {
+      var on = sameRoom(l, c.loc);
+      return '<button type="button" class="opt rp' + (on ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span><span class="rp-n">' + esc(l) + '</span>' + (on ? ICON.done : '') + '</button>'; }).join('') +
     '<input id="ctx-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" aria-label="' + tl('Which room?') + '" value="' + esc(isReceivedRoom(c.loc) || roomsFor(c.centre).some(function (l) { return sameRoom(l, c.loc); }) ? '' : c.loc) + '">' +
     '<p class="err" id="ctx-err" hidden></p><button class="btn primary" data-act="ctxDone">' + tl('Done') + '</button>';
 }
@@ -6683,11 +6773,27 @@ function listHasIsbn(code) {
 }
 function isBookCode(code) { return /^97[89]/.test(code); }
 function needsNameText(n) { return /^Barcode [A-Z0-9]{4,20}$/.test(n); }
-function needNameItems(centre) { return S.items.filter(function (it) { return needsNameText(it.name) && !isReceivedRoom(it.loc) && (!centre || it.centre === centre); }); }
-function unsortedItems(centre) { return S.items.filter(function (it) { return !it.cat && !isReceivedRoom(it.loc) && (!centre || it.centre === centre); }); }
-function tidyCount(centre) {
-  var n = needNameItems(centre);
-  return n.length + unsortedItems(centre).filter(function (it) { return n.indexOf(it) < 0; }).length;
+// what an item still needs: a place (it is in Received), a name (still called "Barcode …"), a type
+function attentionTags(it) {
+  var t = [];
+  if (isReceivedRoom(it.loc)) t.push('place');
+  if (needsNameText(it.name)) t.push('name');
+  if (!it.cat) t.push('type');
+  return t;
+}
+function attentionItems(centre) {
+  return S.items.filter(function (it) { return (!centre || it.centre === centre) && attentionTags(it).length; })
+    .sort(function (a, b) { return attentionTags(b).length - attentionTags(a).length || a.name.localeCompare(b.name); });
+}
+function tagLabel(t) { return t === 'place' ? tl('Needs place') : t === 'name' ? tl('Needs name') : tl('Needs type'); }
+function tagWord(t) { return t === 'place' ? tl('a place') : t === 'name' ? tl('a name') : tl('a type'); }
+function tagsHtml(it) {
+  var ic = { place: ICON.pin, name: ICON.pencil, type: ICON.tag };
+  return '<span class="tags">' + attentionTags(it).map(function (t) { return '<span class="tag">' + ic[t] + '<span>' + tagLabel(t) + '</span></span>'; }).join('') + '</span>';
+}
+function attRow(it) {
+  return '<div class="roomrow"><button class="rowmain" data-act="finish" data-id="' + esc(it.id) + '"><span class="ri" aria-hidden="true">' + (CAT_ICON[it.cat] || '📦') + '</span>' +
+    '<span class="rtext">' + esc(shown(it)) + tagsHtml(it) + '</span>' + ICON.go + '</button></div>';
 }
 // Title from Open Library (free). If it is not reachable or does not know the book, the person types the title.
 // Three free catalogues are asked at once: Open Library, Google Books, and openBD (Japanese books, which the other two often lack).
@@ -7002,7 +7108,9 @@ var ACT = {
   addNew: function () { S.q = ''; go({ name: 'add', text: '' }); },
   toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
   addPlace: function () { go({ name: 'add', key: cur().key }); },
-  recvEdit: function (el) { var it = S.byId[el.dataset.id]; if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it) }); },
+  finish: function (el) { var it = S.byId[el.dataset.id]; if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: true }); },
+  attFilter: function (el) { cur().f = el.dataset.val; render(); },
+  editNext: function () { S.editNext = true; ACT.editGo(); },
   toEdit: function () { go({ name: 'edit', id: cur().id, key: cur().key, base: editBase(S.byId[cur().id]) }); },
 
   moveOpen: openMove,
@@ -7194,12 +7302,11 @@ var ACT = {
     M = { type: 'starter', id: s.id };
     openSheet('<h2>' + esc(s.name) + '</h2><p class="sub">' + tl('Not confirmed · 0 in stock') + '</p>' +
       '<label class="lab">' + tl('How many do you have?') + '</label>' + stepper('st-n', 1, 0, 99999, tl('How many?')) +
-      '<label class="lab" for="st-loc">' + tl('Where is it?') + '</label>' +
-      '<input id="st-loc" class="inp" maxlength="60" autocomplete="off" placeholder="' + esc(tl('e.g. Store room')) + '">' + locChips(s.centre) +
+      '<label class="lab" for="st-loc-btn">' + tl('Where is it?') + '</label>' + roomField('st-loc', '', s.centre, tl('Choose a room')) +
       '<p class="err" id="m-err" hidden></p>' +
       '<button class="btn primary" id="m-go" data-act="starterYes">' + tl('We have it') + '</button>' +
       '<button class="btn" data-act="starterNo" data-id="' + esc(s.id) + '">' + tl('We don’t have it') + '</button>' +
-      '<button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'st-loc');
+      '<button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
   starterYes: function () {
     var s = (S.starter || []).filter(function (x) { return x.id === M.id; })[0], qty = parseQty(val('st-n')), loc = val('st-loc'), err = byIdEl('m-err');
@@ -7306,11 +7413,24 @@ var ACT = {
     if (group === 'tracking') { redrawKind(); syncTrack(); }
     if (group === 'kind') { F.kindTouched = true; if (v === 'Equipment') F.tracking = 'count'; redrawKind(); syncTrack(); }
     if (group === 'setq') { F.set = v === 'yes'; redrawKind(); syncTrack(); }
-    if (group === 'centre' && byIdEl('f-locs')) byIdEl('f-locs').innerHTML = locChips(F.centre);
+    if (group === 'centre' && byIdEl('f-loc-btn')) byIdEl('f-loc-btn').dataset.centre = F.centre;
   },
-  locPick: function (el) { byIdEl(el.dataset.target || 'f-loc').value = el.dataset.val; },
-  roomsAll: function (el) { M = { type: 'rooms-all', target: el.dataset.target || 'f-loc' }; openSheet(roomsSheetHtml(el.dataset.centre, val(M.target))); },
-  roomSet: function (el) { byIdEl(M.target || 'f-loc').value = el.dataset.val; closeSheet(); },
+  pickRoom: function (el) {
+    RP = { target: el.dataset.target, centre: el.dataset.centre, none: !!el.dataset.none };
+    showRoomPick(roomPickHtml({ centre: RP.centre, current: val(RP.target), none: RP.none, title: el.dataset.title || (RP.target === 'f-room' ? tl('Where will it go?') : tl('Where is it?')) }));
+  },
+  roomSet: function (el) { setRoomValue(el.dataset.val); },
+  roomNew: function () { byIdEl('rp-add').hidden = true; byIdEl('rp-new').hidden = false; byIdEl('rp-newname').focus(); },
+  roomNewGo: function () {
+    var v = val('rp-newname').trim(), er = byIdEl('rp-err');
+    if (!v) { er.textContent = tl('Type where it’s kept.'); er.hidden = false; return; }
+    if (isReceivedRoom(v)) { er.textContent = reservedMsg(); er.hidden = false; return; }
+    setRoomValue(v);
+  },
+  infoToggle: function (el) {
+    var n = byIdEl(el.dataset.for); if (!n) return;
+    n.hidden = !n.hidden; el.setAttribute('aria-expanded', n.hidden ? 'false' : 'true');
+  },
   subOpen: function () {
     M = { type: 'sub-open' };
     var list = (S.subtypes || {})[F.cat] || [];
@@ -7396,7 +7516,7 @@ var ACT = {
     }).catch(failed);
   },
   editGo: function () {
-    var it = S.byId[cur().id];
+    var it = S.byId[cur().id], fin = !!cur().finish, nextWanted = !!S.editNext; S.editNext = false;
     if (!it) return;
     var bs = cur().base || editBase(it);
     var f = {}, loc = val('f-loc'), photo = F.photo;
@@ -7425,10 +7545,14 @@ var ACT = {
       var n = res.items[0];
       if (photo && !res.photoFailed) S.localPhoto[n.id] = photo;
       mergeItems(res.items); rebuild();
-      if (isReceivedRoom(bs.loc) && !isReceivedRoom(n.loc)) {   // put away: back to the Rooms list, which is one shorter
-        var at = -1; S.stack.forEach(function (x, i) { if (x.name === 'rooms') at = i; });
-        setStack(at >= 0 ? S.stack.slice(0, at + 1) : [{ name: 'rooms' }]);
-        toast(res.photoFailed ? tl('Saved, but the photo didn’t save.') : tl('Put away in {room}.', { room: n.loc }));
+      if (fin || (isReceivedRoom(bs.loc) && !isReceivedRoom(n.loc))) {   // finishing an item: back to the list it came from (one shorter), or straight on to the next one
+        var left = attentionTags(n), nxt = nextWanted ? attentionItems(n.centre).filter(function (x) { return x.id !== n.id; })[0] : null;
+        var back = S.stack.slice(0, -1);
+        if (nxt) back.push({ name: 'edit', id: nxt.id, key: RMSearch.norm(nxt.name), base: editBase(nxt), finish: true });
+        setStack(back);
+        toast(res.photoFailed ? tl('Saved, but the photo didn’t save.')
+          : isReceivedRoom(bs.loc) && !isReceivedRoom(n.loc) ? tl('Put away in {room}.', { room: n.loc })
+          : left.length ? tl('Saved. Still needs {what}.', { what: left.map(tagWord).join(' + ') }) : tl('Saved.'));
         return;
       }
       var below = S.stack[S.stack.length - 2], keepStack = S.stack.slice(0, below && below.name === 'item' ? -2 : -1);
@@ -7485,7 +7609,7 @@ var ACT = {
 
   addHere: function () { var v = cur(); store.set('rm_scanloc', v.loc); SC.centre = v.centre === myCentre() ? '' : v.centre; ACT.addOpen(); },
   reqCentre: function () { M = { type: 'reqcentre' }; openSheet(centreSheet('reqCentreSet', F.centre)); },
-  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); var rs = byIdEl('f-rooms'); if (rs) rs.innerHTML = locChips(F.centre, 'f-room'); },
+  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); var rb = byIdEl('f-room-btn'); if (rb) rb.dataset.centre = F.centre; },
   clearRq: function () { S.rq = ''; var i = byIdEl('rq'); if (i) { i.value = ''; i.focus(); } var b = byIdEl('roomlist'); if (b) b.innerHTML = roomListHtml(cur()); var c = $('#rsearch .clear'); if (c) c.hidden = true; },
   roomOpen: function (el) { S.rfil = {}; S.rq = ''; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
@@ -7833,6 +7957,8 @@ document.addEventListener('input', function (e) {
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id === 'f-parts') F.parts = t.value;
+  else if (t.id === 'rp-q') { var q = t.value.trim().toLowerCase(); [].forEach.call(document.querySelectorAll('#rp-list [data-name]'), function (b) { b.classList.toggle('rp-hide', !!q && b.dataset.name.indexOf(q) < 0); }); }
+  else if (t.classList && t.classList.contains('pickval')) syncPick(t.id);
   else if (t.id === 'f-unit') { unitPrev(); refreshAskLinks(); }
   else if (t.id === 'f-qty') refreshAskLinks();
   else if (t.id && t.id.indexOf('c-') === 0) countChanges();
