@@ -507,7 +507,7 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .sm.btn,.btn.sm{width:auto;min-height:44px;padding:0 var(--s4)}
 #share svg{width:20px;height:20px;flex:none}
 details.more{margin-top:var(--s3)}
-details.more summary{min-height:48px;display:flex;align-items:center;color:var(--muted);cursor:pointer}
+details.more summary{min-height:48px;display:flex;align-items:center;cursor:pointer}
 .tidy h2{font-size:16px;margin:0}
 /* v24 */
 .chip{display:inline-flex;align-items:center;justify-content:center;text-align:center}
@@ -580,16 +580,26 @@ details.histfold{margin-top:var(--s5)}
 .btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
 .btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
 /* v31: while one thing is saving, ONE layer covers everything (page, bar, sheets), so it all dims and releases in the same frame */
-#lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 45%,transparent);cursor:progress}
+#lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 55%,transparent);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);cursor:progress}
+html.locked,html.locked body{overflow:hidden}
 #lock[hidden]{display:none}
 /* v29: skeletons (they appear after 150 ms, so a fast load never flashes) */
-@keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes skelpulse{0%,100%{opacity:.55}50%{opacity:1}}
+:root{--sk1:color-mix(in srgb,var(--ink) 13%,var(--surface));--sk2:color-mix(in srgb,var(--ink) 3%,var(--surface))}
 .skelwrap{opacity:0;animation:show 0s .15s forwards}
-.skel{display:block;border-radius:6px;background:linear-gradient(90deg,var(--wash) 0,color-mix(in srgb,var(--wash) 50%,var(--surface)) 50%,var(--wash) 100%);background-size:600px 100%;animation:shimmer 1.3s linear infinite}
+.skel{display:block;border-radius:6px;background:linear-gradient(90deg,var(--sk1) 0,var(--sk1) 30%,var(--sk2) 50%,var(--sk1) 70%,var(--sk1) 100%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
 .skelcard{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4) 0}
 .list .skelcard{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
 .list .skelcard:last-child{border-bottom:0}
 .verline{margin-top:var(--s5);text-align:center}
+.formend.pair{display:flex;gap:var(--s3)}
+.formend.pair .btn{flex:1 1 0;min-width:0;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
+details.more summary,details.histfold summary,details[data-keep] summary,details.notwhat summary,details.settings summary{color:var(--ink);font-weight:600}
+details > summary::after{color:var(--ink)}
+.chip.look{display:inline-flex;align-items:center;gap:8px}
+.chip.look svg{width:18px;height:18px;flex:none}
+.fulllist .item{content-visibility:auto;contain-intrinsic-size:auto 92px}
 .askrows{display:flex;flex-direction:column;margin:var(--s2) 0}
 .askrow{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s2) 0;border-top:1px solid rgba(0,0,0,.18)}
 .askrow .btn{flex:none}
@@ -604,7 +614,10 @@ details.histfold{margin-top:var(--s5)}
 .note + #roomlist{margin-top:var(--s3)}
 /* v29: launch animation: three blocks fall into place, the last one tilts, over about a second */
 #launch{display:none}
-#launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.05s forwards}
+#launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.6s forwards}
+#launch.go.short{animation:lfade .15s .45s forwards}
+#launch.go.short .blk,#launch.go.short .dot,#launch.go.short .tick,#launch.go.short .st1,#launch.go.short .st2{animation:none}
+#launch.go.short .st1,#launch.go.short .st2{opacity:0}
 #launch svg{width:128px;height:128px;overflow:visible}
 #launch .blk{transform-box:fill-box;transform-origin:center}
 #launch.go .b1{animation:ldrop .38s .05s cubic-bezier(.3,.7,.4,1) both}
@@ -622,7 +635,7 @@ details.histfold{margin-top:var(--s5)}
 @keyframes ltick{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
 @keyframes lfade{to{opacity:0}}
 @media (prefers-reduced-motion:reduce){
-  .skel{animation:none}
+  .skel{animation:skelpulse 1.6s ease-in-out infinite;background:var(--sk1)}
   #launch.go{animation:lfade .2s .5s forwards}
   #launch.go *{animation:none!important}
 }
@@ -3210,6 +3223,9 @@ var ICON = {
   ICON.trash = s('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>');
   ICON.pencil = s('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>');
   ICON.barcode = s('<path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/>');
+  ICON.sun = s('<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>');
+  ICON.moon = s('<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>');
+  ICON.auto = s('<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>');
   ICON.done = s('<path d="M5 12.5l4.5 4.5L19 7.5"/>');
   ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
   ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
@@ -3272,6 +3288,7 @@ L.ms = {
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
+  "All items": "Semua barang",
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
   "Alpha · updated {date}": "Alfa · dikemas kini {date}",
@@ -3284,7 +3301,7 @@ L.ms = {
   "Also send on WhatsApp": "Hantar juga melalui WhatsApp",
   "Antiseptic and creams": "Antiseptik dan krim",
   "Anything you leave goes to “Needs details” on Rooms.": "Yang ditinggalkan akan masuk ke “Perlu butiran” di Bilik.",
-  "Apply": "Guna",
+  "Apply ({n})": "Guna ({n})",
   "Approve": "Luluskan",
   "Approve?": "Luluskan?",
   "Approved": "Diluluskan",
@@ -3323,7 +3340,6 @@ L.ms = {
   "Change PIN": "Tukar PIN",
   "Change type": "Tukar jenis",
   "Changed while you counted:": "Berubah semasa anda mengira:",
-  "Changes this item at all centres.": "Mengubah barang ini di semua pusat.",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
   "Check the price.": "Semak harga.",
@@ -3353,6 +3369,7 @@ L.ms = {
   "Cleaning liquids": "Cecair pencuci",
   "Clear": "Kosongkan",
   "Clear all": "Kosongkan semua",
+  "Close": "Tutup",
   "Closest:": "Paling hampir:",
   "Coloured paper and card": "Kertas dan kad warna",
   "Colours": "Warna",
@@ -3396,6 +3413,7 @@ L.ms = {
   "Equipment": "Peralatan",
   "Estimate it": "Anggar",
   "Every centre": "Semua pusat",
+  "Extra Large": "Sangat besar",
   "Fans and lights": "Kipas dan lampu",
   "Festival and event items": "Barang perayaan dan acara",
   "Files, folders and books": "Fail, folder dan buku",
@@ -3407,6 +3425,8 @@ L.ms = {
   "First-aid kits and tools": "Kit dan alatan pertolongan cemas",
   "Flash cards and posters": "Kad imbasan dan poster",
   "Flashlight": "Lampu suluh",
+  "Follow theme": "Ikut tema",
+  "Follow theme uses your phone’s light or dark setting.": "Ikut tema menggunakan tetapan cerah atau gelap telefon anda.",
   "For mistakes or duplicates. Can’t be undone.": "Untuk kesilapan atau pendua. Tidak boleh dibatalkan.",
   "For {centre}": "Untuk {centre}",
   "Full": "Penuh",
@@ -3442,7 +3462,6 @@ L.ms = {
   "Labels, stickers and stamps": "Label, pelekat dan setem",
   "Language": "Bahasa",
   "Large": "Besar",
-  "Larger": "Lebih besar",
   "Learning materials": "Bahan pembelajaran",
   "Least: {level}": "Paling sedikit: {level}",
   "Leave blank if it never runs out.": "Kosongkan jika tidak pernah habis.",
@@ -3462,7 +3481,6 @@ L.ms = {
   "Lowest first": "Paling sedikit dahulu",
   "Mark as bought": "Tandakan dibeli",
   "Mark as bought?": "Tandakan sudah dibeli?",
-  "Match my phone": "Ikut telefon saya",
   "Mats and mattresses": "Tikar dan tilam",
   "Me": "Saya",
   "Minimum": "Minimum",
@@ -3533,6 +3551,7 @@ L.ms = {
   "Only {n} here.": "Hanya ada {n} di sini.",
   "Open the Google Sheet": "Buka Google Sheet",
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
+  "Open the full list": "Buka senarai penuh",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
   "Other": "Lain-lain",
   "Other centres have spare:": "Pusat lain ada lebihan:",
@@ -3548,8 +3567,10 @@ L.ms = {
   "Photo didn’t work. Try another.": "Gambar tidak berjaya. Cuba yang lain.",
   "Photo of a barcode": "Gambar kod bar",
   "Photo saved.": "Foto disimpan.",
+  "Pick one type to narrow by subtype.": "Pilih satu jenis untuk menyempitkan mengikut subjenis.",
   "Piece missing": "Bahagian hilang",
   "Place": "Tempat",
+  "Place and notes stay at {centre}.": "Tempat dan nota kekal di {centre}.",
   "Plasters and bandages": "Plaster dan pembalut",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "Mohon beli {qty} {unit} {name} untuk {centre}.",
   "Point at a barcode.": "Halakan ke kod bar.",
@@ -3647,6 +3668,7 @@ L.ms = {
   "Share {n}": "Kongsi {n}",
   "Sheet edit": "Ubah dalam helaian",
   "Shelves and storage": "Rak dan simpanan",
+  "Show more": "Tunjuk lagi",
   "Shown as: 1 {a} · 2 {b}": "Dipaparkan: 1 {a} · 2 {b}",
   "Sign out": "Log keluar",
   "Skip for now": "Langkau dahulu",
@@ -3727,6 +3749,7 @@ L.ms = {
   "Type a name — this barcode isn’t on the list yet.": "Taip nama — kod bar ini belum ada.",
   "Type a number, like 24 pens.": "Taip nombor, cth. 24 batang pen.",
   "Type a number.": "Taip nombor.",
+  "Type and subtype are shared by all centres.": "Jenis dan subjenis dikongsi oleh semua pusat.",
   "Type how many (0 or more).": "Taip berapa banyak (0 atau lebih).",
   "Type how many there are.": "Taip berapa banyak.",
   "Type how many to send.": "Taip berapa yang hendak dihantar.",
@@ -3840,6 +3863,7 @@ L.ms = {
   "{n} selected": "{n} dipilih",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
+  "“Received” is kept for stock sent from another centre. Choose a room.": "“Received” dikhaskan untuk stok yang dihantar dari pusat lain. Pilih bilik.",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
   "…and {n} more. Open the app for the rest.": "…dan {n} lagi. Buka apl untuk selebihnya.",
 };
@@ -3882,6 +3906,7 @@ L.zh = {
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
+  "All items": "全部物品",
   "All rooms": "所有房间",
   "Almost out": "快没了",
   "Alpha · updated {date}": "Alpha · 更新于 {date}",
@@ -3894,7 +3919,7 @@ L.zh = {
   "Also send on WhatsApp": "也用 WhatsApp 发送",
   "Antiseptic and creams": "消毒药水与药膏",
   "Anything you leave goes to “Needs details” on Rooms.": "留下的会放进“房间”里的“需要补充资料”。",
-  "Apply": "应用",
+  "Apply ({n})": "应用（{n}）",
   "Approve": "批准",
   "Approve?": "批准？",
   "Approved": "已批准",
@@ -3933,7 +3958,6 @@ L.zh = {
   "Change PIN": "更改 PIN",
   "Change type": "更改类型",
   "Changed while you counted:": "你清点时被改动：",
-  "Changes this item at all centres.": "会在所有中心修改这件物品。",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
   "Check the price.": "请检查价格。",
@@ -3963,6 +3987,7 @@ L.zh = {
   "Cleaning liquids": "清洁液",
   "Clear": "清除",
   "Clear all": "全部清除",
+  "Close": "关闭",
   "Closest:": "最接近：",
   "Coloured paper and card": "彩纸与卡纸",
   "Colours": "颜色",
@@ -4006,6 +4031,7 @@ L.zh = {
   "Equipment": "设备",
   "Estimate it": "估量",
   "Every centre": "所有分园",
+  "Extra Large": "特大",
   "Fans and lights": "风扇与灯",
   "Festival and event items": "节庆与活动用品",
   "Files, folders and books": "文件夹与簿本",
@@ -4017,6 +4043,8 @@ L.zh = {
   "First-aid kits and tools": "急救包与工具",
   "Flash cards and posters": "识字卡和海报",
   "Flashlight": "手电筒",
+  "Follow theme": "跟随主题",
+  "Follow theme uses your phone’s light or dark setting.": "“跟随主题”使用手机的浅色或深色设置。",
   "For mistakes or duplicates. Can’t be undone.": "用于错误或重复。无法撤销。",
   "For {centre}": "给 {centre}",
   "Full": "满的",
@@ -4052,7 +4080,6 @@ L.zh = {
   "Labels, stickers and stamps": "标签、贴纸与印章",
   "Language": "语言",
   "Large": "大",
-  "Larger": "特大",
   "Learning materials": "学习材料",
   "Least: {level}": "最少：{level}",
   "Leave blank if it never runs out.": "不会用完就留空。",
@@ -4072,7 +4099,6 @@ L.zh = {
   "Lowest first": "最少的在前",
   "Mark as bought": "标记为已购买",
   "Mark as bought?": "标记为已购买？",
-  "Match my phone": "跟随手机",
   "Mats and mattresses": "垫子与床垫",
   "Me": "我的",
   "Minimum": "最低量",
@@ -4143,6 +4169,7 @@ L.zh = {
   "Only {n} here.": "这里只有 {n}。",
   "Open the Google Sheet": "打开 Google Sheet",
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
+  "Open the full list": "打开完整列表",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
   "Other": "其他",
   "Other centres have spare:": "其他中心有多余的：",
@@ -4158,8 +4185,10 @@ L.zh = {
   "Photo didn’t work. Try another.": "这张照片不行，换一张。",
   "Photo of a barcode": "拍条码照片",
   "Photo saved.": "照片已保存。",
+  "Pick one type to narrow by subtype.": "选一个类型才能按子类型筛选。",
   "Piece missing": "缺少零件",
   "Place": "位置",
+  "Place and notes stay at {centre}.": "位置和备注只属于 {centre}。",
   "Plasters and bandages": "创可贴与绷带",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "申请为 {centre} 购买 {qty} {unit} {name}。",
   "Point at a barcode.": "对准条码。",
@@ -4257,6 +4286,7 @@ L.zh = {
   "Share {n}": "分享 {n} 项",
   "Sheet edit": "表格里的修改",
   "Shelves and storage": "架子与收纳",
+  "Show more": "显示更多",
   "Shown as: 1 {a} · 2 {b}": "显示为：1 {a} · 2 {b}",
   "Sign out": "退出登录",
   "Skip for now": "先跳过",
@@ -4337,6 +4367,7 @@ L.zh = {
   "Type a name — this barcode isn’t on the list yet.": "请输入名称——这个条码还没有记录。",
   "Type a number, like 24 pens.": "输入数字，如 24 支笔。",
   "Type a number.": "请输入数字。",
+  "Type and subtype are shared by all centres.": "类型和子类型由所有中心共用。",
   "Type how many (0 or more).": "请输入数量（0 或更大）。",
   "Type how many there are.": "请输入数量。",
   "Type how many to send.": "请输入要送多少。",
@@ -4450,6 +4481,7 @@ L.zh = {
   "{n} selected": "已选 {n} 项",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
+  "“Received” is kept for stock sent from another centre. Choose a room.": "“Received”专用于其他中心送来的物品。请选择房间。",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
   "…and {n} more. Open the app for the rest.": "…还有 {n} 项，请打开应用查看。",
 };
@@ -4837,7 +4869,7 @@ if (!hist && HOSTED) {
     setChangeHandler: function (fn) { window.addEventListener('popstate', function () { fn(); }); }
   };
 }
-var TAB_ROOT = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
+var TAB_ROOT = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
 function tabRootOf(name) { return TAB_ROOT[name] || 'home'; }
 function histPush() { try { if (hist) { hist.push({ n: S.stack.length }); S.hdepth = (S.hdepth || 0) + 1; } } catch (e) { /* back button just leaves the app */ } }
 function go(view, replace) {
@@ -4905,7 +4937,7 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vRooms,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vNeedDetails, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vNeedDetails, allitems: vAllItems, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
   delete views.bulk;
   views.unsorted = vNeedDetails;
   app.innerHTML = (views[v.name] || vHome)(v);
@@ -5027,6 +5059,19 @@ function scopeChips() {
   return '<div class="seg" data-group="scope"><button class="chip' + (S.allCentres ? '' : ' on') + '" data-act="scope" data-val="">' + esc(myCentre()) + '</button>' +
     '<button class="chip' + (S.allCentres ? ' on' : '') + '" data-act="scope" data-val="1">' + tl('All centres') + '</button></div>';
 }
+// a few real items under the shortcuts, so the page is never bare; only these are drawn (no lag), and Show more adds twelve at a time
+function allItemsHtml() {
+  var gs = sortGroups(scoped(S.groups), 'az');
+  if (!gs.length) return '';
+  var n = Math.min(S.homeN || 8, 50), more = gs.length > n;
+  return '<h2 class="sec">' + tl('All items') + '</h2><div class="list">' + gs.slice(0, n).map(card).join('') + '</div>' +
+    (more ? (n < 50 ? '<button class="btn" data-act="moreItems">' + tl('Show more') + '</button>' : '<button class="btn" data-act="allItems">' + tl('Open the full list') + '</button>') : '');
+}
+function vAllItems() {
+  var gs = sortGroups(applyFilters(scoped(S.groups)), 'az');
+  return top(true) + '<h1 class="title">' + tl('All items') + '</h1><p class="sub">' + esc(myCentre()) + ' · ' + esc(tl('{n} items', { n: gs.length })) + '</p>' +
+    '<div class="list fulllist">' + gs.map(card).join('') + '</div>';
+}
 function recentHtml() {
   var gs = scoped((store.get('rm_recent', []) || []).map(function (k) { return S.gmap[k]; }).filter(Boolean));
   if (!gs.length) return '';
@@ -5125,12 +5170,13 @@ function drawResults() {
   if (d) { d.textContent = filterCount(); d.hidden = !filterCount(); }
 }
 // ----- sort and filter (the icon at the end of the search bar) -----
-function filtersActive() { var f = S.fil || {}; return !!(f.cat || f.status || f.room); }
-function filterCount() { var f = S.fil || {}; return (f.cat ? 1 : 0) + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.room ? 1 : 0) + (S.qSort ? 1 : 0); }
+function selCats(f) { return Object.keys((f && f.cats) || {}); }
+function filtersActive() { var f = S.fil || {}; return !!(selCats(f).length || f.status || f.room); }
+function filterCount() { var f = S.fil || {}; return selCats(f).length + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.room ? 1 : 0) + (S.qSort ? 1 : 0); }
 function applyFilters(list) {
-  var f = S.fil || {};
+  var f = S.fil || {}, cats = selCats(f);
   return list.filter(function (g) {
-    if (f.cat && g.cat !== f.cat) return false;
+    if (cats.length && cats.indexOf(g.cat) < 0) return false;
     if (f.sub && !g.rows.some(function (r) { return r.subtype === f.sub; })) return false;
     if (f.status === 'low' && !g.rows.some(low)) return false;
     if (f.status === 'attn' && !g.rows.some(function (r) { return STATUS_LABEL[r.status]; })) return false;
@@ -5156,7 +5202,7 @@ function subtypesUsed(cat, rows) {
 }
 function filterChipsHtml() {
   var f = S.fil || {}, out = [];
-  if (f.cat) out.push(['cat', f.cat, tl(f.cat)]);
+  selCats(f).forEach(function (c) { out.push(['cat', c, tl(c)]); });
   if (f.sub) out.push(['sub', f.sub, tl(f.sub)]);
   if (f.status) out.push(['status', f.status, STATUS_NAME()[f.status]]);
   if (f.room) out.push(['room', f.room, f.room]);
@@ -5170,15 +5216,17 @@ function filterSheet() {
     return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span class="cl">' + (icon ? '<i class="ce" aria-hidden="true">' + icon + '</i>' : '') + '<span>' + esc(label) + '</span></span>' + (extra || '') + '</button>';
   }, counts = {};
   scoped(S.groups).forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
-  var subs = f.cat ? subtypesUsed(f.cat, [].concat.apply([], scoped(S.groups).map(function (g) { return g.rows; }))) : [];
+  var chosen = selCats(f), subs = chosen.length === 1 ? subtypesUsed(chosen[0], [].concat.apply([], scoped(S.groups).map(function (g) { return g.rows; }))) : [];
   return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2>' +
     '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('Best match')], ['az', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('qSort', o[0], o[1], (S.qSort || '') === o[0]); }).join('') + '</div>' +
-    '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + S.categories.map(function (c) { return chip('filterCat', c, tl(c), f.cat === c, '<small>' + (counts[c] || 0) + '</small>', CAT_ICON[c] || ''); }).join('') + '</div>' +
-    (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('filterSub', x, tl(x), f.sub === x); }).join('') + '</div>' : '') +
+    '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + S.categories.map(function (c) { return chip('filterCat', c, tl(c), !!(f.cats && f.cats[c]), '<small>' + (counts[c] || 0) + '</small>', CAT_ICON[c] || ''); }).join('') + '</div>' +
+    (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('filterSub', x, tl(x), f.sub === x); }).join('') + '</div>'
+      : chosen.length > 1 ? '<p class="help">' + tl('Pick one type to narrow by subtype.') + '</p>' : '') +
     '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('filterStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div>' +
     (roomsFor(myCentre()).length ? '<label class="lab">' + tl('Room') + '</label><div class="grid2">' + roomsFor(myCentre()).map(function (r) { return chip('filterRoom', r, r, f.room && sameRoom(f.room, r)); }).join('') + '</div>' : '') + '</div>' +
-    '<div class="sheetfoot"><button class="btn primary" data-act="closeSheet">' + tl('Apply') + '</button>' +
-    '<button class="btn quiet" data-act="filterClear">' + tl('Clear all') + '</button></div>';
+    '<div class="sheetfoot">' + (filterCount()
+      ? '<button class="btn primary" data-act="closeSheet">' + esc(tl('Apply ({n})', { n: filterCount() })) + '</button><button class="btn quiet" data-act="filterClear">' + tl('Clear all') + '</button>'
+      : '<button class="btn primary" data-act="closeSheet">' + tl('Close') + '</button>') + '</div>';
 }
 function redrawFilter() {
   drawResults();
@@ -5210,7 +5258,7 @@ function resultsHtml(v) {
       : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>');
   }
   if (!q) {
-    return starterStrip() + lowStripHtml() + recentHtml() + (S.groups.length ? '' : '<div class="card empty"><h2>' + tl('Nothing on the list yet.') + '</h2></div>');
+    return starterStrip() + lowStripHtml() + recentHtml() + allItemsHtml() + (S.groups.length ? '' : '<div class="card empty"><h2>' + tl('Nothing on the list yet.') + '</h2></div>');
   }
   var r = RMSearch.search(scoped(S.groups), anyBarcode(q) || q);   // an ISBN typed with dashes or as ISBN-10 still finds the book
   var elsewhere = !S.allCentres && !r.strong.length ? RMSearch.search(S.groups, anyBarcode(q) || q).strong : [];
@@ -5496,8 +5544,12 @@ function roomsFor(centre) {
   S.items.forEach(function (it) { if (it.centre === centre) add(it.loc); });
   return out.sort(function (a, b) { return a.localeCompare(b); });
 }
+// "Received" is where stock sent from another centre lands until it is put away: never offered as a place to choose, never typed in by hand
+function isReceivedRoom(n) { return String(n || '').trim().toLowerCase() === 'received'; }
+function pickRooms(centre) { return roomsFor(centre).filter(function (n) { return !isReceivedRoom(n); }); }
+function reservedMsg() { return tl('“Received” is kept for stock sent from another centre. Choose a room.'); }
 function locChips(centre) {
-  var locs = roomsFor(centre);
+  var locs = pickRooms(centre);
   return locs.length ? '<div class="chips" style="margin-top:8px">' + locs.map(function (l) {
     return '<button type="button" class="chip" data-act="locPick" data-val="' + esc(l) + '">' + esc(l) + '</button>';
   }).join('') + '</div>' : '';
@@ -5542,7 +5594,7 @@ function vAdd(v) {
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" placeholder="' + tl('e.g. set of 10, check all pieces') + '">' +
     photoField() + '</details>' +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="formend"><button class="btn primary" id="f-go" data-act="addGo">' + tl('Add') + '</button>' +
+    '<div class="formend' + (v.fromAdd ? ' pair' : '') + '"><button class="btn primary" id="f-go" data-act="addGo">' + tl('Add') + '</button>' +
     (v.fromAdd ? '<button class="btn" data-act="addGoMore">' + tl('Add & next item') + '</button>' : '') + '</div>';
 }
 // Two names look the same when they have the same words (a typo is allowed in longer words, and the last word may still be
@@ -5680,8 +5732,9 @@ function vEdit(v) {
     '<p class="note" id="edit-drift" role="status" hidden></p>' +
     (S.admin ? admin.split('<label class="lab">' + tl('Which centre?')).join('<label class="lab">' + tl('Which centre?')) : '') +
     '<label class="lab">' + tl('Type') + '</label>' +
-    '<p class="typenote" role="note"><span class="ii" aria-hidden="true">i</span><span>' + tl('Changes this item at all centres.') + '</span></p>' + typePicker() +
-    '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
+    '<p class="typenote" role="note"><span class="ii" aria-hidden="true">i</span><span>' + tl('Type and subtype are shared by all centres.') + '</span></p>' + typePicker() +
+    '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label>' +
+    '<p class="typenote" role="note"><span class="ii" aria-hidden="true">i</span><span>' + esc(tl('Place and notes stay at {centre}.', { centre: it.centre })) + '</span></p><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
     '<div id="f-locs">' + locChips(it.centre) + '</div>' +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
     photoField() +
@@ -5740,7 +5793,7 @@ function vLow() {
         ? '<button type="button" class="triall" data-act="lowAllSel" role="checkbox" aria-checked="' + (shareN === n ? 'true' : shareN ? 'mixed' : 'false') + '"><i class="pk2 ' + (shareN === n ? 'on' : shareN ? 'mixed' : '') + '" aria-hidden="true"></i><span>' + esc(tl('{n} selected', { n: shareN })) + '</span></button>'
         : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '<div class="tools">' +
       (!pick && lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
-      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.done : ICON.pick) + '<span>' + (pick ? tl('Done') : tl('Select')) + '</span></button></div></div>' : '') +
+      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.x : ICON.pick) + '<span>' + (pick ? tl('Cancel') : tl('Select')) + '</span></button></div></div>' : '') +
     (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
     (lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
       var spare = spareOf(it);
@@ -5846,7 +5899,6 @@ function centreSheet(act, current) {
 }
 function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
-var APP_BUILT = '2026-11-18';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 function builtText() {
   try { return new Date(APP_BUILT + 'T12:00:00').toLocaleDateString(LANG === 'ms' ? 'ms-MY' : LANG === 'zh' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return APP_BUILT; }
 }
@@ -5855,10 +5907,10 @@ function vSettings() {
   return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Settings') + '</h1>' +
     '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p></div>' +
     '<button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
-    langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Match my phone')], ['light', tl('Light')], ['dark', tl('Dark')]].map(function (o) {
-      return '<button class="chip' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[1] + '</button>';
-    }).join('') + '</div>' +
-    '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Larger')]].map(function (o) {
+    langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Follow theme'), ICON.auto], ['light', tl('Light'), ICON.sun], ['dark', tl('Dark'), ICON.moon]].map(function (o) {
+      return '<button class="chip look' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[2] + '<span>' + o[1] + '</span></button>';
+    }).join('') + '</div><p class="help">' + tl('Follow theme uses your phone’s light or dark setting.') + '</p>' +
+    '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
     '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
@@ -5889,14 +5941,15 @@ function vRooms(v) {
       '<button class="rowbtn" data-act="go" data-to="needName"><span>' + esc(tl('{n} need details', { n: tidyCount(centre) })) + '</span>' + ICON.go + '</button></div>' : '');
 }
 function roomRowOk(it, f) {
-  if (f.cat && it.cat !== f.cat) return false;
+  var cats = selCats(f);
+  if (cats.length && cats.indexOf(it.cat) < 0) return false;
   if (f.sub && it.subtype !== f.sub) return false;
   if (f.status === 'low' && !low(it)) return false;
   if (f.status === 'attn' && !STATUS_LABEL[it.status]) return false;
   if (f.status === 'unsorted' && it.cat) return false;
   return true;
 }
-function roomFilterCount() { var f = S.rfil || {}; return (f.cat ? 1 : 0) + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.sort ? 1 : 0); }
+function roomFilterCount() { var f = S.rfil || {}; return selCats(f).length + (f.sub ? 1 : 0) + (f.status ? 1 : 0) + (f.sort ? 1 : 0); }
 function roomListHtml(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), q = RMSearch.norm(S.rq || '').trim(), words = q ? q.split(/\s+/) : [];
   var list = all.filter(function (it) {
@@ -5920,7 +5973,7 @@ function roomListHtml(v) {
 }
 function vRoom(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc);
-  var chipsOn = (f.cat ? [['cat', f.cat, tl(f.cat)]] : []).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
+  var chipsOn = selCats(f).map(function (c) { return ['cat', c, tl(c)]; }).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
   return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + esc(v.loc) + '</h1>' +
     '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p></div>' +
     (all.length > 6 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
@@ -5937,13 +5990,16 @@ function roomFilterSheet(v) {
   all.forEach(function (it) { counts[it.cat] = (counts[it.cat] || 0) + 1; });
   var chip = function (act, val, label, on, extra, icon) { return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span class="cl">' + (icon ? '<i class="ce" aria-hidden="true">' + icon + '</i>' : '') + '<span>' + esc(label) + '</span></span>' + (extra || '') + '</button>'; };
   var cats = S.categories.filter(function (c) { return counts[c]; });
-  var subs = f.cat ? subtypesUsed(f.cat, all) : [];
+  var chosen = selCats(f), subs = chosen.length === 1 ? subtypesUsed(chosen[0], all) : [];
   return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2>' +
     '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('roomSort', o[0], o[1], (f.sort || '') === o[0]); }).join('') + '</div>' +
-    (cats.length > 1 ? '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + cats.map(function (c) { return chip('roomCat', c, tl(c), f.cat === c, '<small>' + counts[c] + '</small>', CAT_ICON[c] || ''); }).join('') + '</div>' : '') +
-    (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('roomSub', x, tl(x), f.sub === x); }).join('') + '</div>' : '') +
+    (cats.length > 1 ? '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + cats.map(function (c) { return chip('roomCat', c, tl(c), !!(f.cats && f.cats[c]), '<small>' + counts[c] + '</small>', CAT_ICON[c] || ''); }).join('') + '</div>' : '') +
+    (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('roomSub', x, tl(x), f.sub === x); }).join('') + '</div>'
+      : chosen.length > 1 ? '<p class="help">' + tl('Pick one type to narrow by subtype.') + '</p>' : '') +
     '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('roomStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div></div>' +
-    '<div class="sheetfoot"><button class="btn primary" data-act="closeSheet">' + tl('Apply') + '</button><button class="btn quiet" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>';
+    '<div class="sheetfoot">' + (roomFilterCount()
+      ? '<button class="btn primary" data-act="closeSheet">' + esc(tl('Apply ({n})', { n: roomFilterCount() })) + '</button><button class="btn quiet" data-act="roomFilterClear">' + tl('Clear all') + '</button>'
+      : '<button class="btn primary" data-act="closeSheet">' + tl('Close') + '</button>') + '</div>';
 }
 function redrawRoomFilter() {
   var sb = $('#sheet .sheetbody'), y = sb ? sb.scrollTop : 0;
@@ -6197,7 +6253,7 @@ function ctxSheet() {
   return '<h2>' + tl('Where do they go?') + '</h2>' + (c.loc ? '<p class="sub">' + esc(ctxLabel()) + '</p>' : '') +
     (S.centres.length > 1 ? '<label class="lab">' + tl('Which centre?') + '</label><div class="chips">' + S.centres.map(function (n) {
       return '<button type="button" class="chip' + (n === c.centre ? ' on' : '') + '" data-act="ctxCentre" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
-    '<label class="lab">' + tl('Which room?') + '</label><div class="chips">' + roomsFor(c.centre).map(function (l) {
+    '<label class="lab">' + tl('Which room?') + '</label><div class="chips">' + pickRooms(c.centre).map(function (l) {
       return '<button type="button" class="chip' + (sameRoom(l, c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '">' + esc(l) + '</button>'; }).join('') + '</div>' +
     '<input id="ctx-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" aria-label="' + tl('Which room?') + '" value="' + esc(roomsFor(c.centre).some(function (l) { return sameRoom(l, c.loc); }) ? '' : c.loc) + '">' +
     '<p class="err" id="ctx-err" hidden></p><button class="btn primary" data-act="ctxDone">' + tl('Done') + '</button>';
@@ -6568,12 +6624,16 @@ function lockUI(on) {
   if (on) {
     S.locked = true; S.lockSettled = false; S.lockPending = true;
     if (el) el.hidden = false;
-    document.body.classList.add('saving');
+    document.body.classList.add('saving'); document.documentElement.classList.add('locked');
+    // nothing behind the layer can be tapped, focused, typed into or reached by keyboard
+    ['app', 'nav', 'sheet', 'banner'].forEach(function (id) { var x = byIdEl(id); if (x) x.inert = true; });
+    try { if (document.activeElement && document.activeElement !== document.body && document.activeElement.blur) document.activeElement.blur(); } catch (e) { /* none */ }
     S.lockWD = setTimeout(function () { lockUI(false); toast(tl('No reply yet. It may have saved: check before trying again.')); }, 55000);
   } else {
     S.locked = false; S.lockSettled = false; S.lockPending = false;
     if (el) el.hidden = true;
-    document.body.classList.remove('saving');
+    document.body.classList.remove('saving'); document.documentElement.classList.remove('locked');
+    ['app', 'nav', 'sheet', 'banner'].forEach(function (id) { var x = byIdEl(id); if (x) x.inert = false; });
   }
 }
 function busy(on, label) {
@@ -6653,7 +6713,7 @@ function shrink(file) {
 var ACT = {
   nav: function (el) {
     var to = el.dataset.to, TABS = { home: 1, low: 1, rooms: 1, more: 1 };
-    S.lowPick = false; S.lowOn = {};
+    S.lowPick = false; S.lowOn = {}; S.homeN = 8;
     if (to === 'home') { S.fil = {}; S.qSort = ''; S.q = ''; }
     var from = tabRootOf(cur().name);
     (S.scrollAt || (S.scrollAt = {}))[from] = window.scrollY;
@@ -6817,6 +6877,7 @@ var ACT = {
   ctxRoom: function (el) { store.set('rm_scanloc', el.dataset.val); $('#sheet .panel').innerHTML = ctxSheet(); drawCtx(); },
   ctxDone: function () {
     var typed = val('ctx-room');
+    if (isReceivedRoom(typed)) { var rr = byIdEl('ctx-err'); rr.textContent = reservedMsg(); rr.hidden = false; return; }
     if (typed) store.set('rm_scanloc', typed);
     if (!store.get('rm_scanloc', '')) { var er = byIdEl('ctx-err'); er.textContent = tl('Choose a room first.'); er.hidden = false; return; }
     closeSheet(); drawCtx();
@@ -7055,6 +7116,7 @@ var ACT = {
     if (from.fromAdd) { var cx = ctxNow(); F.centre = cx.centre; loc = cx.loc; }
     if (!F.centre) return formError(tl('Choose a centre first.'));
     if (!loc) { if (from.fromAdd) openCtx(); return formError(tl('Type where it’s kept.')); }
+    if (isReceivedRoom(loc)) return formError(reservedMsg());
     if (!lv && min && isNaN(parseQty(min))) return formError(tl('Enter a number.'));
     var g = S.gmap[RMSearch.norm(name)] || {};   // same name as something we have: keep its details the same
     // the minimum is copied to a new centre, but not to a second shelf in a centre that already has one
@@ -7120,6 +7182,7 @@ var ACT = {
     var bs = cur().base || editBase(it);
     var f = {}, loc = val('f-loc'), photo = F.photo;
     if (!loc) return formError(tl('Type where it’s kept.'));
+    if (isReceivedRoom(loc) && !isReceivedRoom(bs.loc)) return formError(reservedMsg());
     if (loc !== bs.loc) f.loc = loc;
     if (val('f-notes') !== bs.notes) f.notes = val('f-notes');
     if (F.cat !== bs.cat) f.cat = F.cat;
@@ -7201,11 +7264,16 @@ var ACT = {
   roomOpen: function (el) { S.rfil = {}; S.rq = ''; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
   roomSort: function (el) { (S.rfil || (S.rfil = {})).sort = el.dataset.val; redrawRoomFilter(); },
-  roomCat: function (el) { var f = S.rfil || (S.rfil = {}); f.cat = f.cat === el.dataset.val ? '' : el.dataset.val; f.sub = ''; redrawRoomFilter(); },
+  roomCat: function (el) {
+    var f = S.rfil || (S.rfil = {}), c = f.cats || (f.cats = {}), v = el.dataset.val;
+    if (c[v]) delete c[v]; else c[v] = 1;
+    if (selCats(f).length !== 1) f.sub = '';
+    redrawRoomFilter();
+  },
   roomSub: function (el) { var f = S.rfil || (S.rfil = {}); f.sub = f.sub === el.dataset.val ? '' : el.dataset.val; redrawRoomFilter(); },
   roomStatus: function (el) { var f = S.rfil || (S.rfil = {}); f.status = f.status === el.dataset.val ? '' : el.dataset.val; redrawRoomFilter(); },
   roomFilterClear: function () { S.rfil = {}; redrawRoomFilter(); },
-  roomFilterDrop: function (el) { var f = S.rfil || (S.rfil = {}), k = el.dataset.k; if (k === 'cat') { f.cat = ''; f.sub = ''; } else f[k] = ''; render(); },
+  roomFilterDrop: function (el) { var f = S.rfil || (S.rfil = {}), k = el.dataset.k; if (k === 'cat') { if (f.cats) delete f.cats[el.dataset.val]; if (selCats(f).length !== 1) f.sub = ''; } else f[k] = ''; render(); },
   countPlaceHere: function (el) { go({ name: 'countList', centre: cur().centre, loc: el.dataset.val }); },
   roomAdd: function (el) {
     M = { type: 'room', op: 'add', centre: el.dataset.centre };
@@ -7276,14 +7344,21 @@ var ACT = {
   qSort: function (el) { S.qSort = el.dataset.val; redrawFilter(); },
   qCentre: function (el) { S.qCentre = el.dataset.val; drawResults(); },
   filterOpen: function () { M = { type: 'filter' }; openSheet(filterSheet(), null, 'has-foot'); },
-  filterCat: function (el) { var f = S.fil || (S.fil = {}); f.cat = f.cat === el.dataset.val ? '' : el.dataset.val; f.sub = ''; redrawFilter(); },
+  filterCat: function (el) {
+    var f = S.fil || (S.fil = {}), c = f.cats || (f.cats = {}), v = el.dataset.val;
+    if (c[v]) delete c[v]; else c[v] = 1;
+    if (selCats(f).length !== 1) f.sub = '';   // a subtype belongs to ONE type
+    redrawFilter();
+  },
   filterSub: function (el) { var f = S.fil || (S.fil = {}); f.sub = f.sub === el.dataset.val ? '' : el.dataset.val; redrawFilter(); },
   filterStatus: function (el) { var f = S.fil || (S.fil = {}); f.status = f.status === el.dataset.val ? '' : el.dataset.val; redrawFilter(); },
   filterRoom: function (el) { var f = S.fil || (S.fil = {}); f.room = f.room && sameRoom(f.room, el.dataset.val) ? '' : el.dataset.val; redrawFilter(); },
   filterClear: function () { S.fil = {}; S.qSort = ''; redrawFilter(); },
+  moreItems: function () { S.homeN = (S.homeN || 8) + 12; drawResults(); },
+  allItems: function () { go({ name: 'allitems' }); },
   filterDrop: function (el) {
     var f = S.fil || (S.fil = {}), k = el.dataset.k;
-    if (k === 'cat') { f.cat = ''; f.sub = ''; } else f[k] = '';
+    if (k === 'cat') { if (f.cats) delete f.cats[el.dataset.val]; if (selCats(f).length !== 1) f.sub = ''; } else f[k] = '';
     drawResults();
   },
   // One tap on Add: the camera, or the typing page if that was the last way it was used (or there is no camera here)
@@ -7651,15 +7726,23 @@ if (HOSTED) {
   });
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
 }
+var APP_REL = 'v32';
+var APP_BUILT = '2026-11-18';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
-  var el = document.getElementById('launch'), skip = false;
+  var el = document.getElementById('launch'), skip = false, full = true;
   if (!el) return;
   try { skip = !!(sessionStorage.getItem('rm_launched') || localStorage.getItem('rm_noanim') || /[?&]noanim\b/.test(location.search)); } catch (e) { /* play it */ }
   if (skip) { el.remove(); return; }
-  try { sessionStorage.setItem('rm_launched', '1'); } catch (e) { /* fine */ }
-  el.classList.add('go');
+  // the whole animation on the first open of the day and after an update; a short one on other cold starts
+  try {
+    var today = new Date().toDateString(), seen = localStorage.getItem('rm_launchday'), built = localStorage.getItem('rm_launchbuild');
+    full = !(seen === today && built === APP_REL);
+    localStorage.setItem('rm_launchday', today); localStorage.setItem('rm_launchbuild', APP_REL);
+    sessionStorage.setItem('rm_launched', '1');
+  } catch (e) { /* fine */ }
+  el.classList.add('go'); if (!full) el.classList.add('short');
   var done = function () { if (el.parentNode) el.remove(); };
-  setTimeout(done, 1250);
+  setTimeout(done, full ? 1900 : 700);
   document.addEventListener('pointerdown', done, { once: true, passive: true });
 })();
 syncThemeColor();
