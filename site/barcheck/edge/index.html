@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#e91e63">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Bar test: edge to edge</title>
+<style>
+  :root{--bg:#f4f3ef;--ink:#1e1d1a;--card:#fff;--line:#dfddd5;--mut:#6b675d}
+  @media (prefers-color-scheme:dark){:root{--bg:#1a1815;--ink:#f1eee6;--card:#24211d;--line:#3a362f;--mut:#a8a396}}
+  html{background:#e91e63}                       /* anything drawn below the page shows pink */
+  body{font:16px/1.45 system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px 16px calc(96px + env(safe-area-inset-bottom)) 16px;max-width:560px}
+  h1{font-size:22px;margin:8px 0}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}
+  dt{color:var(--mut)}dd{margin:0;font-weight:600}
+  #probe{position:fixed;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  #bar{position:fixed;left:0;right:0;bottom:0;background:#e91e63;color:#fff;font-weight:700;text-align:center;padding:14px 8px calc(14px + env(safe-area-inset-bottom));box-sizing:border-box}
+  a{color:inherit}
+</style>
+</head>
+<body>
+<h1>Bar test: edge to edge</h1>
+<p>This page asks Android to let it draw under the system bars (<b>viewport-fit=cover</b>). The strip at the very bottom is pink and extends under the bottom bar if Android allows it.</p>
+<div class="card"><dl>
+  <dt>Opened as</dt><dd id="mode">…</dd>
+  <dt>Space under top bar</dt><dd id="top">…</dd>
+  <dt>Space under bottom bar</dt><dd id="bot">…</dd>
+  <dt>Page height / screen</dt><dd id="hh">…</dd>
+</dl></div>
+<div class="card">
+  <p><b>Open it from the home screen and tell me:</b></p>
+  <p>1. What colour is the bottom bar area: pink, dark, or something else? (If the pink strip reaches the very bottom of the screen, say so.)</p>
+  <p>2. The numbers above: both "space under" lines. Zero means Android did not hand the page the bars.</p>
+  <p>3. Switch the phone between light and dark mode: did the bottom area change?</p>
+  <p><a href="../../">Back to the app</a></p>
+</div>
+<div id="probe"></div>
+<div id="bar">pink strip: should reach the bottom edge</div>
+<script>
+(function () {
+  function show() {
+    var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+    var cs = getComputedStyle(document.getElementById('probe'));
+    document.getElementById('mode').textContent = standalone ? 'Installed app' : 'Chrome tab';
+    document.getElementById('top').textContent = cs.paddingTop;
+    document.getElementById('bot').textContent = cs.paddingBottom;
+    document.getElementById('hh').textContent = window.innerHeight + ' / ' + screen.height + ' (css px)';
+  }
+  window.addEventListener('resize', show);
+  show();
+})();
+</script>
+</body>
+</html>
