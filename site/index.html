@@ -498,7 +498,13 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .chip.tbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3)}
 .chip.tbtn svg{width:18px;height:18px;flex:none}
 .pickgap{height:96px}
+.triall{display:flex;align-items:center;gap:var(--s3);min-height:44px;font-weight:600;font-size:15px;text-align:left}
+.pk2{position:relative;flex:none;width:24px;height:24px;border:2px solid var(--line-strong);border-radius:4px;background:var(--surface)}
+.pk2.on,.pk2.mixed{background:var(--brand);border-color:var(--brand)}
+.pk2.on::after{content:"";position:absolute;left:6px;top:1px;width:6px;height:12px;border:solid var(--on-brand);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.pk2.mixed::after{content:"";position:absolute;left:4px;top:9px;width:12px;height:0;border-top:3px solid var(--on-brand);border-radius:2px}
 #share{gap:var(--s2)}
+.sm.btn,.btn.sm{width:auto;min-height:44px;padding:0 var(--s4)}
 #share svg{width:20px;height:20px;flex:none}
 details.more{margin-top:var(--s3)}
 details.more summary{min-height:48px;display:flex;align-items:center;color:var(--muted);cursor:pointer}
@@ -564,7 +570,8 @@ html[data-text="2"] #sheet .panel{max-height:calc(92vh / 1.3)}
 .grid2 .chip > .cl .ce{flex:none;font-style:normal}
 .grid2 .chip > .cl > span{overflow-wrap:normal;word-break:normal;hyphens:auto}
 html[data-text="1"] #sheet .grid2,html[data-text="2"] #sheet .grid2{grid-template-columns:1fr}
-details.more,details[data-keep],details.notwhat{border-top:1px solid var(--line-strong)}
+details.more,details[data-keep],details.notwhat,details.histfold{border-top:1px solid var(--line-strong)}
+details.histfold{margin-top:var(--s5)}
 .help:empty{display:none}
 /* a waiting button keeps its size: the label is hidden and a spinner sits in the middle */
 .btn.loading,.chip.loading,.ib.loading{position:relative;color:transparent!important;pointer-events:none;--spin:var(--ink)}
@@ -572,8 +579,9 @@ details.more,details[data-keep],details.notwhat{border-top:1px solid var(--line-
 .chip.on.loading{--spin:var(--paper)}
 .btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
 .btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
-/* v30: while one thing is saving, everything else waits (dimmed, not tappable) */
-body.saving #app button:not(.loading),body.saving #app a.btn,body.saving #nav button,body.saving #sheet button:not(.loading),body.saving .savebar .btn:not(.loading){opacity:.45;pointer-events:none}
+/* v31: while one thing is saving, ONE layer covers everything (page, bar, sheets), so it all dims and releases in the same frame */
+#lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 45%,transparent);cursor:progress}
+#lock[hidden]{display:none}
 /* v29: skeletons (they appear after 150 ms, so a fast load never flashes) */
 @keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
 .skelwrap{opacity:0;animation:show 0s .15s forwards}
@@ -582,6 +590,9 @@ body.saving #app button:not(.loading),body.saving #app a.btn,body.saving #nav bu
 .list .skelcard{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
 .list .skelcard:last-child{border-bottom:0}
 .verline{margin-top:var(--s5);text-align:center}
+.askrows{display:flex;flex-direction:column;margin:var(--s2) 0}
+.askrow{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s2) 0;border-top:1px solid rgba(0,0,0,.18)}
+.askrow .btn{flex:none}
 .simlist{display:flex;flex-direction:column;margin-top:var(--s2)}
 .simrow{display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;min-height:44px;padding:var(--s2) 0;border-top:1px solid rgba(0,0,0,.18);color:inherit}
 .simrow span{font-size:14px;opacity:.85}
@@ -589,10 +600,8 @@ body.saving #app button:not(.loading),body.saving #app a.btn,body.saving #nav bu
 .linkbtn{color:var(--brand-ink,var(--ink));text-decoration:underline;font-weight:600;min-height:44px;padding:0 var(--s2)}
 .typenote{display:flex;gap:var(--s2);align-items:flex-start;margin:0 0 var(--s2);padding:var(--s2) var(--s3);border-radius:var(--r);background:var(--wash);font-size:14px}
 .typenote .ii{flex:none;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:12px;font-weight:700;margin-top:1px}
-.confrow{padding:var(--s3) 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:var(--s2)}
-.confrow p{margin:0;color:var(--muted);font-size:15px}
-.confrow .btn{margin:0}
-#askfirst{margin:var(--s3) 0 var(--s4)}
+#edit-drift{margin:0 0 var(--s4)}
+.note + #roomlist{margin-top:var(--s3)}
 /* v29: launch animation: three blocks fall into place, the last one tilts, over about a second */
 #launch{display:none}
 #launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.05s forwards}
@@ -645,6 +654,7 @@ html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 </style>
 </head>
 <body>
+<div id="lock" hidden aria-hidden="true"></div>
 <div id="launch" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)">
 <g class="st1" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M14 14v8M20 11v9M26 14v8"/></g>
 <g class="st2" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M38 14v8M44 11v9M50 14v8"/></g>
@@ -3200,6 +3210,7 @@ var ICON = {
   ICON.trash = s('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>');
   ICON.pencil = s('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>');
   ICON.barcode = s('<path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/>');
+  ICON.done = s('<path d="M5 12.5l4.5 4.5L19 7.5"/>');
   ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
   ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
@@ -3236,11 +3247,11 @@ L.ms = {
   "About RM": "Lebih kurang RM",
   "About RM {price}.": "Anggaran RM {price}.",
   "Add": "Tambah",
+  "Add & next item": "Tambah & barang seterusnya",
   "Add Malay and Chinese names too.": "Tambah nama Melayu dan Cina juga.",
   "Add a centre": "Tambah pusat",
   "Add a room": "Tambah bilik",
   "Add an item": "Tambah barang",
-  "Add and add another": "Tambah dan tambah lagi",
   "Add at least one item.": "Tambah sekurang-kurangnya satu barang.",
   "Add centre": "Tambah pusat",
   "Add more": "Tambah",
@@ -3258,7 +3269,6 @@ L.ms = {
   "Admin PIN:": "PIN admin:",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
   "Admin mode": "Mod admin",
-  "All": "Semua",
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
@@ -3279,10 +3289,10 @@ L.ms = {
   "Approve?": "Luluskan?",
   "Approved": "Diluluskan",
   "Art and craft": "Seni dan kraf",
+  "Ask": "Tanya",
   "Ask to buy": "Mohon beli",
   "Ask to buy more": "Mohon beli lagi",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
-  "Ask {centre} first": "Tanya {centre} dahulu",
   "Asked to buy": "Mohon beli",
   "Back": "Kembali",
   "Balloons and banners": "Belon dan sepanduk",
@@ -3312,7 +3322,7 @@ L.ms = {
   "Change": "Tukar",
   "Change PIN": "Tukar PIN",
   "Change type": "Tukar jenis",
-  "Changed while you counted": "Berubah semasa anda mengira",
+  "Changed while you counted:": "Berubah semasa anda mengira:",
   "Changes this item at all centres.": "Mengubah barang ini di semua pusat.",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
@@ -3408,6 +3418,7 @@ L.ms = {
   "Google Sheet": "Google Sheet",
   "Half": "Separuh",
   "Hi, can {me} borrow some {name} from {centre}?": "Hai, boleh {me} pinjam {name} daripada {centre}?",
+  "Hi, can {me} borrow {qty} of {name} from {centre}?": "Hai, boleh {me} pinjam {qty} {name} daripada {centre}?",
   "Hide checked": "Sembunyi yang sudah disemak",
   "History": "Sejarah",
   "How many do you have?": "Berapa yang anda ada?",
@@ -3425,9 +3436,6 @@ L.ms = {
   "It’s fine now": "Sudah okay",
   "Just added": "Baru ditambah",
   "Keep at least one centre.": "Simpan sekurang-kurangnya satu pusat.",
-  "Keep mine": "Kekalkan versi saya",
-  "Keep my count ({n})": "Kekalkan kiraan saya ({n})",
-  "Keeping mine replaces what they saved.": "Mengekalkan versi anda akan menggantikan apa yang mereka simpan.",
   "Kept for years, like toys or keys.": "Disimpan bertahun-tahun, seperti mainan atau kunci.",
   "Kept in {place} at {centre}.": "Disimpan di {place} di {centre}.",
   "Kind and checking can’t be changed.": "Jenis dan cara semak tidak boleh diubah.",
@@ -3478,6 +3486,7 @@ L.ms = {
   "No centres yet.": "Belum ada pusat.",
   "No other centre has spare": "Tiada pusat lain ada lebihan",
   "No other centre has spare.": "Tiada pusat lain ada lebihan.",
+  "No reply yet. It may have saved: check before trying again.": "Belum ada jawapan. Mungkin sudah disimpan: semak sebelum cuba lagi.",
   "No requests yet.": "Belum ada permohonan.",
   "No rooms yet.": "Belum ada bilik.",
   "None": "Tiada",
@@ -3600,6 +3609,7 @@ L.ms = {
   "Saved.": "Disimpan.",
   "Saving the photo…": "Menyimpan foto…",
   "Saving…": "Menyimpan…",
+  "Saving… one moment.": "Sedang menyimpan… sekejap.",
   "Scan": "Imbas",
   "Scan a sticker to open it here.": "Imbas pelekat untuk buka di sini.",
   "Scan an item": "Imbas barang",
@@ -3637,13 +3647,11 @@ L.ms = {
   "Share {n}": "Kongsi {n}",
   "Sheet edit": "Ubah dalam helaian",
   "Shelves and storage": "Rak dan simpanan",
-  "Show history": "Tunjuk sejarah",
   "Shown as: 1 {a} · 2 {b}": "Dipaparkan: 1 {a} · 2 {b}",
   "Sign out": "Log keluar",
   "Skip for now": "Langkau dahulu",
   "Soap and hand wash": "Sabun dan pencuci tangan",
-  "Someone else changed this item": "Orang lain mengubah barang ini",
-  "Someone else changed this item. Saving will ask what to do.": "Orang lain mengubah barang ini. Semasa simpan, anda akan ditanya apa nak buat.",
+  "Someone else changed this item. Check it before you save.": "Orang lain mengubah barang ini. Semak sebelum simpan.",
   "Someone else changed this while you were working.": "Orang lain mengubah ini semasa anda bekerja.",
   "Someone just changed this. Showing their version.": "Orang lain baru mengubah ini. Menunjukkan versi mereka.",
   "Something went wrong. Try again.": "Ada masalah. Cuba lagi.",
@@ -3697,9 +3705,6 @@ L.ms = {
   "The type is already set. Ask your admin to change it.": "Jenis sudah ditetapkan. Minta admin menukarnya.",
   "The “{name}” column is missing from the {tab} tab.": "Lajur “{name}” tiada dalam tab {tab}.",
   "The “{name}” tab is missing. Ask your admin to set the sheet up again.": "Tab “{name}” tiada. Minta admin sediakan semula helaian.",
-  "Their number is kept unless you choose yours.": "Nombor mereka dikekalkan kecuali anda pilih nombor anda.",
-  "Their version is in the form. Check it, then Save.": "Versi mereka sudah dalam borang. Semak, kemudian Simpan.",
-  "Theirs: {v}": "Mereka: {v}",
   "There’s already a centre called “{name}”.": "Sudah ada pusat bernama “{name}”.",
   "There’s already a room called “{name}”.": "Sudah ada bilik bernama “{name}”.",
   "There’s no such centre.": "Pusat itu tiada.",
@@ -3741,10 +3746,9 @@ L.ms = {
   "Undo": "Buat asal",
   "Undone.": "Sudah dibuat asal.",
   "Unit": "Unit",
+  "Updated by someone else: {fields}. Check it and save again.": "Dikemas kini oleh orang lain: {fields}. Semak dan simpan semula.",
   "Updated {when}": "Dikemas kini {when}",
   "Use Add more or Take some.": "Guna Tambah atau Ambil.",
-  "Use theirs": "Guna versi mereka",
-  "Use theirs ({n})": "Guna versi mereka ({n})",
   "Use this sheet": "Guna helaian ini",
   "Used stock": "Stok diambil",
   "Used up, like paper or glue.": "Habis digunakan, seperti kertas atau gam.",
@@ -3777,11 +3781,10 @@ L.ms = {
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
-  "You counted {a}. It now says {b}.": "Anda kira {a}. Sekarang tertera {b}.",
   "You have {amount} here.": "Anda ada {amount} di sini.",
+  "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
-  "Yours: {v}": "Anda: {v}",
   "about RM {price}": "kira-kira RM {price}",
   "at {centre} · {place}": "di {centre} · {place}",
   "bottle": "botol",
@@ -3821,6 +3824,9 @@ L.ms = {
   "{centre} has {amount}": "{centre} ada {amount}",
   "{centre} will have {amount} left.": "{centre} akan ada {amount} tinggal.",
   "{kind}. Can’t be changed.": "{kind}. Tidak boleh diubah.",
+  "{k} items changed while you counted. Their numbers were kept.": "{k} barang berubah semasa anda mengira. Nombor mereka dikekalkan.",
+  "{name} changed to {n} while you counted. We kept {n}.": "{name} berubah kepada {n} semasa anda mengira. Kami kekalkan {n}.",
+  "{name} is now {n}": "{name} kini {n}",
   "{name} is on the starter list. Confirm it?": "{name} ada dalam senarai permulaan. Sahkan?",
   "{n} added": "{n} ditambah",
   "{n} changes will send when you’re online.": "{n} perubahan akan dihantar apabila dalam talian.",
@@ -3851,11 +3857,11 @@ L.zh = {
   "About RM": "大约 RM",
   "About RM {price}.": "大约 RM {price}。",
   "Add": "添加",
+  "Add & next item": "添加并继续下一件",
   "Add Malay and Chinese names too.": "也加上马来文和中文名称。",
   "Add a centre": "添加分园",
   "Add a room": "添加房间",
   "Add an item": "添加物品",
-  "Add and add another": "添加并继续添加",
   "Add at least one item.": "至少添加一件。",
   "Add centre": "添加分园",
   "Add more": "增加",
@@ -3873,7 +3879,6 @@ L.zh = {
   "Admin PIN:": "管理员 PIN：",
   "Admin link (keep private)": "管理员链接（请保密）",
   "Admin mode": "管理员模式",
-  "All": "全部",
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
@@ -3894,10 +3899,10 @@ L.zh = {
   "Approve?": "批准？",
   "Approved": "已批准",
   "Art and craft": "美术与手工",
+  "Ask": "询问",
   "Ask to buy": "申请购买",
   "Ask to buy more": "申请再买",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
-  "Ask {centre} first": "先问问{centre}",
   "Asked to buy": "申请购买",
   "Back": "返回",
   "Balloons and banners": "气球与横幅",
@@ -3927,7 +3932,7 @@ L.zh = {
   "Change": "更改",
   "Change PIN": "更改 PIN",
   "Change type": "更改类型",
-  "Changed while you counted": "你清点时被改动",
+  "Changed while you counted:": "你清点时被改动：",
   "Changes this item at all centres.": "会在所有中心修改这件物品。",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
@@ -4023,6 +4028,7 @@ L.zh = {
   "Google Sheet": "Google 表格",
   "Half": "一半",
   "Hi, can {me} borrow some {name} from {centre}?": "你好，{me} 可以向 {centre} 借一些{name}吗？",
+  "Hi, can {me} borrow {qty} of {name} from {centre}?": "你好，{me} 可以向 {centre} 借 {qty} {name} 吗？",
   "Hide checked": "隐藏已检查",
   "History": "历史记录",
   "How many do you have?": "你有多少？",
@@ -4040,9 +4046,6 @@ L.zh = {
   "It’s fine now": "现在没问题了",
   "Just added": "刚刚添加的",
   "Keep at least one centre.": "至少要保留一个分园。",
-  "Keep mine": "保留我的",
-  "Keep my count ({n})": "保留我数的（{n}）",
-  "Keeping mine replaces what they saved.": "保留我的会覆盖对方保存的内容。",
   "Kept for years, like toys or keys.": "长期保留，如玩具或钥匙。",
   "Kept in {place} at {centre}.": "{centre} 放在 {place}。",
   "Kind and checking can’t be changed.": "类型和核对方式不能更改。",
@@ -4093,6 +4096,7 @@ L.zh = {
   "No centres yet.": "还没有分园。",
   "No other centre has spare": "其他中心都没有多余的",
   "No other centre has spare.": "其他中心都没有多余的。",
+  "No reply yet. It may have saved: check before trying again.": "还没有回应。可能已经保存：请先检查再重试。",
   "No requests yet.": "还没有申请。",
   "No rooms yet.": "还没有房间。",
   "None": "无",
@@ -4215,6 +4219,7 @@ L.zh = {
   "Saved.": "已保存。",
   "Saving the photo…": "正在保存照片…",
   "Saving…": "保存中…",
+  "Saving… one moment.": "正在保存…请稍等。",
   "Scan": "扫描",
   "Scan a sticker to open it here.": "扫描贴纸即可在此打开。",
   "Scan an item": "扫描物品",
@@ -4252,13 +4257,11 @@ L.zh = {
   "Share {n}": "分享 {n} 项",
   "Sheet edit": "表格里的修改",
   "Shelves and storage": "架子与收纳",
-  "Show history": "查看历史",
   "Shown as: 1 {a} · 2 {b}": "显示为：1 {a} · 2 {b}",
   "Sign out": "退出登录",
   "Skip for now": "先跳过",
   "Soap and hand wash": "肥皂与洗手液",
-  "Someone else changed this item": "别人修改了这件物品",
-  "Someone else changed this item. Saving will ask what to do.": "别人修改了这件物品。保存时会问你怎么处理。",
+  "Someone else changed this item. Check it before you save.": "别人修改了这件物品。保存前请先检查。",
   "Someone else changed this while you were working.": "在你操作时，别人修改了这里。",
   "Someone just changed this. Showing their version.": "别人刚修改了这里。显示对方的版本。",
   "Something went wrong. Try again.": "出了点问题，请再试一次。",
@@ -4312,9 +4315,6 @@ L.zh = {
   "The type is already set. Ask your admin to change it.": "类型已设定。请管理员来更改。",
   "The “{name}” column is missing from the {tab} tab.": "{tab} 页缺少“{name}”这一列。",
   "The “{name}” tab is missing. Ask your admin to set the sheet up again.": "缺少“{name}”页。请管理员重新设置表格。",
-  "Their number is kept unless you choose yours.": "除非你选自己的，否则保留对方的数字。",
-  "Their version is in the form. Check it, then Save.": "对方的内容已填入表单。请检查后保存。",
-  "Theirs: {v}": "对方：{v}",
   "There’s already a centre called “{name}”.": "已经有叫“{name}”的分园。",
   "There’s already a room called “{name}”.": "已经有叫“{name}”的房间了。",
   "There’s no such centre.": "没有这个分园。",
@@ -4356,10 +4356,9 @@ L.zh = {
   "Undo": "撤销",
   "Undone.": "已撤销。",
   "Unit": "单位",
+  "Updated by someone else: {fields}. Check it and save again.": "已被别人更新：{fields}。请检查后再保存。",
   "Updated {when}": "{when} 更新",
   "Use Add more or Take some.": "请用“增加”或“取用”。",
-  "Use theirs": "用对方的",
-  "Use theirs ({n})": "用对方的（{n}）",
   "Use this sheet": "使用这张表",
   "Used stock": "取用",
   "Used up, like paper or glue.": "会用完，如纸或胶水。",
@@ -4392,11 +4391,10 @@ L.zh = {
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
   "Yes": "好",
-  "You counted {a}. It now says {b}.": "你数的是 {a}。现在显示 {b}。",
   "You have {amount} here.": "这里有 {amount}。",
+  "You typed in {field}: {v}": "你在{field}输入的是：{v}",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
-  "Yours: {v}": "你的：{v}",
   "about RM {price}": "约 RM {price}",
   "at {centre} · {place}": "在 {centre} · {place}",
   "bottle": "瓶",
@@ -4436,6 +4434,9 @@ L.zh = {
   "{centre} has {amount}": "{centre} 有 {amount}",
   "{centre} will have {amount} left.": "{centre} 将剩下 {amount}。",
   "{kind}. Can’t be changed.": "{kind}。不能更改。",
+  "{k} items changed while you counted. Their numbers were kept.": "你清点时有 {k} 件被改动。已保留对方的数字。",
+  "{name} changed to {n} while you counted. We kept {n}.": "你清点时 {name} 变成了 {n}。已保留 {n}。",
+  "{name} is now {n}": "{name} 现在是 {n}",
   "{name} is on the starter list. Confirm it?": "{name} 在起步清单里。要确认吗？",
   "{n} added": "已加 {n}",
   "{n} changes will send when you’re online.": "{n} 项更改联网后会发送。",
@@ -4607,7 +4608,7 @@ function hostedCall(fn, data) {
     var done = false, ctl = window.AbortController ? new AbortController() : null;
     function finish(f, v) { if (done) return; done = true; clearTimeout(timer); f(v); }
     function offline() { return Object.assign(new Error(tl('Offline.')), { network: true }); }
-    var timer = setTimeout(function () { if (ctl) ctl.abort(); finish(reject, offline()); }, 45000);
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); var o = offline(); o.timeout = true; finish(reject, o); }, window.__rmTimeout || 45000);
     if (!BACKEND.url) return finish(reject, Object.assign(new Error(tl('This page isn’t connected to a list yet.')), { network: false }));
     fetch(BACKEND.url, {
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, data: data || {} }),
@@ -4621,10 +4622,13 @@ function hostedCall(fn, data) {
       .catch(function (e) { WHY = String(e && e.name ? e.name + ': ' : '') + String(e && e.message || e).slice(0, 140); finish(reject, offline()); });
   });
 }
-// the "saving" lock on the other buttons ends the moment the sheet has answered, whatever the answer is
+// a call that started right after busy(true) owns the lock; the lock lifts a moment after that call has answered and its page is drawn
 function call(fn, data) {
+  var owner = S.lockPending; S.lockPending = false;
   var p = callRaw(fn, data);
-  return p.then(function (v) { document.body.classList.remove('saving'); return v; }, function (e) { document.body.classList.remove('saving'); throw e; });
+  if (!owner) return p;
+  var settled = function () { if (S.locked) { S.lockSettled = true; clearTimeout(S.lockT); S.lockT = setTimeout(function () { if (S.lockSettled) lockUI(false); }, 140); } };
+  return p.then(function (v) { settled(); return v; }, function (e) { settled(); throw e; });
 }
 function callRaw(fn, data) {
   if (HOSTED) return hostedCall(fn, data);
@@ -4633,8 +4637,8 @@ function callRaw(fn, data) {
     var timer = setTimeout(function () {
       if (done) return;
       done = true;
-      reject(Object.assign(new Error(tl('Offline.')), { network: true }));
-    }, 45000);
+      reject(Object.assign(new Error(tl('Offline.')), { network: true, timeout: true }));
+    }, window.__rmTimeout || 45000);
     function finish(f, v) { if (done) return; done = true; clearTimeout(timer); f(v); }
     try {
       google.script.run
@@ -4668,7 +4672,8 @@ function pollTick() {
 window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType,
   pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
-  skelHist: function (on) { S.histLoading = {}; S.histLoading[cur().id] = !!on; render(); } };
+  skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
+  lock: lockUI };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -4801,7 +4806,7 @@ function flush() {
       mergeItems(res.items);
       if (res.conflicts && res.conflicts.length) {
         (S.pendingConf || (S.pendingConf = [])).push.apply(S.pendingConf, res.conflicts.map(function (c) { return Object.assign({ centre: job.data.centre, loc: job.data.location }, c); }));
-      }
+      } else if (job.fn === 'saveCount' && S.roomNotes) delete S.roomNotes[job.data.centre + '|' + job.data.location];
       next();
     }).catch(function (e) {
       if (e.network) { S.offline = true; return end(); }
@@ -4817,7 +4822,7 @@ function flush() {
     S.flushing = false;
     rebuild();
     softRender();
-    if (S.pendingConf && S.pendingConf.length && byIdEl('sheet').hidden) { var pc = S.pendingConf; S.pendingConf = []; openCountConflicts(pc); }
+    if (S.pendingConf && S.pendingConf.length) { var pc = S.pendingConf; S.pendingConf = []; noteCountConflicts(pc); }
     clearTimeout(retryTimer);
     if (S.outbox.length) retryTimer = setTimeout(flush, 20000);
     else if (stale) refresh();
@@ -4869,6 +4874,7 @@ try {
   // The phone's own back button: close an open sheet, otherwise go up one screen.
   if (hist) hist.setChangeHandler(function () {
     if (S.skipPop > 0) { S.skipPop--; var f = S.afterRewind; S.afterRewind = null; if (f) f(); return; }
+    if (S.locked) { try { hist.push({ n: S.stack.length }); } catch (e) { /* nothing to restore */ } toast(tl('Saving… one moment.')); return; }
     S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
     if (!byIdEl('sheet').hidden) { closeSheet(); histPush(); return; }   // the sheet closes; the screen stays, so the entry is put back
     if (S.stack.length > 1) { S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); }
@@ -4885,6 +4891,7 @@ function vConnect() {
     '<button class="btn primary" style="margin-top:14px" data-act="connect">' + tl('Connect') + '</button></div>';
 }
 function render() {
+  if (S.lockSettled) lockUI(false);
   var app = byIdEl('app'), v = cur();
   if (!S.loaded) {
     byIdEl('nav').hidden = true;
@@ -5300,9 +5307,7 @@ function vItem(v) {
     '<button class="rowbtn" data-act="addPlace"><span>' + tl('Also kept elsewhere') + '</span>' + ICON.go + '</button>' +
     (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Needs details') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div></details>' +
-    '<h2 class="sec">' + tl('History') + '</h2>' +
-    (past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>'
-      : (S.histLoading && S.histLoading[cur().id] ? skelHistory() : '<button class="btn" data-act="history">' + tl('Show history') + '</button>'));
+    '<details class="histfold" id="histfold"' + (cur().histOpen ? ' open' : '') + '><summary>' + tl('History') + '</summary>' + (cur().histOpen ? histBody(past) : '') + '</details>';
 }
 function itemActions(sel, many) {
   return isLevel(sel)
@@ -5538,7 +5543,7 @@ function vAdd(v) {
     photoField() + '</details>' +
     '<p class="err" id="f-err" hidden></p>' +
     '<div class="formend"><button class="btn primary" id="f-go" data-act="addGo">' + tl('Add') + '</button>' +
-    (v.fromAdd ? '<button class="btn" data-act="addGoMore">' + tl('Add and add another') + '</button>' : '') + '</div>';
+    (v.fromAdd ? '<button class="btn" data-act="addGoMore">' + tl('Add & next item') + '</button>' : '') + '</div>';
 }
 // Two names look the same when they have the same words (a typo is allowed in longer words, and the last word may still be
 // being typed). A one- or two-letter word or a number must match exactly, so "Test C" is not "Test A".
@@ -5595,6 +5600,18 @@ function centreLines(rows) {
     return { centre: c.centre, qty: qty, text: same ? amount(qty, c.rows[0].unit) : c.rows.map(amountOf).join(' + ') };
   });
 }
+// the message to a centre carries the number typed so far, so it is right whichever centre is chosen
+function askHref(centre, name) {
+  var q = parseQty(val('f-qty')), unit = pluralUnit(val('f-unit')) || 'pcs', me = myCentre();
+  var text = q >= 1 ? tl('Hi, can {me} borrow {qty} of {name} from {centre}?', { me: me, qty: amount(q, unit), name: name, centre: centre })
+    : tl('Hi, can {me} borrow some {name} from {centre}?', { me: me, name: name, centre: centre });
+  return 'https://wa.me/?text=' + encodeURIComponent(text);
+}
+function refreshAskLinks() {
+  var box = $('.askrows');
+  if (!box) return;
+  [].forEach.call(box.querySelectorAll('a[data-centre]'), function (a) { a.href = askHref(a.dataset.centre, box.dataset.name); });
+}
 function forLineHtml() { return esc(tl('For {centre}', { centre: F.centre })) + ' · <button type="button" class="linkbtn" data-act="reqCentre">' + esc(tl('Change')) + '</button>'; }
 function vRequest(v) {
   var g = v.key ? S.gmap[v.key] : null;
@@ -5606,10 +5623,12 @@ function vRequest(v) {
       others = centreLines(g.rows.filter(function (r) { return r.centre !== mine && (isLevel(r) ? r.qty === 3 : r.qty > r.min); })),
       hereTxt = here.length ? '<br>' + esc(tl('You have {amount} here.', { amount: here[0].text })) : '';
     if (others.length) {
-      var top1 = others.slice().sort(function (a, b) { return b.qty - a.qty; })[0];
-      have = '<div class="similar"><b>' + esc(tl('Other centres have spare:')) + '</b><br>' +
-        others.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: r.text })); }).join('<br>') + hereTxt + '</div>' +
-        '<a class="btn" id="askfirst" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(tl('Hi, can {me} borrow some {name} from {centre}?', { me: mine, name: g.name, centre: top1.centre })) + '">' + esc(tl('Ask {centre} first', { centre: top1.centre })) + '</a>';
+      others.sort(function (a, b) { return b.qty - a.qty || a.centre.localeCompare(b.centre); });   // most spare first; equal amounts both show, in name order
+      have = '<div class="similar"><b>' + esc(tl('Other centres have spare:')) + '</b><div class="askrows" data-name="' + esc(g.name) + '">' +
+        others.map(function (r) {
+          return '<div class="askrow"><span>' + esc(tl('{centre} has {amount}', { centre: r.centre, amount: r.text })) + '</span>' +
+            '<a class="btn sm" target="_blank" rel="noopener" data-centre="' + esc(r.centre) + '" href="' + askHref(r.centre, g.name) + '">' + esc(tl('Ask')) + '</a></div>';
+        }).join('') + '</div>' + (hereTxt ? esc(tl('You have {amount} here.', { amount: here[0].text })) : '') + '</div>';
     } else {
       have = '<div class="similar"><b>' + esc(tl('No other centre has spare.')) + '</b><br>' + esc(tl('This will be a new purchase.')) + hereTxt + '</div>';
     }
@@ -5641,9 +5660,10 @@ function fieldText(k, v) { return k === 'cat' || k === 'subtype' ? (v ? tl(v) : 
 function editDrift() {
   var v = cur(), box = byIdEl('edit-drift'), it = S.byId[v.id];
   if (!box || !it || !v.base) return;
+  if (v.conflictHtml) { box.innerHTML = v.conflictHtml; box.hidden = false; return; }
   var now = editBase(it), moved = Object.keys(now).filter(function (k) { return String(now[k]) !== String(v.base[k]); });
   box.hidden = !moved.length;
-  if (moved.length) box.textContent = tl('Someone else changed this item. Saving will ask what to do.');
+  if (moved.length) box.textContent = tl('Someone else changed this item. Check it before you save.');
 }
 function vEdit(v) {
   var it = S.byId[v.id];
@@ -5716,9 +5736,11 @@ function vLow() {
   var n = lows.length + broken.length;
   var sl = lows.filter(function (it) { return on[it.id]; }), sb = broken.filter(function (it) { return on[it.id]; }), shareN = sl.length + sb.length;
   return top(false) + '<h1 class="title">' + tl('Running low') + '</h1>' +
-    (n ? '<div class="lowbar"><p class="count">' + esc(pick ? tl('{n} selected', { n: shareN }) : tl('{n} running low', { n: lows.length })) + '</p><div class="tools">' +
-      (pick ? '<button type="button" class="chip tbtn" data-act="lowAllSel">' + ICON.pick + '<span>' + (shareN === n ? tl('None') : tl('All')) + '</span></button>' : (lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '')) +
-      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + ICON.pick + '<span>' + (pick ? tl('Done') : tl('Select')) + '</span></button></div></div>' : '') +
+    (n ? '<div class="lowbar">' + (pick
+        ? '<button type="button" class="triall" data-act="lowAllSel" role="checkbox" aria-checked="' + (shareN === n ? 'true' : shareN ? 'mixed' : 'false') + '"><i class="pk2 ' + (shareN === n ? 'on' : shareN ? 'mixed' : '') + '" aria-hidden="true"></i><span>' + esc(tl('{n} selected', { n: shareN })) + '</span></button>'
+        : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '<div class="tools">' +
+      (!pick && lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
+      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.done : ICON.pick) + '<span>' + (pick ? tl('Done') : tl('Select')) + '</span></button></div></div>' : '') +
     (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
     (lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
       var spare = spareOf(it);
@@ -5906,6 +5928,7 @@ function vRoom(v) {
       '<input id="rq" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + esc(tl('Search in this room')) + '" placeholder="' + esc(tl('Search this room…')) + '" value="' + esc(S.rq || '') + '">' +
       '<button class="clear" data-act="clearRq" aria-label="' + esc(tl('Clear')) + '"' + (S.rq ? '' : ' hidden') + '>' + ICON.x + '</button></div>' : '') +
     (chipsOn.length ? '<div class="seg fchips">' + chipsOn.map(function (o) { return '<button class="fchip" data-act="roomFilterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>'; }).join('') + '</div>' : '') +
+    ((S.roomNotes || {})[v.centre + '|' + v.loc] ? '<p class="note" role="status"><b>' + esc(tl('Changed while you counted:')) + '</b><br>' + S.roomNotes[v.centre + '|' + v.loc].map(esc).join('<br>') + '</p>' : '') +
     '<div id="roomlist">' + roomListHtml(v) + '</div>' +
     (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button></div>' : '');
 }
@@ -5969,6 +5992,17 @@ function vPick() {
 var REQ_BADGE = { 'New': 'plain', 'Approved': 'ok', 'Bought': 'ok', 'Declined': 'low' };
 function skelCard() { return '<div class="skelcard"><span class="skel" style="height:18px;width:55%"></span><span class="skel" style="height:13px;width:85%"></span><span class="skel" style="height:22px;width:30%"></span></div>'; }
 function skelRequests() { return '<div class="skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="list">' + skelCard() + skelCard() + skelCard() + '</div></div>'; }
+function histBody(past) {
+  return past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>' : skelHistory();
+}
+// the fold's contents are swapped in place: no redraw of the page, so nothing jumps and a fast second tap cannot race it
+function fillHistFold(v) {
+  var d = byIdEl('histfold');
+  if (!d || cur() !== v) return;
+  var sum = d.querySelector('summary'), past = S.history[v.id];
+  [].slice.call(d.children).forEach(function (c) { if (c !== sum) d.removeChild(c); });
+  if (v.histOpen) d.insertAdjacentHTML('beforeend', histBody(past));
+}
 function skelHistory() { return '<div class="card skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="skelcard"><span class="skel" style="height:13px;width:90%"></span><span class="skel" style="height:13px;width:70%"></span><span class="skel" style="height:13px;width:80%"></span></div></div>'; }
 function vRequests() {
   var body;
@@ -6525,47 +6559,78 @@ function formError(msg) {
   else if (msg) toast(msg);
 }
 // the button that was just tapped shows a spinner and its label changes; a form's own save button if the tap was not on a button
-var busyEl = null, busyT = 0;
+var busyEl = null;
+// The lock belongs to ONE call: the first call made after busy(true). When that call has answered, the lock is released a moment
+// after the screen has been redrawn (render() releases it too), so the layer lifts together with the new screen.
+function lockUI(on) {
+  var el = byIdEl('lock');
+  clearTimeout(S.lockWD);
+  if (on) {
+    S.locked = true; S.lockSettled = false; S.lockPending = true;
+    if (el) el.hidden = false;
+    document.body.classList.add('saving');
+    S.lockWD = setTimeout(function () { lockUI(false); toast(tl('No reply yet. It may have saved: check before trying again.')); }, 55000);
+  } else {
+    S.locked = false; S.lockSettled = false; S.lockPending = false;
+    if (el) el.hidden = true;
+    document.body.classList.remove('saving');
+  }
+}
 function busy(on, label) {
   if (on) {
     var b = S.lastBtn && S.lastBtnAt > Date.now() - 1500 && document.body.contains(S.lastBtn) && /^(BUTTON|A)$/.test(S.lastBtn.tagName) ? S.lastBtn : (byIdEl('f-go') || byIdEl('m-go'));
     busyEl = b;
+    lockUI(true);
     if (!b) return;
     b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true');
-    document.body.classList.add('saving'); clearTimeout(busyT); busyT = setTimeout(function () { document.body.classList.remove('saving'); }, 60000);
   } else {
-    document.body.classList.remove('saving');
+    lockUI(false);
     var e = busyEl; busyEl = null;
     if (!e) return;
     e.classList.remove('loading'); e.disabled = false; e.removeAttribute('aria-busy');
   }
 }
+function applyTheirs(conflicts, it) {
+  conflicts.forEach(function (x) {
+    var k = x.field;
+    if (k === 'notes') byIdEl('f-notes').value = it.notes || '';
+    else if (k === 'loc') byIdEl('f-loc').value = it.loc;
+    else if (k === 'name' && byIdEl('f-name')) byIdEl('f-name').value = it.name;
+    else if (k === 'alt' && byIdEl('f-alt')) byIdEl('f-alt').value = it.alt || '';
+    else if (k === 'unit' && byIdEl('f-unit')) byIdEl('f-unit').value = it.unit || '';
+    else if (k === 'min' && byIdEl('f-min')) byIdEl('f-min').value = it.min || 0;
+    else if (k === 'cat' || k === 'subtype') { F.cat = it.cat || ''; F.sub = it.subtype || ''; var ft = byIdEl('f-type'); if (ft) ft.innerHTML = typeInner(); }
+    else if (k === 'centre') { F.centre = it.centre; [].forEach.call(document.querySelectorAll('[data-group=centre] .chip'), function (b) { b.classList.toggle('on', b.dataset.val === F.centre); }); }
+  });
+}
+// the second person is not asked anything: the fields someone else changed show THEIR version, a note says so (and what was typed,
+// so it can be copied), the rest of the edits stay, and one tap on Save finishes
 function editConflict(data) {
   busy(false);
   mergeItems(data.items); rebuild();
-  var it = data.items[0];
-  M = { type: 'editconf', conflicts: data.conflicts, itemId: it.id };
-  openSheet('<h2>' + esc(tl('Someone else changed this item')) + '</h2><p class="sub">' + esc(shown(it)) + '</p>' +
-    data.conflicts.map(function (c) {
-      return '<div class="confrow"><b>' + esc(FIELD_LABEL(c.field)) + '</b><p>' + esc(tl('Theirs: {v}', { v: fieldText(c.field, c.theirs) })) + '</p><p>' + esc(tl('Yours: {v}', { v: fieldText(c.field, c.yours) })) + '</p></div>';
-    }).join('') +
-    '<button class="btn primary" id="m-go" data-act="editUseTheirs">' + tl('Use theirs') + '</button>' +
-    '<button class="btn quiet" data-act="editKeepMine">' + tl('Keep mine') + '</button>' +
-    '<p class="help">' + tl('Keeping mine replaces what they saved.') + '</p>');
+  var it = data.items[0], v = cur();
+  applyTheirs(data.conflicts, it);
+  v.base = editBase(it);
+  v.conflictHtml = '<b>' + esc(tl('Updated by someone else: {fields}. Check it and save again.', { fields: data.conflicts.map(function (c) { return FIELD_LABEL(c.field); }).join(', ') })) + '</b>' +
+    data.conflicts.map(function (c) { return '<br>' + esc(tl('You typed in {field}: {v}', { field: FIELD_LABEL(c.field), v: fieldText(c.field, c.yours) })); }).join('');
+  editDrift();
+  var box = byIdEl('edit-drift'); if (box && box.scrollIntoView) box.scrollIntoView({ block: 'center' });
 }
-function openCountConflicts(list) {
-  M = { type: 'countconf', list: list };
-  openSheet('<h2>' + esc(tl('Changed while you counted')) + '</h2><p class="sub">' + esc(tl('Their number is kept unless you choose yours.')) + '</p>' +
-    list.map(function (c, i) {
-      var said = function (x) { return c.level ? LEVEL_LABELS[x] : x; };
-      return '<div class="confrow"><b>' + esc(c.name) + '</b><p>' + esc(tl('You counted {a}. It now says {b}.', { a: said(c.count), b: said(c.current) })) + '</p>' +
-        '<button class="btn primary" data-act="confTheirs" data-i="' + i + '">' + esc(tl('Use theirs ({n})', { n: said(c.current) })) + '</button>' +
-        '<button class="btn quiet" data-act="confMine" data-i="' + i + '">' + esc(tl('Keep my count ({n})', { n: said(c.count) })) + '</button></div>';
-    }).join(''));
+// a room check that came back with numbers someone changed meanwhile: their numbers were kept; say so, here and on that room's page
+function noteCountConflicts(list) {
+  list.forEach(function (c) {
+    var key = c.centre + '|' + c.loc, said = function (x) { return c.level ? LEVEL_LABELS[x] : x; };
+    var arr = (S.roomNotes || (S.roomNotes = {}))[key] || (S.roomNotes[key] = []);
+    arr.push(tl('{name} is now {n}', { name: c.name, n: said(c.current) }));
+  });
+  toast(list.length === 1
+    ? tl('{name} changed to {n} while you counted. We kept {n}.', { name: list[0].name, n: list[0].level ? LEVEL_LABELS[list[0].current] : list[0].current })
+    : tl('{k} items changed while you counted. Their numbers were kept.', { k: list.length }));
+  if (cur().name === 'room') softRender();
 }
 function failed(e) {
   busy(false);
-  formError(e.network ? tl('Offline. Try again later.') : e.message);
+  formError(e.timeout ? tl('No reply yet. It may have saved: check before trying again.') : e.network ? tl('Offline. Try again later.') : e.message);
 }
 function shrink(file) {
   return new Promise(function (resolve, reject) {
@@ -6658,11 +6723,11 @@ var ACT = {
     }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again later.') : e.message); });
   },
   reqRetry: function () { S.reqErr = false; S.requests = null; render(); loadRequests(); },
+  // (the fold itself is opened by the page; a late answer only fills the cache, and is drawn only if that item's page is still showing)
   history: function () {
-    var id = cur().id;
-    (S.histLoading || (S.histLoading = {}))[id] = true; softRender();
-    call('getHistory', { itemId: id }).then(function (res) { S.histLoading[id] = false; S.history[id] = res.history; softRender(); })
-      .catch(function (e) { S.histLoading[id] = false; softRender(); toast(e.network ? tl('Offline.') : e.message); });
+    var v = cur(), id = v.id;
+    call('getHistory', { itemId: id }).then(function (res) { S.history[id] = res.history; if (v.histOpen) fillHistFold(v); })
+      .catch(function (e) { if (cur() === v) toast(e.network ? tl('Offline.') : e.message); });
   },
 
   toRequest: function () { go({ name: 'request', text: S.q.trim() }); },
@@ -7015,10 +7080,17 @@ var ACT = {
       } else afterAdd(from, { name: 'item', key: RMSearch.norm(it.name), id: it.id });
       toast(res.photoFailed ? tl('Added, but the photo didn’t save.') : tl('Added.'));
     }).catch(function (e) {
-      if (e.data && e.data.duplicateId && S.byId[e.data.duplicateId]) {
-        var d = S.byId[e.data.duplicateId];
-        afterAdd(from, { name: 'item', key: RMSearch.norm(d.name), id: d.id });
-        return toast(tl('It’s already on the list here. Use “Add more”.'));
+      if (e.data && e.data.duplicateId) {
+        // it is already there: either it was here before, or the answer to our own first try was lost. Open it, reading the list first if need be.
+        var open = function () {
+          var d = S.byId[e.data.duplicateId];
+          if (!d) return failed(e);
+          busy(false);
+          afterAdd(from, { name: 'item', key: RMSearch.norm(d.name), id: d.id });
+          toast(tl('It’s already on the list here. Use “Add more”.'));
+        };
+        if (S.byId[e.data.duplicateId]) return open();
+        return call('getData', {}).then(function (dd) { applyData(dd); saveData(); open(); }).catch(function () { failed(e); });
       }
       failed(e);
     });
@@ -7079,43 +7151,6 @@ var ACT = {
       failed(e);
     });
   },
-  // the safe answer is the first button: take their version into the form and let the person look before saving again
-  editUseTheirs: function () {
-    var c = M.conflicts || [], it = S.byId[M.itemId];
-    closeSheet();
-    if (!it) return;
-    c.forEach(function (x) {
-      var k = x.field, v = it[k === 'loc' ? 'loc' : k];
-      if (k === 'notes') byIdEl('f-notes').value = it.notes || '';
-      else if (k === 'loc') byIdEl('f-loc').value = it.loc;
-      else if (k === 'name' && byIdEl('f-name')) byIdEl('f-name').value = it.name;
-      else if (k === 'alt' && byIdEl('f-alt')) byIdEl('f-alt').value = it.alt || '';
-      else if (k === 'unit' && byIdEl('f-unit')) byIdEl('f-unit').value = it.unit || '';
-      else if (k === 'min' && byIdEl('f-min')) byIdEl('f-min').value = it.min || 0;
-      else if (k === 'cat' || k === 'subtype') { F.cat = it.cat || ''; F.sub = it.subtype || ''; var ft = byIdEl('f-type'); if (ft) ft.innerHTML = typeInner(); }
-      else if (k === 'centre') { F.centre = it.centre; [].forEach.call(document.querySelectorAll('[data-group=centre] .chip'), function (b) { b.classList.toggle('on', b.dataset.val === F.centre); }); }
-    });
-    cur().base = editBase(it);
-    editDrift();
-    toast(tl('Their version is in the form. Check it, then Save.'));
-  },
-  editKeepMine: function () {
-    var it = S.byId[M.itemId];
-    closeSheet();
-    if (!it) return;
-    cur().base = editBase(it);   // from here the sheet's current values are what this save is measured against
-    ACT.editGo();
-  },
-  // a room check that came back with numbers someone changed meanwhile: one line each, their number stands unless chosen otherwise
-  confTheirs: function (el) { var l = (M.list || []); l.splice(Number(el.dataset.i), 1); if (!l.length) closeSheet(); else openCountConflicts(l); },
-  confMine: function (el) {
-    var l = (M.list || []), c = l[Number(el.dataset.i)];
-    if (!c) return;
-    enqueue('saveCount', { centre: c.centre, location: c.loc, counts: [{ id: c.id, count: c.count, base: c.current }] });
-    l.splice(Number(el.dataset.i), 1);
-    if (!l.length) closeSheet(); else openCountConflicts(l);
-  },
-
   lowSortOpen: function () {
     M = { type: 'lowsort' };
     openSheet('<h2>' + tl('Sort') + '</h2>' + [['', tl('A to Z')], ['u', tl('Lowest first')]].map(function (o) {
@@ -7214,6 +7249,7 @@ var ACT = {
       var el = byIdEl('c-' + id), n = el ? parseQty(el.value) : NaN;
       if (!isNaN(n)) counts.push({ id: id, count: n, base: F.was[id] });
     });
+    if (S.roomNotes) delete S.roomNotes[v.centre + '|' + v.loc];
     enqueue('saveCount', { centre: v.centre, location: v.loc, counts: counts });
     if (S.checkDraft) delete S.checkDraft[v.centre + '|' + v.loc];
     back();
@@ -7474,6 +7510,7 @@ document.addEventListener('click', function (e) {
   var el = e.target.closest('[data-act]');
   // the next tap anywhere puts the last message away, so it never sits on top of a button
   if (!e.target.closest('#toast')) byIdEl('toast').hidden = true;
+  if (S.locked) { e.preventDefault(); return; }
   if (!el || el.disabled) return;
   S.lastBtn = el; S.lastBtnAt = Date.now();
   var fn = ACT[el.dataset.act];
@@ -7491,16 +7528,25 @@ document.addEventListener('input', function (e) {
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id === 'f-parts') F.parts = t.value;
-  else if (t.id === 'f-unit') unitPrev();
+  else if (t.id === 'f-unit') { unitPrev(); refreshAskLinks(); }
+  else if (t.id === 'f-qty') refreshAskLinks();
   else if (t.id && t.id.indexOf('c-') === 0) countChanges();
   if (cur().name === 'add' && cur().fromAdd) addDraftSave();
 });
+document.addEventListener('toggle', function (e) {
+  var d = e.target;
+  if (!d || d.id !== 'histfold') return;
+  var v = cur(); v.histOpen = d.open;
+  if (d.open) { delete S.history[v.id]; fillHistFold(v); ACT.history(); }   // always read it fresh; a skeleton shows meanwhile
+  else fillHistFold(v);
+}, true);
 document.addEventListener('focusout', function (e) {
   var t = e.target;
   if (t && t.id === 'f-unit') { var pl = pluralUnit(t.value); if (pl !== t.value.trim()) t.value = pl; unitPrev(); }
 });
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && e.target.id === 'q') e.target.blur();
+  if (S.locked && e.key === 'Enter') { e.preventDefault(); return; }
   if (e.key === 'Enter' && e.target.id === 'm-pin') ACT.pinGo();
   if (e.key === 'Escape' && !byIdEl('sheet').hidden) closeSheet();
 });
