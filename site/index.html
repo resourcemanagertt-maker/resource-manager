@@ -3802,6 +3802,7 @@ L.ms = {
   "That’s too big.": "Terlalu besar.",
   "The Google Sheet won’t open. Tell your admin.": "Google Sheet tidak dapat dibuka. Beritahu admin.",
   "The PIN is 6 digits.": "PIN ialah 6 digit.",
+  "The list couldn’t open the requests.": "Senarai tidak dapat membuka permintaan.",
   "The list is busy. Try again in a moment.": "Senarai sibuk. Cuba sebentar lagi.",
   "The list sent back an error ({n}).": "Senarai menghantar ralat ({n}).",
   "The list sent back something unexpected.": "Senarai menghantar sesuatu yang tidak dijangka.",
@@ -4445,6 +4446,7 @@ L.zh = {
   "That’s too big.": "数字太大了。",
   "The Google Sheet won’t open. Tell your admin.": "Google 表格打不开，请告诉管理员。",
   "The PIN is 6 digits.": "PIN 是 6 位数字。",
+  "The list couldn’t open the requests.": "列表无法打开申请。",
   "The list is busy. Try again in a moment.": "清单正忙，请稍后再试。",
   "The list sent back an error ({n}).": "清单返回了错误（{n}）。",
   "The list sent back something unexpected.": "清单返回了意料之外的内容。",
@@ -5070,6 +5072,10 @@ document.addEventListener('toggle', function (e) {
 }, true);
 function afterRender(v) {
   if (v.name === 'countList') restoreCheck(v);
+  if (v.name === 'edit' && !v._focused) {   // an item that still needs a name: the cursor is in the name box, so typing can start at once
+    var nb = byIdEl('f-nname');
+    if (nb) { v._focused = true; nb.focus(); try { nb.scrollIntoView({ block: 'center' }); } catch (e) { /* older browsers */ } }
+  }
   if (v.name === 'add' && v._draft) fillAddDraft(v._draft);
 }
 // Refresh what is on screen without wiping something the person is typing
@@ -6243,7 +6249,7 @@ function reqCard(r) {
 }
 function vRequests() {
   var body;
-  if (S.reqErr) body = '<div class="card empty"><h2>' + tl('Can’t reach the list.') + '</h2><button class="btn" data-act="reqRetry">' + tl('Try again') + '</button></div>';
+  if (S.reqErr) body = '<div class="card empty"><h2>' + (S.reqMsg ? tl('The list couldn’t open the requests.') : tl('Can’t reach the list.')) + '</h2>' + (S.reqMsg ? '<p class="sub">' + esc(S.reqMsg) + '</p>' : '') + '<button class="btn" data-act="reqRetry">' + tl('Try again') + '</button></div>';
   else if (!S.requests) body = skelRequests();
   else {
     var list = S.requests.filter(function (r) { return !S.admin || S.allCentres || r.centre === myCentre(); });
@@ -7779,13 +7785,17 @@ var ACT = {
 };
 function loadRequests() {
   var t0 = Date.now();
-  S.reqErr = false;
+  S.reqErr = false; S.reqMsg = '';
   call('getRequests', { phone: phoneCode(), pin: S.admin ? S.pin : '' }).then(function (res) {
     var show = function () { S.requests = res.requests; if (cur().name === 'requests' || cur().name === 'admin') render(); };
     var el = Date.now() - t0;
     if (!S.requests && el > 150 && el < 550) setTimeout(show, 550 - el);   // a skeleton that appeared stays long enough to be read as one
     else show();
-  }).catch(function (e) { S.reqErr = !S.requests; if (cur().name === 'requests') { if (S.reqErr) render(); else toast(e.network ? tl('Offline.') : e.message); } });
+  }).catch(function (e) {
+    S.reqErr = !S.requests;
+    S.reqMsg = e && !e.network && e.data ? e.message : '';   // a refusal from the list itself says why; only a real network failure is "can't reach"
+    if (cur().name === 'requests') { if (S.reqErr) render(); else toast(e.network ? tl('Offline.') : e.message); }
+  });
 }
 
 // ---------- listeners ----------

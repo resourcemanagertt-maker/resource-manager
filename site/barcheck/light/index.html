@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f4f3ef">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Bar test: light colour</title>
+<style>
+  :root{--bg:#f4f3ef;--ink:#1e1d1a;--card:#fff;--line:#dfddd5;--brand:#0113a1;--mut:#6b675d}
+  @media (prefers-color-scheme:dark){:root{--bg:#1a1815;--ink:#f1eee6;--card:#24211d;--line:#3a362f;--brand:#8aa0ff;--mut:#a8a396}}
+  body{font:16px/1.45 system-ui,sans-serif;margin:0;padding:16px 16px 40px;background:var(--bg);color:var(--ink);max-width:560px}
+  h1{font-size:22px;margin:8px 0}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px}
+  button{font:inherit;width:100%;box-sizing:border-box;min-height:52px;padding:10px 14px;border-radius:999px;border:1px solid var(--brand);background:transparent;color:var(--ink);font-weight:600;margin-top:10px}
+  button.on{background:var(--brand);color:#fff}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}
+  dt{color:var(--mut)}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+  a{color:var(--brand)}
+</style>
+</head>
+<body>
+<h1>Bar test: light colour</h1>
+<p>This test app's manifest says: <b>theme_color is light (#f4f3ef)</b>.</p>
+<div class="card"><dl>
+  <dt>Opened as</dt><dd id="mode">…</dd>
+  <dt>Phone is in</dt><dd id="scheme">…</dd>
+  <dt>Top bar colour set by the page</dt><dd id="meta">…</dd>
+</dl></div>
+<div class="card">
+  <p><b>Step 1.</b> Before tapping anything, look at the top bar and the bottom bar and note their colours.</p>
+  <p><b>Step 2.</b> Tap a colour, then look at both bars again.</p>
+  <button data-c="#d32f2f">Red</button>
+  <button data-c="#2e7d32">Green</button>
+  <button data-c="#f4f3ef">Light (cream)</button>
+  <button data-c="#1a1815">Dark (near black)</button>
+</div>
+<div class="card">
+  <p><b>Tell me:</b> opened from the home screen, what were the top and bottom bars at step 1 (light, dark or other), and did either change at step 2? Then switch your phone between light and dark mode and tell me if the bottom bar followed.</p>
+  <p><a href="../../">Back to the app</a></p>
+</div>
+<script>
+(function () {
+  var m = document.querySelector('meta[name=theme-color]');
+  function cur() { return m ? m.getAttribute('content') : 'none (no tag)'; }
+  function show() {
+    var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+    document.getElementById('mode').textContent = standalone ? 'Installed app' : 'Chrome tab';
+    document.getElementById('scheme').textContent = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'Dark mode' : 'Light mode';
+    document.getElementById('meta').textContent = cur();
+    [].forEach.call(document.querySelectorAll('button[data-c]'), function (b) { b.classList.toggle('on', b.dataset.c === cur()); });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('button[data-c]');
+    if (!b) return;
+    if (!m) { m = document.createElement('meta'); m.name = 'theme-color'; document.head.appendChild(m); }
+    m.setAttribute('content', b.dataset.c);
+    show();
+  });
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', show);
+  show();
+})();
+</script>
+</body>
+</html>
