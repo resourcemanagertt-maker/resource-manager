@@ -478,13 +478,10 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes spinr{to{transform:rotate(-360deg)}}
 @keyframes show{to{opacity:1}}
-@keyframes slide{0%{left:-40%}100%{left:100%}}
 /* the refresh arrows run counter-clockwise, so the spin does too */
 .ib.spin svg,.rowbtn.spin .lead svg{animation:spinr .8s linear infinite}
 /* a button that is waiting: a spinner shows after a third of a second, so quick taps do not flicker */
-.btn.loading::before,.chip.loading::before{content:"";flex:none;width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;opacity:0;animation:spin .8s linear infinite,show 0s .3s forwards;margin-right:8px}
-#loadbar{position:fixed;left:0;right:0;top:0;height:3px;z-index:60;overflow:hidden;background:transparent}
-#loadbar::after{content:"";position:absolute;top:0;height:100%;width:40%;background:var(--brand);animation:slide 1s ease-in-out infinite}
+.btn.loading::before,.chip.loading::before{content:"";flex:none;width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
 .splash:not(:has(.btn))::before{content:"";display:block;width:28px;height:28px;margin:0 auto var(--s3);border:3px solid var(--line-strong);border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite}
 .roomrow{display:flex;align-items:center;gap:var(--s2);border-bottom:1px solid var(--line);padding-right:var(--s3)}
 .roomrow:last-child{border-bottom:0}
@@ -522,6 +519,57 @@ details.settings summary{flex-direction:row!important;align-items:center!importa
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
 .grid2 .chip{justify-content:space-between;text-align:left;min-width:0;gap:6px}
 .grid2 .chip > span{overflow-wrap:anywhere;white-space:normal;line-height:1.2;text-align:left}
+/* ===== v28 design system: 16 px sides; a title has 4 px before its sub-line and 16 px before the first block; rows 16 px in; sections 28 above, 8 below ===== */
+h1.title{margin:0 0 var(--s4)}
+h1.title:has(+ .sub){margin-bottom:var(--s1)}
+.sub{margin:0 0 var(--s4)}
+.hero{margin:var(--s3) 0 var(--s4)}
+.pagehead{display:flex;align-items:center;gap:var(--s3);margin:var(--s1) 0 var(--s4)}
+.pagehead .ph-text{flex:1;min-width:0}
+.pagehead h1.title{margin:0;overflow-wrap:break-word}
+.pagehead .sub{margin:var(--s1) 0 0}
+.pagehead .tools,.pagehead > .ib{flex:none}
+.pagehead .tools{display:flex;gap:var(--s2);flex-wrap:nowrap}
+#app > h1.title + *,#app > .sub + *,#app > .pagehead + *,#app > .hero + *{margin-top:0!important}
+.sec{margin:28px 0 var(--s2)}
+.search{margin-bottom:var(--s4)}
+#results > :first-child{margin-top:0}
+#results > .sec:first-child{margin-top:var(--s3)}
+.list + .btn,.cats + .btn,div.card + .btn,.card.rows + .btn{margin-top:var(--s4)}
+/* one list row: the card gives 16 px at each side, the row adds none */
+.rowbtn{min-height:56px;padding:var(--s2) 0}
+.roomrow{padding:0;gap:0}
+.roomrow .rowmain{padding:var(--s2) 0;min-height:56px;gap:var(--s3)}
+.rowbtn svg,.roomrow .rowmain svg{width:20px;height:20px;flex:none}
+.roomrow .rowmain small .due{display:inline-flex;vertical-align:middle;margin-right:6px}
+.roomrow .rowmain small .due i{width:8px;height:8px}
+.place{padding:var(--s3) 0}
+.place:last-child{border-bottom:0}
+div.card:has(> .place){overflow:hidden}
+.place.on{background:transparent}
+/* folds: label and plus on one line, a light rule like every other divider */
+summary,details.settings summary,details.more summary{display:flex;flex-direction:row;align-items:center;justify-content:space-between;min-height:56px;padding:0}
+summary::after,details.settings summary::after{content:"+";position:static;margin:0 0 0 auto;width:24px;text-align:center;font-size:22px;line-height:1;font-weight:400;transform:none}
+details.settings{border-top:1px solid var(--line-strong)}
+details.settings summary small{display:none}
+/* Check: one OK, one size */
+.cline .okb,.cline.lvrow .cctl .okb{flex:0 0 96px;width:96px;min-width:96px;margin-left:auto}
+html[data-text="1"] .cline .okb,html[data-text="2"] .cline .okb,html[data-text="1"] .cline.lvrow .cctl .okb,html[data-text="2"] .cline.lvrow .cctl .okb{flex:1 0 100%;width:100%;margin-left:0}
+/* sheets never grow taller than the screen at Large and Larger text (the page is zoomed, the height limit was not) */
+html[data-text="1"] #sheet .panel{max-height:calc(92vh / 1.15)}
+html[data-text="2"] #sheet .panel{max-height:calc(92vh / 1.3)}
+.grid2 .chip > .cl{display:flex;align-items:flex-start;gap:6px;min-width:0;text-align:left;line-height:1.2}
+.grid2 .chip > .cl .ce{flex:none;font-style:normal}
+.grid2 .chip > .cl > span{overflow-wrap:normal;word-break:normal;hyphens:auto}
+html[data-text="1"] #sheet .grid2,html[data-text="2"] #sheet .grid2{grid-template-columns:1fr}
+details.more,details[data-keep],details.notwhat{border-top:1px solid var(--line-strong)}
+.help:empty{display:none}
+/* a waiting button keeps its size: the label is hidden and a spinner sits in the middle */
+.btn.loading,.chip.loading,.ib.loading{position:relative;color:transparent!important;pointer-events:none;--spin:var(--ink)}
+.btn.primary.loading{--spin:var(--on-brand)}
+.chip.on.loading{--spin:var(--paper)}
+.btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
+.btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
 /* v26: layouts that hold at Large and Larger text (the page is zoomed, so it is narrower in CSS pixels) */
 .item .name{overflow-wrap:break-word;hyphens:auto}
 .tidyhead{display:flex;align-items:center;gap:var(--s2)}
@@ -538,22 +586,18 @@ details.settings summary{flex-direction:row!important;align-items:center!importa
 .place .qty{margin-left:auto}
 .cline .cctl{flex-wrap:wrap}
 .cline .cctl .stepper{flex:1 1 150px}
-.cline .okb{flex:1 1 88px}
 #toast button{color:inherit}
 html[data-text="1"] .tile,html[data-text="2"] .tile:not(.big){width:44px;height:44px}
 html[data-text="1"] .tile:not(.big) .emo,html[data-text="2"] .tile:not(.big) .emo{font-size:24px}
 html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
-html[data-text="1"] .roomrow .rowmain,html[data-text="2"] .roomrow .rowmain{padding:var(--s2)}
 #cam .camwait{inset:auto;left:10%;right:10%;top:28%;height:28%;position:absolute}
 .tilebtn{position:relative;flex:none;background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
-.roomrow .rowmain{padding-right:var(--s2)}
 .roomrow .rowmain svg{flex:none;width:20px;height:20px;color:var(--ink)}
 .roomrow .rowmain > span:first-child{flex:1;min-width:0}
 </style>
 </head>
 <body>
-<div id="loadbar" hidden role="progressbar" aria-label="Loading"></div>
 <div id="banner"></div>
 <div id="app"><div class="splash">Getting the list…</div></div>
 <nav id="nav" hidden></nav>
@@ -3131,7 +3175,6 @@ L.ms = {
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
-  "All here": "Semua ada",
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
   "Already have:": "Sudah ada:",
@@ -3717,7 +3760,6 @@ L.zh = {
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
-  "All here": "都在",
   "All rooms": "所有房间",
   "Almost out": "快没了",
   "Already have:": "已有：",
@@ -4433,19 +4475,7 @@ function hostedCall(fn, data) {
       .catch(function (e) { WHY = String(e && e.name ? e.name + ': ' : '') + String(e && e.message || e).slice(0, 140); finish(reject, offline()); });
   });
 }
-// anything that waits on the sheet for more than a moment shows a thin bar under the top edge (the quiet version check does not)
-var pending = 0, barT = 0;
-function loadBar(on) {
-  var b = byIdEl('loadbar'); if (!b) return;
-  if (on) { pending++; if (pending === 1) { clearTimeout(barT); barT = setTimeout(function () { b.hidden = false; }, 300); } }
-  else { pending = Math.max(0, pending - 1); if (!pending) { clearTimeout(barT); b.hidden = true; } }
-}
 function call(fn, data) {
-  if (fn === 'version') return callRaw(fn, data);
-  loadBar(true);
-  return callRaw(fn, data).then(function (v) { loadBar(false); return v; }, function (e) { loadBar(false); throw e; });
-}
-function callRaw(fn, data) {
   if (HOSTED) return hostedCall(fn, data);
   return new Promise(function (resolve, reject) {
     var done = false;
@@ -4484,7 +4514,7 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, loadBar: loadBar };
+window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -4970,14 +5000,14 @@ function filterChipsHtml() {
 }
 function STATUS_NAME() { return { low: tl('Running low'), attn: tl('Broken or missing'), unsorted: tl('Needs details') }; }
 function filterSheet() {
-  var f = S.fil || {}, chip = function (act, val, label, on, extra) {
-    return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span>' + esc(label) + '</span>' + (extra || '') + '</button>';
+  var f = S.fil || {}, chip = function (act, val, label, on, extra, icon) {
+    return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span class="cl">' + (icon ? '<i class="ce" aria-hidden="true">' + icon + '</i>' : '') + '<span>' + esc(label) + '</span></span>' + (extra || '') + '</button>';
   }, counts = {};
   scoped(S.groups).forEach(function (g) { counts[g.cat] = (counts[g.cat] || 0) + 1; });
   var subs = f.cat ? subtypesUsed(f.cat, [].concat.apply([], scoped(S.groups).map(function (g) { return g.rows; }))) : [];
   return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2>' +
     '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('Best match')], ['az', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('qSort', o[0], o[1], (S.qSort || '') === o[0]); }).join('') + '</div>' +
-    '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + S.categories.map(function (c) { return chip('filterCat', c, (CAT_ICON[c] || '') + ' ' + tl(c), f.cat === c, '<small>' + (counts[c] || 0) + '</small>'); }).join('') + '</div>' +
+    '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + S.categories.map(function (c) { return chip('filterCat', c, tl(c), f.cat === c, '<small>' + (counts[c] || 0) + '</small>', CAT_ICON[c] || ''); }).join('') + '</div>' +
     (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('filterSub', x, tl(x), f.sub === x); }).join('') + '</div>' : '') +
     '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('filterStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div>' +
     (roomsFor(myCentre()).length ? '<label class="lab">' + tl('Room') + '</label><div class="grid2">' + roomsFor(myCentre()).map(function (r) { return chip('filterRoom', r, r, f.room && sameRoom(f.room, r)); }).join('') + '</div>' : '') + '</div>' +
@@ -5515,12 +5545,12 @@ function vCountList(v) {
     .sort(function (a, b) { return a.name.localeCompare(b.name); });
   F = { was: {} };
   rows.forEach(function (it) { F.was[it.id] = it.qty; });
-  return top(true) + '<div class="titlerow"><h1 class="title">' + esc(v.loc) + '</h1><div class="tools">' +
+  return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + esc(v.loc) + '</h1></div><div class="tools">' +
       '<button type="button" class="ib" data-act="countSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.sort + '</button>' +
       '<button type="button" class="ib' + (S.checkHide ? ' on' : '') + '" data-act="countHide" aria-label="' + tl('Hide checked') + '" title="' + tl('Hide checked') + '" aria-pressed="' + (S.checkHide ? 'true' : 'false') + '">' + (S.checkHide ? ICON.eyeoff : ICON.eye) + '</button></div></div>' +
     '<p class="prog" id="c-prog" style="margin-top:var(--s3)">' + tl('{n} of {total} confirmed', { n: 0, total: rows.length }) + '</p><div class="progbar"><i id="c-bar"></i></div>' +
     '<div class="card' + (S.checkHide ? ' hidechecked' : '') + '" id="checklist">' + rows.map(function (it) {
-      var okTxt = it.kind === 'Equipment' && !isLevel(it) ? tl('All here') : tl('OK');
+      var okTxt = tl('OK');
       return '<div class="cline' + (isLevel(it) ? ' lvrow' : '') + '" data-row="' + esc(it.id) + '" data-name="' + esc(shown(it).toLowerCase()) + '" data-cat="' + esc((it.cat || '').toLowerCase()) + '" data-low="' + (low(it) ? 1 : 0) + '"><div class="cname"><span class="tkt">' + esc(shown(it)) +
         '<small>' + (isLevel(it) ? '' : esc(it.unit)) + '</small></span></div><div class="cctl">' +
         (isLevel(it)
@@ -5601,8 +5631,9 @@ function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
 function vSettings() {
   var waiting = S.outbox.length;
-  return top(true) + '<div class="titlerow"><h1 class="title">' + tl('Settings') + '</h1><button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
-    '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p>' +
+  return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Settings') + '</h1>' +
+    '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p></div>' +
+    '<button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Match my phone')], ['light', tl('Light')], ['dark', tl('Dark')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
@@ -5630,8 +5661,8 @@ function vRooms(v) {
     (names.length ? '<div class="card rows">' + names.map(function (loc) {
       var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
       return '<div class="roomrow"><button class="rowmain" data-act="roomOpen" data-val="' + esc(loc) + '"><span>' + esc(loc) + '<small>' +
-        (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) : tl('Empty')) + '</small></span>' +
-        (p.n && days > 30 ? '<span class="due" role="img" aria-label="' + esc(tl('Overdue')) + '"><i></i></span>' : '') + ICON.go + '</button></div>';
+        (p.n && days > 30 ? '<span class="due" role="img" aria-label="' + esc(tl('Overdue')) + '"><i></i></span>' : '') +
+        (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + tl('checked {when}', { when: ago(p.oldest) }) : tl('Empty')) + '</small></span>' + ICON.go + '</button></div>';
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
     (nn || us ? '<h2 class="sec tidyhead">' + tl('Needs details') + '<span class="pn">' + tidyCount(centre) + '</span></h2><div class="card rows tidy">' +
       '<button class="rowbtn" data-act="go" data-to="needName"><span>' + esc(tl('{n} need details', { n: tidyCount(centre) })) + '</span>' + ICON.go + '</button></div>' : '');
@@ -5652,9 +5683,9 @@ function vRoom(v) {
     return a.name.localeCompare(b.name);
   });
   var chipsOn = (f.cat ? [['cat', f.cat, tl(f.cat)]] : []).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
-  return top(true) + '<div class="titlerow"><h1 class="title">' + esc(v.loc) + '</h1>' +
+  return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + esc(v.loc) + '</h1>' +
+    '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p></div>' +
     (all.length > 6 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
-    '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p>' +
     (chipsOn.length ? '<div class="seg fchips">' + chipsOn.map(function (o) { return '<button class="fchip" data-act="roomFilterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>'; }).join('') + '</div>' : '') +
     (list.length ? '<div class="list">' + list.map(function (it) {
       return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
@@ -5667,12 +5698,12 @@ function vRoom(v) {
 function roomFilterSheet(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), counts = {};
   all.forEach(function (it) { counts[it.cat] = (counts[it.cat] || 0) + 1; });
-  var chip = function (act, val, label, on, extra) { return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span>' + esc(label) + '</span>' + (extra || '') + '</button>'; };
+  var chip = function (act, val, label, on, extra, icon) { return '<button type="button" class="chip fchip' + (on ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(val) + '"><span class="cl">' + (icon ? '<i class="ce" aria-hidden="true">' + icon + '</i>' : '') + '<span>' + esc(label) + '</span></span>' + (extra || '') + '</button>'; };
   var cats = S.categories.filter(function (c) { return counts[c]; });
   var subs = f.cat ? subtypesUsed(f.cat, all) : [];
   return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2>' +
     '<label class="lab">' + tl('Sort') + '</label><div class="chips">' + [['', tl('A to Z')], ['low', tl('Lowest first')]].map(function (o) { return chip('roomSort', o[0], o[1], (f.sort || '') === o[0]); }).join('') + '</div>' +
-    (cats.length > 1 ? '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + cats.map(function (c) { return chip('roomCat', c, (CAT_ICON[c] || '') + ' ' + tl(c), f.cat === c, '<small>' + counts[c] + '</small>'); }).join('') + '</div>' : '') +
+    (cats.length > 1 ? '<label class="lab">' + tl('Type') + '</label><div class="grid2">' + cats.map(function (c) { return chip('roomCat', c, tl(c), f.cat === c, '<small>' + counts[c] + '</small>', CAT_ICON[c] || ''); }).join('') + '</div>' : '') +
     (subs.length ? '<label class="lab">' + tl('Subtype') + '</label><div class="chips">' + subs.map(function (x) { return chip('roomSub', x, tl(x), f.sub === x); }).join('') + '</div>' : '') +
     '<label class="lab">' + tl('Status') + '</label><div class="chips">' + [['low', STATUS_NAME().low], ['attn', STATUS_NAME().attn], ['unsorted', STATUS_NAME().unsorted]].map(function (o) { return chip('roomStatus', o[0], o[1], f.status === o[0]); }).join('') + '</div></div>' +
     '<div class="sheetfoot"><button class="btn primary" data-act="closeSheet">' + tl('Apply') + '</button><button class="btn quiet" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>';
@@ -6282,12 +6313,10 @@ function busy(on, label) {
     var b = S.lastBtn && S.lastBtnAt > Date.now() - 1500 && document.body.contains(S.lastBtn) && /^(BUTTON|A)$/.test(S.lastBtn.tagName) ? S.lastBtn : (byIdEl('f-go') || byIdEl('m-go'));
     busyEl = b;
     if (!b) return;
-    if (!b.classList.contains('ib') && String(b.textContent).trim()) { b.dataset.label = b.textContent; b.textContent = label || tl('Saving…'); }
     b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true');
   } else {
     var e = busyEl; busyEl = null;
     if (!e) return;
-    if (e.dataset.label !== undefined) { e.textContent = e.dataset.label; delete e.dataset.label; }
     e.classList.remove('loading'); e.disabled = false; e.removeAttribute('aria-busy');
   }
 }
