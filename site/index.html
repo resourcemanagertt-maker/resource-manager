@@ -595,10 +595,35 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 .list .skelcard{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
 .list .skelcard:last-child{border-bottom:0}
 .verline{margin-top:var(--s5);text-align:center}
+.rqlist{display:flex;flex-direction:column;gap:var(--s3)}
+.rq{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh1);padding:var(--s4);display:flex;flex-direction:column;gap:var(--s2)}
+.rq p{margin:0}
+.rq-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
+.rq-name{font-weight:700;font-size:18px;line-height:1.25;overflow-wrap:break-word;min-width:0}
+.rq-qty{font-size:16px;font-weight:700}
+.rq-meta{font-size:14px;color:var(--muted);overflow-wrap:break-word}
+.rq-why{font-size:15px;overflow-wrap:break-word}
+.rq-why span{color:var(--muted);font-weight:600;margin-right:6px}
+.rq-answer{background:var(--wash);border-radius:var(--r);padding:var(--s2) var(--s3);font-size:15px;overflow-wrap:break-word}
+.rq-have summary{min-height:40px;padding:0;font-size:14px;color:var(--muted);font-weight:600}
+.rq-actions{display:flex;gap:var(--s2);margin-top:var(--s1)}
+.rq-actions .btn{flex:1 1 0;min-width:0;width:auto;min-height:44px;margin:0}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap;flex:none;line-height:1.2}
+.pill svg{width:14px;height:14px;flex:none}
+.st-wait{background:transparent;border:1px solid var(--line-strong);color:var(--ink)}
+.st-appr{background:color-mix(in srgb,var(--brand) 16%,transparent);border:1px solid var(--brand);color:var(--ink)}
+.st-bought{background:var(--brand);border:1px solid var(--brand);color:var(--on-brand)}
+.st-no{background:var(--mark);border:1px solid var(--mark);color:var(--on-mark)}
+.emptyreq{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2)}
+.emptyic svg{width:36px;height:36px;color:var(--muted)}
+.emptyreq .btn{margin-top:var(--s3)}
 .pickfield{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);width:100%;min-height:52px;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left;font-size:16px}
 .pickfield svg{width:20px;height:20px;flex:none}
 .opt .ri{margin-right:var(--s3)}
 .ri{display:inline-grid;place-items:center;width:32px;margin-right:var(--s3);font-size:22px;line-height:1;flex:none}
+.ri svg{width:22px;height:22px;color:var(--ink)}
+.ri2{display:inline-grid;vertical-align:middle;margin-right:6px}
+.ri2 svg{width:18px;height:18px}
 .formend.pair{display:flex;gap:var(--s3)}
 .formend.pair .btn{flex:1 1 0;min-width:0;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
 details.more summary,details.histfold summary,details[data-keep] summary,details.notwhat summary,details.settings summary{color:var(--ink);font-weight:600}
@@ -3239,6 +3264,31 @@ var ICON = {
   ICON.door = s('<path d="M6 21V4h9l3 2v15M4 21h16"/><circle cx="13" cy="12.5" r=".9"/>');
   ICON.key = s('<circle cx="8" cy="15" r="3.5"/><path d="M10.5 12.5 20 3M16 7l3 3"/>');
   ICON.qr = s('<rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM18 14h2"/>');
+  ICON.clock = s('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>');
+  ICON.bag = s('<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>');
+  ICON.phone = s('<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>');
+  ICON.room = {
+    store: s('<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 9h16M4 15h16M10 6h4M10 12h4M10 18h4"/>'),
+    hall: s('<path d="M3 9l9-5 9 5M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 20h18"/>'),
+    door: s('<path d="M6 21V4h9l3 2v15M4 21h16"/><circle cx="13" cy="12.5" r=".9"/>'),
+    sick: s('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M12 10.5v6M9 13.5h6"/>'),
+    class: s('<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M6 20l2-4M18 20l-2-4M7 9h6M7 12h9"/>'),
+    office: s('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+    play: s('<path d="M4 4h16M6 4v16M18 4v16M9 4l-1 10M15 4l1 10M7 14h3M14 14h3"/>'),
+    garden: s('<path d="M12 21v-8M12 13c0-4-3-6-7-6 0 4 3 6 7 6zM12 15c0-3 2-5 6-5 0 3-2 5-6 5z"/>'),
+    read: s('<path d="M12 6c-2-1.5-5-2-8-1.5V18c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6zM12 6v13.5"/>'),
+    art: s('<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s0-2.5 1.5-2.5H17a4 4 0 0 0 4-4C21 6.5 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>'),
+    kitchen: s('<path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM2 11h20M9 7c0-1.5 1-1.5 1-3M14 7c0-1.5 1-1.5 1-3"/>'),
+    wash: s('<path d="M12 3s6 6.2 6 10.5a6 6 0 0 1-12 0C6 9.2 12 3 12 3z"/>'),
+    music: s('<path d="M9 18V6l10-2v12M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zM19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"/>'),
+    nap: s('<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.5"/>'),
+    tools: s('<path d="M14.5 6.5a4 4 0 0 0-5 5L3 18l3 3 6.5-6.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/>'),
+    science: s('<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M8 15h8"/>'),
+    computer: s('<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>'),
+    laundry: s('<path d="M8 4l-5 3 2 4 3-1v10h8V10l3 1 2-4-5-3a4 4 0 0 1-8 0z"/>'),
+    toys: s('<rect x="3" y="12" width="8" height="8" rx="1"/><rect x="13" y="12" width="8" height="8" rx="1"/><rect x="8" y="4" width="8" height="8" rx="1"/>'),
+    received: s('<path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/>')
+  };
   ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
   ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
@@ -3271,6 +3321,7 @@ L.ms = {
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
   "A set": "Satu set",
+  "A small test page for the bars at the top and bottom of the phone.": "Halaman ujian kecil untuk bar di atas dan bawah telefon.",
   "A to Z": "A hingga Z",
   "About RM": "Lebih kurang RM",
   "About RM {price}.": "Anggaran RM {price}.",
@@ -3304,13 +3355,16 @@ L.ms = {
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
   "Alpha · updated {date}": "Alfa · dikemas kini {date}",
-  "Already have:": "Sudah ada:",
+  "Already have in 1 place": "Sudah ada di 1 tempat",
+  "Already have in {n} places": "Sudah ada di {n} tempat",
   "Already here. Use Add more.": "Sudah ada. Guna Tambah.",
   "Already here? Tap it.": "Sudah ada? Ketik.",
   "Already sent.": "Sudah dihantar.",
   "Also kept elsewhere": "Disimpan di tempat lain juga",
   "Also kept elsewhere?": "Disimpan di tempat lain juga?",
   "Also send on WhatsApp": "Hantar juga melalui WhatsApp",
+  "Answer": "Jawapan",
+  "Answered ({n})": "Sudah dijawab ({n})",
   "Antiseptic and creams": "Antiseptik dan krim",
   "Anything you leave goes to “Needs details” on Rooms.": "Yang ditinggalkan akan masuk ke “Perlu butiran” di Bilik.",
   "Apply ({n})": "Guna ({n})",
@@ -3321,8 +3375,12 @@ L.ms = {
   "Ask": "Tanya",
   "Ask to buy": "Mohon beli",
   "Ask to buy more": "Mohon beli lagi",
+  "Ask to buy something": "Minta untuk beli sesuatu",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
   "Asked to buy": "Mohon beli",
+  "Asked today": "Ditanya hari ini",
+  "Asked yesterday": "Ditanya semalam",
+  "Asked {date}": "Ditanya pada {date}",
   "Back": "Kembali",
   "Balloons and banners": "Belon dan sepanduk",
   "Barcode {code}": "Kod bar {code}",
@@ -3354,6 +3412,7 @@ L.ms = {
   "Changed while you counted:": "Berubah semasa anda mengira:",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
+  "Check the phone bars": "Semak bar telefon",
   "Check the price.": "Semak harga.",
   "Check the spelling.": "Semak ejaan.",
   "Check your internet.": "Semak internet anda.",
@@ -3448,6 +3507,7 @@ L.ms = {
   "Gifts and prizes": "Hadiah",
   "Gloves and masks": "Sarung tangan dan pelitup muka",
   "Glue, tape and staples": "Gam, pita dan staples",
+  "Going to {room}": "Akan ke {room}",
   "Google Sheet": "Google Sheet",
   "Half": "Separuh",
   "Hi, can {me} borrow some {name} from {centre}?": "Hai, boleh {me} pinjam {name} daripada {centre}?",
@@ -3469,6 +3529,7 @@ L.ms = {
   "It’s fine now": "Sudah okay",
   "Just added": "Baru ditambah",
   "Keep at least one centre.": "Simpan sekurang-kurangnya satu pusat.",
+  "Kept at {room}": "Disimpan di {room}",
   "Kept for years, like toys or keys.": "Disimpan bertahun-tahun, seperti mainan atau kunci.",
   "Kept in {place} at {centre}.": "Disimpan di {place} di {centre}.",
   "Kind and checking can’t be changed.": "Jenis dan cara semak tidak boleh diubah.",
@@ -3506,6 +3567,7 @@ L.ms = {
   "Name missing": "Nama tiada",
   "Name them ({n})": "Namakan ({n})",
   "Name this item": "Namakan barang ini",
+  "Need something we don’t have? Ask once and it goes to the admin.": "Perlukan sesuatu yang kita tiada? Tanya sekali dan ia terus ke pentadbir.",
   "Needs details": "Perlu butiran",
   "Needs fixing": "Perlu dibaiki",
   "New PIN": "PIN baru",
@@ -3598,6 +3660,7 @@ L.ms = {
   "Projectors and screens": "Projektor dan skrin",
   "Puzzles": "Puzzle",
   "QR stickers": "Pelekat QR",
+  "RM {price}": "RM {price}",
   "Read {code}…": "Dibaca {code}…",
   "Reading the barcode…": "Membaca kod bar…",
   "Received": "Diterima",
@@ -3653,7 +3716,6 @@ L.ms = {
   "Science and nature": "Sains dan alam",
   "Scissors and cutting": "Gunting dan pemotong",
   "Search again": "Cari semula",
-  "Search first, then ask to buy.": "Cari dahulu, kemudian mohon beli.",
   "Search for an item": "Cari barang",
   "Search in this room": "Cari dalam bilik ini",
   "Search this room…": "Cari dalam bilik ini…",
@@ -3727,6 +3789,7 @@ L.ms = {
   "That one is estimated, not counted.": "Yang itu dianggar, bukan dikira.",
   "That one is estimated, not counted. Ask them to restock.": "Yang itu dianggar, bukan dikira. Minta mereka tambah stok.",
   "That piece isn’t part of this set.": "Bahagian itu bukan sebahagian set ini.",
+  "That request has already moved on.": "Permintaan itu sudah bergerak ke langkah seterusnya.",
   "That request has been removed.": "Permohonan itu sudah dibuang.",
   "That request isn’t yours.": "Permintaan itu bukan milik anda.",
   "That sheet isn’t empty. Use a new one.": "Helaian itu tidak kosong. Guna yang baharu.",
@@ -3812,6 +3875,7 @@ L.ms = {
   "Which room?": "Bilik mana?",
   "Whiteboard and chalk": "Papan putih dan kapur",
   "Whole numbers only.": "Nombor bulat sahaja.",
+  "Why": "Sebab",
   "Why: {why}.": "Sebab: {why}.",
   "Why?": "Kenapa?",
   "Withdraw": "Tarik balik",
@@ -3823,7 +3887,6 @@ L.ms = {
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
-  "about RM {price}": "kira-kira RM {price}",
   "at {centre} · {place}": "di {centre} · {place}",
   "bottle": "botol",
   "box": "kotak",
@@ -3831,6 +3894,7 @@ L.ms = {
   "checked {when}": "disemak {when}",
   "e.g. 2 puzzle pieces lost": "cth. 2 kepingan puzzle hilang",
   "e.g. 3 keys, 3 locks": "cth. 3 kunci, 3 mangga",
+  "e.g. Art corner": "cth. Sudut seni",
   "e.g. Reading corner": "cth. Sudut bacaan",
   "e.g. Store room": "cth. Bilik stor",
   "e.g. another centre has spare": "cth. pusat lain ada lebihan",
@@ -3848,6 +3912,7 @@ L.ms = {
   "now": "kini",
   "pack": "bungkus",
   "pcs": "biji",
+  "phone {tag}": "telefon {tag}",
   "request waiting": "permohonan menunggu",
   "requests waiting": "permohonan menunggu",
   "running low": "tinggal sedikit",
@@ -3892,6 +3957,7 @@ L.zh = {
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
   "A set": "一套",
+  "A small test page for the bars at the top and bottom of the phone.": "一个小测试页，用来检查手机顶部和底部的栏。",
   "A to Z": "A 到 Z",
   "About RM": "大约 RM",
   "About RM {price}.": "大约 RM {price}。",
@@ -3925,13 +3991,16 @@ L.zh = {
   "All rooms": "所有房间",
   "Almost out": "快没了",
   "Alpha · updated {date}": "Alpha · 更新于 {date}",
-  "Already have:": "已有：",
+  "Already have in 1 place": "已有 1 处",
+  "Already have in {n} places": "已有 {n} 处",
   "Already here. Use Add more.": "已经有了，请用“增加”。",
   "Already here? Tap it.": "已经有了？点它。",
   "Already sent.": "之前已发送。",
   "Also kept elsewhere": "别处也有存放",
   "Also kept elsewhere?": "别处也有存放？",
   "Also send on WhatsApp": "也用 WhatsApp 发送",
+  "Answer": "回复",
+  "Answered ({n})": "已回复（{n}）",
   "Antiseptic and creams": "消毒药水与药膏",
   "Anything you leave goes to “Needs details” on Rooms.": "留下的会放进“房间”里的“需要补充资料”。",
   "Apply ({n})": "应用（{n}）",
@@ -3942,8 +4011,12 @@ L.zh = {
   "Ask": "询问",
   "Ask to buy": "申请购买",
   "Ask to buy more": "申请再买",
+  "Ask to buy something": "申请购买东西",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
   "Asked to buy": "申请购买",
+  "Asked today": "今天提出",
+  "Asked yesterday": "昨天提出",
+  "Asked {date}": "{date} 提出",
   "Back": "返回",
   "Balloons and banners": "气球与横幅",
   "Barcode {code}": "条码 {code}",
@@ -3975,6 +4048,7 @@ L.zh = {
   "Changed while you counted:": "你清点时被改动：",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
+  "Check the phone bars": "检查手机状态栏",
   "Check the price.": "请检查价格。",
   "Check the spelling.": "检查拼写。",
   "Check your internet.": "请检查网络。",
@@ -4069,6 +4143,7 @@ L.zh = {
   "Gifts and prizes": "礼物与奖品",
   "Gloves and masks": "手套与口罩",
   "Glue, tape and staples": "胶水、胶带与订书钉",
+  "Going to {room}": "将放在 {room}",
   "Google Sheet": "Google 表格",
   "Half": "一半",
   "Hi, can {me} borrow some {name} from {centre}?": "你好，{me} 可以向 {centre} 借一些{name}吗？",
@@ -4090,6 +4165,7 @@ L.zh = {
   "It’s fine now": "现在没问题了",
   "Just added": "刚刚添加的",
   "Keep at least one centre.": "至少要保留一个分园。",
+  "Kept at {room}": "存放在 {room}",
   "Kept for years, like toys or keys.": "长期保留，如玩具或钥匙。",
   "Kept in {place} at {centre}.": "{centre} 放在 {place}。",
   "Kind and checking can’t be changed.": "类型和核对方式不能更改。",
@@ -4127,6 +4203,7 @@ L.zh = {
   "Name missing": "缺少名称",
   "Name them ({n})": "逐个起名（{n}）",
   "Name this item": "给这件东西起名",
+  "Need something we don’t have? Ask once and it goes to the admin.": "需要我们没有的东西？提一次，就会送到管理员那里。",
   "Needs details": "需要补充资料",
   "Needs fixing": "需要修理",
   "New PIN": "新 PIN",
@@ -4219,6 +4296,7 @@ L.zh = {
   "Projectors and screens": "投影仪与屏幕",
   "Puzzles": "拼图",
   "QR stickers": "二维码贴纸",
+  "RM {price}": "RM {price}",
   "Read {code}…": "已读取 {code}…",
   "Reading the barcode…": "正在读取条形码…",
   "Received": "已收到",
@@ -4274,7 +4352,6 @@ L.zh = {
   "Science and nature": "科学与自然",
   "Scissors and cutting": "剪刀与裁剪",
   "Search again": "重新搜索",
-  "Search first, then ask to buy.": "先搜索，再申请购买。",
   "Search for an item": "搜索物品",
   "Search in this room": "在这个房间里搜索",
   "Search this room…": "在这个房间里搜索…",
@@ -4348,6 +4425,7 @@ L.zh = {
   "That one is estimated, not counted.": "那个是估算的，不是点数的。",
   "That one is estimated, not counted. Ask them to restock.": "那个是估算的，不是点数的。请让他们补货。",
   "That piece isn’t part of this set.": "这个零件不属于这套。",
+  "That request has already moved on.": "这个请求已经处理过了。",
   "That request has been removed.": "这个申请已被删除。",
   "That request isn’t yours.": "这不是你的申请。",
   "That sheet isn’t empty. Use a new one.": "这张表格不是空的，请用新的。",
@@ -4433,6 +4511,7 @@ L.zh = {
   "Which room?": "哪个房间？",
   "Whiteboard and chalk": "白板与粉笔",
   "Whole numbers only.": "只能填整数。",
+  "Why": "原因",
   "Why: {why}.": "原因：{why}。",
   "Why?": "为什么？",
   "Withdraw": "撤回",
@@ -4444,7 +4523,6 @@ L.zh = {
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
-  "about RM {price}": "约 RM {price}",
   "at {centre} · {place}": "在 {centre} · {place}",
   "bottle": "瓶",
   "box": "盒",
@@ -4452,6 +4530,7 @@ L.zh = {
   "checked {when}": "{when} 核对",
   "e.g. 2 puzzle pieces lost": "例如：丢了 2 块拼图",
   "e.g. 3 keys, 3 locks": "例如：3 把钥匙、3 把锁",
+  "e.g. Art corner": "例如：美术角",
   "e.g. Reading corner": "例如：阅读角",
   "e.g. Store room": "例：储物间",
   "e.g. another centre has spare": "例：别的分园有多的",
@@ -4469,6 +4548,7 @@ L.zh = {
   "now": "现在",
   "pack": "包",
   "pcs": "个",
+  "phone {tag}": "手机 {tag}",
   "request waiting": "个申请待处理",
   "requests waiting": "个申请待处理",
   "running low": "快不够",
@@ -4719,7 +4799,7 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIcon,
+window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIconKey,
   pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
@@ -5566,25 +5646,26 @@ function roomsFor(centre) {
 }
 // "Received" is where stock sent from another centre lands until it is put away: never offered as a place to choose, never typed in by hand
 // an icon for a room, from words in its name (a Rooms-sheet column can come later); every emoji is old enough for any phone
-var ROOM_ICONS = [[/receiv/i, '📥'], [/store|storage|stock/i, '🗄️'], [/hall|lobby|assembly/i, '🏛️'], [/entrance|gate|front|door/i, '🚪'], [/sick|clinic|first.?aid|medic/i, '🏥'],
-  [/class|kelas/i, '✏️'], [/office|admin|pejabat|staff/i, '🗂️'], [/play|garden|yard|outdoor|taman/i, '🎠'], [/read|library|book|perpustakaan/i, '📚'], [/art|craft|seni/i, '🎨'],
-  [/kitchen|pantry|dining|canteen|dapur|makan/i, '🍽️'], [/toilet|wash|bath|tandas|sink/i, '🚿'], [/music|muzik|piano/i, '🎵'], [/nap|sleep|rest|tidur/i, '🛏️'],
-  [/shed|workshop|maintenance|tool|garage/i, '🔧'], [/science|lab/i, '🔬'], [/computer|it room|tech/i, '💻'], [/laundry|cuci/i, '🧺'], [/toy|block|sand|water/i, '🧸']];
-function roomIcon(name) {
-  for (var i = 0; i < ROOM_ICONS.length; i++) if (ROOM_ICONS[i][0].test(String(name || ''))) return ROOM_ICONS[i][1];
-  return '🚪';
+var ROOM_KEYS = [[/receiv/i, 'received'], [/store|storage|stock/i, 'store'], [/hall|lobby|assembly/i, 'hall'], [/entrance|gate|front|door/i, 'door'], [/sick|clinic|first.?aid|medic/i, 'sick'],
+  [/class|kelas/i, 'class'], [/office|admin|pejabat|staff/i, 'office'], [/garden|yard|outdoor|taman/i, 'garden'], [/play/i, 'play'], [/read|library|book|perpustakaan/i, 'read'], [/art|craft|seni/i, 'art'],
+  [/kitchen|pantry|dining|canteen|dapur|makan/i, 'kitchen'], [/toilet|wash|bath|tandas|sink/i, 'wash'], [/music|muzik|piano/i, 'music'], [/nap|sleep|rest|tidur/i, 'nap'],
+  [/shed|workshop|maintenance|tool|garage/i, 'tools'], [/science|lab/i, 'science'], [/computer|it room|tech/i, 'computer'], [/laundry|cuci/i, 'laundry'], [/toy|block|sand|water/i, 'toys']];
+function roomIconKey(name) {
+  for (var i = 0; i < ROOM_KEYS.length; i++) if (ROOM_KEYS[i][0].test(String(name || ''))) return ROOM_KEYS[i][1];
+  return 'door';
 }
+function roomIcon(name) { return ICON.room[roomIconKey(name)]; }
 function isReceivedRoom(n) { return String(n || '').trim().toLowerCase() === 'received'; }
 function pickRooms(centre) { return roomsFor(centre).filter(function (n) { return !isReceivedRoom(n); }); }
 function reservedMsg() { return tl('“Received” is kept for stock sent from another centre. Choose a room.'); }
-function locChips(centre) {
+function locChips(centre, target) {
   var rooms = pickRooms(centre), use = {};
   S.items.forEach(function (it) { if (it.centre === centre && !isReceivedRoom(it.loc)) use[it.loc] = (use[it.loc] || 0) + 1; });
   rooms.sort(function (a, b) { return (use[b] || 0) - (use[a] || 0) || a.localeCompare(b); });
   var top4 = rooms.slice(0, 4);
   return rooms.length ? '<div class="chips" style="margin-top:8px">' + top4.map(function (l) {
-    return '<button type="button" class="chip" data-act="locPick" data-val="' + esc(l) + '"><span aria-hidden="true">' + roomIcon(l) + '</span> ' + esc(l) + '</button>';
-  }).join('') + (rooms.length > 4 ? '<button type="button" class="chip" data-act="roomsAll" data-centre="' + esc(centre) + '">' + esc(tl('All rooms')) + ' ›</button>' : '') + '</div>' : '';
+    return '<button type="button" class="chip" data-act="locPick" data-target="' + esc(target || 'f-loc') + '" data-val="' + esc(l) + '"><span class="ri2" aria-hidden="true">' + roomIcon(l) + '</span>' + esc(l) + '</button>';
+  }).join('') + (rooms.length > 4 ? '<button type="button" class="chip" data-act="roomsAll" data-target="' + esc(target || 'f-loc') + '" data-centre="' + esc(centre) + '">' + esc(tl('All rooms')) + ' ›</button>' : '') + '</div>' : '';
 }
 function roomsSheetHtml(centre, current) {
   return '<h2>' + tl('Rooms') + '</h2><p class="help">' + tl('Type a new room in the box above.') + '</p>' + pickRooms(centre).map(function (l) {
@@ -5729,7 +5810,10 @@ function vRequest(v) {
     '<div id="similar">' + (g ? '' : similarHtml(v.text || '')) + '</div>' +
     '<div class="qtyunit"><div><label class="lab" for="f-qty">' + tl('How many?') + '</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g ? g.unit : '') + '" placeholder="pcs"></div></div>' +
-    '<p class="help" id="unit-prev"></p><p class="forline" id="forline">' + forLineHtml() + '</p>' +
+    '<p class="unitprev" hidden></p><p class="forline" id="forline">' + forLineHtml() + '</p>' +
+    '<label class="lab" for="f-room">' + tl('Where will it go?') + ' <i>' + tl('(optional)') + '</i></label>' +
+    '<input id="f-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + esc(tl('e.g. Art corner')) + '">' +
+    '<div id="f-rooms">' + locChips(F.centre, 'f-room') + '</div>' +
     '<label class="lab" for="f-why">' + tl('Why?') + ' <i>' + tl('(optional)') + '</i></label>' +
     '<input id="f-why" class="inp" maxlength="300" autocomplete="off">' +
     '<label class="lab" for="f-price">' + tl('About RM') + ' <i>' + tl('(optional)') + '</i></label>' +
@@ -5950,6 +6034,7 @@ function vSettings() {
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
+    (HOSTED ? '<div class="card rows" style="margin-top:var(--s5)"><a class="rowbtn" href="barcheck.html"><span class="lead">' + ICON.phone + '</span><span>' + tl('Check the phone bars') + '<small>' + tl('A small test page for the bars at the top and bottom of the phone.') + '</small></span>' + ICON.go + '</a></div>' : '') +
     '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
@@ -5962,9 +6047,8 @@ function roomsBadge(centre) {
   return n;
 }
 function recvRow(it) {
-  return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
-    '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
-    '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
+  return '<div class="roomrow"><button class="rowmain" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"><span class="ri" aria-hidden="true">' + (CAT_ICON[it.cat] || '📦') + '</span>' +
+    '<span class="rtext">' + esc(shown(it)) + '<small>' + esc(amountOf(it)) + (it.cat ? ' · ' + esc(tl(it.cat)) : '') + '</small></span>' + ICON.go + '</button></div>';
 }
 function vRooms(v) {
   var centre = myCentre() || S.centres[0];
@@ -5981,9 +6065,8 @@ function vRooms(v) {
   var recv = S.items.filter(function (it) { return it.centre === centre && isReceivedRoom(it.loc); }).sort(function (a, b) { return a.name.localeCompare(b.name); });
   var nn = needNameItems(centre).length, us = unsortedItems(centre).length;
   return top(false) + '<h1 class="title">' + tl('Rooms') + '</h1>' +
-    (recv.length ? '<h2 class="sec tidyhead recvhead"><span class="ri" aria-hidden="true">' + roomIcon('received') + '</span>' + tl('Received') + '<span class="pn">' + recv.length + '</span></h2>' +
-      '<div class="list">' + recv.map(recvRow).join('') + '</div>' +
-      '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(recv[0].loc) + '">' + tl('Start checking') + '</button></div>' +
+    (recv.length ? '<h2 class="sec tidyhead recvhead">' + tl('Received') + '<span class="pn">' + recv.length + '</span></h2>' +
+      '<div class="card rows">' + recv.map(recvRow).join('') + '</div>' +
       '<h2 class="sec">' + tl('Rooms') + '</h2>' : '') +
     (names.length ? '<div class="card rows">' + names.map(function (loc) {
       var p = places[loc], days = p.oldest ? Math.floor((Date.now() - p.oldest) / 86400000) : 999;
@@ -6100,8 +6183,8 @@ function vPick() {
     }).join('') + '</div>';
 }
 var REQ_BADGE = { 'New': 'plain', 'Approved': 'ok', 'Bought': 'ok', 'Declined': 'low' };
-function skelCard() { return '<div class="skelcard"><span class="skel" style="height:18px;width:55%"></span><span class="skel" style="height:13px;width:85%"></span><span class="skel" style="height:22px;width:30%"></span></div>'; }
-function skelRequests() { return '<div class="skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="list">' + skelCard() + skelCard() + skelCard() + '</div></div>'; }
+function skelRq() { return '<div class="rq"><div class="rq-top"><span class="skel" style="height:20px;width:55%"></span><span class="skel" style="height:26px;width:88px;border-radius:999px"></span></div><span class="skel" style="height:16px;width:35%"></span><span class="skel" style="height:13px;width:70%"></span></div>'; }
+function skelRequests() { return '<div class="skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="rqlist">' + skelRq() + skelRq() + skelRq() + '</div></div>'; }
 function histBody(past) {
   return past ? '<div class="card">' + (past.length ? past.map(histLine).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>' : skelHistory();
 }
@@ -6114,24 +6197,50 @@ function fillHistFold(v) {
   if (v.histOpen) d.insertAdjacentHTML('beforeend', histBody(past));
 }
 function skelHistory() { return '<div class="card skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="skelcard"><span class="skel" style="height:13px;width:90%"></span><span class="skel" style="height:13px;width:70%"></span><span class="skel" style="height:13px;width:80%"></span></div></div>'; }
+var REQ_PILL = function () { return { New: ['wait', ICON.clock], Approved: ['appr', ICON.done], Bought: ['bought', ICON.bag], Declined: ['no', ICON.x] }; };
+function reqPill(st) { var p = REQ_PILL()[st] || REQ_PILL().New; return '<span class="pill st-' + p[0] + '">' + p[1] + '<span>' + esc(REQ_LABEL[st] || st) + '</span></span>'; }
+function askedText(ms) {
+  if (!ms) return '';
+  var d = Math.floor((Date.now() - ms) / 86400000);
+  if (d <= 0) return tl('Asked today');
+  if (d === 1) return tl('Asked yesterday');
+  var date; try { date = new Date(ms).toLocaleDateString(LANG === 'ms' ? 'ms-MY' : LANG === 'zh' ? 'zh-CN' : 'en-GB', { timeZone: 'Asia/Kuala_Lumpur', day: 'numeric', month: 'short' }); } catch (e) { date = new Date(ms).toDateString(); }
+  return tl('Asked {date}', { date: date });
+}
+function reqCard(r) {
+  var item = r.itemId ? S.byId[r.itemId] : null;
+  var where = r.room ? tl('Going to {room}', { room: r.room }) : item ? tl('Kept at {room}', { room: item.loc }) : '';
+  var meta = S.admin ? [r.centre].concat(r.tag ? [tl('phone {tag}', { tag: r.tag })] : []) : [tl('For {centre}', { centre: r.centre })].concat(where ? [where] : []);
+  var have = S.admin && r.have && r.have !== 'Not on the list' ? r.have.split('; ') : [];
+  var actions = '';
+  if (S.admin) {
+    if (r.status === 'New') actions = '<button class="btn sm" data-act="decide" data-id="' + esc(r.id) + '" data-val="Approved">' + tl('Approve') + '</button><button class="btn sm quiet" data-act="decide" data-id="' + esc(r.id) + '" data-val="Declined">' + tl('Decline') + '</button>';
+    else if (r.status === 'Approved') actions = '<button class="btn sm" data-act="decide" data-id="' + esc(r.id) + '" data-val="Bought">' + tl('Mark as bought') + '</button>';
+  } else if (r.status === 'New') actions = '<button class="btn sm quiet" data-act="withdraw" data-id="' + esc(r.id) + '">' + tl('Withdraw') + '</button>';
+  return '<div class="rq" data-id="' + esc(r.id) + '"><div class="rq-top"><p class="rq-name">' + esc(r.name) + '</p>' + reqPill(r.status) + '</div>' +
+    '<p class="rq-qty">' + esc(amount(r.qty, r.unit)) + (r.price ? ' · ' + esc(tl('RM {price}', { price: r.price })) : '') + '</p>' +
+    '<p class="rq-meta">' + meta.map(esc).join(' · ') + '</p>' +
+    (S.admin && where ? '<p class="rq-meta">' + esc(where) + '</p>' : '') +
+    '<p class="rq-meta">' + esc(askedText(r.date)) + '</p>' +
+    (r.why ? '<p class="rq-why"><span>' + tl('Why') + '</span>' + esc(r.why) + '</p>' : '') +
+    (r.adminNote ? '<p class="rq-answer"><b>' + tl('Answer') + '</b> ' + esc(r.adminNote) + '</p>' : '') +
+    (have.length ? '<details class="rq-have"><summary>' + esc(have.length === 1 ? tl('Already have in 1 place') : tl('Already have in {n} places', { n: have.length })) + '</summary><p class="rq-meta">' + have.map(esc).join('<br>') + '</p></details>' : '') +
+    (actions ? '<div class="rq-actions">' + actions + '</div>' : '') + '</div>';
+}
 function vRequests() {
   var body;
   if (S.reqErr) body = '<div class="card empty"><h2>' + tl('Can’t reach the list.') + '</h2><button class="btn" data-act="reqRetry">' + tl('Try again') + '</button></div>';
   else if (!S.requests) body = skelRequests();
-  else if (!S.requests.length) body = '<div class="card empty"><h2>' + tl('No requests yet.') + '</h2><p style="margin:0">' + tl('Search first, then ask to buy.') + '</p></div>';
   else {
-    body = (S.admin ? scopeChips() : '') + '<div class="list">' + S.requests.filter(function (r) { return !S.admin || S.allCentres || r.centre === myCentre(); }).map(function (r) {
-      return '<div class="card" style="padding:12px"><p class="name">' + esc(r.name) + ' <span class="muted" style="font-weight:400">× ' + amount(r.qty, r.unit) + '</span></p>' +
-        '<p class="line">' + esc(r.centre) + ' · ' + esc(when(r.date)) + (r.price ? ' · ' + esc(tl('about RM {price}', { price: r.price })) : '') + '</p>' +
-        (r.why ? '<p class="line">' + esc(r.why) + '</p>' : '') +
-        (S.admin && r.have ? '<p class="line"><b>' + tl('Already have:') + '</b> ' + esc(r.have) + '</p>' : '') +
-        '<p class="line" style="margin-top:6px"><span class="badge ' + (REQ_BADGE[r.status] || 'plain') + '">' + (REQ_LABEL[r.status] || esc(r.status)) + '</span>' +
-        (r.adminNote ? ' ' + esc(r.adminNote) : '') + '</p>' +
-        (!S.admin && r.status === 'New' ? '<div class="chips" style="margin-top:10px"><button class="chip" data-act="withdraw" data-id="' + esc(r.id) + '">' + tl('Withdraw') + '</button></div>' : '') +
-        (S.admin ? '<div class="chips" style="margin-top:10px">' + ['Approved', 'Declined', 'Bought'].filter(function (s) { return s !== r.status; }).map(function (s) {
-          return '<button class="chip" data-act="decide" data-id="' + esc(r.id) + '" data-val="' + s + '">' + { Approved: tl('Approve'), Declined: tl('Decline'), Bought: tl('Mark as bought') }[s] + '</button>';
-        }).join('') + '</div>' : '') + '</div>';
-    }).join('') + '</div>';
+    var list = S.requests.filter(function (r) { return !S.admin || S.allCentres || r.centre === myCentre(); });
+    if (!list.length) body = (S.admin ? scopeChips() : '') + '<div class="card empty emptyreq"><span class="emptyic" aria-hidden="true">' + ICON.receipt + '</span><h2>' + tl('No requests yet.') + '</h2>' +
+      '<p>' + tl('Need something we don’t have? Ask once and it goes to the admin.') + '</p><button class="btn primary" data-act="reqNew">' + tl('Ask to buy something') + '</button></div>';
+    else {
+      var waiting = list.filter(function (r) { return r.status === 'New'; }), done = list.filter(function (r) { return r.status !== 'New'; });
+      body = (S.admin ? scopeChips() : '') +
+        (waiting.length ? '<h2 class="sec tidyhead firstsec">' + tl('Waiting') + '<span class="pn">' + waiting.length + '</span></h2><div class="rqlist">' + waiting.map(reqCard).join('') + '</div>' : '') +
+        (done.length ? '<h2 class="sec">' + esc(tl('Answered ({n})', { n: done.length })) + '</h2><div class="rqlist">' + done.map(reqCard).join('') + '</div>' : '');
+    }
   }
   return top(true) + '<h1 class="title">' + (S.admin ? tl('Requests') : tl('My requests')) + '</h1>' + body;
 }
@@ -6854,6 +6963,7 @@ var ACT = {
       mergeItems(res.items); rebuild(); closeSheet(); toast(tl('Thanks, saved.'));
     }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again later.') : e.message); });
   },
+  reqNew: function () { go({ name: 'request', text: '' }); },
   reqRetry: function () { S.reqErr = false; S.requests = null; render(); loadRequests(); },
   // (the fold itself is opened by the page; a late answer only fills the cache, and is drawn only if that item's page is still showing)
   history: function () {
@@ -7173,9 +7283,9 @@ var ACT = {
     if (group === 'setq') { F.set = v === 'yes'; redrawKind(); syncTrack(); }
     if (group === 'centre' && byIdEl('f-locs')) byIdEl('f-locs').innerHTML = locChips(F.centre);
   },
-  locPick: function (el) { byIdEl('f-loc').value = el.dataset.val; },
-  roomsAll: function (el) { M = { type: 'rooms-all' }; openSheet(roomsSheetHtml(el.dataset.centre, val('f-loc'))); },
-  roomSet: function (el) { byIdEl('f-loc').value = el.dataset.val; closeSheet(); },
+  locPick: function (el) { byIdEl(el.dataset.target || 'f-loc').value = el.dataset.val; },
+  roomsAll: function (el) { M = { type: 'rooms-all', target: el.dataset.target || 'f-loc' }; openSheet(roomsSheetHtml(el.dataset.centre, val(M.target))); },
+  roomSet: function (el) { byIdEl(M.target || 'f-loc').value = el.dataset.val; closeSheet(); },
   subOpen: function () {
     M = { type: 'sub-open' };
     var list = (S.subtypes || {})[F.cat] || [];
@@ -7247,7 +7357,8 @@ var ACT = {
     if (price && !/^\d+(\.\d{1,2})?$/.test(price)) return formError(tl('Type the price as a number, like 45 or 12.50.'));
     formError('');
     busy(true, tl('Sending…'));
-    var data = { name: name, qty: qty, unit: pluralUnit(val('f-unit')), centre: F.centre, why: val('f-why'), price: price, itemId: v.itemId || '', phone: phoneCode() };
+    if (isReceivedRoom(val('f-room'))) return formError(reservedMsg());
+    var data = { name: name, qty: qty, unit: pluralUnit(val('f-unit')), centre: F.centre, why: val('f-why'), price: price, itemId: v.itemId || '', phone: phoneCode(), room: val('f-room') };
     call('addRequest', data).then(function (res) {
       S.requests = null;
       setStack(S.stack.slice(0, -1));
@@ -7341,7 +7452,7 @@ var ACT = {
 
   addHere: function () { var v = cur(); store.set('rm_scanloc', v.loc); SC.centre = v.centre === myCentre() ? '' : v.centre; ACT.addOpen(); },
   reqCentre: function () { M = { type: 'reqcentre' }; openSheet(centreSheet('reqCentreSet', F.centre)); },
-  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); },
+  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); var rs = byIdEl('f-rooms'); if (rs) rs.innerHTML = locChips(F.centre, 'f-room'); },
   clearRq: function () { S.rq = ''; var i = byIdEl('rq'); if (i) { i.value = ''; i.focus(); } var b = byIdEl('roomlist'); if (b) b.innerHTML = roomListHtml(cur()); var c = $('#rsearch .clear'); if (c) c.hidden = true; },
   roomOpen: function (el) { S.rfil = {}; S.rq = ''; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
