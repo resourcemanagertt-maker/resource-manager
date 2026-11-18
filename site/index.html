@@ -497,7 +497,9 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .lowbar .tools{gap:var(--s2)}
 .chip.tbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3)}
 .chip.tbtn svg{width:18px;height:18px;flex:none}
-#share{margin-bottom:var(--s4)}
+.pickgap{height:96px}
+#share{gap:var(--s2)}
+#share svg{width:20px;height:20px;flex:none}
 details.more{margin-top:var(--s3)}
 details.more summary{min-height:48px;display:flex;align-items:center;color:var(--muted);cursor:pointer}
 .tidy h2{font-size:16px;margin:0}
@@ -570,6 +572,8 @@ details.more,details[data-keep],details.notwhat{border-top:1px solid var(--line-
 .chip.on.loading{--spin:var(--paper)}
 .btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
 .btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
+/* v30: while one thing is saving, everything else waits (dimmed, not tappable) */
+body.saving #app button:not(.loading),body.saving #app a.btn,body.saving #nav button,body.saving #sheet button:not(.loading),body.saving .savebar .btn:not(.loading){opacity:.45;pointer-events:none}
 /* v29: skeletons (they appear after 150 ms, so a fast load never flashes) */
 @keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
 .skelwrap{opacity:0;animation:show 0s .15s forwards}
@@ -578,6 +582,16 @@ details.more,details[data-keep],details.notwhat{border-top:1px solid var(--line-
 .list .skelcard{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
 .list .skelcard:last-child{border-bottom:0}
 .verline{margin-top:var(--s5);text-align:center}
+.simlist{display:flex;flex-direction:column;margin-top:var(--s2)}
+.simrow{display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;min-height:44px;padding:var(--s2) 0;border-top:1px solid rgba(0,0,0,.18);color:inherit}
+.simrow span{font-size:14px;opacity:.85}
+.forline{margin:var(--s4) 0 0;font-size:16px;font-weight:600}
+.linkbtn{color:var(--brand-ink,var(--ink));text-decoration:underline;font-weight:600;min-height:44px;padding:0 var(--s2)}
+.typenote{display:flex;gap:var(--s2);align-items:flex-start;margin:0 0 var(--s2);padding:var(--s2) var(--s3);border-radius:var(--r);background:var(--wash);font-size:14px}
+.typenote .ii{flex:none;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:12px;font-weight:700;margin-top:1px}
+.confrow{padding:var(--s3) 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:var(--s2)}
+.confrow p{margin:0;color:var(--muted);font-size:15px}
+.confrow .btn{margin:0}
 #askfirst{margin:var(--s3) 0 var(--s4)}
 /* v29: launch animation: three blocks fall into place, the last one tilts, over about a second */
 #launch{display:none}
@@ -3114,12 +3128,43 @@ function parseQty(v) {
   var s = String(v == null ? '' : v).normalize('NFKC').trim();
   return /^\d{1,6}$/.test(s) ? parseInt(s, 10) : NaN;
 }
+var UNIT_ABBR = { pcs: 1, pc: 1, kg: 1, g: 1, mg: 1, ml: 1, l: 1, cm: 1, mm: 1, m: 1, pkt: 1, pkts: 1, oz: 1, lb: 1, lbs: 1, doz: 1 };
+var UNIT_IRREG = { child: 'children', man: 'men', woman: 'women', person: 'people', foot: 'feet', tooth: 'teeth', mouse: 'mice', shelf: 'shelves', knife: 'knives', leaf: 'leaves', loaf: 'loaves', half: 'halves' };
+var UNIT_IRREG_BACK = (function () { var o = {}; Object.keys(UNIT_IRREG).forEach(function (k) { o[UNIT_IRREG[k]] = k; }); return o; })();
+// "box" -> "boxes". Only plain English words; anything else (digits, symbols, Malay, Chinese, several words) stays as typed.
+function pluralWord(w) {
+  var lw = w.toLowerCase(), out;
+  if (UNIT_ABBR[lw] || UNIT_IRREG_BACK[lw]) return w;                           // an abbreviation, or already an irregular plural
+  if (UNIT_IRREG[lw]) out = UNIT_IRREG[lw];
+  else if (/s$/.test(lw) && !/(ss|us|is)$/.test(lw)) return w;                   // already ends like a plural (pens, boxes, reams)
+  else if (/(x|z|ch|sh|ss|us|is)$/.test(lw)) out = lw + 'es';
+  else if (/[^aeiou]y$/.test(lw)) out = lw.slice(0, -1) + 'ies';
+  else out = lw + 's';
+  return w.charAt(0) !== lw.charAt(0) ? out.charAt(0).toUpperCase() + out.slice(1) : out;
+}
+function pluralUnit(raw, lang) {
+  var u = String(raw || '').trim();
+  if (!u || (lang || LANG) !== 'en') return u;
+  var m = /^([A-Za-z][A-Za-z\-]*) of (.+)$/i.exec(u);
+  if (m) return pluralWord(m[1]) + ' of ' + m[2];
+  if (!/^[A-Za-z][A-Za-z\-]*$/.test(u)) return u;   // digits, symbols, other scripts, several words: as typed
+  return pluralWord(u);
+}
 function unitFor(n, unit) {
   unit = unit || 'pcs';
   if (n !== 1) return unit;
-  if (/(x|ch|sh|ss)es$/i.test(unit)) return unit.slice(0, -2);
+  var low = unit.toLowerCase();
+  if (UNIT_IRREG_BACK[low]) return unit.charAt(0) === unit.charAt(0).toUpperCase() && unit.charAt(0) !== low.charAt(0) ? UNIT_IRREG_BACK[low].charAt(0).toUpperCase() + UNIT_IRREG_BACK[low].slice(1) : UNIT_IRREG_BACK[low];
+  if (/[^aeiou]ies$/i.test(unit)) return unit.slice(0, -3) + 'y';
+  if (/(x|ch|sh|ss|us|is)es$/i.test(unit)) return unit.slice(0, -2);
   if (/[a-z]{2,}s$/i.test(unit) && !/ss$/i.test(unit)) return unit.slice(0, -1);
   return unit;
+}
+function unitPrev() {
+  var i = byIdEl('f-unit'), p = byIdEl('unit-prev');
+  if (!i || !p) return;
+  var v = i.value.trim(), pl = pluralUnit(v);
+  p.textContent = v ? tl('Shown as: 1 {a} · 2 {b}', { a: unitFor(1, pl), b: unitFor(2, pl) }) : '';
 }
 function amount(n, unit) { return n + ' ' + unitFor(n, unit); }
 function ago(ms) {
@@ -3155,6 +3200,7 @@ var ICON = {
   ICON.trash = s('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>');
   ICON.pencil = s('<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>');
   ICON.barcode = s('<path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/>');
+  ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
   ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
   ICON.refresh = s('<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>');
@@ -3212,11 +3258,13 @@ L.ms = {
   "Admin PIN:": "PIN admin:",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
   "Admin mode": "Mod admin",
+  "All": "Semua",
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
+  "Alpha · updated {date}": "Alfa · dikemas kini {date}",
   "Already have:": "Sudah ada:",
   "Already here. Use Add more.": "Sudah ada. Guna Tambah.",
   "Already here? Tap it.": "Sudah ada? Ketik.",
@@ -3261,8 +3309,10 @@ L.ms = {
   "Centre name": "Nama pusat",
   "Centres": "Pusat",
   "Certificates and graduation": "Sijil dan konvokesyen",
+  "Change": "Tukar",
   "Change PIN": "Tukar PIN",
   "Change type": "Tukar jenis",
+  "Changed while you counted": "Berubah semasa anda mengira",
   "Changes this item at all centres.": "Mengubah barang ini di semua pusat.",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
@@ -3273,7 +3323,6 @@ L.ms = {
   "Checked {total}.": "{total} disemak.",
   "Checked {when}": "Disemak {when}",
   "Checking…": "Menyemak…",
-  "Choose": "Pilih",
   "Choose Approved, Bought or Not approved.": "Pilih Diluluskan, Dibeli atau Tidak diluluskan.",
   "Choose Full, Half, Almost out or Empty.": "Pilih Penuh, Separuh, Hampir habis atau Kosong.",
   "Choose a 6-digit PIN: Admin › Change PIN.": "Pilih PIN 6 digit: Admin › Tukar PIN.",
@@ -3349,6 +3398,7 @@ L.ms = {
   "Flash cards and posters": "Kad imbasan dan poster",
   "Flashlight": "Lampu suluh",
   "For mistakes or duplicates. Can’t be undone.": "Untuk kesilapan atau pendua. Tidak boleh dibatalkan.",
+  "For {centre}": "Untuk {centre}",
   "Full": "Penuh",
   "Furniture and fittings": "Perabot dan kelengkapan",
   "Getting your list…": "Mendapatkan senarai…",
@@ -3375,6 +3425,9 @@ L.ms = {
   "It’s fine now": "Sudah okay",
   "Just added": "Baru ditambah",
   "Keep at least one centre.": "Simpan sekurang-kurangnya satu pusat.",
+  "Keep mine": "Kekalkan versi saya",
+  "Keep my count ({n})": "Kekalkan kiraan saya ({n})",
+  "Keeping mine replaces what they saved.": "Mengekalkan versi anda akan menggantikan apa yang mereka simpan.",
   "Kept for years, like toys or keys.": "Disimpan bertahun-tahun, seperti mainan atau kunci.",
   "Kept in {place} at {centre}.": "Disimpan di {place} di {centre}.",
   "Kind and checking can’t be changed.": "Jenis dan cara semak tidak boleh diubah.",
@@ -3404,6 +3457,7 @@ L.ms = {
   "Match my phone": "Ikut telefon saya",
   "Mats and mattresses": "Tikar dan tilam",
   "Me": "Saya",
+  "Minimum": "Minimum",
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
   "Music and instruments": "Muzik dan alat muzik",
@@ -3422,8 +3476,8 @@ L.ms = {
   "Next.": "Seterusnya.",
   "No answer. Check the link and sharing, and your signal, then try again.": "Tiada jawapan. Semak pautan, perkongsian dan isyarat, kemudian cuba lagi.",
   "No centres yet.": "Belum ada pusat.",
-  "No other centre has any": "Tiada pusat lain ada",
-  "No other centre has this.": "Tiada pusat lain ada barang ini.",
+  "No other centre has spare": "Tiada pusat lain ada lebihan",
+  "No other centre has spare.": "Tiada pusat lain ada lebihan.",
   "No requests yet.": "Belum ada permohonan.",
   "No rooms yet.": "Belum ada bilik.",
   "None": "Tiada",
@@ -3472,7 +3526,7 @@ L.ms = {
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
   "Other": "Lain-lain",
-  "Other centres have some:": "Pusat lain ada sedikit:",
+  "Other centres have spare:": "Pusat lain ada lebihan:",
   "Other names": "Nama lain",
   "Outdoor and sports": "Luar dan sukan",
   "Overdue": "Lewat",
@@ -3486,6 +3540,7 @@ L.ms = {
   "Photo of a barcode": "Gambar kod bar",
   "Photo saved.": "Foto disimpan.",
   "Piece missing": "Bahagian hilang",
+  "Place": "Tempat",
   "Plasters and bandages": "Plaster dan pembalut",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "Mohon beli {qty} {unit} {name} untuk {centre}.",
   "Point at a barcode.": "Halakan ke kod bar.",
@@ -3560,6 +3615,7 @@ L.ms = {
   "Search…": "Cari…",
   "See all": "Lihat semua",
   "See it under Me › Requests.": "Lihat di Saya › Permohonan.",
+  "Select": "Pilih",
   "Select all": "Pilih semua",
   "Send": "Hantar",
   "Send now": "Hantar sekarang",
@@ -3577,15 +3633,19 @@ L.ms = {
   "Set up": "Tetapan",
   "Settings": "Tetapan",
   "Settings, requests and the Google Sheet": "Tetapan, permohonan dan Google Sheet",
-  "Share on WhatsApp": "Kongsi di WhatsApp",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "Kongsi helaian dengan pemilik apl (Editor). Kakitangan guna pautan yang sama.",
   "Share {n}": "Kongsi {n}",
   "Sheet edit": "Ubah dalam helaian",
   "Shelves and storage": "Rak dan simpanan",
   "Show history": "Tunjuk sejarah",
+  "Shown as: 1 {a} · 2 {b}": "Dipaparkan: 1 {a} · 2 {b}",
   "Sign out": "Log keluar",
   "Skip for now": "Langkau dahulu",
   "Soap and hand wash": "Sabun dan pencuci tangan",
+  "Someone else changed this item": "Orang lain mengubah barang ini",
+  "Someone else changed this item. Saving will ask what to do.": "Orang lain mengubah barang ini. Semasa simpan, anda akan ditanya apa nak buat.",
+  "Someone else changed this while you were working.": "Orang lain mengubah ini semasa anda bekerja.",
+  "Someone just changed this. Showing their version.": "Orang lain baru mengubah ini. Menunjukkan versi mereka.",
   "Something went wrong. Try again.": "Ada masalah. Cuba lagi.",
   "Sort": "Isih",
   "Sort and filter": "Isih dan tapis",
@@ -3637,6 +3697,9 @@ L.ms = {
   "The type is already set. Ask your admin to change it.": "Jenis sudah ditetapkan. Minta admin menukarnya.",
   "The “{name}” column is missing from the {tab} tab.": "Lajur “{name}” tiada dalam tab {tab}.",
   "The “{name}” tab is missing. Ask your admin to set the sheet up again.": "Tab “{name}” tiada. Minta admin sediakan semula helaian.",
+  "Their number is kept unless you choose yours.": "Nombor mereka dikekalkan kecuali anda pilih nombor anda.",
+  "Their version is in the form. Check it, then Save.": "Versi mereka sudah dalam borang. Semak, kemudian Simpan.",
+  "Theirs: {v}": "Mereka: {v}",
   "There’s already a centre called “{name}”.": "Sudah ada pusat bernama “{name}”.",
   "There’s already a room called “{name}”.": "Sudah ada bilik bernama “{name}”.",
   "There’s no such centre.": "Pusat itu tiada.",
@@ -3680,13 +3743,14 @@ L.ms = {
   "Unit": "Unit",
   "Updated {when}": "Dikemas kini {when}",
   "Use Add more or Take some.": "Guna Tambah atau Ambil.",
+  "Use theirs": "Guna versi mereka",
+  "Use theirs ({n})": "Guna versi mereka ({n})",
   "Use this sheet": "Guna helaian ini",
   "Used stock": "Stok diambil",
   "Used up, like paper or glue.": "Habis digunakan, seperti kertas atau gam.",
   "Using:": "Kini:",
   "Usual things. Nothing counts until you confirm.": "Barang biasa. Tiada dikira sehingga anda sahkan.",
   "Vehicles and figures": "Kenderaan dan patung",
-  "Version {n} · updated {date}": "Versi {n} · dikemas kini {date}",
   "Waiting": "Menunggu",
   "We don’t have it": "Tiada",
   "We don’t have “{name}”.": "Kita tiada “{name}”.",
@@ -3713,9 +3777,11 @@ L.ms = {
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
+  "You counted {a}. It now says {b}.": "Anda kira {a}. Sekarang tertera {b}.",
   "You have {amount} here.": "Anda ada {amount} di sini.",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
+  "Yours: {v}": "Anda: {v}",
   "about RM {price}": "kira-kira RM {price}",
   "at {centre} · {place}": "di {centre} · {place}",
   "bottle": "botol",
@@ -3765,6 +3831,7 @@ L.ms = {
   "{n} need details": "{n} perlu butiran",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
   "{n} running low": "{n} hampir habis",
+  "{n} selected": "{n} dipilih",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
@@ -3806,11 +3873,13 @@ L.zh = {
   "Admin PIN:": "管理员 PIN：",
   "Admin link (keep private)": "管理员链接（请保密）",
   "Admin mode": "管理员模式",
+  "All": "全部",
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
   "All rooms": "所有房间",
   "Almost out": "快没了",
+  "Alpha · updated {date}": "Alpha · 更新于 {date}",
   "Already have:": "已有：",
   "Already here. Use Add more.": "已经有了，请用“增加”。",
   "Already here? Tap it.": "已经有了？点它。",
@@ -3855,8 +3924,10 @@ L.zh = {
   "Centre name": "分园名称",
   "Centres": "分园",
   "Certificates and graduation": "证书与毕业用品",
+  "Change": "更改",
   "Change PIN": "更改 PIN",
   "Change type": "更改类型",
+  "Changed while you counted": "你清点时被改动",
   "Changes this item at all centres.": "会在所有中心修改这件物品。",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
@@ -3867,7 +3938,6 @@ L.zh = {
   "Checked {total}.": "已检查 {total} 件。",
   "Checked {when}": "{when} 核对过",
   "Checking…": "正在验证…",
-  "Choose": "选择",
   "Choose Approved, Bought or Not approved.": "请选择已批准、已购买或未批准。",
   "Choose Full, Half, Almost out or Empty.": "请选择满的、一半、快没了或空的。",
   "Choose a 6-digit PIN: Admin › Change PIN.": "请设一个 6 位 PIN：管理 › 更改 PIN。",
@@ -3943,6 +4013,7 @@ L.zh = {
   "Flash cards and posters": "识字卡和海报",
   "Flashlight": "手电筒",
   "For mistakes or duplicates. Can’t be undone.": "用于错误或重复。无法撤销。",
+  "For {centre}": "给 {centre}",
   "Full": "满的",
   "Furniture and fittings": "家具与设施",
   "Getting your list…": "正在获取清单…",
@@ -3969,6 +4040,9 @@ L.zh = {
   "It’s fine now": "现在没问题了",
   "Just added": "刚刚添加的",
   "Keep at least one centre.": "至少要保留一个分园。",
+  "Keep mine": "保留我的",
+  "Keep my count ({n})": "保留我数的（{n}）",
+  "Keeping mine replaces what they saved.": "保留我的会覆盖对方保存的内容。",
   "Kept for years, like toys or keys.": "长期保留，如玩具或钥匙。",
   "Kept in {place} at {centre}.": "{centre} 放在 {place}。",
   "Kind and checking can’t be changed.": "类型和核对方式不能更改。",
@@ -3998,6 +4072,7 @@ L.zh = {
   "Match my phone": "跟随手机",
   "Mats and mattresses": "垫子与床垫",
   "Me": "我的",
+  "Minimum": "最低量",
   "More": "更多",
   "More detail:": "详细信息：",
   "Music and instruments": "音乐与乐器",
@@ -4016,11 +4091,11 @@ L.zh = {
   "Next.": "下一个。",
   "No answer. Check the link and sharing, and your signal, then try again.": "没有回应。请检查链接、分享设置和信号后再试。",
   "No centres yet.": "还没有分园。",
-  "No other centre has any": "其他中心都没有",
-  "No other centre has this.": "其他中心都没有这件物品。",
+  "No other centre has spare": "其他中心都没有多余的",
+  "No other centre has spare.": "其他中心都没有多余的。",
   "No requests yet.": "还没有申请。",
   "No rooms yet.": "还没有房间。",
-  "None": "全不选",
+  "None": "无",
   "None here.": "这里没有。",
   "None yet.": "还没有。",
   "Normal": "标准",
@@ -4066,7 +4141,7 @@ L.zh = {
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
   "Other": "其他",
-  "Other centres have some:": "其他中心有一些：",
+  "Other centres have spare:": "其他中心有多余的：",
   "Other names": "其他名称",
   "Outdoor and sports": "户外与运动",
   "Overdue": "已逾期",
@@ -4080,6 +4155,7 @@ L.zh = {
   "Photo of a barcode": "拍条码照片",
   "Photo saved.": "照片已保存。",
   "Piece missing": "缺少零件",
+  "Place": "位置",
   "Plasters and bandages": "创可贴与绷带",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "申请为 {centre} 购买 {qty} {unit} {name}。",
   "Point at a barcode.": "对准条码。",
@@ -4154,6 +4230,7 @@ L.zh = {
   "Search…": "搜索…",
   "See all": "查看全部",
   "See it under Me › Requests.": "在“我的”›“申请”里查看。",
+  "Select": "选择",
   "Select all": "全选",
   "Send": "发送",
   "Send now": "立即发送",
@@ -4171,15 +4248,19 @@ L.zh = {
   "Set up": "设置",
   "Settings": "设置",
   "Settings, requests and the Google Sheet": "设置、申请和 Google Sheet",
-  "Share on WhatsApp": "用 WhatsApp 分享",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "与应用所有者共享表格（编辑者）。员工继续用同一链接。",
   "Share {n}": "分享 {n} 项",
   "Sheet edit": "表格里的修改",
   "Shelves and storage": "架子与收纳",
   "Show history": "查看历史",
+  "Shown as: 1 {a} · 2 {b}": "显示为：1 {a} · 2 {b}",
   "Sign out": "退出登录",
   "Skip for now": "先跳过",
   "Soap and hand wash": "肥皂与洗手液",
+  "Someone else changed this item": "别人修改了这件物品",
+  "Someone else changed this item. Saving will ask what to do.": "别人修改了这件物品。保存时会问你怎么处理。",
+  "Someone else changed this while you were working.": "在你操作时，别人修改了这里。",
+  "Someone just changed this. Showing their version.": "别人刚修改了这里。显示对方的版本。",
   "Something went wrong. Try again.": "出了点问题，请再试一次。",
   "Sort": "排序",
   "Sort and filter": "排序与筛选",
@@ -4231,6 +4312,9 @@ L.zh = {
   "The type is already set. Ask your admin to change it.": "类型已设定。请管理员来更改。",
   "The “{name}” column is missing from the {tab} tab.": "{tab} 页缺少“{name}”这一列。",
   "The “{name}” tab is missing. Ask your admin to set the sheet up again.": "缺少“{name}”页。请管理员重新设置表格。",
+  "Their number is kept unless you choose yours.": "除非你选自己的，否则保留对方的数字。",
+  "Their version is in the form. Check it, then Save.": "对方的内容已填入表单。请检查后保存。",
+  "Theirs: {v}": "对方：{v}",
   "There’s already a centre called “{name}”.": "已经有叫“{name}”的分园。",
   "There’s already a room called “{name}”.": "已经有叫“{name}”的房间了。",
   "There’s no such centre.": "没有这个分园。",
@@ -4274,13 +4358,14 @@ L.zh = {
   "Unit": "单位",
   "Updated {when}": "{when} 更新",
   "Use Add more or Take some.": "请用“增加”或“取用”。",
+  "Use theirs": "用对方的",
+  "Use theirs ({n})": "用对方的（{n}）",
   "Use this sheet": "使用这张表",
   "Used stock": "取用",
   "Used up, like paper or glue.": "会用完，如纸或胶水。",
   "Using:": "当前：",
   "Usual things. Nothing counts until you confirm.": "常见物品。确认后才算入库存。",
   "Vehicles and figures": "玩具车与人偶",
-  "Version {n} · updated {date}": "版本 {n} · 更新于 {date}",
   "Waiting": "等待中",
   "We don’t have it": "没有",
   "We don’t have “{name}”.": "我们没有“{name}”。",
@@ -4307,9 +4392,11 @@ L.zh = {
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
   "Yes": "好",
+  "You counted {a}. It now says {b}.": "你数的是 {a}。现在显示 {b}。",
   "You have {amount} here.": "这里有 {amount}。",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
+  "Yours: {v}": "你的：{v}",
   "about RM {price}": "约 RM {price}",
   "at {centre} · {place}": "在 {centre} · {place}",
   "bottle": "瓶",
@@ -4359,6 +4446,7 @@ L.zh = {
   "{n} need details": "{n} 件需要补充资料",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
   "{n} running low": "{n} 件快用完",
+  "{n} selected": "已选 {n} 项",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
@@ -4533,7 +4621,12 @@ function hostedCall(fn, data) {
       .catch(function (e) { WHY = String(e && e.name ? e.name + ': ' : '') + String(e && e.message || e).slice(0, 140); finish(reject, offline()); });
   });
 }
+// the "saving" lock on the other buttons ends the moment the sheet has answered, whatever the answer is
 function call(fn, data) {
+  var p = callRaw(fn, data);
+  return p.then(function (v) { document.body.classList.remove('saving'); return v; }, function (e) { document.body.classList.remove('saving'); throw e; });
+}
+function callRaw(fn, data) {
   if (HOSTED) return hostedCall(fn, data);
   return new Promise(function (resolve, reject) {
     var done = false;
@@ -4573,6 +4666,7 @@ function pollTick() {
   pollNow();
 }
 window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType,
+  pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { S.histLoading = {}; S.histLoading[cur().id] = !!on; render(); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
@@ -4705,13 +4799,17 @@ function flush() {
       S.outbox.shift();
       store.set('rm_outbox', S.outbox);
       mergeItems(res.items);
+      if (res.conflicts && res.conflicts.length) {
+        (S.pendingConf || (S.pendingConf = [])).push.apply(S.pendingConf, res.conflicts.map(function (c) { return Object.assign({ centre: job.data.centre, loc: job.data.location }, c); }));
+      }
       next();
     }).catch(function (e) {
       if (e.network) { S.offline = true; return end(); }
       S.outbox.shift();                       // the sheet said no (e.g. item was removed): drop it and say so
       store.set('rm_outbox', S.outbox);
       stale = true;
-      toast(e.message);
+      if (e.data && e.data.conflict) { if (e.data.items) mergeItems(e.data.items); toast(tl('Someone just changed this. Showing their version.')); }
+      else toast(e.message);
       next();
     });
   })();
@@ -4719,6 +4817,7 @@ function flush() {
     S.flushing = false;
     rebuild();
     softRender();
+    if (S.pendingConf && S.pendingConf.length && byIdEl('sheet').hidden) { var pc = S.pendingConf; S.pendingConf = []; openCountConflicts(pc); }
     clearTimeout(retryTimer);
     if (S.outbox.length) retryTimer = setTimeout(flush, 20000);
     else if (stale) refresh();
@@ -4825,7 +4924,7 @@ function afterRender(v) {
 function softRender() {
   var n = cur().name;
   if (!byIdEl('sheet').hidden) return;
-  if (S.loaded && hasCentre() && ['add', 'request', 'edit', 'countList', 'bulk', 'scanBooks'].indexOf(n) >= 0) { drawChrome(cur()); return; }
+  if (S.loaded && hasCentre() && ['add', 'request', 'edit', 'countList', 'bulk', 'scanBooks'].indexOf(n) >= 0) { drawChrome(cur()); if (n === 'edit') editDrift(); return; }
   if (S.loaded && hasCentre() && n === 'home' && byIdEl('results')) { drawResults(); drawChrome(cur()); return; }
   render();
 }
@@ -5422,7 +5521,7 @@ function vAdd(v) {
     (g ? '' : '<div id="f-kindwrap">' + kindBox() + '</div>') +
     '<div id="f-count"' + (levelOn() ? ' hidden' : '') + '><div class="qtyunit"><div><label class="lab" for="f-qty" id="f-qtylab">' + tl('How many?') + '</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g ? g.unit : '') + '" placeholder="pcs"></div></div>' +
-    '<p class="help">' + tl('Count packs, not pieces.') + '</p></div>' +
+    '<p class="help" id="unit-prev"></p><p class="help">' + tl('Count packs, not pieces.') + '</p></div>' +
     '<div id="f-levelbox"' + (levelOn() ? '' : ' hidden') + '><label class="lab">' + tl('How much is left?') + '</label>' + chips('level', ['Plenty', 'Half', 'Low', 'Out'], F.level, LEVEL_CHIP) + '</div>' +
     (v.fromAdd ? '' : '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
     '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label>' +
@@ -5469,12 +5568,14 @@ function looksSame(typed, name) {
 function namesOfGroup(g) { return [g.name, g.dname].concat(String((g.rows && g.rows[0] && g.rows[0].alt) || g.alt || '').split(/[,;]/)).filter(Boolean); }
 function similarGroups(text) {
   if (!String(text).trim()) return [];
-  return S.groups.filter(function (g) { return namesOfGroup(g).some(function (n) { return looksSame(text, n); }); });
+  return scoped(S.groups).filter(function (g) { return namesOfGroup(g).some(function (n) { return looksSame(text, n); }); });
 }
 function similarHtml(text) {
   var r = similarGroups(text).slice(0, 3);
   if (!r.length) return '';
-  return '<div class="similar">' + tl('Already here? Tap it.') + '<div class="list">' + r.map(card).join('') + '</div></div>';
+  return '<div class="similar">' + tl('Already here? Tap it.') + '<div class="simlist">' + r.map(function (g) {
+    return '<button type="button" class="simrow" data-act="open" data-key="' + esc(g.key) + '"><b>' + esc(g.dname) + '</b><span>' + esc(g.rows.map(function (r) { return r.loc + ' · ' + amountOf(r); }).join(' · ')) + '</span></button>';
+  }).join('') + '</div></div>';
 }
 // at least 3 English letters, or 2 Chinese characters, before the "already here" menu appears
 function enoughToMatch(text) {
@@ -5494,21 +5595,23 @@ function centreLines(rows) {
     return { centre: c.centre, qty: qty, text: same ? amount(qty, c.rows[0].unit) : c.rows.map(amountOf).join(' + ') };
   });
 }
+function forLineHtml() { return esc(tl('For {centre}', { centre: F.centre })) + ' · <button type="button" class="linkbtn" data-act="reqCentre">' + esc(tl('Change')) + '</button>'; }
 function vRequest(v) {
   var g = v.key ? S.gmap[v.key] : null;
   F = { centre: myCentre() };
   var have = '';
   if (g) {
     var mine = myCentre(), here = centreLines(g.rows.filter(function (r) { return r.centre === mine && r.qty > 0; })),
-      others = centreLines(g.rows.filter(function (r) { return r.centre !== mine && r.qty > 0; })),
+      // "has spare" means more than that centre's own minimum (a level item: Full). A centre that is itself low is not worth asking.
+      others = centreLines(g.rows.filter(function (r) { return r.centre !== mine && (isLevel(r) ? r.qty === 3 : r.qty > r.min); })),
       hereTxt = here.length ? '<br>' + esc(tl('You have {amount} here.', { amount: here[0].text })) : '';
     if (others.length) {
       var top1 = others.slice().sort(function (a, b) { return b.qty - a.qty; })[0];
-      have = '<div class="similar"><b>' + esc(tl('Other centres have some:')) + '</b><br>' +
+      have = '<div class="similar"><b>' + esc(tl('Other centres have spare:')) + '</b><br>' +
         others.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: r.text })); }).join('<br>') + hereTxt + '</div>' +
         '<a class="btn" id="askfirst" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(tl('Hi, can {me} borrow some {name} from {centre}?', { me: mine, name: g.name, centre: top1.centre })) + '">' + esc(tl('Ask {centre} first', { centre: top1.centre })) + '</a>';
     } else {
-      have = '<div class="similar"><b>' + esc(tl('No other centre has this.')) + '</b><br>' + esc(tl('This will be a new purchase.')) + hereTxt + '</div>';
+      have = '<div class="similar"><b>' + esc(tl('No other centre has spare.')) + '</b><br>' + esc(tl('This will be a new purchase.')) + hereTxt + '</div>';
     }
   }
   return top(true) + '<h1 class="title">' + tl('Ask to buy') + '</h1>' +
@@ -5518,7 +5621,7 @@ function vRequest(v) {
     '<div id="similar">' + (g ? '' : similarHtml(v.text || '')) + '</div>' +
     '<div class="qtyunit"><div><label class="lab" for="f-qty">' + tl('How many?') + '</label><input id="f-qty" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>' +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g ? g.unit : '') + '" placeholder="pcs"></div></div>' +
-    '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) +
+    '<p class="help" id="unit-prev"></p><p class="forline" id="forline">' + forLineHtml() + '</p>' +
     '<label class="lab" for="f-why">' + tl('Why?') + ' <i>' + tl('(optional)') + '</i></label>' +
     '<input id="f-why" class="inp" maxlength="300" autocomplete="off">' +
     '<label class="lab" for="f-price">' + tl('About RM') + ' <i>' + tl('(optional)') + '</i></label>' +
@@ -5528,6 +5631,20 @@ function vRequest(v) {
 }
 
 // ----- Change details -----
+// what the Edit page showed when it opened: a save sends only what was changed from this, and the sheet checks it is still there
+function editBase(it) {
+  return { name: it.name, alt: it.alt || '', cat: it.cat || '', subtype: it.subtype || '', centre: it.centre, loc: it.loc, unit: it.unit || '', min: it.min || 0, notes: it.notes || '' };
+}
+var FIELD_LABEL = function (k) { return { name: tl('Name'), alt: tl('Other names'), cat: tl('Type'), subtype: tl('Subtype'), centre: tl('Centre'), loc: tl('Place'), unit: tl('Unit'), min: tl('Minimum'), notes: tl('Notes'), status: tl('Status') }[k] || k; };
+function fieldText(k, v) { return k === 'cat' || k === 'subtype' ? (v ? tl(v) : '—') : (v === '' || v == null ? '—' : String(v)); }
+// the page was drawn from older numbers than the sheet now has: say so on the Edit page, quietly
+function editDrift() {
+  var v = cur(), box = byIdEl('edit-drift'), it = S.byId[v.id];
+  if (!box || !it || !v.base) return;
+  var now = editBase(it), moved = Object.keys(now).filter(function (k) { return String(now[k]) !== String(v.base[k]); });
+  box.hidden = !moved.length;
+  if (moved.length) box.textContent = tl('Someone else changed this item. Saving will ask what to do.');
+}
 function vEdit(v) {
   var it = S.byId[v.id];
   if (!it) return top(true) + '<div class="card empty"><h2>' + tl('That item was removed.') + '</h2></div>';
@@ -5540,8 +5657,10 @@ function vEdit(v) {
     (isLevel(it) ? '' : '<div class="qtyunit">' + (it.kind === 'Equipment' ? '<input id="f-min" type="hidden" value="0">' : '<div><label class="lab" for="f-min">' + tl('Tell me when below') + '</label><input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="' + it.min + '"></div>') +
     '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(it.unit) + '"></div></div>') : '';
   return top(true) + '<h1 class="title">' + tl('Edit item') + '</h1><p class="sub">' + esc(shown(it)) + ' · ' + esc(it.centre) + '</p>' +
+    '<p class="note" id="edit-drift" role="status" hidden></p>' +
     (S.admin ? admin.split('<label class="lab">' + tl('Which centre?')).join('<label class="lab">' + tl('Which centre?')) : '') +
-    '<label class="lab">' + tl('Type') + '</label>' + typePicker() + '<p class="help">' + tl('Changes this item at all centres.') + '</p>' +
+    '<label class="lab">' + tl('Type') + '</label>' +
+    '<p class="typenote" role="note"><span class="ii" aria-hidden="true">i</span><span>' + tl('Changes this item at all centres.') + '</span></p>' + typePicker() +
     '<label class="lab" for="f-loc">' + tl('Where is it?') + '</label><input id="f-loc" class="inp" maxlength="60" autocomplete="off" value="' + esc(it.loc) + '">' +
     '<div id="f-locs">' + locChips(it.centre) + '</div>' +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
@@ -5586,33 +5705,33 @@ function vLow() {
       return a.name.localeCompare(b.name);
     });
   var broken = S.items.filter(function (it) { return it.centre === mine && STATUS_LABEL[it.status]; });
-  var off = S.lowOff || (S.lowOff = {}), pick = !!S.lowPick;
+  var on = S.lowOn || (S.lowOn = {}), pick = !!S.lowPick;
   var card = function (it, lines) {
-    var main = '<button class="card item' + (pick ? ' pickrow' + (off[it.id] ? ' off' : '') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
-      (pick ? ' role="checkbox" aria-checked="' + (off[it.id] ? 'false' : 'true') + '"' : '') + '>' +
+    var main = '<button class="card item' + (pick ? ' pickrow' + (on[it.id] ? '' : ' off') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
+      (pick ? ' role="checkbox" aria-checked="' + (on[it.id] ? 'true' : 'false') + '"' : '') + '>' +
       (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + lines +
       '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
     return pick ? main : '<div class="lowwrap">' + main + '<button type="button" class="btn askb" data-act="askFromLow" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tl('Ask to buy') + '</button></div>';
   };
   var n = lows.length + broken.length;
-  var sl = pick ? lows.filter(function (it) { return !off[it.id]; }) : lows, sb = pick ? broken.filter(function (it) { return !off[it.id]; }) : broken, shareN = sl.length + sb.length;
+  var sl = lows.filter(function (it) { return on[it.id]; }), sb = broken.filter(function (it) { return on[it.id]; }), shareN = sl.length + sb.length;
   return top(false) + '<h1 class="title">' + tl('Running low') + '</h1>' +
-    (n ? '<div class="lowbar"><p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p><div class="tools">' +
-      (lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
-      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + ICON.pick + '<span>' + (pick ? tl('Done') : tl('Choose')) + '</span></button></div></div>' +
-      '<a class="btn" id="share" target="_blank" rel="noopener"' + (pick && !shareN ? ' aria-disabled="true" style="opacity:.45;pointer-events:none"' : '') + ' href="https://wa.me/?text=' +
-        encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + (pick ? tl('Share {n}', { n: shareN }) : tl('Share on WhatsApp')) + '</a>' : '') +
+    (n ? '<div class="lowbar"><p class="count">' + esc(pick ? tl('{n} selected', { n: shareN }) : tl('{n} running low', { n: lows.length })) + '</p><div class="tools">' +
+      (pick ? '<button type="button" class="chip tbtn" data-act="lowAllSel">' + ICON.pick + '<span>' + (shareN === n ? tl('None') : tl('All')) + '</span></button>' : (lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '')) +
+      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + ICON.pick + '<span>' + (pick ? tl('Done') : tl('Select')) + '</span></button></div></div>' : '') +
+    (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
     (lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
       var spare = spareOf(it);
       return card(it, (isLevel(it)
         ? '<span class="line"><span class="badge low">' + LEVEL_LABELS[it.qty] + '</span></span>'
         : '<span class="line"><span class="badge low">' + tl('{amount} left', { amount: amount(it.qty, it.unit) }) + '</span> ' + esc(tl('needs {min}', { min: it.min })) + '</span>') +
         (spare.length ? '<span class="line">' + spare.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) })); }).join(' · ') + '</span>'
-          : (S.gmap[RMSearch.norm(it.name)] || { rows: [] }).rows.some(function (r) { return r.centre !== it.centre && r.qty > 0; }) ? '' : '<span class="line nootherline">' + esc(tl('No other centre has any')) + '</span>'));
+          : '<span class="line nootherline">' + esc(tl('No other centre has spare')) + '</span>'));
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing is running low.') + '</h2></div>') +
     (broken.length ? '<h2 class="sec">' + tl('Broken or missing') + '</h2><div class="list lowlist">' + broken.map(function (it) {
       return card(it, '<span class="line"><span class="badge warn">' + STATUS_LABEL[it.status] + '</span></span>' + (it.notes ? '<span class="line">' + esc(it.notes) + '</span>' : ''));
-    }).join('') + '</div>' : '');
+    }).join('') + '</div>' : '') +
+    (pick && shareN ? '<div class="pickgap" aria-hidden="true"></div>' : '');
 }
 
 function vCountList_placeholder() {}
@@ -5705,7 +5824,7 @@ function centreSheet(act, current) {
 }
 function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 // the gear on Me: how the page looks and sounds, and keeping the list fresh
-var APP_BUILD = 29, APP_BUILT = '2026-11-18';
+var APP_BUILT = '2026-11-18';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 function builtText() {
   try { return new Date(APP_BUILT + 'T12:00:00').toLocaleDateString(LANG === 'ms' ? 'ms-MY' : LANG === 'zh' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return APP_BUILT; }
 }
@@ -5720,7 +5839,7 @@ function vSettings() {
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Larger')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
-    '<p class="help verline">' + esc(tl('Version {n} · updated {date}', { n: APP_BUILD, date: builtText() })) + '</p>';
+    '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
 function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
@@ -6406,18 +6525,43 @@ function formError(msg) {
   else if (msg) toast(msg);
 }
 // the button that was just tapped shows a spinner and its label changes; a form's own save button if the tap was not on a button
-var busyEl = null;
+var busyEl = null, busyT = 0;
 function busy(on, label) {
   if (on) {
     var b = S.lastBtn && S.lastBtnAt > Date.now() - 1500 && document.body.contains(S.lastBtn) && /^(BUTTON|A)$/.test(S.lastBtn.tagName) ? S.lastBtn : (byIdEl('f-go') || byIdEl('m-go'));
     busyEl = b;
     if (!b) return;
     b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true');
+    document.body.classList.add('saving'); clearTimeout(busyT); busyT = setTimeout(function () { document.body.classList.remove('saving'); }, 60000);
   } else {
+    document.body.classList.remove('saving');
     var e = busyEl; busyEl = null;
     if (!e) return;
     e.classList.remove('loading'); e.disabled = false; e.removeAttribute('aria-busy');
   }
+}
+function editConflict(data) {
+  busy(false);
+  mergeItems(data.items); rebuild();
+  var it = data.items[0];
+  M = { type: 'editconf', conflicts: data.conflicts, itemId: it.id };
+  openSheet('<h2>' + esc(tl('Someone else changed this item')) + '</h2><p class="sub">' + esc(shown(it)) + '</p>' +
+    data.conflicts.map(function (c) {
+      return '<div class="confrow"><b>' + esc(FIELD_LABEL(c.field)) + '</b><p>' + esc(tl('Theirs: {v}', { v: fieldText(c.field, c.theirs) })) + '</p><p>' + esc(tl('Yours: {v}', { v: fieldText(c.field, c.yours) })) + '</p></div>';
+    }).join('') +
+    '<button class="btn primary" id="m-go" data-act="editUseTheirs">' + tl('Use theirs') + '</button>' +
+    '<button class="btn quiet" data-act="editKeepMine">' + tl('Keep mine') + '</button>' +
+    '<p class="help">' + tl('Keeping mine replaces what they saved.') + '</p>');
+}
+function openCountConflicts(list) {
+  M = { type: 'countconf', list: list };
+  openSheet('<h2>' + esc(tl('Changed while you counted')) + '</h2><p class="sub">' + esc(tl('Their number is kept unless you choose yours.')) + '</p>' +
+    list.map(function (c, i) {
+      var said = function (x) { return c.level ? LEVEL_LABELS[x] : x; };
+      return '<div class="confrow"><b>' + esc(c.name) + '</b><p>' + esc(tl('You counted {a}. It now says {b}.', { a: said(c.count), b: said(c.current) })) + '</p>' +
+        '<button class="btn primary" data-act="confTheirs" data-i="' + i + '">' + esc(tl('Use theirs ({n})', { n: said(c.current) })) + '</button>' +
+        '<button class="btn quiet" data-act="confMine" data-i="' + i + '">' + esc(tl('Keep my count ({n})', { n: said(c.count) })) + '</button></div>';
+    }).join(''));
 }
 function failed(e) {
   busy(false);
@@ -6444,7 +6588,7 @@ function shrink(file) {
 var ACT = {
   nav: function (el) {
     var to = el.dataset.to, TABS = { home: 1, low: 1, rooms: 1, more: 1 };
-    S.lowPick = false; S.lowOff = {};
+    S.lowPick = false; S.lowOn = {};
     if (to === 'home') { S.fil = {}; S.qSort = ''; S.q = ''; }
     var from = tabRootOf(cur().name);
     (S.scrollAt || (S.scrollAt = {}))[from] = window.scrollY;
@@ -6527,7 +6671,7 @@ var ACT = {
   addNew: function () { S.q = ''; go({ name: 'add', text: '' }); },
   toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
   addPlace: function () { go({ name: 'add', key: cur().key }); },
-  toEdit: function () { go({ name: 'edit', id: cur().id, key: cur().key }); },
+  toEdit: function () { go({ name: 'edit', id: cur().id, key: cur().key, base: editBase(S.byId[cur().id]) }); },
 
   moveOpen: openMove,
   moveCentre: function (el) {
@@ -6808,10 +6952,10 @@ var ACT = {
     var it = S.byId[cur().id], n = Number(el.dataset.n);
     if (!it || !isLevel(it) || it.qty === n) return;
     var id = it.id, was = it.qty;
-    enqueue('setLevel', { itemId: id, level: n });
+    enqueue('setLevel', { itemId: id, level: n, base: was });
     softRender();
     toast(tl('Set to {level}.', { level: LEVEL_LABELS[n] }), tl('Undo'), function () {
-      enqueue('setLevel', { itemId: id, level: was });
+      enqueue('setLevel', { itemId: id, level: was, base: n });
       softRender();
       toast(tl('Undone.'));
     });
@@ -6855,7 +6999,7 @@ var ACT = {
     var photo = F.photo;
     call('addItem', {
       name: g.name || name, kind: F.kind, parts: F.kind === 'Equipment' ? (g.name ? ((g.rows[0] || {}).parts || '') : (F.set ? val('f-parts') : '')) : '',
-      qty: lv ? '' : qty, centre: F.centre, location: loc, unit: lv ? '' : (F.kind === 'Equipment' && F.set ? 'set' : (val('f-unit') || g.unit || '')),
+      qty: lv ? '' : qty, centre: F.centre, location: loc, unit: lv ? '' : (F.kind === 'Equipment' && F.set ? 'set' : (pluralUnit(val('f-unit')) || g.unit || '')),
       alt: val('f-alt') || g.alt || '', cat: F.cat || g.cat || '', subtype: F.sub || '', min: lv || F.kind === 'Equipment' ? '' : (min || (g.min && !here ? g.min : '')), notes: val('f-notes'),
       tracking: lv ? 'Level' : '', level: lv ? Math.max(0, LEVEL_NAMES.indexOf(F.level)) : '',
       photoData: photo
@@ -6887,7 +7031,7 @@ var ACT = {
     if (price && !/^\d+(\.\d{1,2})?$/.test(price)) return formError(tl('Type the price as a number, like 45 or 12.50.'));
     formError('');
     busy(true, tl('Sending…'));
-    var data = { name: name, qty: qty, unit: val('f-unit'), centre: F.centre, why: val('f-why'), price: price, itemId: v.itemId || '', phone: phoneCode() };
+    var data = { name: name, qty: qty, unit: pluralUnit(val('f-unit')), centre: F.centre, why: val('f-why'), price: price, itemId: v.itemId || '', phone: phoneCode() };
     call('addRequest', data).then(function (res) {
       S.requests = null;
       setStack(S.stack.slice(0, -1));
@@ -6901,26 +7045,28 @@ var ACT = {
   editGo: function () {
     var it = S.byId[cur().id];
     if (!it) return;
+    var bs = cur().base || editBase(it);
     var f = {}, loc = val('f-loc'), photo = F.photo;
     if (!loc) return formError(tl('Type where it’s kept.'));
-    if (loc !== it.loc) f.loc = loc;
-    if (val('f-notes') !== it.notes) f.notes = val('f-notes');
-    if (F.cat !== it.cat) f.cat = F.cat;
-    if (F.cat !== it.cat || (F.sub || '') !== (it.subtype || '')) f.subtype = F.sub || '';
+    if (loc !== bs.loc) f.loc = loc;
+    if (val('f-notes') !== bs.notes) f.notes = val('f-notes');
+    if (F.cat !== bs.cat) f.cat = F.cat;
+    if (F.cat !== bs.cat || (F.sub || '') !== bs.subtype) f.subtype = F.sub || '';
     if (S.admin) {
       var min = val('f-min');
       if (!val('f-name')) return formError(tl('Type a name for the item.'));
       if (!isLevel(it) && min && isNaN(parseQty(min))) return formError(tl('Enter a number.'));
-      if (val('f-name') !== it.name) f.name = val('f-name');
-      if (val('f-alt') !== it.alt) f.alt = val('f-alt');
-      if (F.centre !== it.centre) f.centre = F.centre;
-      if (!isLevel(it) && (val('f-unit') || 'pcs') !== it.unit) f.unit = val('f-unit');
-      if (!isLevel(it) && (parseQty(min) || 0) !== it.min) f.min = parseQty(min) || 0;
+      if (val('f-name') !== bs.name) f.name = val('f-name');
+      if (val('f-alt') !== bs.alt) f.alt = val('f-alt');
+      if (F.centre !== bs.centre) f.centre = F.centre;
+      if (!isLevel(it) && (val('f-unit') || 'pcs') !== bs.unit) f.unit = pluralUnit(val('f-unit'));
+      if (!isLevel(it) && (parseQty(min) || 0) !== bs.min) f.min = parseQty(min) || 0;
     }
     if (!Object.keys(f).length && !photo) return back();
+    var sent = {}; Object.keys(f).forEach(function (k) { if (bs[k] !== undefined) sent[k] = bs[k]; });
     formError('');
     busy(true);
-    call('updateItem', { itemId: it.id, fields: f, photoData: photo, pin: S.pin }).then(function (res) {
+    call('updateItem', { itemId: it.id, fields: f, base: sent, photoData: photo, pin: S.pin }).then(function (res) {
       var n = res.items[0];
       if (photo && !res.photoFailed) S.localPhoto[n.id] = photo;
       mergeItems(res.items); rebuild();
@@ -6928,7 +7074,46 @@ var ACT = {
       keepStack.push({ name: 'item', key: RMSearch.norm(n.name), id: n.id });
       setStack(keepStack);
       toast(res.photoFailed ? tl('Saved, but the photo didn’t save.') : tl('Saved.'));
-    }).catch(failed);
+    }).catch(function (e) {
+      if (e.data && e.data.conflict && e.data.conflicts) return editConflict(e.data);
+      failed(e);
+    });
+  },
+  // the safe answer is the first button: take their version into the form and let the person look before saving again
+  editUseTheirs: function () {
+    var c = M.conflicts || [], it = S.byId[M.itemId];
+    closeSheet();
+    if (!it) return;
+    c.forEach(function (x) {
+      var k = x.field, v = it[k === 'loc' ? 'loc' : k];
+      if (k === 'notes') byIdEl('f-notes').value = it.notes || '';
+      else if (k === 'loc') byIdEl('f-loc').value = it.loc;
+      else if (k === 'name' && byIdEl('f-name')) byIdEl('f-name').value = it.name;
+      else if (k === 'alt' && byIdEl('f-alt')) byIdEl('f-alt').value = it.alt || '';
+      else if (k === 'unit' && byIdEl('f-unit')) byIdEl('f-unit').value = it.unit || '';
+      else if (k === 'min' && byIdEl('f-min')) byIdEl('f-min').value = it.min || 0;
+      else if (k === 'cat' || k === 'subtype') { F.cat = it.cat || ''; F.sub = it.subtype || ''; var ft = byIdEl('f-type'); if (ft) ft.innerHTML = typeInner(); }
+      else if (k === 'centre') { F.centre = it.centre; [].forEach.call(document.querySelectorAll('[data-group=centre] .chip'), function (b) { b.classList.toggle('on', b.dataset.val === F.centre); }); }
+    });
+    cur().base = editBase(it);
+    editDrift();
+    toast(tl('Their version is in the form. Check it, then Save.'));
+  },
+  editKeepMine: function () {
+    var it = S.byId[M.itemId];
+    closeSheet();
+    if (!it) return;
+    cur().base = editBase(it);   // from here the sheet's current values are what this save is measured against
+    ACT.editGo();
+  },
+  // a room check that came back with numbers someone changed meanwhile: one line each, their number stands unless chosen otherwise
+  confTheirs: function (el) { var l = (M.list || []); l.splice(Number(el.dataset.i), 1); if (!l.length) closeSheet(); else openCountConflicts(l); },
+  confMine: function (el) {
+    var l = (M.list || []), c = l[Number(el.dataset.i)];
+    if (!c) return;
+    enqueue('saveCount', { centre: c.centre, location: c.loc, counts: [{ id: c.id, count: c.count, base: c.current }] });
+    l.splice(Number(el.dataset.i), 1);
+    if (!l.length) closeSheet(); else openCountConflicts(l);
   },
 
   lowSortOpen: function () {
@@ -6975,6 +7160,8 @@ var ACT = {
   },
 
   addHere: function () { var v = cur(); store.set('rm_scanloc', v.loc); SC.centre = v.centre === myCentre() ? '' : v.centre; ACT.addOpen(); },
+  reqCentre: function () { M = { type: 'reqcentre' }; openSheet(centreSheet('reqCentreSet', F.centre)); },
+  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); },
   clearRq: function () { S.rq = ''; var i = byIdEl('rq'); if (i) { i.value = ''; i.focus(); } var b = byIdEl('roomlist'); if (b) b.innerHTML = roomListHtml(cur()); var c = $('#rsearch .clear'); if (c) c.hidden = true; },
   roomOpen: function (el) { S.rfil = {}; S.rq = ''; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
@@ -7022,7 +7209,12 @@ var ACT = {
   countGo: function () {
     var v = cur(), changes = countChanges();
     if (!changes) return;
-    enqueue('saveCount', { centre: v.centre, location: v.loc, counts: changes });
+    var counts = [];
+    Object.keys(F.was || {}).forEach(function (id) {
+      var el = byIdEl('c-' + id), n = el ? parseQty(el.value) : NaN;
+      if (!isNaN(n)) counts.push({ id: id, count: n, base: F.was[id] });
+    });
+    enqueue('saveCount', { centre: v.centre, location: v.loc, counts: counts });
     if (S.checkDraft) delete S.checkDraft[v.centre + '|' + v.loc];
     back();
     var total = Object.keys(F.was || {}).length;
@@ -7036,8 +7228,14 @@ var ACT = {
     applyLink();
     adminEntry();
   },
-  lowPick: function () { S.lowPick = !S.lowPick; if (!S.lowPick) S.lowOff = {}; render(); },
-  lowTog: function (el) { var o = S.lowOff || (S.lowOff = {}), id = el.dataset.id; if (o[id]) delete o[id]; else o[id] = 1; var y = window.scrollY; render(); window.scrollTo(0, y); },
+  lowPick: function () { S.lowPick = !S.lowPick; S.lowOn = {}; render(); },
+  lowTog: function (el) { var o = S.lowOn || (S.lowOn = {}), id = el.dataset.id; if (o[id]) delete o[id]; else o[id] = 1; var y = window.scrollY; render(); window.scrollTo(0, y); },
+  lowAllSel: function () {
+    var mine = myCentre(), ids = S.items.filter(function (it) { return it.centre === mine && (low(it) || STATUS_LABEL[it.status]); }).map(function (it) { return it.id; });
+    var on = S.lowOn || (S.lowOn = {}), all = ids.every(function (id) { return on[id]; });
+    S.lowOn = {}; if (!all) ids.forEach(function (id) { S.lowOn[id] = 1; });
+    var y = window.scrollY; render(); window.scrollTo(0, y);
+  },
   scope: function (el) { S.allCentres = !!el.dataset.val; render(); },
   qSort: function (el) { S.qSort = el.dataset.val; redrawFilter(); },
   qCentre: function (el) { S.qCentre = el.dataset.val; drawResults(); },
@@ -7293,8 +7491,13 @@ document.addEventListener('input', function (e) {
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id === 'f-parts') F.parts = t.value;
+  else if (t.id === 'f-unit') unitPrev();
   else if (t.id && t.id.indexOf('c-') === 0) countChanges();
   if (cur().name === 'add' && cur().fromAdd) addDraftSave();
+});
+document.addEventListener('focusout', function (e) {
+  var t = e.target;
+  if (t && t.id === 'f-unit') { var pl = pluralUnit(t.value); if (pl !== t.value.trim()) t.value = pl; unitPrev(); }
 });
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && e.target.id === 'q') e.target.blur();
