@@ -48,7 +48,10 @@ a{color:inherit}
 #app{padding:var(--s2) var(--s4) calc(104px + var(--stripH,0px))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);min-height:48px;margin-bottom:var(--s1)}
 .org{color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topr{display:flex;align-items:center;gap:var(--s2);min-width:0;max-width:72%}
+.topr{display:flex;align-items:center;justify-content:flex-end;gap:var(--s2);min-width:0;max-width:72%;flex:0 1 auto}
+.topr .me{flex:0 1 auto}
+@media (max-width:420px){html[data-text] .adminpill span,.adminpill.tight span{display:none}html[data-text] .adminpill,.adminpill.tight{padding:0;width:44px;justify-content:center}}
+@media (max-width:340px){.adminpill span{display:none}.adminpill{padding:0;width:44px;justify-content:center}}
 .adminpill{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3);border:1.5px solid var(--ink);border-radius:999px;background:var(--mark);color:var(--on-mark);font-size:14px;font-weight:700}
 .adminpill svg{width:16px;height:16px}
 .selbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s4);padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface)}
@@ -667,7 +670,11 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 .btn.ask{width:auto;min-height:44px;padding:0 var(--s4);background:transparent;color:var(--ink);border:1px solid var(--line-strong);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:var(--s2)}
 .btn.ask svg{width:18px;height:18px;flex:none}
 .empty .btn.ask{margin-right:var(--s2)}
-.lowact{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s2)}
+.lowact{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0 0 var(--s3);padding-left:calc(52px + var(--s3))}
+html[data-text] .lowact{padding-left:calc(44px + var(--s3))}
+.lowwrap:has(.lowact){padding-bottom:0}
+.lowwrap:has(.lowact) .card.item{padding-bottom:var(--s2)}
+.empty .btn.ask{margin-top:var(--s3)}
 .lowact .btn{flex:0 1 auto;min-width:0;width:auto;min-height:44px;margin:0;padding:0 var(--s5)}
 .askchip{display:inline-flex;align-items:center;gap:6px}
 /* the room picker: title and search stay on top, the list is the only part that scrolls, "Add a new room" stays pinned at the bottom */
@@ -692,8 +699,12 @@ html[data-text="2"] #sheet .panel.rpanel{max-height:calc(min(85vh,640px) / 1.3)}
 /* press and hold: no text selection or browser menu on a row */
 [data-act=open],[data-act=finish],[data-hold],.card.item,.roomrow .rowmain,.simrow,.cat{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .tile img,.tilebtn img{pointer-events:none;-webkit-user-drag:none}
-[data-act=open],[data-act=finish],[data-hold]{transition:transform .38s cubic-bezier(.2,.7,.2,1),background-color .38s}
-[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:scale(.985);background-color:color-mix(in srgb,var(--brand) 12%,var(--surface))}
+/* the hold tint is drawn behind the row but across the whole card (the card's own side padding and corners included) */
+[data-act=open],[data-act=finish],[data-hold]{position:relative;isolation:isolate;transition:transform .38s cubic-bezier(.2,.7,.2,1)}
+[data-act=open]::before,[data-act=finish]::before,[data-hold]::before{content:"";position:absolute;z-index:-1;top:0;bottom:0;left:calc(var(--s4) * -1);right:calc(var(--s4) * -1);background:color-mix(in srgb,var(--brand) 14%,var(--surface));opacity:0;transition:opacity .38s;pointer-events:none}
+[data-act=open].holding::before,[data-act=finish].holding::before,[data-hold].holding::before{opacity:1}
+[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:scale(.99)}
+.list:has(.holding),.cats:has(.holding),.rows:has(.holding),div.card:has(.holding){overflow:hidden}
 @media (prefers-reduced-motion:reduce){[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:none}}
 .sp{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:76px;padding:var(--s3) var(--s4);border:1.5px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left}
 .sp.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,var(--surface))}
@@ -703,6 +714,9 @@ html[data-text="2"] #sheet .panel.rpanel{max-height:calc(min(85vh,640px) / 1.3)}
 .sp-t b{font-size:16px;line-height:1.25}
 .sp-t span{font-size:14px;line-height:1.35;color:var(--muted)}
 .sp-ok svg{width:22px;height:22px;color:var(--brand)}
+@keyframes glow2{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--brand) 45%,transparent)}}
+.glow{animation:glow2 .45s ease-in-out 2;border-radius:var(--r)}
+@media (prefers-reduced-motion:reduce){.glow{animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 45%,transparent)}}
 .rp-or{margin:var(--s2) 0 0;font-size:14px;font-weight:600;color:var(--muted)}
 .menu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
 .menu-head h2{margin:0;overflow-wrap:anywhere}
@@ -3427,6 +3441,7 @@ L.ms = {
   "1 change will send when you’re online.": "1 perubahan akan dihantar apabila dalam talian.",
   "1 item": "1 barang",
   "1 person asked": "1 orang meminta",
+  "1 phone is signed in": "1 telefon sedang log masuk",
   "1 room": "1 bilik",
   "100 at most.": "Paling banyak 100.",
   "A piece is missing": "Ada bahagian hilang",
@@ -3445,6 +3460,8 @@ L.ms = {
   "Add a room": "Tambah bilik",
   "Add an item": "Tambah barang",
   "Add at least one item.": "Tambah sekurang-kurangnya satu barang.",
+  "Add by scanning": "Tambah dengan mengimbas",
+  "Add by typing": "Tambah dengan menaip",
   "Add centre": "Tambah pusat",
   "Add more": "Tambah",
   "Add room": "Tambah bilik",
@@ -3510,6 +3527,7 @@ L.ms = {
   "Bottom strip": "Jalur bawah",
   "Bought": "Dibeli",
   "Bought · on its way": "Dibeli · dalam perjalanan",
+  "Bought · stock added since": "Dibeli · stok telah ditambah",
   "Broken": "Rosak",
   "Broken or missing": "Rosak atau hilang",
   "Broken or missing:": "Rosak atau hilang:",
@@ -3608,6 +3626,7 @@ L.ms = {
   "Equipment": "Peralatan",
   "Estimate it": "Anggar",
   "Every centre": "Semua pusat",
+  "Everyone will need the PIN again.": "Semua orang perlu PIN semula.",
   "Extra Large": "Sangat besar",
   "Fans and lights": "Kipas dan lampu",
   "Festival and event items": "Barang perayaan dan acara",
@@ -3895,7 +3914,10 @@ L.ms = {
   "Shown as: 1 {a} · 2 {b}": "Dipaparkan: 1 {a} · 2 {b}",
   "Sign in as admin": "Log masuk sebagai admin",
   "Sign out": "Log keluar",
+  "Sign out all phones": "Log keluar semua telefon",
+  "Sign out all phones?": "Log keluar semua telefon?",
   "Signed in as admin": "Log masuk sebagai admin",
+  "Signed out everywhere.": "Telah log keluar di semua tempat.",
   "Skip for now": "Langkau dahulu",
   "Soap and hand wash": "Sabun dan pencuci tangan",
   "Someone else changed this item. Check it before you save.": "Orang lain mengubah barang ini. Semak sebelum simpan.",
@@ -3913,7 +3935,7 @@ L.ms = {
   "Starting camera…": "Memulakan kamera…",
   "Stationery and paper": "Alat tulis dan kertas",
   "Status": "Status",
-  "Stay signed in for 6 hours on this phone": "Kekal log masuk selama 6 jam pada telefon ini",
+  "Stay signed in on this phone until I sign out": "Kekal log masuk pada telefon ini sehingga saya log keluar",
   "Subtype": "Subjenis",
   "Supplies": "Bekalan",
   "Supplies or equipment?": "Bekalan atau peralatan?",
@@ -4043,6 +4065,7 @@ L.ms = {
   "Yes": "Ya",
   "You have {amount} here.": "Anda ada {amount} di sini.",
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
+  "Your admin sign-in ended. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your admin sign-in has expired. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
@@ -4104,6 +4127,7 @@ L.ms = {
   "{n} people": "{n} orang",
   "{n} people asked": "{n} orang meminta",
   "{n} people have asked. You’re counted too.": "{n} orang telah meminta. Anda dikira sama.",
+  "{n} phones are signed in": "{n} telefon sedang log masuk",
   "{n} rooms": "{n} bilik",
   "{n} rooms are now Every-centre rooms.": "{n} bilik kini bilik Setiap pusat.",
   "{n} running low": "{n} hampir habis",
@@ -4121,6 +4145,7 @@ L.zh = {
   "1 change will send when you’re online.": "1 项更改联网后会发送。",
   "1 item": "1 件",
   "1 person asked": "1 人申请",
+  "1 phone is signed in": "有 1 部手机已登录",
   "1 room": "1 个房间",
   "100 at most.": "最多 100 个。",
   "A piece is missing": "缺了一个零件",
@@ -4139,6 +4164,8 @@ L.zh = {
   "Add a room": "添加房间",
   "Add an item": "添加物品",
   "Add at least one item.": "至少添加一件。",
+  "Add by scanning": "扫描添加",
+  "Add by typing": "输入添加",
   "Add centre": "添加分园",
   "Add more": "增加",
   "Add room": "添加房间",
@@ -4204,6 +4231,7 @@ L.zh = {
   "Bottom strip": "底部细条",
   "Bought": "已购买",
   "Bought · on its way": "已购买 · 在路上",
+  "Bought · stock added since": "已购买 · 之后已入库",
   "Broken": "损坏",
   "Broken or missing": "损坏或缺失",
   "Broken or missing:": "损坏或缺失：",
@@ -4302,6 +4330,7 @@ L.zh = {
   "Equipment": "设备",
   "Estimate it": "估量",
   "Every centre": "所有分园",
+  "Everyone will need the PIN again.": "所有人都需要重新输入 PIN。",
   "Extra Large": "特大",
   "Fans and lights": "风扇与灯",
   "Festival and event items": "节庆与活动用品",
@@ -4589,7 +4618,10 @@ L.zh = {
   "Shown as: 1 {a} · 2 {b}": "显示为：1 {a} · 2 {b}",
   "Sign in as admin": "以管理员身份登录",
   "Sign out": "退出登录",
+  "Sign out all phones": "退出所有手机",
+  "Sign out all phones?": "退出所有手机？",
   "Signed in as admin": "已以管理员身份登录",
+  "Signed out everywhere.": "已在所有设备退出。",
   "Skip for now": "先跳过",
   "Soap and hand wash": "肥皂与洗手液",
   "Someone else changed this item. Check it before you save.": "别人修改了这件物品。保存前请先检查。",
@@ -4607,7 +4639,7 @@ L.zh = {
   "Starting camera…": "正在启动相机…",
   "Stationery and paper": "文具与纸张",
   "Status": "状态",
-  "Stay signed in for 6 hours on this phone": "在这部手机上保持登录 6 小时",
+  "Stay signed in on this phone until I sign out": "在这部手机上保持登录，直到我退出",
   "Subtype": "细类",
   "Supplies": "耗材",
   "Supplies or equipment?": "耗材还是设备？",
@@ -4737,6 +4769,7 @@ L.zh = {
   "Yes": "好",
   "You have {amount} here.": "这里有 {amount}。",
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
+  "Your admin sign-in ended. Sign in again.": "你的管理员登录已结束，请重新登录。",
   "Your admin sign-in has expired. Sign in again.": "你的管理员登录已过期，请重新登录。",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
@@ -4798,6 +4831,7 @@ L.zh = {
   "{n} people": "{n} 人",
   "{n} people asked": "{n} 人申请",
   "{n} people have asked. You’re counted too.": "已有 {n} 人申请，你也算在内。",
+  "{n} phones are signed in": "有 {n} 部手机已登录",
   "{n} rooms": "{n} 个房间",
   "{n} rooms are now Every-centre rooms.": "{n} 个房间现在是所有中心共用的房间。",
   "{n} running low": "{n} 件快用完",
@@ -4902,20 +4936,30 @@ function phoneCode() {
 }
 // The admin door is not on any screen: open the page with #admin on the end (the admin's own link has it) and the PIN box appears.
 function noteAdminHash() { if (/[#&]admin\b/.test(location.hash)) S.adminWanted = true; }
-// "Stay signed in": a token from an earlier sign-in is tried once when the list has loaded
-function adminRestore() {
-  if (S.admin || S.adminTried) return;
-  S.adminTried = true;
+// "Stay signed in": a phone that signed in with the tick keeps a token until it signs out. The page believes it at once, so the Admin pill is on the very first screen;
+// the server check runs alongside the loading and fills in the details (or, if the token is no longer good, takes the admin look away again).
+(function () {
   var t = store.get('rm_admin_tok', null);
-  if (!t || !t.t || Date.now() - t.at > 6 * 3600 * 1000) { if (t) store.set('rm_admin_tok', null); return; }
+  if (t && t.t) { S.admin = { sheetUrl: '', sheetName: '', log: [], phones: 0, pending: true }; S.pin = 'tok:' + t.t; }
+})();
+function adminRestore() {
+  if (S.adminTried) return;
+  var t = store.get('rm_admin_tok', null);
+  if (!t || !t.t) { if (S.admin && S.admin.pending) { S.admin = null; S.pin = ''; } return; }
+  if (HOSTED && !BACKEND.id) return;
+  S.adminTried = true;
   var pin = 'tok:' + t.t;
   callRaw('adminOpen', { pin: pin }).then(function (res) {
-    S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log }; S.pin = pin; S.requests = null;
+    S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log, phones: res.phones || 0 }; S.pin = pin; S.requests = null;
     render();
-  }).catch(function (e) { if (e && e.network) S.adminTried = false; else store.set('rm_admin_tok', null); });
+  }).catch(function (e) {
+    if (e && e.network) { S.adminTried = false; return; }   // no signal: stay as we are, try again later
+    store.set('rm_admin_tok', null); S.admin = null; S.pin = ''; S.requests = null;
+    toast(tl('Your admin sign-in ended. Sign in again.')); render();
+  });
 }
 function adminEntry() {
-  if (S.loaded && hasCentre()) adminRestore();
+  adminRestore();
   noteAdminHash();
   if (!S.adminWanted || !S.loaded || !hasCentre()) return;   // wait for the list and the centre
   S.adminWanted = false;
@@ -5045,6 +5089,10 @@ window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; 
   act: function (name, data) { return ACT[name]({ dataset: data || {} }); },
   ask: function (q) { var g = RMSearch.search(S.groups, q).strong[0]; var mine = g && g.rows.filter(function (r) { return r.centre === myCentre(); })[0]; if (g) go({ name: 'request', key: g.key, itemId: mine ? mine.id : '' }); },
   openNow: function () { S.openAt = 0; openLoad(true); },
+  hdepth: function () { return S.hdepth || 0; },
+  hist: function () { return { d: S.hdepth || 0, skip: S.skipPop || 0, pend: S.pendingPush || 0, entry: !!S.sheetEntry, rw: !!S.sheetRewind, len: history.length }; },
+  adminPending: function () { return !!(S.admin && S.admin.pending); },
+  sheetEntry: function () { return !!S.sheetEntry; },
   lock: lockUI,
   lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true, b); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
@@ -5212,7 +5260,28 @@ if (!hist && HOSTED) {
 }
 var TAB_ROOT = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
 function tabRootOf(name) { return TAB_ROOT[name] || 'home'; }
-function histPush() { try { if (hist) { hist.push({ n: S.stack.length }); S.hdepth = (S.hdepth || 0) + 1; } } catch (e) { /* back button just leaves the app */ } }
+// v40: every open sheet owns ONE history entry, so the phone's Back button closes the sheet (or goes one layer down) instead of leaving the app.
+// A history step back is asynchronous, so while one is pending any new entry waits (pendingPush) until it has happened.
+function histPushNow() { try { if (hist) { hist.push({ n: S.stack.length }); S.hdepth = (S.hdepth || 0) + 1; } } catch (e) { /* back button just leaves the app */ } }
+function histPush() {
+  if (S.sheetRewind) flushSheetRewind();
+  if (S.skipPop > 0) { S.pendingPush = (S.pendingPush || 0) + 1; return; }
+  histPushNow();
+}
+function rewind(n, cb) {   // go back n entries without the Back handler treating it as the person pressing Back
+  S.skipPop = (S.skipPop || 0) + 1; (S.rwQ = S.rwQ || []).push(cb || null);
+  // if the browser drops a step (another navigation overtook it), put the bookkeeping right again instead of waiting for ever
+  clearTimeout(S.rwWD);
+  S.rwWD = setTimeout(function () { if (S.skipPop > 0) { S.skipPop = 0; var q = S.rwQ || []; S.rwQ = []; q.forEach(function (f) { if (f) f(); }); flushPendingPushes(); } }, 1500);
+  try { history.go(-n); } catch (e) { S.skipPop--; S.rwQ.pop(); if (cb) cb(); }
+}
+function flushSheetRewind() {
+  if (!S.sheetRewind) return;
+  S.sheetRewind = false;
+  S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
+  rewind(1, null);
+}
+function flushPendingPushes() { var n = S.pendingPush || 0; S.pendingPush = 0; for (var i = 0; i < n; i++) histPushNow(); }
 function go(view, replace) {
   if (replace) S.stack[S.stack.length - 1] = view; else { S.stack.push(view); histPush(); }
   render();
@@ -5220,13 +5289,12 @@ function go(view, replace) {
 }
 // Put the stack in a known shape and make the phone's own history match it, so Back always goes to the screen before.
 function setStack(stack) {
+  S.sheetRewind = false; S.pendingPush = 0;   // the entries are rebuilt from scratch below (a closing sheet's entry is among those rewound)
   var d = S.hdepth || 0;
   S.stack = stack; S.hdepth = 0;
-  var again = function () { for (var i = 1; i < S.stack.length; i++) histPush(); };
-  if (d > 0 && hist) {
-    S.skipPop = (S.skipPop || 0) + 1; S.afterRewind = again;
-    try { history.go(-d); } catch (e) { S.skipPop--; S.afterRewind = null; again(); }
-  } else again();
+  var tok = S.stackTok = (S.stackTok || 0) + 1;
+  var again = function () { if (tok !== S.stackTok) return; for (var i = 1; i < S.stack.length; i++) histPush(); };   // an older call that is overtaken must not push again
+  if (d > 0 && hist) rewind(d, again); else again();
   render();
   window.scrollTo(0, 0);
 }
@@ -5246,14 +5314,16 @@ function root(name) {
 try {
   // The phone's own back button: close an open sheet, otherwise go up one screen.
   if (hist) hist.setChangeHandler(function () {
-    if (S.skipPop > 0) { S.skipPop--; var f = S.afterRewind; S.afterRewind = null; if (f) f(); return; }
+    if (/[#&]admin/.test(location.hash)) return;   // the address just gained #admin: that is the admin door, not Back (and not the end of one of our own steps)
+    if (S.skipPop > 0) { S.skipPop--; var f = (S.rwQ || []).shift(); if (f) f(); if (S.skipPop === 0) { clearTimeout(S.rwWD); flushPendingPushes(); } return; }
     if (S.locked) { try { hist.push({ n: S.stack.length }); } catch (e) { /* nothing to restore */ } toast(tl('Saving… one moment.')); return; }
     S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
-    if (!byIdEl('sheet').hidden) {   // a sheet layer goes (a room list inside a sheet, a sheet opened from the menu); the last one closes. The screen stays, so the entry is put back
-      if (byIdEl('rp-wrap')) endRoomPick();
-      else if (SHEETL.length) SHEETL.pop().rebuild();
-      else closeSheet();
-      histPush(); return;
+    if (!byIdEl('sheet').hidden) {   // that Back used up the sheet's entry: a layer goes (a room list inside a sheet, a sheet opened from the menu); the last one closes
+      S.sheetEntry = false;
+      if (byIdEl('rp-wrap')) { endRoomPick(); S.sheetEntry = true; histPush(); }
+      else if (SHEETL.length) { SHEETL.pop().rebuild(); S.sheetEntry = true; histPush(); }
+      else closeSheet(true);
+      return;
     }
     if (S.stack.length > 1) { S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); }
   });
@@ -5301,6 +5371,21 @@ document.addEventListener('toggle', function (e) {
   var d = e.target;
   if (d && d.dataset && d.dataset.keep) (S.keep || (S.keep = {}))[d.dataset.keep] = d.open;
 }, true);
+// draw the eye to a field, then do the follow-up; any touch or key press in the meantime cancels the follow-up (the person has taken over)
+function glowThen(el, fn) {
+  var done = false, calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  try { el.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' }); } catch (e) { /* older browsers */ }
+  el.classList.add('glow');
+  var stop = function (run) {
+    if (done) return; done = true; clearTimeout(t);
+    document.removeEventListener('pointerdown', cancel, true); document.removeEventListener('keydown', cancel, true);
+    el.classList.remove('glow');
+    if (run && fn && document.body.contains(el)) fn();
+  };
+  var cancel = function () { stop(false); };
+  var t = setTimeout(function () { stop(true); }, calm ? 600 : 950);
+  document.addEventListener('pointerdown', cancel, true); document.addEventListener('keydown', cancel, true);
+}
 function afterRender(v) {
   if (v.name === 'countList') restoreCheck(v);
   if (v.name === 'request') { openLoad(); refreshAskNote(); }
@@ -5308,9 +5393,12 @@ function afterRender(v) {
     store.set('rm_lptip', 1);
     setTimeout(function () { if (cur().name === 'home') toast(tl('Tip: press and hold an item for shortcuts.')); }, 1500);
   }
-  if (v.name === 'edit' && !v._focused) {   // an item that still needs a name: the cursor is in the name box, so typing can start at once
-    var nb = byIdEl('f-nname') || (S.byId[v.id] && needsNameText(S.byId[v.id].name) ? byIdEl('f-name') : null);
-    if (nb) { v._focused = true; nb.focus(); try { nb.scrollIntoView({ block: 'center' }); } catch (e) { /* older browsers */ } }
+  if (v.name === 'edit' && !v._focused) {   // an item that still needs something: the first missing thing glows twice, then the keyboard (name) or the room list (place) opens
+    var it0 = S.byId[v.id], tags0 = it0 ? attentionTags(it0) : [], target = null, then = null;
+    if (tags0.indexOf('name') >= 0 && (byIdEl('f-nname') || byIdEl('f-name'))) { target = byIdEl('f-nname') || byIdEl('f-name'); then = function () { target.focus(); }; }
+    else if (tags0.indexOf('place') >= 0 && byIdEl('f-loc-btn')) { target = byIdEl('f-loc-btn'); then = function () { target.click(); }; }
+    else if (tags0.indexOf('type') >= 0 && byIdEl('f-type')) target = byIdEl('f-type');
+    if (target) { v._focused = true; glowThen(target, then); }
   }
   if (v.name === 'add' && v._draft) fillAddDraft(v._draft);
 }
@@ -5343,7 +5431,11 @@ function drawChrome(v) {
       '<span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + ICON[to] + '</svg>' +
       (n ? '<span class="n">' + n + '</span>' : '') + '</span><span class="lb">' + label + '</span></button>';
   };
-  var addBtn = '<button data-act="addOpen" aria-label="' + tl('Add') + '" class="addb' + (tab === 'add' ? ' on' : '') + '"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15"/><path d="M12 9.2v5.6M9.2 12h5.6"/></svg></span><span class="lb">' + tl('Add') + '</span></button>';
+  var scanning = scanOk() && store.get('rm_scanmode', 'scan') !== 'type';
+  var addIcon = scanning
+    ? '<path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15"/><path d="M12 9.2v5.6M9.2 12h5.6"/>'
+    : '<rect x="3" y="6.5" width="18" height="11" rx="2"/><path d="M6.8 10h.01M9.9 10h.01M13 10h.01M16.1 10h.01M17.9 10h.01M7.5 14h9"/>';
+  var addBtn = '<button data-act="addOpen" data-mode="' + (scanning ? 'scan' : 'type') + '" aria-label="' + esc(scanning ? tl('Add by scanning') : tl('Add by typing')) + '" class="addb' + (tab === 'add' ? ' on' : '') + '"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + addIcon + '</svg></span><span class="lb">' + tl('Add') + '</span></button>';
   nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), roomsBadge(myCentre())) + b('more', tl('Me')) + '</div>';
   var n = S.outbox.length, msg = '';
   if (n && S.offline) {
@@ -5430,7 +5522,8 @@ function recentHtml() {
   var gs = scoped((store.get('rm_recent', []) || []).map(function (k) { return S.gmap[k]; }).filter(Boolean));
   if (!gs.length) return '';
   return '<h2 class="sec">' + tl('Recent') + '</h2><div class="cats">' + gs.map(function (g) {
-    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"><span class="emo" aria-hidden="true">' + (CAT_ICON[g.cat] || '📦') + '</span><span class="lbl2">' + esc(g.dname) + '</span><small>' +
+    var hr = g.rows.filter(function (r) { return r.centre === myCentre(); })[0] || g.rows[0];
+    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"' + (hr ? ' data-hold="' + esc(hr.id) + '"' : '') + '><span class="emo" aria-hidden="true">' + (CAT_ICON[g.cat] || '📦') + '</span><span class="lbl2">' + esc(g.dname) + '</span><small>' +
       (g.levelOnly ? LEVEL_LABELS[g.lowest] : esc(amount(g.total, g.unit))) + '</small></button>';
   }).join('') + '</div>';
 }
@@ -5729,6 +5822,10 @@ function histLine(h) {
 
 // ----- Bottom sheets -----
 function openSheet(html, focusId, cls) {
+  if (byIdEl('sheet').hidden && hist) {
+    if (S.sheetRewind) { S.sheetRewind = false; S.sheetEntry = true; }   // closed and opened again in one go: keep the entry
+    else if (!S.sheetEntry) { S.sheetEntry = true; histPush(); }
+  }
   $('#sheet .panel').className = 'panel' + (cls ? ' ' + cls : '');
   $('#sheet .panel').innerHTML = html;
   byIdEl('sheet').hidden = false;
@@ -5736,8 +5833,9 @@ function openSheet(html, focusId, cls) {
 }
 var SHEETL = [];   // the sheets underneath the one on top: { rebuild() } puts one back
 function pushSheet(rebuild) { if (!byIdEl('sheet').hidden) SHEETL.push({ rebuild: rebuild }); }
-function closeSheet() {
+function closeSheet(fromBack) {
   SHEETL = [];
+  if (S.sheetEntry) { S.sheetEntry = false; if (fromBack !== true) { S.sheetRewind = true; setTimeout(flushSheetRewind, 0); } }   // the entry goes too (after the current step, so a screen change right after can take it with it)
   if (SC.picking && SC.pickSheet) {
     var pe = SC.picking, b = SC.pickBackup || {};
     SC.picking = null; SC.pickSheet = false;
@@ -5828,7 +5926,7 @@ function askRemove(id, fromMenu) {
 function reopenMenu(id) { var it = S.byId[id]; if (!it) return closeSheet(); M = { type: 'itemmenu', id: it.id }; openSheet(itemMenuHtml(it)); }
 function itemMenuHtml(it) {
   return '<div class="menu-head"><h2>' + esc(shown(it)) + '</h2><button type="button" class="ib rp-x" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button></div><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
-    '<button type="button" class="opt" data-act="menuEdit"><span class="ri" aria-hidden="true">' + ICON.pencil + '</span><span>' + tl('Edit item') + '</span></button>' +
+    '<button type="button" class="opt" data-act="menuEdit"><span class="ri" aria-hidden="true">' + ICON.pencil + '</span><span>' + (attentionTags(it).length ? tl('Finish adding') : tl('Edit item')) + '</span></button>' +
     '<button type="button" class="opt" data-act="menuProblem"><span class="ri" aria-hidden="true">' + ICON.warn + '</span><span>' + tl('Report a problem') + '</span></button>' +
     (S.admin ? '<button type="button" class="opt danger" data-act="menuRemove"><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span>' + tl('Delete') + '</span></button>' : '');
 }
@@ -6388,7 +6486,8 @@ function vSettings() {
     }).join('') + '</div>' +
     '<h2 class="sec">' + tl('Admin') + '</h2><div class="card rows">' + (S.admin
       ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin panel') + '<small>' + tl('Signed in as admin') + '</small></span>' + ICON.go + '</button>' +
-        '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button>'
+        '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button>' +
+        '<button class="rowbtn" data-act="adminLeaveAll"><span class="lead">' + ICON.x + '</span><span>' + tl('Sign out all phones') + (S.admin.phones ? '<small>' + esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) + '</small>' : '') + '</span>' + ICON.go + '</button>'
       : '<button class="rowbtn" data-act="pinOpen"><span class="lead">' + ICON.shield + '</span><span>' + tl('Sign in as admin') + '<small>' + tl('Needs the admin PIN.') + '</small></span>' + ICON.go + '</button>') + '</div>' +
     (HOSTED ? '<div class="card rows" style="margin-top:var(--s5)"><a class="rowbtn" href="barcheck.html"><span class="lead">' + ICON.phone + '</span><span>' + tl('Check the phone bars') + '<small>' + tl('A small test page for the bars at the top and bottom of the phone.') + '</small></span>' + ICON.go + '</a></div>' : '') +
     '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
@@ -6565,7 +6664,11 @@ function fillHistFold(v) {
 }
 function skelHistory() { return '<div class="card skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="skelcard"><span class="skel" style="height:13px;width:90%"></span><span class="skel" style="height:13px;width:70%"></span><span class="skel" style="height:13px;width:80%"></span></div></div>'; }
 var REQ_PILL = function () { return { New: ['wait', ICON.clock], Approved: ['appr', ICON.done], Bought: ['bought', ICON.bag], Declined: ['no', ICON.x] }; };
-function reqPill(st) { var p = REQ_PILL()[st] || REQ_PILL().New; return '<span class="pill st-' + p[0] + '">' + p[1] + '<span>' + esc(REQ_LABEL[st] || st) + '</span></span>'; }
+function reqPill(st, r) {
+  var p = REQ_PILL()[st] || REQ_PILL().New, oo = r && (S.open || []).filter(function (x) { return x.id === r.id; })[0];
+  var label = st === 'Bought' && oo && oo.restocked ? tl('Bought · stock added since') : (REQ_LABEL[st] || st);
+  return '<span class="pill st-' + p[0] + '">' + p[1] + '<span>' + esc(label) + '</span></span>';
+}
 function askedText(ms) {
   if (!ms) return '';
   var d = Math.floor((Date.now() - ms) / 86400000);
@@ -6584,7 +6687,7 @@ function reqCard(r) {
     if (r.status === 'New') actions = '<button class="btn sm" data-act="decide" data-id="' + esc(r.id) + '" data-val="Approved">' + tl('Approve') + '</button><button class="btn sm quiet" data-act="decide" data-id="' + esc(r.id) + '" data-val="Declined">' + tl('Decline') + '</button>';
     else if (r.status === 'Approved') actions = '<button class="btn sm" data-act="decide" data-id="' + esc(r.id) + '" data-val="Bought">' + tl('Mark as bought') + '</button>';
   } else if (r.status === 'New') actions = '<button class="btn sm quiet" data-act="withdraw" data-id="' + esc(r.id) + '">' + tl('Withdraw') + '</button>';
-  return '<div class="rq" data-id="' + esc(r.id) + '"><div class="rq-top"><p class="rq-name">' + esc(r.name) + '</p>' + reqPill(r.status) + '</div>' +
+  return '<div class="rq" data-id="' + esc(r.id) + '"><div class="rq-top"><p class="rq-name">' + esc(r.name) + '</p>' + reqPill(r.status, r) + '</div>' +
     '<p class="rq-qty">' + esc(amount(r.qty, r.unit)) + (r.price ? ' · ' + esc(tl('RM {price}', { price: r.price })) : '') + '</p>' +
     '<p class="rq-meta">' + meta.map(esc).join(' · ') + '</p>' +
     (S.admin && where ? '<p class="rq-meta">' + esc(where) + '</p>' : '') +
@@ -7462,14 +7565,14 @@ var ACT = {
   camDone: function () { camStop(); drawScanList(); },
   modeScan: function () {
     if (!scanOk()) return toast(tl('Scanning isn’t available here. Type items instead.'));
-    store.set('rm_scanmode', 'scan');
+    store.set('rm_scanmode', 'scan'); drawChrome(cur());
     camStop();
     camShell();
     showAdd('scanBooks');
     ACT.camStart();
   },
   modeType: function () {
-    store.set('rm_scanmode', 'type');
+    store.set('rm_scanmode', 'type'); drawChrome(cur());
     camStop();
     showAdd('type');
   },
@@ -7871,7 +7974,7 @@ var ACT = {
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
   removeItem: function () { askRemove(cur().id, false); },
-  menuEdit: function () { var id = M.id, it = S.byId[id]; closeSheet(); if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it) }); },
+  menuEdit: function () { var id = M.id, it = S.byId[id]; closeSheet(); if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: attentionTags(it).length > 0 }); },
   menuProblem: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); openProblem(id); },
   menuRemove: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); askRemove(id, true); },
   removeItemGo: function () {
@@ -8053,13 +8156,13 @@ var ACT = {
   countHide: function (el) { S.checkHide = !S.checkHide; el.classList.toggle('on', S.checkHide); el.setAttribute('aria-pressed', S.checkHide ? 'true' : 'false'); el.innerHTML = S.checkHide ? ICON.eyeoff : ICON.eye; byIdEl('checklist').classList.toggle('hidechecked', S.checkHide); },
   countTick: function (el) { var l = el.closest('.cline'); l.classList.toggle('ticked'); countChanges(); },
   centrePick: function () { M = { type: 'centre-pick' }; openSheet(centreSheet('myCentre', myCentre())); },
-  myCentre: function (el) { S.me = { centre: el.dataset.val }; store.set('rm_me', S.me); SC.centre = ''; S.allCentres = false; if (!byIdEl('sheet').hidden) { M = {}; byIdEl('sheet').hidden = true; $('#sheet .panel').innerHTML = ''; } root(tabRootOf(cur().name)); },
+  myCentre: function (el) { S.me = { centre: el.dataset.val }; store.set('rm_me', S.me); SC.centre = ''; S.allCentres = false; if (!byIdEl('sheet').hidden) closeSheet(); root(tabRootOf(cur().name)); },
 
   pinOpen: function () {
     M = { type: 'pin' };
     openSheet('<h2>' + tl('Admin PIN') + '</h2>' +
       '<input id="m-pin" class="inp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" aria-label="' + tl('Admin PIN') + '">' +
-      '<label class="chk"><input type="checkbox" id="m-stay" checked aria-label="' + esc(tl('Stay signed in for 6 hours on this phone')) + '"><span class="box" aria-hidden="true"></span><span>' + tl('Stay signed in for 6 hours on this phone') + '</span></label>' +
+      '<label class="chk"><input type="checkbox" id="m-stay" checked aria-label="' + esc(tl('Stay signed in on this phone until I sign out')) + '"><span class="box" aria-hidden="true"></span><span>' + tl('Stay signed in on this phone until I sign out') + '</span></label>' +
       '<p class="err" id="m-err" hidden></p>' +
       '<button class="btn primary" id="m-go" data-act="pinGo">' + tl('Continue') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-pin');
   },
@@ -8068,8 +8171,9 @@ var ACT = {
     if (!pin) return;
     busy(true, tl('Checking…'));
     call('adminOpen', { pin: pin, remember: !!(byIdEl('m-stay') && byIdEl('m-stay').checked) }).then(function (res) {
-      S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log };
+      S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log, phones: res.phones || 0 };
       S.pin = pin;
+      S.adminTried = true;
       store.set('rm_admin_tok', res.token ? { t: res.token, at: Date.now() } : null);   // only a random token is kept on the phone, never the PIN
       S.requests = null; loadRequests();
       closeSheet();
@@ -8180,6 +8284,16 @@ var ACT = {
       err.hidden = false;
     });
   },
+  adminLeaveAll: function () {
+    M = { type: 'leaveall' };
+    openSheet('<h2>' + tl('Sign out all phones?') + '</h2><p class="sub">' + tl('Everyone will need the PIN again.') + '</p>' +
+      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="adminLeaveAllGo">' + tl('Sign out all phones') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
+  },
+  adminLeaveAllGo: function () {
+    busy(true, tl('Saving…'));
+    call('adminSignOutAll', { pin: S.pin }).then(function () { busy(false); closeSheet(); ACT.adminLeave(); toast(tl('Signed out everywhere.')); })
+      .catch(function (e) { busy(false); var er = byIdEl('m-err'); er.textContent = e.network ? tl('Offline. Try again.') : e.message; er.hidden = false; });
+  },
   adminLeave: function () {
     if (S.pin && S.pin.indexOf('tok:') === 0) callRaw('adminSignOut', { pin: S.pin }).catch(function () { /* it expires by itself */ });
     store.set('rm_admin_tok', null);
@@ -8229,7 +8343,7 @@ function openLoad(force) {
 function openForName(centre, name, itemId) {
   var k = RMSearch.norm(name || ''), best = null;
   (S.open || []).forEach(function (o) {
-    if (o.centre !== centre) return;
+    if (o.centre !== centre || o.restocked) return;   // stock went up since: that request is handled, whatever its label says
     if (!((itemId && o.itemId === itemId) || (k && RMSearch.norm(o.name) === k))) return;
     var live = o.status === 'New' || o.status === 'Approved';
     if (!best || (live && !(best.status === 'New' || best.status === 'Approved'))) best = o;
@@ -8266,6 +8380,7 @@ function refreshAskNote() {
 function loadRequests() {
   var t0 = Date.now();
   S.reqErr = false; S.reqMsg = '';
+  openLoad();
   call('getRequests', { phone: phoneCode(), pin: S.admin ? S.pin : '' }).then(function (res) {
     var show = function () { S.requests = res.requests; if (cur().name === 'requests' || cur().name === 'admin') render(); };
     var el = Date.now() - t0;
