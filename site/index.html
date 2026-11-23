@@ -513,6 +513,14 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .roomrow .rowmain{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:var(--s2);text-align:left;min-height:58px;background:transparent;border:0;color:inherit;padding:var(--s2) var(--s3);cursor:pointer;font:inherit}
 .roomrow .rowmain small{display:block;color:var(--muted);font-size:13px}
 .roomrow .chip{flex:none}
+/* v41: an admin action shows its result at once; the row is tinted and the button spins until the server has said yes */
+.btn.pendb,.btn.pendb[disabled]{display:inline-flex;align-items:center;justify-content:center;opacity:.85;pointer-events:none}
+.btn.pendb::before{content:"";flex:none;width:14px;height:14px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
+@media (prefers-reduced-motion:reduce){.btn.pendb::before{animation-duration:2.4s}}
+.lowwrap.unconf .card.item,.rq.unconf{background:color-mix(in srgb,var(--brand) 10%,var(--surface))}
+.tag.unconf{opacity:.7}
+.topr{min-height:44px}
+.adminpill{min-width:44px}
 .lowwrap{padding-bottom:var(--s4);border-bottom:1px solid var(--line)}
 .lowwrap .card.item{border-bottom:0;padding-bottom:var(--s3)}
 .lowwrap .askb{margin-top:0;min-height:48px;font-size:15px}
@@ -819,6 +827,8 @@ html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 <circle class="dot" cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg></div>
 <div id="banner"></div>
 <div id="app"><div class="splash">Getting the list…</div></div>
+<script>/* an admin phone: the Admin button is in the very first paint, before the big script below has even been read */
+try{var __t=JSON.parse(localStorage.getItem('rm_admin_tok')||'null');if(__t&&__t.t)document.getElementById('app').insertAdjacentHTML('afterbegin','<header class="top"><span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span><span class="topr"><button class="adminpill" aria-label="Admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg><span>Admin</span></button></span></header>')}catch(e){}</script>
 <nav id="nav" hidden></nav>
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
@@ -3476,6 +3486,7 @@ L.ms = {
   "Admin": "Admin",
   "Admin PIN": "PIN admin",
   "Admin PIN:": "PIN admin:",
+  "Admin button was repaired {n} times on this phone.": "Butang admin dibaiki {n} kali pada telefon ini.",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
   "Admin panel": "Panel admin",
   "All": "Semua",
@@ -3483,8 +3494,8 @@ L.ms = {
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
   "All items": "Semua barang",
-  "All requests": "Semua permintaan",
   "All rooms": "Semua bilik",
+  "All suggestions": "Semua cadangan",
   "Almost out": "Hampir habis",
   "Alpha · updated {date}": "Alfa · dikemas kini {date}",
   "Already asked": "Sudah diminta",
@@ -3507,9 +3518,6 @@ L.ms = {
   "Approved": "Diluluskan",
   "Art and craft": "Seni dan kraf",
   "Ask": "Tanya",
-  "Ask to buy": "Mohon beli",
-  "Ask to buy more": "Mohon beli lagi",
-  "Ask to buy something": "Minta untuk beli sesuatu",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
   "Asked": "Diminta",
   "Asked to buy": "Mohon beli",
@@ -3709,12 +3717,12 @@ L.ms = {
   "More detail:": "Butiran lanjut:",
   "More information": "Maklumat lanjut",
   "Music and instruments": "Muzik dan alat muzik",
-  "My requests": "Permintaan saya",
+  "My suggestions": "Cadangan saya",
   "Name": "Nama",
   "Name it": "Namakan",
   "Name them ({n})": "Namakan ({n})",
   "Name this item": "Namakan barang ini",
-  "Need something we don’t have? Ask once and it goes to the admin.": "Perlukan sesuatu yang kita tiada? Tanya sekali dan ia terus ke pentadbir.",
+  "Need something we don’t have? Suggest it and it goes to the admin.": "Perlukan sesuatu yang kita tiada? Cadangkan dan ia dihantar kepada admin.",
   "Needs attention": "Perlu perhatian",
   "Needs details": "Perlu butiran",
   "Needs fixing": "Perlu dibaiki",
@@ -3732,9 +3740,9 @@ L.ms = {
   "No other centre has spare": "Tiada pusat lain ada lebihan",
   "No other centre has spare.": "Tiada pusat lain ada lebihan.",
   "No reply yet. It may have saved: check before trying again.": "Belum ada jawapan. Mungkin sudah disimpan: semak sebelum cuba lagi.",
-  "No requests yet.": "Belum ada permohonan.",
   "No room yet": "Belum ada bilik",
   "No rooms yet.": "Belum ada bilik.",
+  "No suggestions yet.": "Belum ada cadangan.",
   "None": "Tiada",
   "None here.": "Tiada di sini.",
   "None yet.": "Belum ada.",
@@ -3843,8 +3851,6 @@ L.ms = {
   "Request approved": "Permohonan diluluskan",
   "Request bought": "Permohonan dibeli",
   "Request declined": "Permohonan ditolak",
-  "Request sent": "Permohonan dihantar",
-  "Request withdrawn.": "Permintaan ditarik balik.",
   "Retake": "Ambil semula",
   "Review copy: this language isn’t signed off yet.": "Salinan semakan: bahasa ini belum disahkan.",
   "Role-play and dolls": "Main peranan dan anak patung",
@@ -3886,12 +3892,12 @@ L.ms = {
   "Search…": "Cari…",
   "See all": "Lihat semua",
   "See all {n}": "Lihat semua {n}",
-  "See it under Me › Requests.": "Lihat di Saya › Permohonan.",
+  "See it under Me › Suggestions.": "Lihat di Saya › Cadangan.",
   "Select": "Pilih",
   "Select all": "Pilih semua",
   "Send": "Hantar",
   "Send now": "Hantar sekarang",
-  "Send request": "Hantar permohonan",
+  "Send suggestion": "Hantar cadangan",
   "Send to": "Hantar ke",
   "Send to another centre": "Hantar ke pusat lain",
   "Send waiting changes first.": "Hantar perubahan yang menunggu dahulu.",
@@ -3904,7 +3910,7 @@ L.ms = {
   "Set type": "Tetapkan jenis",
   "Set up": "Tetapan",
   "Settings": "Tetapan",
-  "Settings, requests and the Google Sheet": "Tetapan, permohonan dan Google Sheet",
+  "Settings, suggestions and the Google Sheet": "Tetapan, cadangan dan Google Sheet",
   "Share links": "Pautan kongsi",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "Kongsi helaian dengan pemilik apl (Editor). Kakitangan guna pautan yang sama.",
   "Share {n}": "Kongsi {n}",
@@ -3937,6 +3943,9 @@ L.ms = {
   "Status": "Status",
   "Stay signed in on this phone until I sign out": "Kekal log masuk pada telefon ini sehingga saya log keluar",
   "Subtype": "Subjenis",
+  "Suggest a new item": "Cadangkan barang baharu",
+  "Suggestion sent": "Cadangan dihantar",
+  "Suggestion withdrawn.": "Cadangan ditarik balik.",
   "Supplies": "Bekalan",
   "Supplies or equipment?": "Bekalan atau peralatan?",
   "Switch Google Sheet": "Tukar Google Sheet",
@@ -3972,7 +3981,7 @@ L.ms = {
   "That’s too big.": "Terlalu besar.",
   "The Google Sheet won’t open. Tell your admin.": "Google Sheet tidak dapat dibuka. Beritahu admin.",
   "The PIN is 6 digits.": "PIN ialah 6 digit.",
-  "The list couldn’t open the requests.": "Senarai tidak dapat membuka permintaan.",
+  "The list couldn’t open the suggestions.": "Senarai tidak dapat membuka cadangan.",
   "The list is busy. Try again in a moment.": "Senarai sibuk. Cuba sebentar lagi.",
   "The list sent back an error ({n}).": "Senarai menghantar ralat ({n}).",
   "The list sent back something unexpected.": "Senarai menghantar sesuatu yang tidak dijangka.",
@@ -4059,7 +4068,7 @@ L.ms = {
   "Why: {why}.": "Sebab: {why}.",
   "Why?": "Kenapa?",
   "Withdraw": "Tarik balik",
-  "Withdraw this request?": "Tarik balik permintaan ini?",
+  "Withdraw this suggestion?": "Tarik balik cadangan ini?",
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
@@ -4097,10 +4106,10 @@ L.ms = {
   "pack": "bungkus",
   "pcs": "biji",
   "phone {tag}": "telefon {tag}",
-  "request waiting": "permohonan menunggu",
-  "requests waiting": "permohonan menunggu",
   "running low": "tinggal sedikit",
   "scan to count this shelf": "imbas untuk kira rak ini",
+  "suggestion waiting": "cadangan menunggu",
+  "suggestions waiting": "cadangan menunggu",
   "the original sheet": "helaian asal",
   "today": "hari ini",
   "was {a}, now {b}": "tadi {a}, kini {b}",
@@ -4180,6 +4189,7 @@ L.zh = {
   "Admin": "管理员",
   "Admin PIN": "管理员 PIN",
   "Admin PIN:": "管理员 PIN：",
+  "Admin button was repaired {n} times on this phone.": "这部手机上的管理员按钮已修复 {n} 次。",
   "Admin link (keep private)": "管理员链接（请保密）",
   "Admin panel": "管理面板",
   "All": "全部",
@@ -4187,8 +4197,8 @@ L.zh = {
   "All centres": "所有分园",
   "All done.": "全部完成。",
   "All items": "全部物品",
-  "All requests": "全部申请",
   "All rooms": "所有房间",
+  "All suggestions": "所有建议",
   "Almost out": "快没了",
   "Alpha · updated {date}": "Alpha · 更新于 {date}",
   "Already asked": "已经有人申请",
@@ -4211,9 +4221,6 @@ L.zh = {
   "Approved": "已批准",
   "Art and craft": "美术与手工",
   "Ask": "询问",
-  "Ask to buy": "申请购买",
-  "Ask to buy more": "申请再买",
-  "Ask to buy something": "申请购买东西",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
   "Asked": "已申请",
   "Asked to buy": "申请购买",
@@ -4413,12 +4420,12 @@ L.zh = {
   "More detail:": "详细信息：",
   "More information": "更多信息",
   "Music and instruments": "音乐与乐器",
-  "My requests": "我的申请",
+  "My suggestions": "我的建议",
   "Name": "名称",
   "Name it": "起名",
   "Name them ({n})": "逐个起名（{n}）",
   "Name this item": "给这件东西起名",
-  "Need something we don’t have? Ask once and it goes to the admin.": "需要我们没有的东西？提一次，就会送到管理员那里。",
+  "Need something we don’t have? Suggest it and it goes to the admin.": "需要我们没有的东西？提出建议，会交给管理员。",
   "Needs attention": "需要处理",
   "Needs details": "需要补充资料",
   "Needs fixing": "需要修理",
@@ -4436,9 +4443,9 @@ L.zh = {
   "No other centre has spare": "其他中心都没有多余的",
   "No other centre has spare.": "其他中心都没有多余的。",
   "No reply yet. It may have saved: check before trying again.": "还没有回应。可能已经保存：请先检查再重试。",
-  "No requests yet.": "还没有申请。",
   "No room yet": "暂无房间",
   "No rooms yet.": "还没有房间。",
+  "No suggestions yet.": "还没有建议。",
   "None": "无",
   "None here.": "这里没有。",
   "None yet.": "还没有。",
@@ -4547,8 +4554,6 @@ L.zh = {
   "Request approved": "申请已批准",
   "Request bought": "申请已购买",
   "Request declined": "申请已拒绝",
-  "Request sent": "申请已提交",
-  "Request withdrawn.": "申请已撤回。",
   "Retake": "重拍",
   "Review copy: this language isn’t signed off yet.": "审阅版本：这种语言尚未审核通过。",
   "Role-play and dolls": "角色扮演与娃娃",
@@ -4590,12 +4595,12 @@ L.zh = {
   "Search…": "搜索…",
   "See all": "查看全部",
   "See all {n}": "查看全部 {n} 项",
-  "See it under Me › Requests.": "在“我的”›“申请”里查看。",
+  "See it under Me › Suggestions.": "在“我的”›“建议”里查看。",
   "Select": "选择",
   "Select all": "全选",
   "Send": "发送",
   "Send now": "立即发送",
-  "Send request": "提交申请",
+  "Send suggestion": "发送建议",
   "Send to": "送到",
   "Send to another centre": "送到别的分园",
   "Send waiting changes first.": "请先发送待发的更改。",
@@ -4608,7 +4613,7 @@ L.zh = {
   "Set type": "设定类型",
   "Set up": "设置",
   "Settings": "设置",
-  "Settings, requests and the Google Sheet": "设置、申请和 Google Sheet",
+  "Settings, suggestions and the Google Sheet": "设置、建议和 Google Sheet",
   "Share links": "分享链接",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "与应用所有者共享表格（编辑者）。员工继续用同一链接。",
   "Share {n}": "分享 {n} 项",
@@ -4641,6 +4646,9 @@ L.zh = {
   "Status": "状态",
   "Stay signed in on this phone until I sign out": "在这部手机上保持登录，直到我退出",
   "Subtype": "细类",
+  "Suggest a new item": "建议新物品",
+  "Suggestion sent": "建议已提交",
+  "Suggestion withdrawn.": "建议已撤回。",
   "Supplies": "耗材",
   "Supplies or equipment?": "耗材还是设备？",
   "Switch Google Sheet": "更换 Google Sheet",
@@ -4676,7 +4684,7 @@ L.zh = {
   "That’s too big.": "数字太大了。",
   "The Google Sheet won’t open. Tell your admin.": "Google 表格打不开，请告诉管理员。",
   "The PIN is 6 digits.": "PIN 是 6 位数字。",
-  "The list couldn’t open the requests.": "列表无法打开申请。",
+  "The list couldn’t open the suggestions.": "列表无法打开建议。",
   "The list is busy. Try again in a moment.": "清单正忙，请稍后再试。",
   "The list sent back an error ({n}).": "清单返回了错误（{n}）。",
   "The list sent back something unexpected.": "清单返回了意料之外的内容。",
@@ -4763,7 +4771,7 @@ L.zh = {
   "Why: {why}.": "原因：{why}。",
   "Why?": "为什么？",
   "Withdraw": "撤回",
-  "Withdraw this request?": "要撤回这个申请吗？",
+  "Withdraw this suggestion?": "撤回这条建议？",
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
   "Yes": "好",
@@ -4801,10 +4809,10 @@ L.zh = {
   "pack": "包",
   "pcs": "个",
   "phone {tag}": "手机 {tag}",
-  "request waiting": "个申请待处理",
-  "requests waiting": "个申请待处理",
   "running low": "快不够",
   "scan to count this shelf": "扫码盘点这个架子",
+  "suggestion waiting": "条建议待处理",
+  "suggestions waiting": "条建议待处理",
   "the original sheet": "原来的表格",
   "today": "今天",
   "was {a}, now {b}": "原来 {a}，现在 {b}",
@@ -5089,6 +5097,7 @@ window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; 
   act: function (name, data) { return ACT[name]({ dataset: data || {} }); },
   ask: function (q) { var g = RMSearch.search(S.groups, q).strong[0]; var mine = g && g.rows.filter(function (r) { return r.centre === myCentre(); })[0]; if (g) go({ name: 'request', key: g.key, itemId: mine ? mine.id : '' }); },
   openNow: function () { S.openAt = 0; openLoad(true); },
+  menu: function (id) { reopenMenu(id); },
   hdepth: function () { return S.hdepth || 0; },
   hist: function () { return { d: S.hdepth || 0, skip: S.skipPop || 0, pend: S.pendingPush || 0, entry: !!S.sheetEntry, rw: !!S.sheetRewind, len: history.length }; },
   adminPending: function () { return !!(S.admin && S.admin.pending); },
@@ -5298,10 +5307,14 @@ function setStack(stack) {
   render();
   window.scrollTo(0, 0);
 }
+// an Edit page opened from the long-press menu: Back puts that menu up again (a second Back closes it)
+function menuAfter(gone) { if (gone && gone.name === 'edit' && gone.fromMenu && S.byId[gone.fromMenu] && byIdEl('sheet').hidden) reopenMenu(gone.fromMenu); }
 function popView() {
-  if (S.stack.length > 1) S.stack.pop(); else S.stack = [{ name: 'home' }];
+  var gone = null;
+  if (S.stack.length > 1) gone = S.stack.pop(); else S.stack = [{ name: 'home' }];
   render();
   window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0);
+  menuAfter(gone);
 }
 function back() {
   if (S.stack.length > 1 && (S.hdepth || 0) > 0 && hist) { try { history.back(); return; } catch (e) { /* fall through */ } }
@@ -5325,7 +5338,7 @@ try {
       else closeSheet(true);
       return;
     }
-    if (S.stack.length > 1) { S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); }
+    if (S.stack.length > 1) { var gone = S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); menuAfter(gone); }
   });
 } catch (e) { /* no history support */ }
 
@@ -5348,6 +5361,7 @@ function render() {
       ? '<div class="splash"><p>' + tl('Can’t reach the list.') + '</p><p>' + tl('Check your internet.') + '</p><button class="btn primary" data-act="refresh">' + tl('Try again') + '</button>' +
         (HOSTED && WHY ? '<p class="help" style="margin-top:18px">' + tl('More detail:') + ' ' + esc(WHY) + '</p>' : '') + '</div>'
       : '<div class="splash">' + tl('Getting your list…') + '</div>';
+    if (adminShown()) app.insertAdjacentHTML('afterbegin', top(false, true));   // even the loading screen shows the Admin button
     return;
   }
   if (!hasCentre()) v = { name: 'pick' };
@@ -5360,7 +5374,7 @@ function render() {
   restoreOpen();
   afterRender(v);
   drawChrome(v);
-  if (v.name === 'home' && window.matchMedia && matchMedia('(pointer:fine)').matches && byIdEl('q')) byIdEl('q').focus();
+  pillCheck();
 }
 // a fold (<details data-keep="…">) stays open or shut the way the person left it, however often the page is redrawn
 function restoreOpen() {
@@ -5372,20 +5386,27 @@ document.addEventListener('toggle', function (e) {
   if (d && d.dataset && d.dataset.keep) (S.keep || (S.keep = {}))[d.dataset.keep] = d.open;
 }, true);
 // draw the eye to a field, then do the follow-up; any touch or key press in the meantime cancels the follow-up (the person has taken over)
-function glowThen(el, fn) {
-  var done = false, calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  try { el.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' }); } catch (e) { /* older browsers */ }
-  el.classList.add('glow');
+function glowThen(els, fn) {
+  els = [].concat(els);
+  var first = els[0], done = false, calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  try { first.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' }); } catch (e) { /* older browsers */ }
+  els.forEach(function (el) { el.classList.add('glow'); });
   var stop = function (run) {
     if (done) return; done = true; clearTimeout(t);
     document.removeEventListener('pointerdown', cancel, true); document.removeEventListener('keydown', cancel, true);
-    el.classList.remove('glow');
-    if (run && fn && document.body.contains(el)) fn();
+    els.forEach(function (el) { el.classList.remove('glow'); });
+    if (run && fn && document.body.contains(first)) fn();
   };
   var cancel = function () { stop(false); };
   var t = setTimeout(function () { stop(true); }, calm ? 600 : 950);
   document.addEventListener('pointerdown', cancel, true); document.addEventListener('keydown', cancel, true);
 }
+// a name that is still "Barcode 123…" is selected whole, so the first key typed replaces it
+function selectBarcode(el) { if (el && /^barcode\b/i.test(el.value || '')) { try { el.select(); } catch (e) { /* none */ } } }
+document.addEventListener('focusin', function (e) {
+  var el = e.target;
+  if (el && el.id === 'f-name' && !el.dataset.sel && /^barcode\b/i.test(el.value || '')) { el.dataset.sel = '1'; setTimeout(function () { if (document.activeElement === el) selectBarcode(el); }, 0); }
+});
 function afterRender(v) {
   if (v.name === 'countList') restoreCheck(v);
   if (v.name === 'request') { openLoad(); refreshAskNote(); }
@@ -5393,12 +5414,13 @@ function afterRender(v) {
     store.set('rm_lptip', 1);
     setTimeout(function () { if (cur().name === 'home') toast(tl('Tip: press and hold an item for shortcuts.')); }, 1500);
   }
-  if (v.name === 'edit' && !v._focused) {   // an item that still needs something: the first missing thing glows twice, then the keyboard (name) or the room list (place) opens
-    var it0 = S.byId[v.id], tags0 = it0 ? attentionTags(it0) : [], target = null, then = null;
-    if (tags0.indexOf('name') >= 0 && (byIdEl('f-nname') || byIdEl('f-name'))) { target = byIdEl('f-nname') || byIdEl('f-name'); then = function () { target.focus(); }; }
-    else if (tags0.indexOf('place') >= 0 && byIdEl('f-loc-btn')) { target = byIdEl('f-loc-btn'); then = function () { target.click(); }; }
-    else if (tags0.indexOf('type') >= 0 && byIdEl('f-type')) target = byIdEl('f-type');
-    if (target) { v._focused = true; glowThen(target, then); }
+  if (v.name === 'edit' && !v._focused) {   // an item that still needs something: every missing thing glows twice, then the keyboard (name) or the room list (place) opens on the first
+    var it0 = S.byId[v.id], tags0 = it0 ? attentionTags(it0) : [], els0 = [], then0 = null;
+    var nameEl = byIdEl('f-nname') || byIdEl('f-name'), placeEl = byIdEl('f-loc-btn'), typeEl = byIdEl('f-type');
+    if (tags0.indexOf('name') >= 0 && nameEl) { els0.push(nameEl); then0 = function () { nameEl.focus(); selectBarcode(nameEl); }; }
+    if (tags0.indexOf('type') >= 0 && typeEl) els0.push(typeEl);
+    if (tags0.indexOf('place') >= 0 && placeEl) { els0.push(placeEl); if (!then0) then0 = function () { placeEl.click(); }; }
+    if (els0.length) { v._focused = true; glowThen(els0, then0); }
   }
   if (v.name === 'add' && v._draft) fillAddDraft(v._draft);
 }
@@ -5448,11 +5470,22 @@ function drawChrome(v) {
   if (REVIEW && LANGS_ON.indexOf(LANG) < 0) msg += '<div class="notice"><span>' + esc(tl('Review copy: this language isn’t signed off yet.')) + '</span></div>';
   byIdEl('banner').innerHTML = msg;
 }
+// the pill shows whenever this phone is (or is about to be) signed in as admin: from the stored token, before any server answer
+function adminShown() { if (S.admin) return true; try { var t = store.get('rm_admin_tok', null); return !!(t && t.t); } catch (e) { return false; } }
+function pillHtml() { return adminShown() ? '<button class="adminpill" data-act="go" data-to="admin" aria-label="' + esc(tl('Admin')) + '">' + ICON.shield + '<span>' + tl('Admin') + '</span></button>' : ''; }
+// a last check after every page is drawn: if the pill should be there and is not, put it back (and count it, so Settings can say so)
+function pillCheck() {
+  var box = document.querySelector('#app .top .topr');
+  if (!box) return;
+  var has = box.querySelector('.adminpill'), want = adminShown();
+  if (want && !has) { box.insertAdjacentHTML('afterbegin', pillHtml()); try { store.set('rm_pillfix', (store.get('rm_pillfix', 0) || 0) + 1); } catch (e) { /* none */ } }
+  else if (!want && has) has.remove();
+}
 function top(hasBack, noMe) {
   var me = S.me && !noMe ? '<button class="me" data-act="centrePick" aria-label="' + esc(tl('Centre')) + '">' + esc(S.me.centre) + '</button>' : '';
   return '<header class="top">' + (hasBack
     ? '<button class="back" data-act="back">' + ICON.back + '<span>' + tl('Back') + '</span></button>'
-    : '<span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span>') + '<span class="topr">' + (S.admin ? '<button class="adminpill" data-act="go" data-to="admin" aria-label="' + esc(tl('Admin')) + '">' + ICON.shield + '<span>' + tl('Admin') + '</span></button>' : '') + me + '</span></header>';
+    : '<span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span>') + '<span class="topr">' + pillHtml() + me + '</span></header>';
 }
 
 function photoSrc(it, w) {
@@ -5714,12 +5747,12 @@ function resultsHtml(v) {
       var og = elsewhere[0];
       return starterHits(q) + '<div class="card empty" style="margin-top:14px"><h2>' + esc(tl('Not at {centre}.', { centre: myCentre() })) + '</h2>' +
         '<p>' + esc(og.rows.filter(function (r) { return r.centre !== myCentre(); }).slice(0, 3).map(function (r) { return tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) + (isLevel(r) ? '' : ' ' + unitFor(r.qty, r.unit)) }); }).join(' · ')) + '</p>' +
-        '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Ask to buy') + '</button></div>';
+        '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Suggest a new item') + '</button></div>';
     }
     var sh = starterHits(q);
     return sh + '<div class="card empty" style="margin-top:14px"><h2>' + esc(sh ? tl('Not here?') : tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
       (sh ? '' : '<p>' + tl('Check the spelling.') + '</p>') +
-      '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Ask to buy') + '</button>' +
+      '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Suggest a new item') + '</button>' +
       '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></div>' +
       (r.weak.length ? '<p class="count">' + tl('Closest:') + '</p><div class="list">' + r.weak.map(card).join('') + '</div>' : '');
   }
@@ -5729,7 +5762,7 @@ function resultsHtml(v) {
     (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>') +
     (found.length > shown.length ? '<p class="hint">' + tl('First 30 shown. Type more.') + '</p>' : '') + starterHits(q) +
     '<details class="notwhat"><summary>' + tl('Not what you need?') + '</summary>' +
-    '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Ask to buy') + '</button>' +
+    '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Suggest a new item') + '</button>' +
     '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></details>';
 }
 function card(g) {
@@ -5794,7 +5827,6 @@ function vItem(v) {
     '<div class="card rows">' +
     (sel && sel.parts ? '<button class="rowbtn" data-act="pieceOpen"><span>' + tl('A piece is missing') + '<small>' + esc(sel.parts.split(';').join(' +')) + '</small></span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="problem"><span>' + tl('Report a problem') + '<small>' + tl('Broken or missing') + '</small></span>' + ICON.go + '</button>' +
-    (sel && low(sel) ? '' : '<button class="rowbtn" data-act="requestMore"><span>' + tl('Ask to buy more') + '</span>' + ICON.go + '</button>') +
     '<button class="rowbtn" data-act="toEdit"><span>' + tl('Edit item') + '</span>' + ICON.go + '</button>' +
     '</div>' +
     '<details class="more" data-keep="item-more"><summary>' + tl('More') + '</summary><div class="card rows">' +
@@ -6244,7 +6276,7 @@ function vRequest(v) {
       have = '<div class="similar"><b>' + esc(tl('No other centre has spare.')) + '</b><br>' + esc(tl('This will be a new purchase.')) + hereTxt + '</div>';
     }
   }
-  return top(true) + '<h1 class="title">' + tl('Ask to buy') + '</h1>' +
+  return top(true) + '<h1 class="title">' + tl('Suggest a new item') + '</h1>' +
     have +
     '<label class="lab" for="f-name">' + tl('What do you need?') + '</label>' +
     '<input id="f-name" class="inp" maxlength="80" autocomplete="off" value="' + esc(g ? g.name : v.text || '') + '"' + (g ? ' readonly' : '') + '>' +
@@ -6260,7 +6292,7 @@ function vRequest(v) {
     '<input id="f-price" class="inp" inputmode="decimal" maxlength="9" autocomplete="off" placeholder="e.g. 45">' +
     '<div id="ask-note"></div>' +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="formend"><button class="btn primary" id="f-go" data-act="requestGo">' + tl('Send request') + '</button></div>';
+    '<div class="formend"><button class="btn primary" id="f-go" data-act="requestGo">' + tl('Send suggestion') + '</button></div>';
 }
 
 // ----- Change details -----
@@ -6351,7 +6383,7 @@ function vLow() {
       (pick ? ' role="checkbox" aria-checked="' + (on[it.id] ? 'true' : 'false') + '"' : '') + '>' +
       (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + lines +
       (o ? '<span class="line">' + reqChip(o) + '</span>' : '') + '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
-    return pick ? main : '<div class="lowwrap">' + main + (S.admin && low(it) ? admActions(it, o) : '') + '</div>';
+    return pick ? main : '<div class="lowwrap' + (o && o.pending ? ' unconf' : '') + '">' + main + (S.admin && low(it) ? admActions(it, o) : '') + '</div>';
   };
   var n = lows.length + broken.length;
   var sl = lows.filter(function (it) { return on[it.id]; }), sb = broken.filter(function (it) { return on[it.id]; }), shareN = sl.length + sb.length;
@@ -6454,9 +6486,9 @@ function vMore() {
   return top(false, true) + '<h1 class="title">' + tl('Me') + '</h1>' +
     '<div class="card rows" style="margin-top:var(--s3)">' +
     '<button class="rowbtn" data-act="centrePick"><span class="lead">' + ICON.pin + '</span><span>' + tl('Centre') + '<small>' + esc(S.me.centre) + '</small></span>' + ICON.go + '</button>' +
-    '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + (S.admin ? tl('All requests') : tl('My requests')) + '</span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + (S.admin ? tl('All suggestions') : tl('My suggestions')) + '</span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="settings"><span class="lead">' + ICON.cog + '</span><span>' + tl('Settings') + '</span>' + ICON.go + '</button>' +
-    (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin') + '<small>' + tl('Settings, requests and the Google Sheet') + '</small></span>' + ICON.go + '</button>' : '') +
+    (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin') + '<small>' + tl('Settings, suggestions and the Google Sheet') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div>';
 }
 function centreSheet(act, current) {
@@ -6481,6 +6513,7 @@ function vSettings() {
     '<label class="lab">' + tl('Bottom strip') + '</label><div class="chips" data-group="strip">' + [['on', tl('On')], ['off', tl('Off')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_strip', 'on') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_strip" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div><p class="help">' + tl('A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.') + '</p>' +
+    (store.get('rm_pillfix', 0) ? '<p class="help">' + esc(tl('Admin button was repaired {n} times on this phone.', { n: store.get('rm_pillfix', 0) })) + '</p>' : '') +
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
@@ -6678,16 +6711,20 @@ function askedText(ms) {
   return tl('Asked {date}', { date: date });
 }
 function reqCard(r) {
+  var ov = S.opt && S.opt['r:' + r.id];
+  if (ov) r = Object.assign({}, r, { status: ov.status, pending: true });   // not confirmed yet: show the answer, tinted
   var item = r.itemId ? S.byId[r.itemId] : null;
   var where = r.room ? tl('Going to {room}', { room: r.room }) : item ? tl('Kept at {room}', { room: item.loc }) : '';
   var meta = S.admin ? [r.centre].concat(r.tag ? [tl('phone {tag}', { tag: r.tag })] : []) : [tl('For {centre}', { centre: r.centre })].concat(where ? [where] : []);
   var have = S.admin && r.have && r.have !== 'Not on the list' ? r.have.split('; ') : [];
   var actions = '';
-  if (S.admin) {
+  if (S.admin && r.pending) {
+    actions = '<button type="button" class="btn sm pendb" disabled aria-busy="true">' + esc(r.status === 'Approved' ? tl('Mark as bought') : REQ_LABEL[r.status] || r.status) + '</button>';
+  } else if (S.admin) {
     if (r.status === 'New') actions = '<button class="btn sm" data-act="decide" data-id="' + esc(r.id) + '" data-val="Approved">' + tl('Approve') + '</button><button class="btn sm quiet" data-act="decide" data-id="' + esc(r.id) + '" data-val="Declined">' + tl('Decline') + '</button>';
     else if (r.status === 'Approved') actions = '<button class="btn sm" data-act="decide" data-id="' + esc(r.id) + '" data-val="Bought">' + tl('Mark as bought') + '</button>';
   } else if (r.status === 'New') actions = '<button class="btn sm quiet" data-act="withdraw" data-id="' + esc(r.id) + '">' + tl('Withdraw') + '</button>';
-  return '<div class="rq" data-id="' + esc(r.id) + '"><div class="rq-top"><p class="rq-name">' + esc(r.name) + '</p>' + reqPill(r.status, r) + '</div>' +
+  return '<div class="rq' + (r.pending ? ' unconf' : '') + '" data-id="' + esc(r.id) + '"><div class="rq-top"><p class="rq-name">' + esc(r.name) + '</p>' + reqPill(r.status, r) + '</div>' +
     '<p class="rq-qty">' + esc(amount(r.qty, r.unit)) + (r.price ? ' · ' + esc(tl('RM {price}', { price: r.price })) : '') + '</p>' +
     '<p class="rq-meta">' + meta.map(esc).join(' · ') + '</p>' +
     (S.admin && where ? '<p class="rq-meta">' + esc(where) + '</p>' : '') +
@@ -6699,12 +6736,12 @@ function reqCard(r) {
 }
 function vRequests() {
   var body;
-  if (S.reqErr) body = '<div class="card empty"><h2>' + (S.reqMsg ? tl('The list couldn’t open the requests.') : tl('Can’t reach the list.')) + '</h2>' + (S.reqMsg ? '<p class="sub">' + esc(S.reqMsg) + '</p>' : '') + '<button class="btn" data-act="reqRetry">' + tl('Try again') + '</button></div>';
+  if (S.reqErr) body = '<div class="card empty"><h2>' + (S.reqMsg ? tl('The list couldn’t open the suggestions.') : tl('Can’t reach the list.')) + '</h2>' + (S.reqMsg ? '<p class="sub">' + esc(S.reqMsg) + '</p>' : '') + '<button class="btn" data-act="reqRetry">' + tl('Try again') + '</button></div>';
   else if (!S.requests) body = skelRequests();
   else {
     var list = S.requests.filter(function (r) { return !S.admin || S.allCentres || r.centre === myCentre(); });
-    if (!list.length) body = (S.admin ? scopeChips() : '') + '<div class="card empty emptyreq"><span class="emptyic" aria-hidden="true">' + ICON.receipt + '</span><h2>' + tl('No requests yet.') + '</h2>' +
-      '<p>' + tl('Need something we don’t have? Ask once and it goes to the admin.') + '</p><button class="btn primary" data-act="reqNew">' + tl('Ask to buy something') + '</button></div>';
+    if (!list.length) body = (S.admin ? scopeChips() : '') + '<div class="card empty emptyreq"><span class="emptyic" aria-hidden="true">' + ICON.receipt + '</span><h2>' + tl('No suggestions yet.') + '</h2>' +
+      '<p>' + tl('Need something we don’t have? Suggest it and it goes to the admin.') + '</p><button class="btn primary" data-act="reqNew">' + tl('Suggest a new item') + '</button></div>';
     else {
       var waiting = list.filter(function (r) { return r.status === 'New'; }), done = list.filter(function (r) { return r.status !== 'New'; });
       body = (S.admin ? scopeChips() : '') +
@@ -6712,7 +6749,7 @@ function vRequests() {
         (done.length ? '<h2 class="sec">' + esc(tl('Answered ({n})', { n: done.length })) + '</h2><div class="rqlist">' + done.map(reqCard).join('') + '</div>' : '');
     }
   }
-  return top(true) + '<h1 class="title">' + (S.admin ? tl('All requests') : tl('My requests')) + '</h1>' + body;
+  return top(true) + '<h1 class="title">' + (S.admin ? tl('All suggestions') : tl('My suggestions')) + '</h1>' + body;
 }
 // A CSV a spreadsheet can open. Text that starts with = + - @ gets a leading apostrophe so it is never run as a formula.
 function csvCell(v) {
@@ -6744,7 +6781,7 @@ function vAdmin() {
   var link = HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : '';
   return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
     '<div class="stats">' +
-      tile(S.requests ? waiting : '…', waiting === 1 ? tl('request waiting') : tl('requests waiting'), 'requests') +
+      tile(S.requests ? waiting : '…', waiting === 1 ? tl('suggestion waiting') : tl('suggestions waiting'), 'requests') +
       '<button class="stat" data-act="nav" data-to="low"><b>' + lowN + '</b><span>' + tl('running low') + '</span></button>' +
       '<button class="stat" data-act="nav" data-to="low"><b>' + broken + '</b><span>' + tl('broken or missing') + '</span></button></div>' +
     '<h2 class="sec">' + tl('Set up') + '</h2><div class="card rows">' +
@@ -7480,24 +7517,27 @@ var ACT = {
 
   toRequest: function () { go({ name: 'request', text: S.q.trim() }); },
   admOrder: function (el) {
-    var it = S.byId[el.dataset.id];
-    if (!it || !S.admin) return;
-    busy(true);
+    var it = S.byId[el.dataset.id], key = it && 'i:' + it.id;
+    if (!it || !S.admin || (S.opt && S.opt[key])) return;
+    optSet(key, { id: '', centre: it.centre, name: it.name, itemId: it.id, status: 'Approved', askers: 1, pending: true });   // the row says Approved / Mark as bought at once
     var qty = isLevel(it) ? 1 : Math.max(1, (it.min || 1) - it.qty);
-    call('addRequest', { name: it.name, qty: qty, unit: isLevel(it) ? 'pcs' : (it.unit || 'pcs'), centre: it.centre, itemId: it.id, phone: '', room: it.loc, why: tl('Running low') }).then(function (res) {
-      return callRaw('decideRequest', { id: res.id, status: 'Approved', note: '', pin: S.pin });
-    }).then(function () {
-      busy(false); S.requests = null; openLoad(true); toast(tl('Planned. Mark it bought when it is ordered.'));
-    }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
+    callRaw('addRequest', { name: it.name, qty: qty, unit: isLevel(it) ? 'pcs' : (it.unit || 'pcs'), centre: it.centre, itemId: it.id, phone: '', room: it.loc, why: tl('Running low') }).then(function (res) {
+      return callRaw('decideRequest', { id: res.id, status: 'Approved', note: '', pin: S.pin }).then(function () { return res; });
+    }).then(function (res) {
+      openApply(it.id, { id: res.id, centre: it.centre, name: it.name, itemId: it.id, status: 'Approved', askers: 1 });
+      S.requests = null; optEnd(key); softRender(); toast(tl('Planned. Mark it bought when it is ordered.')); openLoad(true);
+    }).catch(function (e) { optFail(key, e); });
   },
   admDecide: function (el) {
     if (!S.admin) return;
-    busy(true);
-    call('decideRequest', { id: el.dataset.rid, status: el.dataset.val, note: '', pin: S.pin }).then(function () {
-      busy(false); S.requests = null; openLoad(true); toast(tl('Saved.'));
-    }).catch(function (e) { busy(false); openLoad(true); toast(e.network ? tl('Offline. Try again.') : e.message); });
+    var it = S.byId[el.dataset.id], rid = el.dataset.rid, st = el.dataset.val, key = 'i:' + (it ? it.id : rid);
+    if (S.opt && S.opt[key]) return;
+    var was = openForRid(rid);
+    optSet(key, { id: rid, centre: it ? it.centre : '', name: it ? it.name : '', itemId: it ? it.id : '', status: st, askers: was ? was.askers : 1, pending: true });
+    callRaw('decideRequest', { id: rid, status: st, note: '', pin: S.pin }).then(function () {
+      reqLocal(rid, st); optEnd(key); softRender(); toast(tl('Saved.')); openLoad(true);
+    }).catch(function (e) { optFail(key, e); });
   },
-  requestMore: function () { go({ name: 'request', key: cur().key, itemId: cur().id }); },
   addNew: function () { S.q = ''; go({ name: 'add', text: '' }); },
   toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
   addPlace: function () { go({ name: 'add', key: cur().key }); },
@@ -7910,7 +7950,7 @@ var ACT = {
       }
       var text = tl('Please can we buy {qty} {unit} of {name} for {centre}.', { qty: qty, unit: data.unit || 'pcs', name: name, centre: F.centre }) +
         (data.why ? ' ' + tl('Why: {why}.', { why: data.why }) : '') + (price ? ' ' + tl('About RM {price}.', { price: price }) : '') + ' (' + res.id + ')';
-      openSheet('<h2>' + tl('Request sent') + '</h2><p class="sub">' + tl('See it under Me › Requests.') + '</p>' +
+      openSheet('<h2>' + tl('Suggestion sent') + '</h2><p class="sub">' + tl('See it under Me › Suggestions.') + '</p>' +
         '<a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(text) + '">' + tl('Also send on WhatsApp') + '</a>' +
         '<button class="btn primary" data-act="closeSheet">' + tl('Done') + '</button>');
     }).catch(failed);
@@ -7937,7 +7977,7 @@ var ACT = {
       if (!isLevel(it) && (parseQty(min) || 0) !== bs.min) f.min = parseQty(min) || 0;
     }
     if (!S.admin && needsNameText(bs.name) && val('f-nname')) f.name = val('f-nname');
-    if (!Object.keys(f).length && !photo) return back();
+    if (!Object.keys(f).length && !photo) { cur().fromMenu = null; return back(); }
     var sent = {}; Object.keys(f).forEach(function (k) { if (bs[k] !== undefined) sent[k] = bs[k]; });
     formError('');
     busy(true);
@@ -7974,7 +8014,16 @@ var ACT = {
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
   removeItem: function () { askRemove(cur().id, false); },
-  menuEdit: function () { var id = M.id, it = S.byId[id]; closeSheet(); if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: attentionTags(it).length > 0 }); },
+  menuEdit: function () {
+    var id = M.id, it = S.byId[id];
+    if (!it) return closeSheet();
+    var view = { name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: attentionTags(it).length > 0, fromMenu: it.id };
+    // the menu's own history entry becomes the Edit page's: nothing is rewound and pushed again, so there is no step for a phone to lose
+    var hand = !!hist && S.sheetEntry && !S.sheetRewind;
+    if (hand) S.sheetEntry = false;
+    closeSheet();
+    if (hand) { S.stack.push(view); render(); window.scrollTo(0, 0); } else go(view);
+  },
   menuProblem: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); openProblem(id); },
   menuRemove: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); askRemove(id, true); },
   removeItemGo: function () {
@@ -8308,13 +8357,13 @@ var ACT = {
   },
   withdraw: function (el) {
     M = { type: 'withdraw', id: el.dataset.id };
-    openSheet('<h2>' + tl('Withdraw this request?') + '</h2><p class="err" id="m-err" hidden></p>' +
+    openSheet('<h2>' + tl('Withdraw this suggestion?') + '</h2><p class="err" id="m-err" hidden></p>' +
       '<button class="btn primary" id="m-go" data-act="withdrawGo">' + tl('Withdraw') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
   withdrawGo: function () {
     busy(true);
     call('withdrawRequest', { id: M.id, phone: phoneCode() }).then(function () {
-      closeSheet(); loadRequests(); toast(tl('Request withdrawn.'));
+      closeSheet(); loadRequests(); toast(tl('Suggestion withdrawn.'));
     }).catch(function (e) {
       busy(false);
       var err = byIdEl('m-err');
@@ -8322,25 +8371,31 @@ var ACT = {
     });
   },
   decideGo: function () {
-    busy(true);
-    call('decideRequest', { id: M.id, status: M.status, note: val('m-note'), pin: S.pin }).then(function () {
-      closeSheet();
-      loadRequests();
-      toast(tl('Saved.'));
-    }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
+    var id = M.id, st = M.status, note = val('m-note'), key = 'r:' + id;
+    if (!id || (S.opt && S.opt[key])) return;
+    optSet(key, { status: st, pending: true }, true);   // the sheet closes and the card shows the answer at once
+    closeSheet();
+    callRaw('decideRequest', { id: id, status: st, note: note, pin: S.pin }).then(function () {
+      reqLocal(id, st, note); optEnd(key); softRender(); toast(tl('Saved.')); openLoad(true); loadRequests();
+    }).catch(function (e) { optFail(key, e); });
   }
 };
 // open requests, with no names or phone codes: the Low page shows "Asked" / "Approved" / "Bought" from this
 function openLoad(force) {
-  if (S.openLoading) return;
+  if (S.openLoading) { if (force) S.openAgain = true; return; }
   if (!force && S.openAt && Date.now() - S.openAt < 45000) return;
   S.openLoading = true;
+  var gen = S.openGen || 0;
   callRaw('openRequests', {}).then(function (res) {
-    S.open = res.open || []; S.openAt = Date.now(); S.openLoading = false;
+    S.openLoading = false;
+    if (gen !== (S.openGen || 0) || S.openAgain) { S.openAgain = false; openLoad(true); return; }   // an answer older than the last tap says the old thing: ask again, draw nothing from it
+    S.open = res.open || []; S.openAt = Date.now();
     if (cur().name === 'low') render(); else if (cur().name === 'request') refreshAskNote();
   }).catch(function () { S.openLoading = false; S.openAt = Date.now(); });
 }
 function openForName(centre, name, itemId) {
+  var ov = itemId && S.opt && S.opt['i:' + itemId];
+  if (ov) return ov;   // a tap the server has not confirmed yet: show what it will be
   var k = RMSearch.norm(name || ''), best = null;
   (S.open || []).forEach(function (o) {
     if (o.centre !== centre || o.restocked) return;   // stock went up since: that request is handled, whatever its label says
@@ -8350,19 +8405,38 @@ function openForName(centre, name, itemId) {
   });
   return best;
 }
+// ----- admin actions: the row shows the result the moment it is tapped (tinted, the button spinning); the server catches up; if it says no the row goes back and a message says why -----
+function optSet(key, rec, quiet) { (S.opt || (S.opt = {}))[key] = rec; if (!quiet) softRender(); }
+function optEnd(key) { if (S.opt) delete S.opt[key]; S.openGen = (S.openGen || 0) + 1; }
+function optFail(key, e) {
+  optEnd(key); softRender();
+  toast(e && e.timeout ? tl('No reply yet. It may have saved: check before trying again.') : e && e.network ? tl('Offline. Try again.') : (e && e.message) || tl('Something went wrong. Try again.'));
+  openLoad(true);
+  if (cur().name === 'requests') loadRequests();
+}
+function openApply(itemId, rec) { S.open = (S.open || []).filter(function (o) { return !(itemId && o.itemId === itemId) && o.id !== rec.id; }).concat(rec); }
+function reqLocal(id, st, note) {
+  (S.open || []).forEach(function (o) { if (o.id === id) o.status = st; });
+  (S.requests || []).forEach(function (r) { if (r.id === id) { r.status = st; if (note) r.adminNote = note; } });
+}
+function openForRid(rid) { return (S.open || []).filter(function (o) { return o.id === rid; })[0] || null; }
 function reqChip(o) {
-  var pill = function (ic, text) { return '<span class="tag">' + ic + '<span>' + text + '</span></span>'; };
+  var pill = function (ic, text) { return '<span class="tag' + (o.pending ? ' unconf' : '') + '">' + ic + '<span>' + text + '</span></span>'; };
   if (o.status === 'New') return pill(ICON.clock, tl('Asked') + (o.askers > 1 ? ' · ' + tl('{n} people', { n: o.askers }) : ''));
   if (o.status === 'Approved') return pill(ICON.done, tl('Approved'));
   if (o.status === 'Bought') return pill(ICON.bag, tl('Bought · on its way'));
   return pill(ICON.x, tl('Not approved'));
 }
 function admActions(it, o) {
-  var st = o ? o.status : '';
-  var b = function (act, label, extra) { return '<button type="button" class="btn sm ask" data-act="' + act + '" data-id="' + esc(it.id) + '"' + (o ? ' data-rid="' + esc(o.id) + '"' : '') + (extra || '') + '>' + label + '</button>'; };
+  var st = o ? o.status : '', pend = !!(o && o.pending);
+  var b = function (act, label, extra) {
+    if (pend) return '<button type="button" class="btn sm ask pendb" disabled aria-busy="true">' + label + '</button>';
+    return '<button type="button" class="btn sm ask" data-act="' + act + '" data-id="' + esc(it.id) + '"' + (o ? ' data-rid="' + esc(o.id) + '"' : '') + (extra || '') + '>' + label + '</button>';
+  };
   var out = !o || st === 'Declined' ? b('admOrder', tl('Plan to buy'))
     : st === 'New' ? b('admDecide', tl('Approve'), ' data-val="Approved"') + b('admDecide', tl('Decline'), ' data-val="Declined"')
-    : st === 'Approved' ? b('admDecide', tl('Mark as bought'), ' data-val="Bought"') : '';
+    : st === 'Approved' ? b('admDecide', tl('Mark as bought'), ' data-val="Bought"')
+    : pend ? b('', tl('Bought')) : '';
   return out ? '<div class="lowact">' + out + '</div>' : '';
 }
 function askMatch() {
@@ -8375,13 +8449,15 @@ function refreshAskNote() {
   if (!box || !go) return;
   var o = askMatch();
   box.innerHTML = o ? '<p class="note">' + esc(tl('Already asked at {centre}: {who}. Tap “Me too” to add yours.', { centre: F.centre, who: o.askers > 1 ? tl('{n} people asked', { n: o.askers }) : tl('1 person asked') })) + '</p>' : '';
-  go.textContent = o ? tl('Me too') : tl('Send request');
+  go.textContent = o ? tl('Me too') : tl('Send suggestion');
 }
 function loadRequests() {
   var t0 = Date.now();
   S.reqErr = false; S.reqMsg = '';
   openLoad();
+  var gen = S.openGen || 0;
   call('getRequests', { phone: phoneCode(), pin: S.admin ? S.pin : '' }).then(function (res) {
+    if (gen !== (S.openGen || 0)) return loadRequests();   // older than the last tap: ask again rather than draw the old answer
     var show = function () { S.requests = res.requests; if (cur().name === 'requests' || cur().name === 'admin') render(); };
     var el = Date.now() - t0;
     if (!S.requests && el > 150 && el < 550) setTimeout(show, 550 - el);   // a skeleton that appeared stays long enough to be read as one
@@ -8559,7 +8635,7 @@ if (HOSTED) {
   });
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
 }
-var APP_BUILT = '2026-11-18';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
+var APP_BUILT = '2026-11-23';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
   var el = document.getElementById('launch'), skip = false;
   if (!el) return;
