@@ -48,7 +48,21 @@ a{color:inherit}
 #app{padding:var(--s2) var(--s4) calc(104px + var(--stripH,0px))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);min-height:48px;margin-bottom:var(--s1)}
 .org{color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.me{font-size:14px;font-weight:600;min-height:44px;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);max-width:62%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topr{display:flex;align-items:center;gap:var(--s2);min-width:0;max-width:72%}
+.adminpill{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3);border:1.5px solid var(--ink);border-radius:999px;background:var(--mark);color:var(--on-mark);font-size:14px;font-weight:700}
+.adminpill svg{width:16px;height:16px}
+.selbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s4);padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface)}
+.selcount{font-weight:600;font-size:15px}
+.selact{display:flex;gap:var(--s2)}
+.qrpage .addbar{background:linear-gradient(to top,var(--paper) 78%,transparent);margin-top:0;padding-top:var(--s4)}
+.chk{display:flex;align-items:center;gap:var(--s3);min-height:44px;margin-top:var(--s3);font-size:15px}
+.chk{position:relative}
+.chk input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;font-size:16px}
+.chk .box{flex:none;display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--ink);border-radius:6px;background:var(--surface)}
+.chk input:checked + .box{background:var(--brand);border-color:var(--brand)}
+.chk input:checked + .box::after{content:"";width:6px;height:11px;border:solid var(--on-brand);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.chk input:focus-visible + .box{outline:3px solid var(--brand);outline-offset:2px}
+.me{font-size:14px;font-weight:600;min-height:44px;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);max-width:100%;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand{display:flex;align-items:center;gap:var(--s2);font-size:17px;letter-spacing:-.01em}
 .brand svg{border-radius:7px;flex:none}
 .search input::placeholder{font-size:16px}
@@ -124,7 +138,7 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .btn{display:flex;align-items:center;justify-content:center;gap:var(--s2);width:100%;min-height:52px;padding:var(--s3) var(--s4);border:1.5px solid var(--ink);border-radius:var(--r);background:transparent;font-weight:600;text-align:center;text-decoration:none}
 .btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
 .btn.quiet{border-color:transparent;background:none;color:var(--muted);font-weight:400;text-decoration:underline;text-underline-offset:3px}
-.btn[disabled]{opacity:.4;cursor:default}
+.btn[disabled]{cursor:default}
 .btn + .btn{margin-top:var(--s2)}
 
 .headcard{display:flex;gap:var(--s4);align-items:flex-start;margin:var(--s1) 0 var(--s4)}
@@ -270,7 +284,7 @@ html[data-text] .search input{font-size:16px}
 #nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 #nav button.addb{color:var(--ink)}
 #nav button.addb{padding-top:0}
-#nav button.addb .ic{width:60px;height:60px;margin-top:-34px;border-radius:50%;background:var(--brand);background:linear-gradient(145deg,color-mix(in srgb,var(--brand) 72%,#6fb0ff),var(--brand));box-shadow:0 0 0 6px var(--surface),0 6px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+#nav button.addb .ic{width:60px;height:60px;margin-top:-34px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 6px var(--surface),0 6px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
 #nav button.addb svg{width:30px;height:30px;stroke:var(--on-brand);stroke-width:2.1}
 #nav button.addb.on::before{display:none}
 #nav button.addb .lb{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -398,9 +412,17 @@ body{background:linear-gradient(180deg,var(--tint) 0,var(--paper) 280px) no-repe
 .list > .item:last-child,.rows > .rowbtn:last-child,.cats > .cat:last-child,div.card > .rowbtn:last-child,div.card > .cline:last-child{border-bottom:0}
 div.card.empty{padding:var(--s5) var(--s4)}
 .stats .stat{box-shadow:var(--sh1);border-radius:var(--r)}
-.btn{box-shadow:var(--sh1)}
-.btn.primary{box-shadow:var(--sh2);background:linear-gradient(180deg,color-mix(in srgb,var(--brand) 88%,#fff),var(--brand))}
-.btn[disabled]{box-shadow:none}
+/* v39: one spec for every button state. Solid fills only: no gradient, no shadow, no opacity wash.
+   primary = brand fill; pressed/hover = a darker solid; disabled = a grey solid; loading = the normal solid with a spinner */
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+@media (hover:hover){.btn.primary:hover:not([disabled]){background:color-mix(in srgb,var(--brand) 88%,#000);border-color:color-mix(in srgb,var(--brand) 88%,#000)}}
+.btn.primary:active:not([disabled]){background:color-mix(in srgb,var(--brand) 78%,#000);border-color:color-mix(in srgb,var(--brand) 78%,#000)}
+.btn:not(.primary):not(.quiet):active:not([disabled]){background:var(--wash)}
+.btn.primary[disabled]{background:color-mix(in srgb,var(--ink) 14%,var(--paper));border-color:color-mix(in srgb,var(--ink) 14%,var(--paper));color:var(--muted)}
+.btn:not(.primary):not(.quiet)[disabled]{border-color:var(--line-strong);color:var(--muted)}
+.btn.quiet[disabled]{color:var(--muted);text-decoration:none}
+.btn.primary.loading,.btn.primary.loading[disabled]{background:var(--brand);border-color:var(--brand)}
+.btn:focus-visible,.chip:focus-visible,.opt:focus-visible,.ib:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
 .chip{box-shadow:var(--sh1)}
 .chip.on{box-shadow:none}
 .search input{box-shadow:var(--sh1)}
@@ -629,13 +651,14 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 #rp-new{margin-top:var(--s2)}
 .rp-hide{display:none!important}
 /* the small i next to a label: the note under it is hidden until it is tapped */
-.labrow{display:flex;align-items:center;gap:var(--s1)}
-.info{flex:none;width:44px;height:44px;margin:calc(var(--s2) * -1) 0 calc(var(--s2) * -1) calc(var(--s1) * -1);display:inline-grid;place-items:center;background:none;border:0;padding:0;color:var(--ink)}
-.info i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);font:700 13px/1 var(--font);font-style:normal}
+.labrow{display:flex;align-items:center;gap:var(--s2);margin:var(--s4) 0 var(--s2)}
+.labrow .lab{margin:0}
+.info{position:relative;flex:none;display:block;width:44px;height:44px;margin:-12px -14px -12px -12px;padding:0;background:none;border:0;color:var(--ink)}
+.info i{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--ink);color:var(--paper);font:700 12px/1 var(--font);font-style:normal}
 .info[aria-expanded=true] i{background:var(--brand);color:var(--on-brand)}
 /* what an item still needs */
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
-.tag{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;line-height:1.2;padding:2px 8px;border-radius:999px;border:1px solid var(--line-strong);background:var(--wash);color:var(--ink);white-space:nowrap}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;line-height:1.2;padding:2px 8px;border-radius:999px;border:1px solid var(--line-strong);background:var(--wash);color:var(--ink);white-space:normal;max-width:100%;text-align:left}
 .tag svg{width:13px;height:13px;flex:none}
 .rtext .tags{margin-top:4px}
 .formend .btn.quiet.next{order:-1}
@@ -667,7 +690,24 @@ html[data-text="2"] #sheet .panel.rpanel{max-height:calc(min(85vh,640px) / 1.3)}
 .rp-in .rp-head,.rp-in .rp-scroll,.rp-in .rp-foot{padding-left:0;padding-right:0}
 .rp-in .rp-head{padding-top:0}
 /* press and hold: no text selection or browser menu on a row */
-[data-id][data-act=open],[data-id][data-act=finish]{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+[data-act=open],[data-act=finish],[data-hold],.card.item,.roomrow .rowmain,.simrow,.cat{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.tile img,.tilebtn img{pointer-events:none;-webkit-user-drag:none}
+[data-act=open],[data-act=finish],[data-hold]{transition:transform .38s cubic-bezier(.2,.7,.2,1),background-color .38s}
+[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:scale(.985);background-color:color-mix(in srgb,var(--brand) 12%,var(--surface))}
+@media (prefers-reduced-motion:reduce){[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:none}}
+.sp{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:76px;padding:var(--s3) var(--s4);border:1.5px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left}
+.sp.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,var(--surface))}
+.sp-ic{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--wash)}
+.sp-ic svg{width:24px;height:24px}
+.sp-t{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.sp-t b{font-size:16px;line-height:1.25}
+.sp-t span{font-size:14px;line-height:1.35;color:var(--muted)}
+.sp-ok svg{width:22px;height:22px;color:var(--brand)}
+.rp-or{margin:var(--s2) 0 0;font-size:14px;font-weight:600;color:var(--muted)}
+.menu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
+.menu-head h2{margin:0;overflow-wrap:anywhere}
+#sheet .opt + .btn{margin-top:var(--s4)}
+#sheet .opt:last-child{margin-bottom:var(--s2)}
 .opt.danger{color:var(--alert);border-color:var(--alert)}
 .opt.danger svg{color:var(--alert)}
 .opt .ri svg{width:22px;height:22px}
@@ -3420,12 +3460,13 @@ L.ms = {
   "Admin PIN": "PIN admin",
   "Admin PIN:": "PIN admin:",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
-  "Admin mode": "Mod admin",
+  "Admin panel": "Panel admin",
   "All": "Semua",
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
   "All done.": "Semua siap.",
   "All items": "Semua barang",
+  "All requests": "Semua permintaan",
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
   "Alpha · updated {date}": "Alfa · dikemas kini {date}",
@@ -3527,6 +3568,7 @@ L.ms = {
   "Colours": "Warna",
   "Computers and tablets": "Komputer dan tablet",
   "Confirm it": "Sahkan",
+  "Confirm new PIN": "Sahkan PIN baharu",
   "Confirmed {name}.": "{name} disahkan.",
   "Connect": "Sambung",
   "Connect to your list": "Sambung ke senarai anda",
@@ -3642,6 +3684,7 @@ L.ms = {
   "Mats and mattresses": "Tikar dan tilam",
   "Me": "Saya",
   "Me too": "Saya juga",
+  "Merge into Every centre": "Gabung ke Setiap pusat",
   "Minimum": "Minimum",
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
@@ -3658,6 +3701,7 @@ L.ms = {
   "Needs fixing": "Perlu dibaiki",
   "Needs name": "Perlu nama",
   "Needs place": "Perlu tempat",
+  "Needs the admin PIN.": "Perlukan PIN admin.",
   "Needs type": "Perlu jenis",
   "New PIN": "PIN baru",
   "New item": "Barang baru",
@@ -3696,6 +3740,7 @@ L.ms = {
   "Nothing new to offer.": "Tiada yang baharu.",
   "Nothing on the list yet.": "Belum ada apa-apa dalam senarai.",
   "Nothing running low.": "Tiada yang tinggal sedikit.",
+  "Nothing to merge.": "Tiada apa untuk digabung.",
   "Nothing yet.": "Belum ada.",
   "Now using “{name}”.": "Kini guna “{name}”.",
   "OK": "OK",
@@ -3721,6 +3766,7 @@ L.ms = {
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
   "Open the full list": "Buka senarai penuh",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
+  "Or choose a room": "Atau pilih bilik",
   "Or type a new room": "Atau taip bilik baru",
   "Other": "Lain-lain",
   "Other centres have spare:": "Pusat lain ada lebihan:",
@@ -3780,7 +3826,6 @@ L.ms = {
   "Request declined": "Permohonan ditolak",
   "Request sent": "Permohonan dihantar",
   "Request withdrawn.": "Permintaan ditarik balik.",
-  "Requests": "Permohonan",
   "Retake": "Ambil semula",
   "Review copy: this language isn’t signed off yet.": "Salinan semakan: bahasa ini belum disahkan.",
   "Role-play and dolls": "Main peranan dan anak patung",
@@ -3795,6 +3840,7 @@ L.ms = {
   "Running low at {where} ({date}):": "Tinggal sedikit di {where} ({date}):",
   "Same as last time: {type}.": "Sama seperti kali lepas: {type}.",
   "Same item, new place.": "Barang sama, tempat baru.",
+  "Same room in every centre": "Bilik sama di setiap pusat",
   "Sand and water play": "Main pasir dan air",
   "Sanitiser and disinfectant": "Pensanitasi dan pembasmi kuman",
   "Save": "Simpan",
@@ -3840,13 +3886,16 @@ L.ms = {
   "Set up": "Tetapan",
   "Settings": "Tetapan",
   "Settings, requests and the Google Sheet": "Tetapan, permohonan dan Google Sheet",
+  "Share links": "Pautan kongsi",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "Kongsi helaian dengan pemilik apl (Editor). Kakitangan guna pautan yang sama.",
   "Share {n}": "Kongsi {n}",
   "Sheet edit": "Ubah dalam helaian",
   "Shelves and storage": "Rak dan simpanan",
   "Show more": "Tunjuk lagi",
   "Shown as: 1 {a} · 2 {b}": "Dipaparkan: 1 {a} · 2 {b}",
+  "Sign in as admin": "Log masuk sebagai admin",
   "Sign out": "Log keluar",
+  "Signed in as admin": "Log masuk sebagai admin",
   "Skip for now": "Langkau dahulu",
   "Soap and hand wash": "Sabun dan pencuci tangan",
   "Someone else changed this item. Check it before you save.": "Orang lain mengubah barang ini. Semak sebelum simpan.",
@@ -3857,12 +3906,14 @@ L.ms = {
   "Sort and filter": "Isih dan tapis",
   "Speakers and microphones": "Pembesar suara dan mikrofon",
   "Staff link (share only with staff)": "Pautan kakitangan (kongsi dengan kakitangan sahaja)",
+  "Staff link and admin link": "Pautan kakitangan dan pautan admin",
   "Stage items and flags": "Barang pentas dan bendera",
   "Start checking": "Mula menyemak",
   "Starter list": "Senarai permulaan",
   "Starting camera…": "Memulakan kamera…",
   "Stationery and paper": "Alat tulis dan kertas",
   "Status": "Status",
+  "Stay signed in for 6 hours on this phone": "Kekal log masuk selama 6 jam pada telefon ini",
   "Subtype": "Subjenis",
   "Supplies": "Bekalan",
   "Supplies or equipment?": "Bekalan atau peralatan?",
@@ -3872,8 +3923,8 @@ L.ms = {
   "Take photo": "Ambil gambar",
   "Take some": "Ambil",
   "Tap Full, Half, Almost out or Empty.": "Ketik Penuh, Separuh, Hampir habis atau Kosong.",
+  "Tap a sticker to skip it.": "Ketik pelekat untuk melangkaunya.",
   "Tap one to fill in what is missing.": "Ketik satu untuk mengisi yang tertinggal.",
-  "Tap to skip one.": "Ketik untuk langkau.",
   "Tell me when below": "Beritahu saya bila kurang daripada",
   "Text size": "Saiz tulisan",
   "Thanks, saved.": "Terima kasih, disimpan.",
@@ -3903,6 +3954,7 @@ L.ms = {
   "The list is busy. Try again in a moment.": "Senarai sibuk. Cuba sebentar lagi.",
   "The list sent back an error ({n}).": "Senarai menghantar ralat ({n}).",
   "The list sent back something unexpected.": "Senarai menghantar sesuatu yang tidak dijangka.",
+  "The two PINs are different.": "Kedua-dua PIN tidak sama.",
   "The type is already set. Ask your admin to change it.": "Jenis sudah ditetapkan. Minta admin menukarnya.",
   "The “{name}” column is missing from the {tab} tab.": "Lajur “{name}” tiada dalam tab {tab}.",
   "The “{name}” tab is missing. Ask your admin to set the sheet up again.": "Tab “{name}” tiada. Minta admin sediakan semula helaian.",
@@ -3911,7 +3963,7 @@ L.ms = {
   "There’s no such centre.": "Pusat itu tiada.",
   "There’s no such room.": "Tiada bilik itu.",
   "Thermometers and ice packs": "Termometer dan pek ais",
-  "These stickers open:": "Pelekat ini membuka:",
+  "These are listed once for each centre. Make each one a single Every-centre room.": "Ini disenaraikan sekali untuk setiap pusat. Jadikan setiap satu bilik Setiap pusat yang tunggal.",
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
   "This will be a new purchase.": "Ini akan menjadi pembelian baharu.",
   "Tip: hold Add to type instead.": "Petua: tekan lama Tambah untuk menaip.",
@@ -3972,6 +4024,7 @@ L.ms = {
   "What’s wrong?": "Apa masalahnya?",
   "Where do they go?": "Di mana disimpan?",
   "Where is it?": "Di mana?",
+  "Where the stickers open": "Tempat pelekat dibuka",
   "Where will it be kept?": "Di mana ia akan disimpan?",
   "Where will it go?": "Akan diletak di mana?",
   "Which centre are you at?": "Anda di pusat mana?",
@@ -3990,6 +4043,7 @@ L.ms = {
   "Yes": "Ya",
   "You have {amount} here.": "Anda ada {amount} di sini.",
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
+  "Your admin sign-in has expired. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
   "You’ve already asked for this.": "Anda sudah memintanya.",
@@ -4046,16 +4100,19 @@ L.ms = {
   "{n} matches:": "{n} padanan:",
   "{n} need details": "{n} perlu butiran",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
+  "{n} of {total} selected": "{n} daripada {total} dipilih",
   "{n} people": "{n} orang",
   "{n} people asked": "{n} orang meminta",
   "{n} people have asked. You’re counted too.": "{n} orang telah meminta. Anda dikira sama.",
   "{n} rooms": "{n} bilik",
+  "{n} rooms are now Every-centre rooms.": "{n} bilik kini bilik Setiap pusat.",
   "{n} running low": "{n} hampir habis",
   "{n} selected": "{n} dipilih",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received” dikhaskan untuk stok yang belum disimpan. Pilih bilik.",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
+  "“{name}” is now an Every-centre room.": "“{name}” kini bilik Setiap pusat.",
   "…and {n} more. Open the app for the rest.": "…dan {n} lagi. Buka apl untuk selebihnya.",
 };
 L.zh = {
@@ -4097,12 +4154,13 @@ L.zh = {
   "Admin PIN": "管理员 PIN",
   "Admin PIN:": "管理员 PIN：",
   "Admin link (keep private)": "管理员链接（请保密）",
-  "Admin mode": "管理员模式",
+  "Admin panel": "管理面板",
   "All": "全部",
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
   "All done.": "全部完成。",
   "All items": "全部物品",
+  "All requests": "全部申请",
   "All rooms": "所有房间",
   "Almost out": "快没了",
   "Alpha · updated {date}": "Alpha · 更新于 {date}",
@@ -4204,6 +4262,7 @@ L.zh = {
   "Colours": "颜色",
   "Computers and tablets": "电脑与平板",
   "Confirm it": "确认它",
+  "Confirm new PIN": "确认新 PIN",
   "Confirmed {name}.": "已确认 {name}。",
   "Connect": "连接",
   "Connect to your list": "连接你的清单",
@@ -4319,6 +4378,7 @@ L.zh = {
   "Mats and mattresses": "垫子与床垫",
   "Me": "我的",
   "Me too": "我也要",
+  "Merge into Every centre": "合并为所有中心共用",
   "Minimum": "最低量",
   "More": "更多",
   "More detail:": "详细信息：",
@@ -4335,6 +4395,7 @@ L.zh = {
   "Needs fixing": "需要修理",
   "Needs name": "需要名称",
   "Needs place": "需要位置",
+  "Needs the admin PIN.": "需要管理员 PIN。",
   "Needs type": "需要类型",
   "New PIN": "新 PIN",
   "New item": "新物品",
@@ -4373,6 +4434,7 @@ L.zh = {
   "Nothing new to offer.": "没有新的可提供。",
   "Nothing on the list yet.": "清单里还没有东西。",
   "Nothing running low.": "没有快不够的。",
+  "Nothing to merge.": "没有可合并的。",
   "Nothing yet.": "暂时没有。",
   "Now using “{name}”.": "现在使用“{name}”。",
   "OK": "没问题",
@@ -4398,6 +4460,7 @@ L.zh = {
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
   "Open the full list": "打开完整列表",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
+  "Or choose a room": "或选择一个房间",
   "Or type a new room": "或输入新房间",
   "Other": "其他",
   "Other centres have spare:": "其他中心有多余的：",
@@ -4457,7 +4520,6 @@ L.zh = {
   "Request declined": "申请已拒绝",
   "Request sent": "申请已提交",
   "Request withdrawn.": "申请已撤回。",
-  "Requests": "申请",
   "Retake": "重拍",
   "Review copy: this language isn’t signed off yet.": "审阅版本：这种语言尚未审核通过。",
   "Role-play and dolls": "角色扮演与娃娃",
@@ -4472,6 +4534,7 @@ L.zh = {
   "Running low at {where} ({date}):": "{where} 快不够了（{date}）：",
   "Same as last time: {type}.": "和上次一样：{type}。",
   "Same item, new place.": "同一物品，新地点。",
+  "Same room in every centre": "每个中心都有的相同房间",
   "Sand and water play": "玩沙玩水",
   "Sanitiser and disinfectant": "消毒液",
   "Save": "保存",
@@ -4517,13 +4580,16 @@ L.zh = {
   "Set up": "设置",
   "Settings": "设置",
   "Settings, requests and the Google Sheet": "设置、申请和 Google Sheet",
+  "Share links": "分享链接",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "与应用所有者共享表格（编辑者）。员工继续用同一链接。",
   "Share {n}": "分享 {n} 项",
   "Sheet edit": "表格里的修改",
   "Shelves and storage": "架子与收纳",
   "Show more": "显示更多",
   "Shown as: 1 {a} · 2 {b}": "显示为：1 {a} · 2 {b}",
+  "Sign in as admin": "以管理员身份登录",
   "Sign out": "退出登录",
+  "Signed in as admin": "已以管理员身份登录",
   "Skip for now": "先跳过",
   "Soap and hand wash": "肥皂与洗手液",
   "Someone else changed this item. Check it before you save.": "别人修改了这件物品。保存前请先检查。",
@@ -4534,12 +4600,14 @@ L.zh = {
   "Sort and filter": "排序与筛选",
   "Speakers and microphones": "音响与麦克风",
   "Staff link (share only with staff)": "员工链接（仅与员工分享）",
+  "Staff link and admin link": "员工链接和管理员链接",
   "Stage items and flags": "舞台用品与旗帜",
   "Start checking": "开始检查",
   "Starter list": "起步清单",
   "Starting camera…": "正在启动相机…",
   "Stationery and paper": "文具与纸张",
   "Status": "状态",
+  "Stay signed in for 6 hours on this phone": "在这部手机上保持登录 6 小时",
   "Subtype": "细类",
   "Supplies": "耗材",
   "Supplies or equipment?": "耗材还是设备？",
@@ -4549,8 +4617,8 @@ L.zh = {
   "Take photo": "拍照",
   "Take some": "取用",
   "Tap Full, Half, Almost out or Empty.": "请点“满的”“一半”“快没了”或“空的”。",
+  "Tap a sticker to skip it.": "点一张贴纸即可跳过。",
   "Tap one to fill in what is missing.": "点一项，补上缺少的内容。",
-  "Tap to skip one.": "点一下可跳过。",
   "Tell me when below": "低于此数时告诉我",
   "Text size": "字体大小",
   "Thanks, saved.": "谢谢，已保存。",
@@ -4580,6 +4648,7 @@ L.zh = {
   "The list is busy. Try again in a moment.": "清单正忙，请稍后再试。",
   "The list sent back an error ({n}).": "清单返回了错误（{n}）。",
   "The list sent back something unexpected.": "清单返回了意料之外的内容。",
+  "The two PINs are different.": "两次输入的 PIN 不一样。",
   "The type is already set. Ask your admin to change it.": "类型已设定。请管理员来更改。",
   "The “{name}” column is missing from the {tab} tab.": "{tab} 页缺少“{name}”这一列。",
   "The “{name}” tab is missing. Ask your admin to set the sheet up again.": "缺少“{name}”页。请管理员重新设置表格。",
@@ -4588,7 +4657,7 @@ L.zh = {
   "There’s no such centre.": "没有这个分园。",
   "There’s no such room.": "没有这个房间。",
   "Thermometers and ice packs": "体温计与冰袋",
-  "These stickers open:": "这些贴纸会打开：",
+  "These are listed once for each centre. Make each one a single Every-centre room.": "这些房间每个中心各列了一次。把每个合并为一个所有中心共用的房间。",
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
   "This will be a new purchase.": "这将是一次新的购买。",
   "Tip: hold Add to type instead.": "小提示：长按“添加”可改为输入。",
@@ -4649,6 +4718,7 @@ L.zh = {
   "What’s wrong?": "出了什么问题？",
   "Where do they go?": "放在哪里？",
   "Where is it?": "在哪里？",
+  "Where the stickers open": "贴纸打开的地址",
   "Where will it be kept?": "它会放在哪里？",
   "Where will it go?": "放在哪里？",
   "Which centre are you at?": "你在哪个分园？",
@@ -4667,6 +4737,7 @@ L.zh = {
   "Yes": "好",
   "You have {amount} here.": "这里有 {amount}。",
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
+  "Your admin sign-in has expired. Sign in again.": "你的管理员登录已过期，请重新登录。",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
   "You’ve already asked for this.": "你已经申请过了。",
@@ -4723,16 +4794,19 @@ L.zh = {
   "{n} matches:": "{n} 个相符：",
   "{n} need details": "{n} 件需要补充资料",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
+  "{n} of {total} selected": "已选 {n}/{total}",
   "{n} people": "{n} 人",
   "{n} people asked": "{n} 人申请",
   "{n} people have asked. You’re counted too.": "已有 {n} 人申请，你也算在内。",
   "{n} rooms": "{n} 个房间",
+  "{n} rooms are now Every-centre rooms.": "{n} 个房间现在是所有中心共用的房间。",
   "{n} running low": "{n} 件快用完",
   "{n} selected": "已选 {n} 项",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received”留给还没放好的物品。请选择一个房间。",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
+  "“{name}” is now an Every-centre room.": "“{name}”现在是所有中心共用的房间。",
   "…and {n} more. Open the app for the rest.": "…还有 {n} 项，请打开应用查看。",
 };
 /*I18N-END*/
@@ -4828,7 +4902,20 @@ function phoneCode() {
 }
 // The admin door is not on any screen: open the page with #admin on the end (the admin's own link has it) and the PIN box appears.
 function noteAdminHash() { if (/[#&]admin\b/.test(location.hash)) S.adminWanted = true; }
+// "Stay signed in": a token from an earlier sign-in is tried once when the list has loaded
+function adminRestore() {
+  if (S.admin || S.adminTried) return;
+  S.adminTried = true;
+  var t = store.get('rm_admin_tok', null);
+  if (!t || !t.t || Date.now() - t.at > 6 * 3600 * 1000) { if (t) store.set('rm_admin_tok', null); return; }
+  var pin = 'tok:' + t.t;
+  callRaw('adminOpen', { pin: pin }).then(function (res) {
+    S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log }; S.pin = pin; S.requests = null;
+    render();
+  }).catch(function (e) { if (e && e.network) S.adminTried = false; else store.set('rm_admin_tok', null); });
+}
 function adminEntry() {
+  if (S.loaded && hasCentre()) adminRestore();
   noteAdminHash();
   if (!S.adminWanted || !S.loaded || !hasCentre()) return;   // wait for the list and the centre
   S.adminWanted = false;
@@ -5162,7 +5249,12 @@ try {
     if (S.skipPop > 0) { S.skipPop--; var f = S.afterRewind; S.afterRewind = null; if (f) f(); return; }
     if (S.locked) { try { hist.push({ n: S.stack.length }); } catch (e) { /* nothing to restore */ } toast(tl('Saving… one moment.')); return; }
     S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
-    if (!byIdEl('sheet').hidden) { closeSheet(); histPush(); return; }   // the sheet closes; the screen stays, so the entry is put back
+    if (!byIdEl('sheet').hidden) {   // a sheet layer goes (a room list inside a sheet, a sheet opened from the menu); the last one closes. The screen stays, so the entry is put back
+      if (byIdEl('rp-wrap')) endRoomPick();
+      else if (SHEETL.length) SHEETL.pop().rebuild();
+      else closeSheet();
+      histPush(); return;
+    }
     if (S.stack.length > 1) { S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); }
   });
 } catch (e) { /* no history support */ }
@@ -5261,7 +5353,6 @@ function drawChrome(v) {
     msg = '<div class="notice"><span>' + esc(tl('Offline. Showing the list from {when}.', { when: when(S.syncedAt) })) +
       '</span><button data-act="refresh">' + tl('Try again') + '</button></div>';
   }
-  if (S.admin) msg += '<div class="notice"><span>' + esc(tl('Admin mode')) + '</span><button data-act="adminLeave">' + tl('Sign out') + '</button></div>';
   if (REVIEW && LANGS_ON.indexOf(LANG) < 0) msg += '<div class="notice"><span>' + esc(tl('Review copy: this language isn’t signed off yet.')) + '</span></div>';
   byIdEl('banner').innerHTML = msg;
 }
@@ -5269,7 +5360,7 @@ function top(hasBack, noMe) {
   var me = S.me && !noMe ? '<button class="me" data-act="centrePick" aria-label="' + esc(tl('Centre')) + '">' + esc(S.me.centre) + '</button>' : '';
   return '<header class="top">' + (hasBack
     ? '<button class="back" data-act="back">' + ICON.back + '<span>' + tl('Back') + '</span></button>'
-    : '<span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span>') + me + '</header>';
+    : '<span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span>') + '<span class="topr">' + (S.admin ? '<button class="adminpill" data-act="go" data-to="admin" aria-label="' + esc(tl('Admin')) + '">' + ICON.shield + '<span>' + tl('Admin') + '</span></button>' : '') + me + '</span></header>';
 }
 
 function photoSrc(it, w) {
@@ -5570,7 +5661,8 @@ function card(g) {
   g.rows.forEach(function (r) {
     if (STATUS_LABEL[r.status] && flags.indexOf(STATUS_LABEL[r.status]) < 0) flags += ' <span class="badge warn">' + STATUS_LABEL[r.status] + '</span>';
   });
-  return '<button class="card item" data-act="open" data-key="' + esc(g.key) + '">' + tile(g.photoRow, g.cat) +
+  var holdRow = g.rows.filter(function (r) { return r.centre === mine; })[0] || g.rows[0];
+  return '<button class="card item" data-act="open" data-key="' + esc(g.key) + '"' + (holdRow ? ' data-hold="' + esc(holdRow.id) + '"' : '') + '>' + tile(g.photoRow, g.cat) +
     '<span class="body"><span class="name">' + esc(g.dname) + '</span>' +
     (g.dalt ? '<span class="alt">' + esc(g.dalt) + '</span>' : '') +
     '<span class="places">' + places + '</span>' + (flags ? '<span class="line">' + flags + '</span>' : '') + '</span>' +
@@ -5642,7 +5734,10 @@ function openSheet(html, focusId, cls) {
   byIdEl('sheet').hidden = false;
   if (focusId && byIdEl(focusId)) byIdEl(focusId).focus();
 }
+var SHEETL = [];   // the sheets underneath the one on top: { rebuild() } puts one back
+function pushSheet(rebuild) { if (!byIdEl('sheet').hidden) SHEETL.push({ rebuild: rebuild }); }
 function closeSheet() {
+  SHEETL = [];
   if (SC.picking && SC.pickSheet) {
     var pe = SC.picking, b = SC.pickBackup || {};
     SC.picking = null; SC.pickSheet = false;
@@ -5730,27 +5825,34 @@ function askRemove(id, fromMenu) {
     '</p><p class="help">' + tl('For mistakes or duplicates. Can’t be undone.') + '</p>' +
     '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="removeItemGo">' + tl('Remove it') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
 }
+function reopenMenu(id) { var it = S.byId[id]; if (!it) return closeSheet(); M = { type: 'itemmenu', id: it.id }; openSheet(itemMenuHtml(it)); }
 function itemMenuHtml(it) {
-  return '<h2>' + esc(shown(it)) + '</h2><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
+  return '<div class="menu-head"><h2>' + esc(shown(it)) + '</h2><button type="button" class="ib rp-x" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button></div><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
     '<button type="button" class="opt" data-act="menuEdit"><span class="ri" aria-hidden="true">' + ICON.pencil + '</span><span>' + tl('Edit item') + '</span></button>' +
     '<button type="button" class="opt" data-act="menuProblem"><span class="ri" aria-hidden="true">' + ICON.warn + '</span><span>' + tl('Report a problem') + '</span></button>' +
-    (S.admin ? '<button type="button" class="opt danger" data-act="menuRemove"><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span>' + tl('Delete') + '</span></button>' : '') +
-    '<button type="button" class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>';
+    (S.admin ? '<button type="button" class="opt danger" data-act="menuRemove"><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span>' + tl('Delete') + '</span></button>' : '');
 }
-var LP = { timer: 0, x: 0, y: 0, fired: false };
-function lpRow(t) { return t && t.closest ? t.closest('[data-id][data-act=open],[data-id][data-act=finish]') : null; }
-function lpCancel() { clearTimeout(LP.timer); LP.timer = 0; }
+var LP = { timer: 0, show: 0, x: 0, y: 0, firedAt: 0, row: null };
+function lpRow(t) { return t && t.closest ? t.closest('[data-hold],[data-id][data-act=open],[data-id][data-act=finish]') : null; }
+function lpCancel() {
+  clearTimeout(LP.timer); clearTimeout(LP.show); LP.timer = 0; LP.show = 0;
+  if (LP.row) { LP.row.classList.remove('holding'); LP.row = null; }
+}
 document.addEventListener('pointerdown', function (e) {
+  LP.firedAt = 0;   // a new touch always starts clean: nothing left over from the last hold can swallow this tap
   if (e.pointerType === 'mouse' && e.button !== 0) return;
   var row = lpRow(e.target);
   if (!row || !byIdEl('sheet').hidden || S.locked) return;
-  LP.x = e.clientX; LP.y = e.clientY; LP.fired = false;
+  LP.x = e.clientX; LP.y = e.clientY;
   lpCancel();
+  LP.row = row;
+  LP.show = setTimeout(function () { LP.show = 0; if (LP.row === row) row.classList.add('holding'); }, 120);   // a quick tap never flashes
   LP.timer = setTimeout(function () {
     LP.timer = 0;
-    var it = S.byId[row.dataset.id];
+    var it = S.byId[row.dataset.hold || row.dataset.id];
+    lpCancel();
     if (!it) return;
-    LP.fired = true;
+    LP.firedAt = Date.now();
     try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) { /* no haptics */ }
     M = { type: 'itemmenu', id: it.id };
     openSheet(itemMenuHtml(it));
@@ -5758,8 +5860,15 @@ document.addEventListener('pointerdown', function (e) {
 }, true);
 document.addEventListener('pointermove', function (e) { if (LP.timer && (Math.abs(e.clientX - LP.x) > 8 || Math.abs(e.clientY - LP.y) > 8)) lpCancel(); }, true);
 ['pointerup', 'pointercancel', 'scroll', 'wheel'].forEach(function (n) { document.addEventListener(n, lpCancel, true); });
-document.addEventListener('click', function (e) { if (LP.fired) { LP.fired = false; e.preventDefault(); e.stopPropagation(); } }, true);
-document.addEventListener('contextmenu', function (e) { if (lpRow(e.target)) e.preventDefault(); });
+// only the click that the hold itself leaves behind (within 0.7 s) is swallowed; anything later is a real tap
+document.addEventListener('click', function (e) {
+  if (LP.firedAt && Date.now() - LP.firedAt < 700) { LP.firedAt = 0; e.preventDefault(); e.stopPropagation(); }
+}, true);
+document.addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('[data-act=open],[data-act=finish],[data-hold]')) e.preventDefault(); });
+document.addEventListener('selectstart', function (e) {
+  var t = e.target && e.target.nodeType === 3 ? e.target.parentNode : e.target;
+  if (t && t.closest && t.closest('[data-act=open],[data-act=finish],[data-hold]')) e.preventDefault();
+});
 function openProblem(id) {
   var it = S.byId[typeof id === 'string' ? id : cur().id];
   if (!it) return;
@@ -6247,7 +6356,7 @@ function vMore() {
   return top(false, true) + '<h1 class="title">' + tl('Me') + '</h1>' +
     '<div class="card rows" style="margin-top:var(--s3)">' +
     '<button class="rowbtn" data-act="centrePick"><span class="lead">' + ICON.pin + '</span><span>' + tl('Centre') + '<small>' + esc(S.me.centre) + '</small></span>' + ICON.go + '</button>' +
-    '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + tl('My requests') + '</span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + (S.admin ? tl('All requests') : tl('My requests')) + '</span>' + ICON.go + '</button>' +
     '<button class="rowbtn" data-act="go" data-to="settings"><span class="lead">' + ICON.cog + '</span><span>' + tl('Settings') + '</span>' + ICON.go + '</button>' +
     (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin') + '<small>' + tl('Settings, requests and the Google Sheet') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div>';
@@ -6277,6 +6386,10 @@ function vSettings() {
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
+    '<h2 class="sec">' + tl('Admin') + '</h2><div class="card rows">' + (S.admin
+      ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin panel') + '<small>' + tl('Signed in as admin') + '</small></span>' + ICON.go + '</button>' +
+        '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button>'
+      : '<button class="rowbtn" data-act="pinOpen"><span class="lead">' + ICON.shield + '</span><span>' + tl('Sign in as admin') + '<small>' + tl('Needs the admin PIN.') + '</small></span>' + ICON.go + '</button>') + '</div>' +
     (HOSTED ? '<div class="card rows" style="margin-top:var(--s5)"><a class="rowbtn" href="barcheck.html"><span class="lead">' + ICON.phone + '</span><span>' + tl('Check the phone bars') + '<small>' + tl('A small test page for the bars at the top and bottom of the phone.') + '</small></span>' + ICON.go + '</a></div>' : '') +
     '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
 }
@@ -6376,10 +6489,32 @@ function redrawRoomFilter() {
   if (M.type === 'roomfilter') { openSheet(roomFilterSheet(cur()), null, 'has-foot'); var nb = $('#sheet .sheetbody'); if (nb) nb.scrollTop = y; }
 }
 // ----- Admin: manage the list of rooms -----
+// rooms that are in every centre but listed once per centre
+function tidyCandidates() {
+  if (S.centres.length < 2) return [];
+  var names = {}, rooms = S.rooms || [], norm = function (x) { return RMSearch.norm(x || ''); };
+  rooms.forEach(function (r) { var k = norm(r.name); if (k) names[k] = names[k] || r.name; });
+  S.items.forEach(function (it) { var k = norm(it.loc); if (k) names[k] = names[k] || it.loc; });
+  return Object.keys(names).filter(function (k) {
+    if (k === 'received' || rooms.some(function (r) { return r.centre === ALL_CENTRES && norm(r.name) === k; })) return false;
+    return S.centres.every(function (c) { return rooms.some(function (r) { return r.centre === c && norm(r.name) === k; }) || S.items.some(function (it) { return it.centre === c && norm(it.loc) === k; }); });
+  }).map(function (k) { return names[k]; }).sort();
+}
+function mergedToast(list) {
+  var msg = list.length === 1 ? tl('“{name}” is now an Every-centre room.', { name: list[0].name }) : tl('{n} rooms are now Every-centre rooms.', { n: list.length });
+  toast(msg, tl('Undo'), function () {
+    var chain = Promise.resolve();
+    list.forEach(function (m) { chain = chain.then(function () { return callRaw('adminRooms', { pin: S.pin, op: 'unmerge', name: m.name, centres: m.centres }).then(function (r) { S.rooms = r.rooms || S.rooms; }); }); });
+    chain.then(function () { saveData(); rebuild(); render(); toast(tl('Undone.')); }).catch(function (e) { toast(e.network ? tl('Offline. Try again.') : e.message); });
+  });
+}
 function vAdminRooms() {
   if (!S.admin) return vMore();
+  var tidy = tidyCandidates();
   var groups = S.centres.concat([ALL_CENTRES]);
   return top(true) + '<h1 class="title">' + tl('Manage rooms') + '</h1><p class="sub">' + tl('Rename a room and its items follow.') + '</p>' +
+    (tidy.length ? '<div class="card tidycard" style="padding:var(--s4);margin-bottom:var(--s4)"><h2 style="margin:0 0 var(--s1)">' + tl('Same room in every centre') + '</h2><p class="help" style="margin:0 0 var(--s2)">' + esc(tidy.join(', ')) + '</p>' +
+      '<p class="help" style="margin:0 0 var(--s3)">' + tl('These are listed once for each centre. Make each one a single Every-centre room.') + '</p><button class="btn" data-act="roomTidy">' + tl('Merge into Every centre') + '</button></div>' : '') +
     groups.map(function (c) {
       var mine = (S.rooms || []).filter(function (r) { return r.centre === c; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
       return '<h2 class="sec">' + esc(c === ALL_CENTRES ? tl('Every centre') : c) + '</h2><div class="rows">' +
@@ -6474,7 +6609,7 @@ function vRequests() {
         (done.length ? '<h2 class="sec">' + esc(tl('Answered ({n})', { n: done.length })) + '</h2><div class="rqlist">' + done.map(reqCard).join('') + '</div>' : '');
     }
   }
-  return top(true) + '<h1 class="title">' + (S.admin ? tl('Requests') : tl('My requests')) + '</h1>' + body;
+  return top(true) + '<h1 class="title">' + (S.admin ? tl('All requests') : tl('My requests')) + '</h1>' + body;
 }
 // A CSV a spreadsheet can open. Text that starts with = + - @ gets a leading apostrophe so it is never run as a formula.
 function csvCell(v) {
@@ -6521,10 +6656,11 @@ function vAdmin() {
       row('sheetChange', '', tl('Switch Google Sheet'), '') +
       row('csv', '', tl('Download'), '') +
     '</div></details>' +
-    (link ? '<h2 class="sec">' + tl('Staff link (share only with staff)') + '</h2><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="' + tl('Staff link (share only with staff)') + '" value="' + link + '" onclick="this.select()">' +
-      '<button class="btn" data-act="copyLink" data-for="staff-link">' + tl('Copy') + '</button></div>' : '') +
-    (link ? '<h2 class="sec">' + tl('Admin link (keep private)') + '</h2><div class="linkrow"><input id="admin-link" class="inp" readonly aria-label="' + tl('Admin link (keep private)') + '" value="' + link + '&admin" onclick="this.select()">' +
-      '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div>' : '') +
+    (link ? '<details class="settings" id="adm-links"><summary>' + tl('Share links') + '<small>' + tl('Staff link and admin link') + '</small></summary><div class="card">' +
+      '<p class="lab">' + tl('Staff link (share only with staff)') + '</p><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="' + tl('Staff link (share only with staff)') + '" value="' + link + '" onclick="this.select()">' +
+      '<button class="btn" data-act="copyLink" data-for="staff-link">' + tl('Copy') + '</button></div>' +
+      '<p class="lab">' + tl('Admin link (keep private)') + '</p><div class="linkrow"><input id="admin-link" class="inp" readonly aria-label="' + tl('Admin link (keep private)') + '" value="' + link + '&admin" onclick="this.select()">' +
+      '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div></div></details>' : '') +
     '<details class="settings" id="adm-hist"><summary>' + tl('History') + '</summary><div class="card">' +
     (S.admin.log.length ? S.admin.log.slice(0, 8).map(function (h) {
       return '<p class="hist"><b>' + esc(tl(h.action)) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
@@ -6653,7 +6789,8 @@ function ctxSheet() {
       return '<button type="button" class="chip' + (n === c.centre ? ' on' : '') + '" data-act="ctxCentre" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
     '<label class="lab">' + tl('Which room?') + '</label></div>' +
     '<div class="rp-scroll" id="ctx-list">' +
-    '<button type="button" class="opt rp' + (isReceivedRoom(c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="Received"><span class="ri" aria-hidden="true">' + ICON.room.received + '</span><span class="rp-n">' + tl('Not sorted yet') + '<small>' + tl('Kept under “Needs attention” until someone puts them away.') + '</small></span>' + (isReceivedRoom(c.loc) ? ICON.done : '') + '</button>' +
+    '<button type="button" class="sp' + (isReceivedRoom(c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="Received"><span class="sp-ic" aria-hidden="true">' + ICON.room.received + '</span><span class="sp-t"><b>' + tl('Not sorted yet') + '</b><span>' + tl('Kept under “Needs attention” until someone puts them away.') + '</span></span>' + (isReceivedRoom(c.loc) ? '<span class="sp-ok" aria-hidden="true">' + ICON.done + '</span>' : '') + '</button>' +
+    '<p class="rp-or">' + tl('Or choose a room') + '</p>' +
     pickRooms(c.centre).map(function (l) {
       var on = sameRoom(l, c.loc);
       return '<button type="button" class="opt rp' + (on ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span><span class="rp-n">' + esc(l) + '</span>' + (on ? ICON.done : '') + '</button>'; }).join('') + '</div>' +
@@ -7002,18 +7139,20 @@ function vLabels(v) {
         .sort(function (a, b) { return a.loc.localeCompare(b.loc) || a.name.localeCompare(b.name); })
         .map(function (it) { return labelCard(linkTo({ i: it.id }), shown(it), it.centre + ' · ' + it.loc, it.id, 'i:' + it.id, v.off['i:' + it.id]); });
   var chosen = cards.filter(function (c) { return c.indexOf('class="lbl off"') < 0; }).length;
-  return '<div class="noprint">' + top(true) + '<h1 class="title">' + tl('QR stickers') + '</h1>' +
+  return '<div class="qrpage"><div class="noprint">' + top(true) + '<h1 class="title">' + tl('QR stickers') + '</h1>' +
     '<p class="sub">' + tl('Scan a sticker to open it here.') + '</p>' +
+    '<div class="card qrset" style="padding:0 var(--s4) var(--s4)">' +
     '<label class="lab">' + tl('What to print') + '</label><div class="chips">' + opt('mode', 'items', tl('One per item'), v.mode === 'items') + opt('mode', 'shelves', tl('One per shelf'), v.mode === 'shelves') + '</div>' +
     '<label class="lab">' + tl('Which centre?') + '</label><div class="chips">' + S.centres.map(function (c) { return opt('centre', c, c, c === v.centre); }).join('') + '</div>' +
-    (v.mode === 'items' ? '<label class="lab">' + tl('Which room?') + '</label><div class="chips">' + opt('place', '', tl('All rooms'), !v.place) + places.map(function (p) { return opt('place', p, p, p === v.place); }).join('') + '</div>' : '') +
-    (S.appUrl ? '<p class="help">' + tl('These stickers open:') + ' ' + esc(S.appUrl) + '</p>'
+    (v.mode === 'items' ? '<label class="lab">' + tl('Which room?') + '</label><div class="chips">' + opt('place', '', tl('All rooms'), !v.place) + places.map(function (p) { return opt('place', p, p, p === v.place); }).join('') + '</div>' : '') + '</div>' +
+    (S.appUrl ? '<details class="settings"><summary>' + tl('Where the stickers open') + '</summary><p class="help">' + esc(S.appUrl) + '</p></details>'
       : '<p class="err">' + tl('Open the app from its own link first.') + '</p>') +
-    '<div class="chips"><button class="chip" data-act="labelAll" data-val="1">' + tl('Select all') + '</button><button class="chip" data-act="labelAll" data-val="">' + tl('None') + '</button></div>' +
-    '<p class="help">' + tl('Tap to skip one.') + '</p>' +
-    '<button class="btn primary" data-act="print"' + (S.appUrl && chosen ? '' : ' disabled') + '>' + (chosen === 1 ? tl('Print 1 sticker') : tl('Print {n} stickers', { n: chosen })) + '</button>' +
-    '<p class="help">' + tl('Press Ctrl+P to print.') + '</p></div>' +
-    (S.appUrl ? '<div class="lbls">' + cards.join('') + '</div>' : '');
+    '<div class="selbar"><span class="selcount">' + esc(tl('{n} of {total} selected', { n: chosen, total: cards.length })) + '</span><span class="selact">' +
+      '<button class="chip" data-act="labelAll" data-val="1">' + tl('Select all') + '</button><button class="chip" data-act="labelAll" data-val="">' + tl('None') + '</button></span></div>' +
+    '<p class="help" style="margin-top:var(--s1)">' + tl('Tap a sticker to skip it.') + '</p></div>' +
+    (S.appUrl ? '<div class="lbls">' + cards.join('') + '</div>' : '') +
+    '<div class="addbar noprint"><button class="btn primary" data-act="print"' + (S.appUrl && chosen ? '' : ' disabled') + '>' + (chosen === 1 ? tl('Print 1 sticker') : tl('Print {n} stickers', { n: chosen })) + '</button>' +
+    '<p class="help" style="text-align:center">' + tl('Press Ctrl+P to print.') + '</p></div></div>';
 }
 
 // ---------- toast ----------
@@ -7052,11 +7191,20 @@ function noZoom(on) {
 }
 ['touchmove', 'wheel'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked && e.cancelable) e.preventDefault(); }, { passive: false }); });
 ['gesturestart', 'gesturechange'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked) e.preventDefault(); }); });
+// while the layer is up, the hole is re-cut every frame at the button's real place (the keyboard closing, a sheet settling or a rotation all move it)
+function trackHole() {
+  var el = byIdEl('lock'), b = S.holeEl;
+  if (!S.locked || !el || !b) return;
+  try { if (document.body.contains(b)) { var p = holePath(b.getBoundingClientRect()); if (p !== S.holePath) { S.holePath = p; el.style.clipPath = p; } } } catch (e) { /* keep the last hole */ }
+  S.holeRaf = requestAnimationFrame(trackHole);
+}
 function lockUI(on, holeEl) {
   var el = byIdEl('lock');
   clearTimeout(S.lockWD);
+  cancelAnimationFrame(S.holeRaf); S.holeEl = null; S.holePath = '';
   if (on) {
     if (el) { try { el.style.clipPath = holeEl ? holePath(holeEl.getBoundingClientRect()) : ''; } catch (e) { el.style.clipPath = ''; } }
+    if (holeEl) { S.holeEl = holeEl; S.holeRaf = requestAnimationFrame(trackHole); }
     noZoom(true);
     S.locked = true; S.lockSettled = false; S.lockPending = true;
     if (el) el.hidden = false;
@@ -7724,8 +7872,8 @@ var ACT = {
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
   removeItem: function () { askRemove(cur().id, false); },
   menuEdit: function () { var id = M.id, it = S.byId[id]; closeSheet(); if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it) }); },
-  menuProblem: function () { var id = M.id; closeSheet(); openProblem(id); },
-  menuRemove: function () { askRemove(M.id, true); },
+  menuProblem: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); openProblem(id); },
+  menuRemove: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); askRemove(id, true); },
   removeItemGo: function () {
     var id = M.id, fromMenu = !!M.fromMenu;
     busy(true, tl('Removing…'));
@@ -7787,6 +7935,13 @@ var ACT = {
     openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: M.name })) + '</h2><p class="sub">' + tl('Only empty rooms can be removed.') + '</p>' +
       '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="roomGo">' + tl('Remove') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
+  roomTidy: function () {
+    busy(true, tl('Saving…'));
+    call('adminRooms', { pin: S.pin, op: 'tidy' }).then(function (res) {
+      busy(false); S.rooms = res.rooms || []; saveData(); rebuild(); render();
+      if (res.merged && res.merged.length) mergedToast(res.merged); else toast(tl('Nothing to merge.'));
+    }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
+  },
   roomGo: function () {
     var m = M, typed = m.op === 'remove' ? '' : val('m-room');
     if (m.op !== 'remove' && !typed) return;
@@ -7795,7 +7950,8 @@ var ACT = {
       S.rooms = res.rooms || [];
       if (res.items && res.items.length) mergeItems(res.items);
       saveData(); rebuild(); closeSheet();
-      toast(m.op === 'add' ? tl('Added.') : m.op === 'rename' ? tl('Renamed.') : tl('Removed.'));
+      if (res.merged && res.merged.length) mergedToast(res.merged);
+      else toast(m.op === 'add' ? tl('Added.') : m.op === 'rename' ? tl('Renamed.') : tl('Removed.'));
     }).catch(function (e) {
       busy(false);
       var err = byIdEl('m-err');
@@ -7903,6 +8059,7 @@ var ACT = {
     M = { type: 'pin' };
     openSheet('<h2>' + tl('Admin PIN') + '</h2>' +
       '<input id="m-pin" class="inp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" aria-label="' + tl('Admin PIN') + '">' +
+      '<label class="chk"><input type="checkbox" id="m-stay" checked aria-label="' + esc(tl('Stay signed in for 6 hours on this phone')) + '"><span class="box" aria-hidden="true"></span><span>' + tl('Stay signed in for 6 hours on this phone') + '</span></label>' +
       '<p class="err" id="m-err" hidden></p>' +
       '<button class="btn primary" id="m-go" data-act="pinGo">' + tl('Continue') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-pin');
   },
@@ -7910,9 +8067,10 @@ var ACT = {
     var pin = val('m-pin');
     if (!pin) return;
     busy(true, tl('Checking…'));
-    call('adminOpen', { pin: pin }).then(function (res) {
+    call('adminOpen', { pin: pin, remember: !!(byIdEl('m-stay') && byIdEl('m-stay').checked) }).then(function (res) {
       S.admin = { sheetUrl: res.sheetUrl, sheetName: res.sheetName, log: res.log };
       S.pin = pin;
+      store.set('rm_admin_tok', res.token ? { t: res.token, at: Date.now() } : null);   // only a random token is kept on the phone, never the PIN
       S.requests = null; loadRequests();
       closeSheet();
       go({ name: 'admin' });
@@ -7973,15 +8131,18 @@ var ACT = {
     M = { type: 'pinchange' };
     openSheet('<h2>' + tl('Change PIN') + '</h2><label class="lab" for="m-pin2">' + tl('New PIN') + '</label>' +
       '<input id="m-pin2" class="inp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">' +
+      '<label class="lab" for="m-pin3">' + tl('Confirm new PIN') + '</label>' +
+      '<input id="m-pin3" class="inp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">' +
       '<p class="help">' + tl('The PIN is 6 digits.') + '</p><p class="err" id="m-err" hidden></p>' +
-      '<button class="btn primary" id="m-go" data-act="pinChangeGo">' + tl('Save') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-pin2');
+      '<button class="btn primary" id="m-go" data-act="pinChangeGo" disabled>' + tl('Save') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>', 'm-pin2');
   },
   pinChangeGo: function () {
     var n = val('m-pin2'), err = byIdEl('m-err');
     if (!/^\d{6}$/.test(n)) { err.textContent = tl('The PIN is 6 digits.'); err.hidden = false; return; }
+    if (n !== val('m-pin3')) { err.textContent = tl('The two PINs are different.'); err.hidden = false; return; }
     busy(true, tl('Saving…'));
     call('adminSetPin', { pin: S.pin, newPin: n }).then(function () {
-      S.pin = n; closeSheet(); toast(tl('PIN changed.'));
+      S.pin = n; store.set('rm_admin_tok', null); closeSheet(); toast(tl('PIN changed.'));
     }).catch(function (e) { busy(false); err.textContent = e.network ? tl('Offline. Try again.') : e.message; err.hidden = false; });
   },
   centreAdd: function () {
@@ -8019,7 +8180,10 @@ var ACT = {
       err.hidden = false;
     });
   },
-  adminLeave: function () { S.admin = null; S.pin = ''; S.requests = null; if (['admin', 'adminRooms', 'adminCentres', 'labels', 'starter'].indexOf(cur().name) >= 0 || cur().name === 'edit') root('more'); else render(); },
+  adminLeave: function () {
+    if (S.pin && S.pin.indexOf('tok:') === 0) callRaw('adminSignOut', { pin: S.pin }).catch(function () { /* it expires by itself */ });
+    store.set('rm_admin_tok', null);
+    S.admin = null; S.pin = ''; S.requests = null; if (['admin', 'adminRooms', 'adminCentres', 'labels', 'starter'].indexOf(cur().name) >= 0 || cur().name === 'edit') root('more'); else render(); },
   decide: function (el) {
     M = { type: 'decide', id: el.dataset.id, status: el.dataset.val };
     var label = { Approved: tl('Approve?'), Declined: tl('Decline?'), Bought: tl('Mark as bought?') }[M.status];
@@ -8149,6 +8313,11 @@ document.addEventListener('input', function (e) {
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id === 'f-parts') F.parts = t.value;
+  else if (t.id === 'm-pin2' || t.id === 'm-pin3') {
+    var a = val('m-pin2'), b2 = val('m-pin3'), full = /^\d{6}$/.test(a) && /^\d{6}$/.test(b2), er = byIdEl('m-err'), go2 = byIdEl('m-go');
+    if (go2) go2.disabled = !(full && a === b2);
+    if (er) { er.hidden = !(full && a !== b2); if (!er.hidden) er.textContent = tl('The two PINs are different.'); }
+  }
   if (t.id === 'f-name' && cur().name === 'request') refreshAskNote();
   else if (t.id === 'rp-q') { var q = t.value.trim().toLowerCase(); [].forEach.call(document.querySelectorAll('#rp-list [data-name]'), function (b) { b.classList.toggle('rp-hide', !!q && b.dataset.name.indexOf(q) < 0); }); }
   else if (t.classList && t.classList.contains('pickval')) syncPick(t.id);
