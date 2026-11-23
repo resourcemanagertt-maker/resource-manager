@@ -112,7 +112,7 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .cat{align-items:center;justify-content:flex-start}
 .cat small{margin-left:auto}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.tile.big{width:96px;height:96px}
+.tile.big{width:96px;height:96px;aspect-ratio:1/1}
 
 .after{margin-top:var(--s5);display:flex;flex-direction:column;gap:var(--s2)}
 .after p{color:var(--muted);font-size:14px}
@@ -640,6 +640,37 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 .rtext .tags{margin-top:4px}
 .formend .btn.quiet.next{order:-1}
 .chip[data-act=attFilter] b{margin-left:6px}
+/* Ask to buy is never the loud button: outlined, as wide as its words */
+.btn.ask{width:auto;min-height:44px;padding:0 var(--s4);background:transparent;color:var(--ink);border:1px solid var(--line-strong);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:var(--s2)}
+.btn.ask svg{width:18px;height:18px;flex:none}
+.empty .btn.ask{margin-right:var(--s2)}
+.lowact{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s2)}
+.lowact .btn{flex:0 1 auto;min-width:0;width:auto;min-height:44px;margin:0;padding:0 var(--s5)}
+.askchip{display:inline-flex;align-items:center;gap:6px}
+/* the room picker: title and search stay on top, the list is the only part that scrolls, "Add a new room" stays pinned at the bottom */
+#sheet .panel.rpanel{display:flex;flex-direction:column;overflow:hidden;padding:0;max-height:min(85vh,640px)}
+html[data-text="1"] #sheet .panel.rpanel{max-height:calc(min(85vh,640px) / 1.15)}
+html[data-text="2"] #sheet .panel.rpanel{max-height:calc(min(85vh,640px) / 1.3)}
+.rp-head{flex:none;padding:var(--s5) var(--s4) var(--s2)}
+.rp-title{display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+.rp-title h2{margin:0}
+.rp-x{flex:none}
+.rp-count{margin:var(--s1) 0 0;color:var(--muted);font-size:14px}
+.rp-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:var(--s2) var(--s4);display:grid;gap:var(--s2);align-content:start;
+  background:linear-gradient(var(--paper) 30%,transparent) top/100% 24px no-repeat local,linear-gradient(transparent,var(--paper) 70%) bottom/100% 24px no-repeat local,linear-gradient(rgba(0,0,0,.14),transparent) top/100% 10px no-repeat scroll,linear-gradient(transparent,rgba(0,0,0,.14)) bottom/100% 10px no-repeat scroll}
+.rp-scroll .opt,.rp-foot .opt{margin-top:0}
+.rp-foot{flex:none;border-top:1px solid var(--line-strong);padding:var(--s3) var(--s4) calc(var(--s4) + env(safe-area-inset-bottom));background:var(--paper)}
+.rp-foot #rp-new,.rp-foot .ctxnew{margin-top:0}
+.rp-foot .inp{margin-top:0}
+.rp-foot .btn{margin-top:var(--s3)}
+.rp-in{display:flex;flex-direction:column;max-height:min(70vh,520px);min-height:0}
+.rp-in .rp-head,.rp-in .rp-scroll,.rp-in .rp-foot{padding-left:0;padding-right:0}
+.rp-in .rp-head{padding-top:0}
+/* press and hold: no text selection or browser menu on a row */
+[data-id][data-act=open],[data-id][data-act=finish]{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.opt.danger{color:var(--alert);border-color:var(--alert)}
+.opt.danger svg{color:var(--alert)}
+.opt .ri svg{width:22px;height:22px}
 /* a thin dark line under our bottom bar in light mode: the phone's own black bar then looks planned */
 :root{--stripH:0px}
 :root[data-strip="1"]{--stripH:8px}
@@ -713,11 +744,11 @@ details > summary::after{color:var(--ink)}
 .cline .cctl{flex-wrap:wrap}
 .cline .cctl .stepper{flex:1 1 150px}
 #toast button{color:inherit}
-html[data-text="1"] .tile,html[data-text="2"] .tile:not(.big){width:44px;height:44px}
+html[data-text="1"] .tile:not(.big),html[data-text="2"] .tile:not(.big){width:44px;height:44px}
 html[data-text="1"] .tile:not(.big) .emo,html[data-text="2"] .tile:not(.big) .emo{font-size:24px}
 html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 #cam .camwait{inset:auto;left:10%;right:10%;top:28%;height:28%;position:absolute}
-.tilebtn{position:relative;flex:none;background:none;border:0;padding:0;cursor:pointer;color:inherit}
+.tilebtn{position:relative;flex:none;display:block;width:96px;height:96px;line-height:0;background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
 .roomrow .rowmain svg{flex:none;width:20px;height:20px;color:var(--ink)}
 .roomrow .rowmain > .rtext{flex:1;min-width:0}
@@ -3303,6 +3334,8 @@ var ICON = {
   ICON.clock = s('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>');
   ICON.bag = s('<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>');
   ICON.tag = s('<path d="M4 4h8l8 8-8 8-8-8z"/><circle cx="8.5" cy="8.5" r="1"/>');
+  ICON.cart = s('<path d="M3 4h2.5l2 11h10l2-8H7"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/>');
+  ICON.warn = s('<path d="M12 4 21 20H3z"/><path d="M12 10v5M12 17.5v.1"/>');
   ICON.phone = s('<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>');
   ICON.room = {
     store: s('<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 9h16M4 15h16M10 6h4M10 12h4M10 18h4"/>'),
@@ -3353,6 +3386,8 @@ L.ms = {
   "1 added": "1 ditambah",
   "1 change will send when you’re online.": "1 perubahan akan dihantar apabila dalam talian.",
   "1 item": "1 barang",
+  "1 person asked": "1 orang meminta",
+  "1 room": "1 bilik",
   "100 at most.": "Paling banyak 100.",
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
@@ -3394,6 +3429,8 @@ L.ms = {
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
   "Alpha · updated {date}": "Alfa · dikemas kini {date}",
+  "Already asked": "Sudah diminta",
+  "Already asked at {centre}: {who}. Tap “Me too” to add yours.": "Sudah diminta di {centre}: {who}. Ketik “Saya juga” untuk menambah anda.",
   "Already have in 1 place": "Sudah ada di 1 tempat",
   "Already have in {n} places": "Sudah ada di {n} tempat",
   "Already here. Use Add more.": "Sudah ada. Guna Tambah.",
@@ -3416,6 +3453,7 @@ L.ms = {
   "Ask to buy more": "Mohon beli lagi",
   "Ask to buy something": "Minta untuk beli sesuatu",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
+  "Asked": "Diminta",
   "Asked to buy": "Mohon beli",
   "Asked today": "Ditanya hari ini",
   "Asked yesterday": "Ditanya semalam",
@@ -3430,6 +3468,7 @@ L.ms = {
   "Books": "Buku",
   "Bottom strip": "Jalur bawah",
   "Bought": "Dibeli",
+  "Bought · on its way": "Dibeli · dalam perjalanan",
   "Broken": "Rosak",
   "Broken or missing": "Rosak atau hilang",
   "Broken or missing:": "Rosak atau hilang:",
@@ -3508,6 +3547,7 @@ L.ms = {
   "Decline": "Tolak",
   "Decline?": "Tolak?",
   "Decorations and lanterns": "Hiasan dan tanglung",
+  "Delete": "Padam",
   "Details": "Butiran",
   "Details changed": "Butiran diubah",
   "Do we have it?": "Ada tak?",
@@ -3596,10 +3636,12 @@ L.ms = {
   "Low at {n}": "Rendah pada {n}",
   "Low first": "Kurang dahulu",
   "Lowest first": "Paling sedikit dahulu",
+  "Manage rooms": "Urus bilik",
   "Mark as bought": "Tandakan dibeli",
   "Mark as bought?": "Tandakan sudah dibeli?",
   "Mats and mattresses": "Tikar dan tilam",
   "Me": "Saya",
+  "Me too": "Saya juga",
   "Minimum": "Minimum",
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
@@ -3679,6 +3721,7 @@ L.ms = {
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
   "Open the full list": "Buka senarai penuh",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
+  "Or type a new room": "Atau taip bilik baru",
   "Other": "Lain-lain",
   "Other centres have spare:": "Pusat lain ada lebihan:",
   "Other names": "Nama lain",
@@ -3697,6 +3740,8 @@ L.ms = {
   "Piece missing": "Bahagian hilang",
   "Place": "Tempat",
   "Place and notes stay at {centre}.": "Tempat dan nota kekal di {centre}.",
+  "Plan to buy": "Rancang untuk beli",
+  "Planned. Mark it bought when it is ordered.": "Dirancang. Tandakan sudah dibeli apabila ditempah.",
   "Plasters and bandages": "Plaster dan pembalut",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "Mohon beli {qty} {unit} {name} untuk {centre}.",
   "Point at a barcode.": "Halakan ke kod bar.",
@@ -3870,6 +3915,8 @@ L.ms = {
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
   "This will be a new purchase.": "Ini akan menjadi pembelian baharu.",
   "Tip: hold Add to type instead.": "Petua: tekan lama Tambah untuk menaip.",
+  "Tip: press and hold an item for shortcuts.": "Petua: tekan dan tahan satu item untuk pintasan.",
+  "Tip: press and hold an item in any list for shortcuts.": "Petua: tekan dan tahan satu item dalam mana-mana senarai untuk pintasan.",
   "Tissues and wipes": "Tisu dan tuala basah",
   "To confirm ({n})": "Untuk disahkan ({n})",
   "Toilet supplies": "Keperluan tandas",
@@ -3945,6 +3992,7 @@ L.ms = {
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your starter list is finished.": "Senarai permulaan anda selesai.",
+  "You’ve already asked for this.": "Anda sudah memintanya.",
   "a name": "nama",
   "a place": "tempat",
   "a type": "jenis",
@@ -3998,6 +4046,10 @@ L.ms = {
   "{n} matches:": "{n} padanan:",
   "{n} need details": "{n} perlu butiran",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
+  "{n} people": "{n} orang",
+  "{n} people asked": "{n} orang meminta",
+  "{n} people have asked. You’re counted too.": "{n} orang telah meminta. Anda dikira sama.",
+  "{n} rooms": "{n} bilik",
   "{n} running low": "{n} hampir habis",
   "{n} selected": "{n} dipilih",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
@@ -4011,6 +4063,8 @@ L.zh = {
   "1 added": "已加 1",
   "1 change will send when you’re online.": "1 项更改联网后会发送。",
   "1 item": "1 件",
+  "1 person asked": "1 人申请",
+  "1 room": "1 个房间",
   "100 at most.": "最多 100 个。",
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
@@ -4052,6 +4106,8 @@ L.zh = {
   "All rooms": "所有房间",
   "Almost out": "快没了",
   "Alpha · updated {date}": "Alpha · 更新于 {date}",
+  "Already asked": "已经有人申请",
+  "Already asked at {centre}: {who}. Tap “Me too” to add yours.": "{centre} 已有人申请：{who}。点“我也要”加上你。",
   "Already have in 1 place": "已有 1 处",
   "Already have in {n} places": "已有 {n} 处",
   "Already here. Use Add more.": "已经有了，请用“增加”。",
@@ -4074,6 +4130,7 @@ L.zh = {
   "Ask to buy more": "申请再买",
   "Ask to buy something": "申请购买东西",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
+  "Asked": "已申请",
   "Asked to buy": "申请购买",
   "Asked today": "今天提出",
   "Asked yesterday": "昨天提出",
@@ -4088,6 +4145,7 @@ L.zh = {
   "Books": "图书",
   "Bottom strip": "底部细条",
   "Bought": "已购买",
+  "Bought · on its way": "已购买 · 在路上",
   "Broken": "损坏",
   "Broken or missing": "损坏或缺失",
   "Broken or missing:": "损坏或缺失：",
@@ -4166,6 +4224,7 @@ L.zh = {
   "Decline": "拒绝",
   "Decline?": "拒绝？",
   "Decorations and lanterns": "装饰与灯笼",
+  "Delete": "删除",
   "Details": "详情",
   "Details changed": "信息已修改",
   "Do we have it?": "我们有吗？",
@@ -4254,10 +4313,12 @@ L.zh = {
   "Low at {n}": "少于 {n} 就算少",
   "Low first": "不足的在前",
   "Lowest first": "最少的在前",
+  "Manage rooms": "管理房间",
   "Mark as bought": "标记为已购买",
   "Mark as bought?": "标记为已购买？",
   "Mats and mattresses": "垫子与床垫",
   "Me": "我的",
+  "Me too": "我也要",
   "Minimum": "最低量",
   "More": "更多",
   "More detail:": "详细信息：",
@@ -4337,6 +4398,7 @@ L.zh = {
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
   "Open the full list": "打开完整列表",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
+  "Or type a new room": "或输入新房间",
   "Other": "其他",
   "Other centres have spare:": "其他中心有多余的：",
   "Other names": "其他名称",
@@ -4355,6 +4417,8 @@ L.zh = {
   "Piece missing": "缺少零件",
   "Place": "位置",
   "Place and notes stay at {centre}.": "位置和备注只属于 {centre}。",
+  "Plan to buy": "计划购买",
+  "Planned. Mark it bought when it is ordered.": "已计划。下单后请标记为已购买。",
   "Plasters and bandages": "创可贴与绷带",
   "Please can we buy {qty} {unit} of {name} for {centre}.": "申请为 {centre} 购买 {qty} {unit} {name}。",
   "Point at a barcode.": "对准条码。",
@@ -4528,6 +4592,8 @@ L.zh = {
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
   "This will be a new purchase.": "这将是一次新的购买。",
   "Tip: hold Add to type instead.": "小提示：长按“添加”可改为输入。",
+  "Tip: press and hold an item for shortcuts.": "提示：长按物品可使用快捷操作。",
+  "Tip: press and hold an item in any list for shortcuts.": "提示：在任何列表中长按物品可使用快捷操作。",
   "Tissues and wipes": "纸巾与湿巾",
   "To confirm ({n})": "待确认（{n}）",
   "Toilet supplies": "厕所用品",
@@ -4603,6 +4669,7 @@ L.zh = {
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
   "Your list is up to date.": "清单已是最新。",
   "Your starter list is finished.": "起步清单已全部处理。",
+  "You’ve already asked for this.": "你已经申请过了。",
   "a name": "名称",
   "a place": "位置",
   "a type": "类型",
@@ -4656,6 +4723,10 @@ L.zh = {
   "{n} matches:": "{n} 个相符：",
   "{n} need details": "{n} 件需要补充资料",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
+  "{n} people": "{n} 人",
+  "{n} people asked": "{n} 人申请",
+  "{n} people have asked. You’re counted too.": "已有 {n} 人申请，你也算在内。",
+  "{n} rooms": "{n} 个房间",
   "{n} running low": "{n} 件快用完",
   "{n} selected": "已选 {n} 项",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
@@ -4885,6 +4956,8 @@ window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; 
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
   act: function (name, data) { return ACT[name]({ dataset: data || {} }); },
+  ask: function (q) { var g = RMSearch.search(S.groups, q).strong[0]; var mine = g && g.rows.filter(function (r) { return r.centre === myCentre(); })[0]; if (g) go({ name: 'request', key: g.key, itemId: mine ? mine.id : '' }); },
+  openNow: function () { S.openAt = 0; openLoad(true); },
   lock: lockUI,
   lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true, b); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
@@ -5138,6 +5211,11 @@ document.addEventListener('toggle', function (e) {
 }, true);
 function afterRender(v) {
   if (v.name === 'countList') restoreCheck(v);
+  if (v.name === 'request') { openLoad(); refreshAskNote(); }
+  if (v.name === 'home' && !store.get('rm_lptip', 0) && S.items.length) {   // once: the shortcut is invisible until somebody is told
+    store.set('rm_lptip', 1);
+    setTimeout(function () { if (cur().name === 'home') toast(tl('Tip: press and hold an item for shortcuts.')); }, 1500);
+  }
   if (v.name === 'edit' && !v._focused) {   // an item that still needs a name: the cursor is in the name box, so typing can start at once
     var nb = byIdEl('f-nname') || (S.byId[v.id] && needsNameText(S.byId[v.id].name) ? byIdEl('f-name') : null);
     if (nb) { v._focused = true; nb.focus(); try { nb.scrollIntoView({ block: 'center' }); } catch (e) { /* older browsers */ } }
@@ -5452,12 +5530,12 @@ function resultsHtml(v) {
       var og = elsewhere[0];
       return starterHits(q) + '<div class="card empty" style="margin-top:14px"><h2>' + esc(tl('Not at {centre}.', { centre: myCentre() })) + '</h2>' +
         '<p>' + esc(og.rows.filter(function (r) { return r.centre !== myCentre(); }).slice(0, 3).map(function (r) { return tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) + (isLevel(r) ? '' : ' ' + unitFor(r.qty, r.unit)) }); }).join(' · ')) + '</p>' +
-        '<button class="btn primary" data-act="toRequest">' + tl('Ask to buy') + '</button></div>';
+        '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Ask to buy') + '</button></div>';
     }
     var sh = starterHits(q);
     return sh + '<div class="card empty" style="margin-top:14px"><h2>' + esc(sh ? tl('Not here?') : tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
       (sh ? '' : '<p>' + tl('Check the spelling.') + '</p>') +
-      '<button class="btn primary" data-act="toRequest">' + tl('Ask to buy') + '</button>' +
+      '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Ask to buy') + '</button>' +
       '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></div>' +
       (r.weak.length ? '<p class="count">' + tl('Closest:') + '</p><div class="list">' + r.weak.map(card).join('') + '</div>' : '');
   }
@@ -5467,7 +5545,7 @@ function resultsHtml(v) {
     (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>') +
     (found.length > shown.length ? '<p class="hint">' + tl('First 30 shown. Type more.') + '</p>' : '') + starterHits(q) +
     '<details class="notwhat"><summary>' + tl('Not what you need?') + '</summary>' +
-    '<button class="btn" data-act="toRequest">' + tl('Ask to buy') + '</button>' +
+    '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Ask to buy') + '</button>' +
     '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></details>';
 }
 function card(g) {
@@ -5531,7 +5609,7 @@ function vItem(v) {
     '<div class="card rows">' +
     (sel && sel.parts ? '<button class="rowbtn" data-act="pieceOpen"><span>' + tl('A piece is missing') + '<small>' + esc(sel.parts.split(';').join(' +')) + '</small></span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="problem"><span>' + tl('Report a problem') + '<small>' + tl('Broken or missing') + '</small></span>' + ICON.go + '</button>' +
-    '<button class="rowbtn" data-act="requestMore"><span>' + tl('Ask to buy more') + '</span>' + ICON.go + '</button>' +
+    (sel && low(sel) ? '' : '<button class="rowbtn" data-act="requestMore"><span>' + tl('Ask to buy more') + '</span>' + ICON.go + '</button>') +
     '<button class="rowbtn" data-act="toEdit"><span>' + tl('Edit item') + '</span>' + ICON.go + '</button>' +
     '</div>' +
     '<details class="more" data-keep="item-more"><summary>' + tl('More') + '</summary><div class="card rows">' +
@@ -5644,8 +5722,46 @@ function refreshMove() {
       : tl('{centre} doesn’t have it yet. Where will it go?', { centre: M.to });
   }
 }
-function openProblem() {
-  var it = S.byId[cur().id];
+function askRemove(id, fromMenu) {
+  var it = S.byId[id];
+  if (!it) return;
+  M = { type: 'remove', id: it.id, fromMenu: !!fromMenu };
+  openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: shown(it) })) + '</h2><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + ' · ' + esc(amountOf(it)) +
+    '</p><p class="help">' + tl('For mistakes or duplicates. Can’t be undone.') + '</p>' +
+    '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="removeItemGo">' + tl('Remove it') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
+}
+function itemMenuHtml(it) {
+  return '<h2>' + esc(shown(it)) + '</h2><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
+    '<button type="button" class="opt" data-act="menuEdit"><span class="ri" aria-hidden="true">' + ICON.pencil + '</span><span>' + tl('Edit item') + '</span></button>' +
+    '<button type="button" class="opt" data-act="menuProblem"><span class="ri" aria-hidden="true">' + ICON.warn + '</span><span>' + tl('Report a problem') + '</span></button>' +
+    (S.admin ? '<button type="button" class="opt danger" data-act="menuRemove"><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span>' + tl('Delete') + '</span></button>' : '') +
+    '<button type="button" class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>';
+}
+var LP = { timer: 0, x: 0, y: 0, fired: false };
+function lpRow(t) { return t && t.closest ? t.closest('[data-id][data-act=open],[data-id][data-act=finish]') : null; }
+function lpCancel() { clearTimeout(LP.timer); LP.timer = 0; }
+document.addEventListener('pointerdown', function (e) {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  var row = lpRow(e.target);
+  if (!row || !byIdEl('sheet').hidden || S.locked) return;
+  LP.x = e.clientX; LP.y = e.clientY; LP.fired = false;
+  lpCancel();
+  LP.timer = setTimeout(function () {
+    LP.timer = 0;
+    var it = S.byId[row.dataset.id];
+    if (!it) return;
+    LP.fired = true;
+    try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) { /* no haptics */ }
+    M = { type: 'itemmenu', id: it.id };
+    openSheet(itemMenuHtml(it));
+  }, 500);
+}, true);
+document.addEventListener('pointermove', function (e) { if (LP.timer && (Math.abs(e.clientX - LP.x) > 8 || Math.abs(e.clientY - LP.y) > 8)) lpCancel(); }, true);
+['pointerup', 'pointercancel', 'scroll', 'wheel'].forEach(function (n) { document.addEventListener(n, lpCancel, true); });
+document.addEventListener('click', function (e) { if (LP.fired) { LP.fired = false; e.preventDefault(); e.stopPropagation(); } }, true);
+document.addEventListener('contextmenu', function (e) { if (lpRow(e.target)) e.preventDefault(); });
+function openProblem(id) {
+  var it = S.byId[typeof id === 'string' ? id : cur().id];
   if (!it) return;
   M = { type: 'problem', id: it.id, status: STATUS_LABEL[it.status] ? it.status : '' };
   var opt = function (val, label) {
@@ -5758,26 +5874,28 @@ function syncPick(id) { var i = byIdEl(id), b = byIdEl(id + '-btn'); if (i && b)
 function roomPickHtml(o) {
   var rooms = pickRooms(o.centre), use = {};
   S.items.forEach(function (it) { if (it.centre === o.centre && !isReceivedRoom(it.loc)) use[it.loc] = (use[it.loc] || 0) + 1; });
-  rooms.sort(function (a, b) { return (use[b] || 0) - (use[a] || 0) || a.localeCompare(b); });
+  rooms.sort(function (a, b) { return (sameRoom(b, o.current) ? 1 : 0) - (sameRoom(a, o.current) ? 1 : 0) || (use[b] || 0) - (use[a] || 0) || a.localeCompare(b); });   // the current room first, then the busiest
   var rows = rooms.map(function (l) {
     var on = sameRoom(l, o.current);
     return '<button type="button" class="opt rp' + (on ? ' on' : '') + '" data-act="roomSet" data-val="' + esc(l) + '" data-name="' + esc(l.toLowerCase()) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span>' +
       '<span class="rp-n">' + esc(l) + '<small>' + (use[l] ? (use[l] === 1 ? tl('1 item') : tl('{n} items', { n: use[l] })) : tl('Empty')) + '</small></span>' + (on ? ICON.done : '') + '</button>';
   }).join('');
-  return '<h2>' + esc(o.title) + '</h2>' +
-    (rooms.length > 8 ? '<input id="rp-q" class="inp" type="search" autocomplete="off" aria-label="' + esc(tl('Search rooms')) + '" placeholder="' + esc(tl('Search rooms')) + '">' : '') +
+  return '<div class="rp-head"><div class="rp-title"><h2>' + esc(o.title) + '</h2><button type="button" class="ib rp-x" data-act="roomClose" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button></div>' +
+    '<p class="rp-count">' + esc(rooms.length === 1 ? tl('1 room') : tl('{n} rooms', { n: rooms.length })) + '</p>' +
+    (rooms.length > 6 ? '<input id="rp-q" class="inp" type="search" autocomplete="off" aria-label="' + esc(tl('Search rooms')) + '" placeholder="' + esc(tl('Search rooms')) + '">' : '') + '</div>' +
+    '<div class="rp-scroll" id="rp-list">' +
     (o.none ? '<button type="button" class="opt rp' + (o.current ? '' : ' on') + '" data-act="roomSet" data-val=""><span class="ri" aria-hidden="true">' + ICON.x + '</span><span class="rp-n">' + tl('No room yet') + '</span>' + (o.current ? '' : ICON.done) + '</button>' : '') +
-    '<div id="rp-list">' + rows + '</div>' +
-    '<button type="button" class="opt rp" id="rp-add" data-act="roomNew"><span class="ri" aria-hidden="true">' + ICON.plus + '</span><span class="rp-n">' + tl('Add a new room') + '</span></button>' +
+    rows + '</div>' +
+    '<div class="rp-foot"><button type="button" class="opt rp" id="rp-add" data-act="roomNew"><span class="ri" aria-hidden="true">' + ICON.plus + '</span><span class="rp-n">' + tl('Add a new room') + '</span></button>' +
     '<div id="rp-new" hidden><input id="rp-newname" class="inp" maxlength="60" autocomplete="off" placeholder="' + esc(tl('e.g. Reading corner')) + '" aria-label="' + esc(tl('Add a new room')) + '">' +
-    '<p class="err" id="rp-err" hidden></p><button type="button" class="btn primary" data-act="roomNewGo">' + tl('Use this room') + '</button></div>';
+    '<p class="err" id="rp-err" hidden></p><button type="button" class="btn primary" data-act="roomNewGo">' + tl('Use this room') + '</button></div></div>';
 }
 // inside a sheet that is already open (the starter list) the picker takes the sheet's place for a moment, so what was typed there is kept
 function showRoomPick(html) {
   var panel = $('#sheet .panel');
-  if (byIdEl('sheet').hidden) { M = { type: 'room-pick' }; openSheet(html); return; }
+  if (byIdEl('sheet').hidden) { M = { type: 'room-pick' }; openSheet(html, null, 'rpanel'); return; }
   [].forEach.call(panel.children, function (c) { c.classList.add('rp-hide'); });
-  var w = document.createElement('div'); w.id = 'rp-wrap'; w.innerHTML = html; panel.appendChild(w);
+  var w = document.createElement('div'); w.id = 'rp-wrap'; w.className = 'rp-in'; w.innerHTML = html; panel.appendChild(w);
 }
 function endRoomPick() {
   var w = byIdEl('rp-wrap');
@@ -5933,6 +6051,7 @@ function vRequest(v) {
     '<input id="f-why" class="inp" maxlength="300" autocomplete="off">' +
     '<label class="lab" for="f-price">' + tl('About RM') + ' <i>' + tl('(optional)') + '</i></label>' +
     '<input id="f-price" class="inp" inputmode="decimal" maxlength="9" autocomplete="off" placeholder="e.g. 45">' +
+    '<div id="ask-note"></div>' +
     '<p class="err" id="f-err" hidden></p>' +
     '<div class="formend"><button class="btn primary" id="f-go" data-act="requestGo">' + tl('Send request') + '</button></div>';
 }
@@ -6017,13 +6136,15 @@ function vLow() {
       return a.name.localeCompare(b.name);
     });
   var broken = S.items.filter(function (it) { return it.centre === mine && STATUS_LABEL[it.status]; });
-  var on = S.lowOn || (S.lowOn = {}), pick = !!S.lowPick;
+  openLoad();
+  var on = S.lowOn || (S.lowOn = {}), pick = !!S.lowPick && !!S.admin;   // only an admin picks and shares
   var card = function (it, lines) {
+    var o = low(it) ? openForName(it.centre, it.name, it.id) : null;
     var main = '<button class="card item' + (pick ? ' pickrow' + (on[it.id] ? '' : ' off') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
       (pick ? ' role="checkbox" aria-checked="' + (on[it.id] ? 'true' : 'false') + '"' : '') + '>' +
       (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + lines +
-      '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
-    return pick ? main : '<div class="lowwrap">' + main + '<button type="button" class="btn askb" data-act="askFromLow" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tl('Ask to buy') + '</button></div>';
+      (o ? '<span class="line">' + reqChip(o) + '</span>' : '') + '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
+    return pick ? main : '<div class="lowwrap">' + main + (S.admin && low(it) ? admActions(it, o) : '') + '</div>';
   };
   var n = lows.length + broken.length;
   var sl = lows.filter(function (it) { return on[it.id]; }), sb = broken.filter(function (it) { return on[it.id]; }), shareN = sl.length + sb.length;
@@ -6032,7 +6153,7 @@ function vLow() {
         ? '<button type="button" class="triall" data-act="lowAllSel" role="checkbox" aria-checked="' + (shareN === n ? 'true' : shareN ? 'mixed' : 'false') + '"><i class="pk2 ' + (shareN === n ? 'on' : shareN ? 'mixed' : '') + '" aria-hidden="true"></i><span>' + esc(tl('{n} selected', { n: shareN })) + '</span></button>'
         : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '<div class="tools">' +
       (!pick && lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
-      '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.x : ICON.pick) + '<span>' + (pick ? tl('Cancel') : tl('Select')) + '</span></button></div></div>' : '') +
+      (S.admin ? '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.x : ICON.pick) + '<span>' + (pick ? tl('Cancel') : tl('Select')) + '</span></button>' : '') + '</div></div>' : '') +
     (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
     (lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
       var spare = spareOf(it);
@@ -6149,6 +6270,7 @@ function vSettings() {
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Follow theme'), ICON.auto], ['light', tl('Light'), ICON.sun], ['dark', tl('Dark'), ICON.moon]].map(function (o) {
       return '<button class="chip look' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[2] + '<span>' + o[1] + '</span></button>';
     }).join('') + '</div><p class="help">' + tl('Follow theme uses your phone’s light or dark setting.') + '</p>' +
+    '<p class="help">' + tl('Tip: press and hold an item in any list for shortcuts.') + '</p>' +
     '<label class="lab">' + tl('Bottom strip') + '</label><div class="chips" data-group="strip">' + [['on', tl('On')], ['off', tl('Off')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_strip', 'on') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_strip" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div><p class="help">' + tl('A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.') + '</p>' +
@@ -6184,7 +6306,8 @@ function vRooms(v) {
     }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
     (att.length ? '<h2 class="sec tidyhead attnhead">' + tl('Needs attention') + '<span class="pn">' + att.length + '</span></h2>' +
       '<div class="card rows">' + att.slice(0, 4).map(attRow).join('') +
-      (att.length > 4 ? '<div class="roomrow tidy"><button class="rowmain" data-act="go" data-to="needName"><span class="rtext">' + esc(tl('See all {n}', { n: att.length })) + '</span>' + ICON.go + '</button></div>' : '') + '</div>' : '');
+      (att.length > 4 ? '<div class="roomrow tidy"><button class="rowmain" data-act="go" data-to="needName"><span class="rtext">' + esc(tl('See all {n}', { n: att.length })) + '</span>' + ICON.go + '</button></div>' : '') + '</div>' : '') +
+    (S.admin ? '<div style="margin-top:var(--s4)"><button class="btn quiet" data-act="go" data-to="adminRooms">' + tl('Manage rooms') + '</button></div>' : '');
 }
 function roomRowOk(it, f) {
   var cats = selCats(f);
@@ -6256,7 +6379,7 @@ function redrawRoomFilter() {
 function vAdminRooms() {
   if (!S.admin) return vMore();
   var groups = S.centres.concat([ALL_CENTRES]);
-  return top(true) + '<h1 class="title">' + tl('Rooms') + '</h1><p class="sub">' + tl('Rename a room and its items follow.') + '</p>' +
+  return top(true) + '<h1 class="title">' + tl('Manage rooms') + '</h1><p class="sub">' + tl('Rename a room and its items follow.') + '</p>' +
     groups.map(function (c) {
       var mine = (S.rooms || []).filter(function (r) { return r.centre === c; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
       return '<h2 class="sec">' + esc(c === ALL_CENTRES ? tl('Every centre') : c) + '</h2><div class="rows">' +
@@ -6387,10 +6510,9 @@ function vAdmin() {
       '<button class="stat" data-act="nav" data-to="low"><b>' + lowN + '</b><span>' + tl('running low') + '</span></button>' +
       '<button class="stat" data-act="nav" data-to="low"><b>' + broken + '</b><span>' + tl('broken or missing') + '</span></button></div>' +
     '<h2 class="sec">' + tl('Set up') + '</h2><div class="card rows">' +
-      row('addNew', '', tl('Add an item'), '') +
       row('starterAdmin', '', tl('Starter list'), '') +
       row('go', 'adminCentres', tl('Centres'), tl('Add, rename or remove centres')) +
-      row('go', 'adminRooms', tl('Rooms'), tl('Add, rename or remove rooms')) +
+      row('go', 'adminRooms', tl('Manage rooms'), tl('Add, rename or remove rooms')) +
       row('pinChange', '', tl('Change PIN'), '') +
       row('go', 'labels', tl('QR stickers'), '') +
     '</div>' +
@@ -6525,19 +6647,22 @@ function drawCtx() {
 }
 function ctxSheet() {
   var c = ctxNow();
-  return '<h2>' + tl('Where do they go?') + '</h2>' + (c.loc ? '<p class="sub">' + esc(ctxLabel()) + '</p>' : '') +
+  return '<div class="rp-head"><div class="rp-title"><h2>' + tl('Where do they go?') + '</h2><button type="button" class="ib rp-x" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button></div>' +
+    (c.loc ? '<p class="rp-count">' + esc(ctxLabel()) + '</p>' : '') +
     (S.centres.length > 1 ? '<label class="lab">' + tl('Which centre?') + '</label><div class="chips">' + S.centres.map(function (n) {
       return '<button type="button" class="chip' + (n === c.centre ? ' on' : '') + '" data-act="ctxCentre" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
-    '<label class="lab">' + tl('Which room?') + '</label>' +
+    '<label class="lab">' + tl('Which room?') + '</label></div>' +
+    '<div class="rp-scroll" id="ctx-list">' +
     '<button type="button" class="opt rp' + (isReceivedRoom(c.loc) ? ' on' : '') + '" data-act="ctxRoom" data-val="Received"><span class="ri" aria-hidden="true">' + ICON.room.received + '</span><span class="rp-n">' + tl('Not sorted yet') + '<small>' + tl('Kept under “Needs attention” until someone puts them away.') + '</small></span>' + (isReceivedRoom(c.loc) ? ICON.done : '') + '</button>' +
     pickRooms(c.centre).map(function (l) {
       var on = sameRoom(l, c.loc);
-      return '<button type="button" class="opt rp' + (on ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span><span class="rp-n">' + esc(l) + '</span>' + (on ? ICON.done : '') + '</button>'; }).join('') +
-    '<input id="ctx-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" aria-label="' + tl('Which room?') + '" value="' + esc(isReceivedRoom(c.loc) || roomsFor(c.centre).some(function (l) { return sameRoom(l, c.loc); }) ? '' : c.loc) + '">' +
-    '<p class="err" id="ctx-err" hidden></p><button class="btn primary" data-act="ctxDone">' + tl('Done') + '</button>';
+      return '<button type="button" class="opt rp' + (on ? ' on' : '') + '" data-act="ctxRoom" data-val="' + esc(l) + '"><span class="ri" aria-hidden="true">' + roomIcon(l) + '</span><span class="rp-n">' + esc(l) + '</span>' + (on ? ICON.done : '') + '</button>'; }).join('') + '</div>' +
+    '<div class="rp-foot"><input id="ctx-room" class="inp" maxlength="60" autocomplete="off" placeholder="' + tl('e.g. Reading corner') + '" aria-label="' + tl('Or type a new room') + '" value="' + esc(isReceivedRoom(c.loc) || roomsFor(c.centre).some(function (l) { return sameRoom(l, c.loc); }) ? '' : c.loc) + '">' +
+    '<p class="err" id="ctx-err" hidden></p><button class="btn primary" data-act="ctxDone">' + tl('Done') + '</button></div>';
 }
+function redrawCtx() { var p = $('#sheet .panel'), sc = byIdEl('ctx-list'), top0 = sc ? sc.scrollTop : 0; p.innerHTML = ctxSheet(); sc = byIdEl('ctx-list'); if (sc) sc.scrollTop = top0; drawCtx(); }
 // (no focus on the text box: the keyboard comes up only when someone taps it)
-function openCtx() { M = { type: 'ctx' }; openSheet(ctxSheet()); }
+function openCtx() { M = { type: 'ctx' }; openSheet(ctxSheet(), null, 'rpanel'); }
 function vScanBooks() {
   return top(true) + '<h1 class="title">' + tl('Scan') + '</h1>' + modeStrip('scan') +
     '<button class="btn ctxchip" id="sc-ctx" data-act="ctxOpen" title="' + esc(ctxLabel()) + '">' + ctxHtml() + '</button>' +
@@ -7103,7 +7228,24 @@ var ACT = {
   },
 
   toRequest: function () { go({ name: 'request', text: S.q.trim() }); },
-  askFromLow: function (el) { go({ name: 'request', key: el.dataset.key, itemId: el.dataset.id }); },
+  admOrder: function (el) {
+    var it = S.byId[el.dataset.id];
+    if (!it || !S.admin) return;
+    busy(true);
+    var qty = isLevel(it) ? 1 : Math.max(1, (it.min || 1) - it.qty);
+    call('addRequest', { name: it.name, qty: qty, unit: isLevel(it) ? 'pcs' : (it.unit || 'pcs'), centre: it.centre, itemId: it.id, phone: '', room: it.loc, why: tl('Running low') }).then(function (res) {
+      return callRaw('decideRequest', { id: res.id, status: 'Approved', note: '', pin: S.pin });
+    }).then(function () {
+      busy(false); S.requests = null; openLoad(true); toast(tl('Planned. Mark it bought when it is ordered.'));
+    }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
+  },
+  admDecide: function (el) {
+    if (!S.admin) return;
+    busy(true);
+    call('decideRequest', { id: el.dataset.rid, status: el.dataset.val, note: '', pin: S.pin }).then(function () {
+      busy(false); S.requests = null; openLoad(true); toast(tl('Saved.'));
+    }).catch(function (e) { busy(false); openLoad(true); toast(e.network ? tl('Offline. Try again.') : e.message); });
+  },
   requestMore: function () { go({ name: 'request', key: cur().key, itemId: cur().id }); },
   addNew: function () { S.q = ''; go({ name: 'add', text: '' }); },
   toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
@@ -7187,9 +7329,9 @@ var ACT = {
   ctxCentre: function (el) {
     SC.centre = el.dataset.val;
     if (!isReceivedRoom(store.get('rm_scanloc', '')) && !roomsFor(SC.centre).some(function (l) { return sameRoom(l, store.get('rm_scanloc', '')); })) store.set('rm_scanloc', '');
-    $('#sheet .panel').innerHTML = ctxSheet(); drawCtx();
+    redrawCtx();
   },
-  ctxRoom: function (el) { store.set('rm_scanloc', el.dataset.val); $('#sheet .panel').innerHTML = ctxSheet(); drawCtx(); },
+  ctxRoom: function (el) { store.set('rm_scanloc', el.dataset.val); redrawCtx(); },
   ctxDone: function () {
     var typed = val('ctx-room');
     if (isReceivedRoom(typed)) { var rr = byIdEl('ctx-err'); rr.textContent = reservedMsg(); rr.hidden = false; return; }
@@ -7420,7 +7562,8 @@ var ACT = {
     showRoomPick(roomPickHtml({ centre: RP.centre, current: val(RP.target), none: RP.none, title: el.dataset.title || (RP.target === 'f-room' ? tl('Where will it go?') : tl('Where is it?')) }));
   },
   roomSet: function (el) { setRoomValue(el.dataset.val); },
-  roomNew: function () { byIdEl('rp-add').hidden = true; byIdEl('rp-new').hidden = false; byIdEl('rp-newname').focus(); },
+  roomClose: function () { endRoomPick(); },
+  roomNew: function () { byIdEl('rp-add').hidden = true; byIdEl('rp-new').hidden = false; byIdEl('rp-newname').focus(); try { byIdEl('rp-new').scrollIntoView({ block: 'nearest' }); } catch (e) { /* older browsers */ } },
   roomNewGo: function () {
     var v = val('rp-newname').trim(), er = byIdEl('rp-err');
     if (!v) { er.textContent = tl('Type where it’s kept.'); er.hidden = false; return; }
@@ -7508,6 +7651,12 @@ var ACT = {
       S.requests = null;
       setStack(S.stack.slice(0, -1));
       if (cur().name === 'requests') loadRequests();   // asked from the empty list: fetch it again, never leave a skeleton with no fetch behind it
+      S.openAt = 0; openLoad(true);
+      if (res.dup) {   // somebody had already asked: this phone is counted on the same request
+        openSheet('<h2>' + tl('Already asked') + '</h2><p class="sub">' + esc(res.askers > 1 ? tl('{n} people have asked. You’re counted too.', { n: res.askers }) : tl('You’ve already asked for this.')) + '</p>' +
+          '<button class="btn primary" data-act="closeSheet">' + tl('Done') + '</button>');
+        return;
+      }
       var text = tl('Please can we buy {qty} {unit} of {name} for {centre}.', { qty: qty, unit: data.unit || 'pcs', name: name, centre: F.centre }) +
         (data.why ? ' ' + tl('Why: {why}.', { why: data.why }) : '') + (price ? ' ' + tl('About RM {price}.', { price: price }) : '') + ' (' + res.id + ')';
       openSheet('<h2>' + tl('Request sent') + '</h2><p class="sub">' + tl('See it under Me › Requests.') + '</p>' +
@@ -7573,21 +7722,17 @@ var ACT = {
   lowSort: function (el) { S.lowSort = el.dataset.val; if (!byIdEl('sheet').hidden) closeSheet(); render(); },
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
-  removeItem: function () {
-    var it = S.byId[cur().id];
-    if (!it) return;
-    M = { type: 'remove', id: it.id };
-    openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: shown(it) })) + '</h2><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + ' · ' + esc(amountOf(it)) +
-      '</p><p class="help">' + tl('For mistakes or duplicates. Can’t be undone.') + '</p>' +
-      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="removeItemGo">' + tl('Remove it') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
-  },
+  removeItem: function () { askRemove(cur().id, false); },
+  menuEdit: function () { var id = M.id, it = S.byId[id]; closeSheet(); if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it) }); },
+  menuProblem: function () { var id = M.id; closeSheet(); openProblem(id); },
+  menuRemove: function () { askRemove(M.id, true); },
   removeItemGo: function () {
-    var id = M.id;
+    var id = M.id, fromMenu = !!M.fromMenu;
     busy(true, tl('Removing…'));
     call('removeItem', { itemId: id, pin: S.pin }).then(function () {
       S.base = S.base.filter(function (b) { return b.id !== id; });
       saveData(); rebuild(); closeSheet();
-      setStack(S.stack.length > 2 ? S.stack.slice(0, -2) : [{ name: 'home' }]);
+      if (fromMenu) render(); else setStack(S.stack.length > 2 ? S.stack.slice(0, -2) : [{ name: 'home' }]);
       toast(tl('Removed.'));
     }).catch(function (e) {
       busy(false);
@@ -7609,7 +7754,7 @@ var ACT = {
 
   addHere: function () { var v = cur(); store.set('rm_scanloc', v.loc); SC.centre = v.centre === myCentre() ? '' : v.centre; ACT.addOpen(); },
   reqCentre: function () { M = { type: 'reqcentre' }; openSheet(centreSheet('reqCentreSet', F.centre)); },
-  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); var rb = byIdEl('f-room-btn'); if (rb) rb.dataset.centre = F.centre; },
+  reqCentreSet: function (el) { F.centre = el.dataset.val; closeSheet(); var p = byIdEl('forline'); if (p) p.innerHTML = forLineHtml(); var rb = byIdEl('f-room-btn'); if (rb) rb.dataset.centre = F.centre; refreshAskNote(); },
   clearRq: function () { S.rq = ''; var i = byIdEl('rq'); if (i) { i.value = ''; i.focus(); } var b = byIdEl('roomlist'); if (b) b.innerHTML = roomListHtml(cur()); var c = $('#rsearch .clear'); if (c) c.hidden = true; },
   roomOpen: function (el) { S.rfil = {}; S.rq = ''; go({ name: 'room', centre: myCentre(), loc: el.dataset.val }); },
   roomFilterOpen: function () { M = { type: 'roomfilter' }; openSheet(roomFilterSheet(cur()), null, 'has-foot'); },
@@ -7907,6 +8052,53 @@ var ACT = {
     }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
   }
 };
+// open requests, with no names or phone codes: the Low page shows "Asked" / "Approved" / "Bought" from this
+function openLoad(force) {
+  if (S.openLoading) return;
+  if (!force && S.openAt && Date.now() - S.openAt < 45000) return;
+  S.openLoading = true;
+  callRaw('openRequests', {}).then(function (res) {
+    S.open = res.open || []; S.openAt = Date.now(); S.openLoading = false;
+    if (cur().name === 'low') render(); else if (cur().name === 'request') refreshAskNote();
+  }).catch(function () { S.openLoading = false; S.openAt = Date.now(); });
+}
+function openForName(centre, name, itemId) {
+  var k = RMSearch.norm(name || ''), best = null;
+  (S.open || []).forEach(function (o) {
+    if (o.centre !== centre) return;
+    if (!((itemId && o.itemId === itemId) || (k && RMSearch.norm(o.name) === k))) return;
+    var live = o.status === 'New' || o.status === 'Approved';
+    if (!best || (live && !(best.status === 'New' || best.status === 'Approved'))) best = o;
+  });
+  return best;
+}
+function reqChip(o) {
+  var pill = function (ic, text) { return '<span class="tag">' + ic + '<span>' + text + '</span></span>'; };
+  if (o.status === 'New') return pill(ICON.clock, tl('Asked') + (o.askers > 1 ? ' · ' + tl('{n} people', { n: o.askers }) : ''));
+  if (o.status === 'Approved') return pill(ICON.done, tl('Approved'));
+  if (o.status === 'Bought') return pill(ICON.bag, tl('Bought · on its way'));
+  return pill(ICON.x, tl('Not approved'));
+}
+function admActions(it, o) {
+  var st = o ? o.status : '';
+  var b = function (act, label, extra) { return '<button type="button" class="btn sm ask" data-act="' + act + '" data-id="' + esc(it.id) + '"' + (o ? ' data-rid="' + esc(o.id) + '"' : '') + (extra || '') + '>' + label + '</button>'; };
+  var out = !o || st === 'Declined' ? b('admOrder', tl('Plan to buy'))
+    : st === 'New' ? b('admDecide', tl('Approve'), ' data-val="Approved"') + b('admDecide', tl('Decline'), ' data-val="Declined"')
+    : st === 'Approved' ? b('admDecide', tl('Mark as bought'), ' data-val="Bought"') : '';
+  return out ? '<div class="lowact">' + out + '</div>' : '';
+}
+function askMatch() {
+  var o = openForName(F.centre, val('f-name'), cur().itemId);
+  return o && (o.status === 'New' || o.status === 'Approved') ? o : null;
+}
+function refreshAskNote() {
+  if (cur().name !== 'request') return;
+  var box = byIdEl('ask-note'), go = byIdEl('f-go');
+  if (!box || !go) return;
+  var o = askMatch();
+  box.innerHTML = o ? '<p class="note">' + esc(tl('Already asked at {centre}: {who}. Tap “Me too” to add yours.', { centre: F.centre, who: o.askers > 1 ? tl('{n} people asked', { n: o.askers }) : tl('1 person asked') })) + '</p>' : '';
+  go.textContent = o ? tl('Me too') : tl('Send request');
+}
 function loadRequests() {
   var t0 = Date.now();
   S.reqErr = false; S.reqMsg = '';
@@ -7957,6 +8149,7 @@ document.addEventListener('input', function (e) {
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
   else if (t.id === 'f-parts') F.parts = t.value;
+  if (t.id === 'f-name' && cur().name === 'request') refreshAskNote();
   else if (t.id === 'rp-q') { var q = t.value.trim().toLowerCase(); [].forEach.call(document.querySelectorAll('#rp-list [data-name]'), function (b) { b.classList.toggle('rp-hide', !!q && b.dataset.name.indexOf(q) < 0); }); }
   else if (t.classList && t.classList.contains('pickval')) syncPick(t.id);
   else if (t.id === 'f-unit') { unitPrev(); refreshAskLinks(); }

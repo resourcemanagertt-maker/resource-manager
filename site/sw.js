@@ -1,5 +1,5 @@
-// Resource Manager service worker, build ec6b4b430f
-const CACHE = 'rm-shell-ec6b4b430f';
+// Resource Manager service worker, build 3e01966e1c
+const CACHE = 'rm-shell-3e01966e1c';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
