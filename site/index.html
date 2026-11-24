@@ -120,6 +120,11 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .badge.warn{border:1px solid var(--ink);color:var(--ink)}
 .badge.ok{color:var(--muted);font-weight:400;padding-left:0}
 .badge.plain{background:var(--wash);color:var(--muted)}
+.badge.need{background:color-mix(in srgb,var(--mark) 42%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--mark) 75%,var(--ink) 20%);border-radius:999px;padding:1px var(--s2);font-weight:600;margin-bottom:2px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.need{background:color-mix(in srgb,var(--mark) 20%,var(--surface))}}
+:root[data-theme="dark"] .badge.need{background:color-mix(in srgb,var(--mark) 20%,var(--surface))}
+.cat{position:relative}
+.cat .nd{position:absolute;top:6px;right:6px;width:10px;height:10px;border-radius:50%;background:var(--mark);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--ink) 45%,transparent)}
 /* a photo only appears when there is one */
 .tile{position:relative;flex:none;width:52px;height:52px;border-radius:var(--r);background:var(--wash);display:grid;place-items:center;overflow:hidden}
 .tile .emo{font-size:28px;line-height:1}
@@ -326,6 +331,9 @@ details.settings summary small{color:var(--muted);font-size:13px}
 
 #toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:30;width:calc(100% - 32px);max-width:528px;display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s3) var(--s4);border-radius:var(--r);background:var(--ink);color:var(--paper);font-size:16px}
 #toast button{color:var(--brand);font-weight:700;text-decoration:underline;min-height:44px;padding:0 var(--s2);margin:-8px 0;white-space:nowrap}
+#dock{position:fixed;left:0;right:0;bottom:calc(140px + var(--stripH,0px) + env(safe-area-inset-bottom));z-index:29;max-width:560px;margin:0 auto;pointer-events:none}
+#dock .notice{margin:0 var(--s4);pointer-events:auto}
+body.navless #dock{bottom:calc(150px + env(safe-area-inset-bottom))}
 .splash{padding:80px var(--s2);text-align:center;color:var(--muted)}
 .splash .btn{max-width:240px;margin:var(--s4) auto 0}
 .seg{display:flex;gap:var(--s2);margin:var(--s2) 0 var(--s3);flex-wrap:wrap}
@@ -517,13 +525,15 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .btn.pendb,.btn.pendb[disabled]{display:inline-flex;align-items:center;justify-content:center;opacity:.85;pointer-events:none}
 .btn.pendb::before{content:"";flex:none;width:14px;height:14px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
 @media (prefers-reduced-motion:reduce){.btn.pendb::before{animation-duration:2.4s}}
-.lowwrap.unconf{background:color-mix(in srgb,var(--brand) 10%,var(--surface));border-radius:var(--r);border-bottom-color:transparent}
-.lowwrap.unconf .card.item{background:transparent}
 .rq.unconf{background:color-mix(in srgb,var(--brand) 10%,var(--surface))}
-/* the long-press tint of a Low row covers the action strip too (same colour as the card's) */
-.lowact{position:relative;isolation:isolate}
-.lowact::before{content:"";position:absolute;z-index:-1;top:-1px;bottom:calc(var(--s3) * -1);left:calc(var(--s4) * -1);right:calc(var(--s4) * -1);background:color-mix(in srgb,var(--brand) 14%,var(--surface));opacity:0;transition:opacity .38s;pointer-events:none}
-.lowwrap:has(.holding) .lowact::before{opacity:1}
+/* v43: a Low row is ONE box (card, the space under it, the action row) and its tint (long-press, or a change waiting on the server) spans the whole card it sits in, edge to edge: nothing is scaled, nothing is cut */
+.lowwrap{position:relative;isolation:isolate}
+.lowwrap::before{content:"";position:absolute;z-index:-1;inset:0 calc(var(--s4) * -1);background:color-mix(in srgb,var(--brand) 14%,var(--surface));opacity:0;transition:opacity .38s;pointer-events:none}
+.lowwrap:has(.holding)::before,.lowwrap.unconf::before{opacity:1}
+.lowwrap.unconf{border-bottom-color:transparent}
+.lowwrap:has(.holding) .card.item,.lowwrap.unconf .card.item{background:transparent}
+.lowwrap [data-act=open]::before{display:none}
+.list:has(.unconf){overflow:hidden}
 .tlock .tgt,.tlock.tl-all .chip{opacity:.55;pointer-events:none}
 .tlock.tl-cat .chip{pointer-events:auto}
 .locknote{color:var(--muted)}
@@ -535,10 +545,8 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 .notice.testbar button,.notice.staffbar button{font-weight:700;text-decoration:underline}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .notice.testbar{background:#4a3b00;color:#ffe9a6;border-color:#c9a227}}
 :root[data-theme="dark"] .notice.testbar{background:#4a3b00;color:#ffe9a6;border-color:#c9a227}
-.missrow{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);padding:var(--s2) 0;border-top:1px solid var(--line)}
-.missrow:first-of-type{border-top:0}
-.missrow .mt{flex:1 1 140px;min-width:0}
-.missrow .mt small{display:block;color:var(--muted)}
+.lowskel{padding:var(--s4) 0 var(--s4);border-bottom:1px solid var(--line);min-height:128px}
+.lowskel:last-child{border-bottom:0}
 .lowwrap{padding-bottom:var(--s4);border-bottom:1px solid var(--line)}
 .lowwrap .card.item{border-bottom:0;padding-bottom:var(--s3)}
 .lowwrap .askb{margin-top:0;min-height:48px;font-size:15px}
@@ -725,13 +733,14 @@ html[data-text="2"] #sheet .panel.rpanel{max-height:calc(min(85vh,640px) / 1.3)}
 /* press and hold: no text selection or browser menu on a row */
 [data-act=open],[data-act=finish],[data-hold],.card.item,.roomrow .rowmain,.simrow,.cat{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .tile img,.tilebtn img{pointer-events:none;-webkit-user-drag:none}
-/* the hold tint is drawn behind the row but across the whole card (the card's own side padding and corners included) */
-[data-act=open],[data-act=finish],[data-hold]{position:relative;isolation:isolate;transition:transform .38s cubic-bezier(.2,.7,.2,1)}
-[data-act=open]::before,[data-act=finish]::before,[data-hold]::before{content:"";position:absolute;z-index:-1;top:0;bottom:0;left:calc(var(--s4) * -1);right:calc(var(--s4) * -1);background:color-mix(in srgb,var(--brand) 14%,var(--surface));opacity:0;transition:opacity .38s;pointer-events:none}
+/* v43: the hold tint spans the whole card the row sits in (the card's own side padding and corners, clipped to them); only the row's CONTENTS press in, so the tint is never shrunk or cut */
+[data-act=open],[data-act=finish],[data-hold]{position:relative;isolation:isolate}
+[data-act=open]::before,[data-act=finish]::before,[data-hold]::before{content:"";position:absolute;z-index:-1;inset:0 calc(var(--s4) * -1);background:color-mix(in srgb,var(--brand) 14%,var(--surface));opacity:0;transition:opacity .38s;pointer-events:none}
 [data-act=open].holding::before,[data-act=finish].holding::before,[data-hold].holding::before{opacity:1}
-[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:scale(.99)}
+[data-act=open] > *,[data-act=finish] > *,[data-hold] > *{transition:transform .38s cubic-bezier(.2,.7,.2,1)}
+[data-act=open].holding > *,[data-act=finish].holding > *,[data-hold].holding > *{transform:scale(.985)}
 .list:has(.holding),.cats:has(.holding),.rows:has(.holding),div.card:has(.holding){overflow:hidden}
-@media (prefers-reduced-motion:reduce){[data-act=open].holding,[data-act=finish].holding,[data-hold].holding{transform:none}}
+@media (prefers-reduced-motion:reduce){[data-act=open].holding > *,[data-act=finish].holding > *,[data-hold].holding > *{transform:none}}
 .sp{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:76px;padding:var(--s3) var(--s4);border:1.5px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left}
 .sp.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,var(--surface))}
 .sp-ic{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--wash)}
@@ -785,7 +794,7 @@ details > summary::after{color:var(--ink)}
 .note + #roomlist{margin-top:var(--s3)}
 /* v29: launch animation: three blocks fall into place, the last one tilts, over about a second */
 #launch{display:none}
-#launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.6s forwards}
+#launch.go{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none;animation:lfade .15s 1.4s forwards}
 #launch svg{width:128px;height:128px;overflow:visible}
 #launch .blk{transform-box:fill-box;transform-origin:center}
 #launch.go .b1{animation:ldrop .38s .05s cubic-bezier(.3,.7,.4,1) both}
@@ -832,6 +841,8 @@ html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 .tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
 .roomrow .rowmain svg{flex:none;width:20px;height:20px;color:var(--ink)}
 .roomrow .rowmain > .rtext{flex:1;min-width:0}
+/* a name with no spaces (a room, an item) wraps rather than widening the page */
+.rtext,.item .name,.rq-name,.place .where,.brow .name,.headcard .name{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -850,6 +861,7 @@ try{var __t=JSON.parse(localStorage.getItem('rm_admin_tok')||'null');if(__t&&__t
 <nav id="nav" hidden></nav>
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
+<div id="dock" aria-live="polite"></div>
 <div id="cam" hidden role="dialog" aria-label="Scan books"><video id="cam-v" playsinline muted></video><div class="aim"></div><div class="camwait" id="cam-wait">Starting camera…</div>
 <div class="camtop"><button class="btn ctx" id="cam-ctx" data-act="ctxOpen"></button><button class="btn ib" id="cam-torch" data-act="camTorch" hidden aria-label="Flashlight" title="Flashlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3h8l-1.5 5h-5z"/><path d="M9.5 8v2.5L8 13v8h8v-8l-1.5-2.5V8"/></svg></button><button class="btn" data-act="camDone">Finish</button></div>
 <div class="camcard" id="cam-card" hidden></div>
@@ -3307,7 +3319,6 @@ function syncThemeColor() {
 }
 function applyStrip() {
   var h = document.documentElement, on = true, inset = 0;
-  try { var v = localStorage.getItem('rm_strip'); on = v == null ? true : JSON.parse(v) !== 'off'; } catch (e) { /* keep the default */ }
   try { var p = document.createElement('div'); p.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding-bottom:env(safe-area-inset-bottom)'; (document.body || h).appendChild(p); inset = parseFloat(getComputedStyle(p).paddingBottom) || 0; p.parentNode.removeChild(p); } catch (e) { /* no probe: assume no inset */ }
   if (on && inset === 0) h.setAttribute('data-strip', '1'); else h.removeAttribute('data-strip');   // a phone that already gives us the space under the bar needs no strip
 }
@@ -3471,14 +3482,11 @@ L.ms = {
   "1 person asked": "1 orang meminta",
   "1 phone is signed in": "1 telefon sedang log masuk",
   "1 room": "1 bilik",
-  "1 time": "1 kali",
   "100 at most.": "Paling banyak 100.",
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
   "A room that isn’t listed? Ask your admin to add it.": "Bilik tiada dalam senarai? Minta admin menambahnya.",
   "A set": "Satu set",
-  "A small test page for the bars at the top and bottom of the phone.": "Halaman ujian kecil untuk bar di atas dan bawah telefon.",
-  "A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.": "Garisan gelap nipis di bawah bar bawah dalam mod cerah, supaya bar hitam telefon nampak dirancang.",
   "A to Z": "A hingga Z",
   "About RM": "Lebih kurang RM",
   "About RM {price}.": "Anggaran RM {price}.",
@@ -3509,7 +3517,6 @@ L.ms = {
   "Admin": "Admin",
   "Admin PIN": "PIN admin",
   "Admin PIN:": "PIN admin:",
-  "Admin button was repaired {n} times on this phone.": "Butang admin dibaiki {n} kali pada telefon ini.",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
   "Admin panel": "Panel admin",
   "All": "Semua",
@@ -3557,7 +3564,6 @@ L.ms = {
   "Board and card games": "Permainan papan dan kad",
   "Boards and notice boards": "Papan dan papan kenyataan",
   "Books": "Buku",
-  "Bottom strip": "Jalur bawah",
   "Bought": "Dibeli",
   "Bought · on its way": "Dibeli · dalam perjalanan",
   "Bought · stock added since": "Dibeli · stok telah ditambah",
@@ -3583,7 +3589,6 @@ L.ms = {
   "Changed while you counted:": "Berubah semasa anda mengira:",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
-  "Check the phone bars": "Semak bar telefon",
   "Check the price.": "Semak harga.",
   "Check the spelling.": "Semak ejaan.",
   "Check your internet.": "Semak internet anda.",
@@ -3644,7 +3649,6 @@ L.ms = {
   "Delete": "Padam",
   "Details": "Butiran",
   "Details changed": "Butiran diubah",
-  "Dismiss": "Abaikan",
   "Do we have it?": "Ada tak?",
   "Done": "Selesai",
   "Download": "Muat turun",
@@ -3744,7 +3748,6 @@ L.ms = {
   "Me too": "Saya juga",
   "Merge into Every centre": "Gabung ke Setiap pusat",
   "Minimum": "Minimum",
-  "Missed searches": "Carian terlepas",
   "More": "Lagi",
   "More detail:": "Butiran lanjut:",
   "More information": "Maklumat lanjut",
@@ -3793,7 +3796,6 @@ L.ms = {
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
   "Nothing matches the filters.": "Tiada yang sepadan dengan penapis.",
   "Nothing matches “{q}”.": "Tiada yang sepadan dengan “{q}”.",
-  "Nothing missed yet.": "Belum ada carian yang terlepas.",
   "Nothing new to offer.": "Tiada yang baharu.",
   "Nothing on the list yet.": "Belum ada apa-apa dalam senarai.",
   "Nothing running low.": "Tiada yang tinggal sedikit.",
@@ -3801,14 +3803,12 @@ L.ms = {
   "Nothing yet.": "Belum ada.",
   "Now using “{name}”.": "Kini guna “{name}”.",
   "OK": "OK",
-  "Off": "Mati",
   "Offer the list": "Tawarkan senarai",
   "Offline.": "Luar talian.",
   "Offline. Showing the list from {when}.": "Luar talian. Senarai dari {when}.",
   "Offline. Tap Try again later.": "Luar talian. Ketik Cuba lagi nanti.",
   "Offline. Try again later.": "Luar talian. Cuba lagi nanti.",
   "Offline. Try again.": "Luar talian. Cuba lagi.",
-  "On": "Hidup",
   "On your starter list, not confirmed": "Dalam senarai permulaan, belum disahkan",
   "One item": "Satu barang",
   "One item or a set?": "Satu barang atau satu set?",
@@ -3837,7 +3837,6 @@ L.ms = {
   "Paints and brushes": "Cat dan berus",
   "Paper (A4, rolls)": "Kertas (A4, gulung)",
   "Pens and pencils": "Pen dan pensel",
-  "People searched for it": "Orang mencarinya",
   "Photo": "Gambar",
   "Photo and notes": "Foto dan nota",
   "Photo didn’t work. Try another.": "Gambar tidak berjaya. Cuba yang lain.",
@@ -4104,7 +4103,6 @@ L.ms = {
   "Welcome": "Selamat datang",
   "What do you need?": "Apa yang anda perlukan?",
   "What is it called?": "Apakah namanya?",
-  "What people searched for and did not find. Nobody is named.": "Apa yang dicari orang tetapi tidak ditemui. Tiada nama disebut.",
   "What to print": "Apa dicetak",
   "What’s wrong?": "Apa masalahnya?",
   "Where do they go?": "Di mana disimpan?",
@@ -4128,7 +4126,6 @@ L.ms = {
   "Yes": "Ya",
   "You have {amount} here.": "Anda ada {amount} di sini.",
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
-  "Your admin is told what people search for.": "Admin diberitahu apa yang dicari orang.",
   "Your admin sign-in ended. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your admin sign-in has expired. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your list is up to date.": "Senarai anda sudah terkini.",
@@ -4197,7 +4194,6 @@ L.ms = {
   "{n} running low": "{n} hampir habis",
   "{n} selected": "{n} dipilih",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
-  "{n} times": "{n} kali",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received” dikhaskan untuk stok yang belum disimpan. Pilih bilik.",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
@@ -4212,14 +4208,11 @@ L.zh = {
   "1 person asked": "1 人申请",
   "1 phone is signed in": "有 1 部手机已登录",
   "1 room": "1 个房间",
-  "1 time": "1 次",
   "100 at most.": "最多 100 个。",
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
   "A room that isn’t listed? Ask your admin to add it.": "房间不在列表里？请管理员添加。",
   "A set": "一套",
-  "A small test page for the bars at the top and bottom of the phone.": "一个小测试页，用来检查手机顶部和底部的栏。",
-  "A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.": "浅色模式下在底部栏下加一条深色细线，让手机的黑色栏看起来是设计好的。",
   "A to Z": "A 到 Z",
   "About RM": "大约 RM",
   "About RM {price}.": "大约 RM {price}。",
@@ -4250,7 +4243,6 @@ L.zh = {
   "Admin": "管理员",
   "Admin PIN": "管理员 PIN",
   "Admin PIN:": "管理员 PIN：",
-  "Admin button was repaired {n} times on this phone.": "这部手机上的管理员按钮已修复 {n} 次。",
   "Admin link (keep private)": "管理员链接（请保密）",
   "Admin panel": "管理面板",
   "All": "全部",
@@ -4298,7 +4290,6 @@ L.zh = {
   "Board and card games": "棋牌游戏",
   "Boards and notice boards": "展示板与布告栏",
   "Books": "图书",
-  "Bottom strip": "底部细条",
   "Bought": "已购买",
   "Bought · on its way": "已购买 · 在路上",
   "Bought · stock added since": "已购买 · 之后已入库",
@@ -4324,7 +4315,6 @@ L.zh = {
   "Changed while you counted:": "你清点时被改动：",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
-  "Check the phone bars": "检查手机状态栏",
   "Check the price.": "请检查价格。",
   "Check the spelling.": "检查拼写。",
   "Check your internet.": "请检查网络。",
@@ -4385,7 +4375,6 @@ L.zh = {
   "Delete": "删除",
   "Details": "详情",
   "Details changed": "信息已修改",
-  "Dismiss": "忽略",
   "Do we have it?": "我们有吗？",
   "Done": "完成",
   "Download": "下载",
@@ -4485,7 +4474,6 @@ L.zh = {
   "Me too": "我也要",
   "Merge into Every centre": "合并为所有中心共用",
   "Minimum": "最低量",
-  "Missed searches": "未找到的搜索",
   "More": "更多",
   "More detail:": "详细信息：",
   "More information": "更多信息",
@@ -4534,7 +4522,6 @@ L.zh = {
   "Nothing is running low.": "没有快不够的。",
   "Nothing matches the filters.": "没有符合筛选的项目。",
   "Nothing matches “{q}”.": "没有与“{q}”匹配的内容。",
-  "Nothing missed yet.": "还没有未找到的搜索。",
   "Nothing new to offer.": "没有新的可提供。",
   "Nothing on the list yet.": "清单里还没有东西。",
   "Nothing running low.": "没有快不够的。",
@@ -4542,14 +4529,12 @@ L.zh = {
   "Nothing yet.": "暂时没有。",
   "Now using “{name}”.": "现在使用“{name}”。",
   "OK": "没问题",
-  "Off": "关",
   "Offer the list": "提供清单",
   "Offline.": "离线。",
   "Offline. Showing the list from {when}.": "离线。显示 {when} 的清单。",
   "Offline. Tap Try again later.": "离线，稍后点“重试”。",
   "Offline. Try again later.": "离线，请稍后再试。",
   "Offline. Try again.": "离线，请重试。",
-  "On": "开",
   "On your starter list, not confirmed": "在起步清单里，尚未确认",
   "One item": "单件",
   "One item or a set?": "单件还是一套？",
@@ -4578,7 +4563,6 @@ L.zh = {
   "Paints and brushes": "颜料与画笔",
   "Paper (A4, rolls)": "纸张（A4、卷纸）",
   "Pens and pencils": "笔类",
-  "People searched for it": "有人搜索过它",
   "Photo": "照片",
   "Photo and notes": "照片和备注",
   "Photo didn’t work. Try another.": "这张照片不行，换一张。",
@@ -4845,7 +4829,6 @@ L.zh = {
   "Welcome": "欢迎",
   "What do you need?": "你需要什么？",
   "What is it called?": "它叫什么？",
-  "What people searched for and did not find. Nobody is named.": "大家搜索过但没找到的东西。不记录任何人的名字。",
   "What to print": "打印什么",
   "What’s wrong?": "出了什么问题？",
   "Where do they go?": "放在哪里？",
@@ -4869,7 +4852,6 @@ L.zh = {
   "Yes": "好",
   "You have {amount} here.": "这里有 {amount}。",
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
-  "Your admin is told what people search for.": "管理员会知道大家搜索了什么。",
   "Your admin sign-in ended. Sign in again.": "你的管理员登录已结束，请重新登录。",
   "Your admin sign-in has expired. Sign in again.": "你的管理员登录已过期，请重新登录。",
   "Your list is up to date.": "清单已是最新。",
@@ -4938,7 +4920,6 @@ L.zh = {
   "{n} running low": "{n} 件快用完",
   "{n} selected": "已选 {n} 项",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
-  "{n} times": "{n} 次",
   "{n} waiting to send": "{n} 项待发送",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received”留给还没放好的物品。请选择一个房间。",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
@@ -4987,8 +4968,8 @@ var S = {
   base: [], items: [], byId: {}, groups: [], gmap: {},
   centres: [], categories: [], subtypes: {}, subtypeKinds: {}, starter: [], skipped: {}, rooms: [], org: '', syncedAt: 0, appUrl: '', fresh: false,
   me: store.get('rm_me', null), outbox: store.get('rm_outbox', []),
-  admin: null, pin: '', requests: null, history: {}, localPhoto: {},
-  test: false, tpin: '', asStaff: false, held: null, testInfo: null, misses: null, modeGen: 0,   // v42: Test mode and View as staff live for one opening of the app only; nothing here is stored
+  admin: null, pin: '', requests: null, history: {}, localPhoto: {}, open: store.get('rm_open', undefined),
+  test: false, tpin: '', asStaff: false, held: null, testInfo: null, modeGen: 0,   // v42: Test mode and View as staff live for one opening of the app only; nothing here is stored
   stack: [{ name: 'home' }], q: '', lowAll: false
 };
 var F = {};   // the form on screen
@@ -5067,7 +5048,12 @@ function adminEntry() {
   noteAdminHash();
   if (!S.adminWanted || !S.loaded || !hasCentre()) return;   // wait for the list and the centre
   S.adminWanted = false;
-  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the word stays in the address bar */ }
+  try {
+    // typing #admin on the end of the address made the browser add an entry of its own (no state): it becomes a tracked step holding the screen as it is
+    var st = history.state;
+    if (!st || st.rm === undefined || st.rm === null) { var nid = ++NAV.n; NAV.snaps[nid] = snapNow(); NAV.chain.push(nid); st = { rm: nid }; }
+    history.replaceState(st, '', location.pathname + location.search);
+  } catch (e) { /* the word stays in the address bar */ }
   if (S.admin) { if (cur().name !== 'admin') go({ name: 'admin' }); } else ACT.pinOpen();
 }
 window.addEventListener('hashchange', adminEntry);
@@ -5211,11 +5197,12 @@ window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; 
   act: function (name, data) { return ACT[name]({ dataset: data || {} }); },
   ask: function (q) { var g = RMSearch.search(S.groups, q).strong[0]; var mine = g && g.rows.filter(function (r) { return r.centre === myCentre(); })[0]; if (g) go({ name: 'request', key: g.key, itemId: mine ? mine.id : '' }); },
   openNow: function () { S.openAt = 0; openLoad(true); },
-  menu: function (id) { reopenMenu(id); },
-  hdepth: function () { return S.hdepth || 0; },
-  hist: function () { return { d: S.hdepth || 0, skip: S.skipPop || 0, pend: S.pendingPush || 0, entry: !!S.sheetEntry, rw: !!S.sheetRewind, len: history.length }; },
+  menu: function (id) { reopenMenu(id); NAV.tapAt = Date.now(); flushDeferred(); },   // as when a finger is lifted after a hold
+  hdepth: function () { return NAV.chain.length - 1; },
+  pushes: function () { return NAV.log.slice(); },
+  hist: function () { return { ch: NAV.chain.map(function (id) { var sn = NAV.snaps[id] || { stack: [] }; return id + ':' + sn.stack.map(function (v) { return v.name; }).join('>') + (sn.sheet ? '*' : ''); }).join(' | '), top: topId(), st: (history.state || {}).rm, d: NAV.chain.length - 1, skip: NAV.expect ? 1 : 0, pend: NAV.q.length + NAV.deferred.length, entry: !!(topSnap() && topSnap().sheet), rw: NAV.drop > 0, len: history.length }; },
   adminPending: function () { return !!(S.admin && S.admin.pending); },
-  sheetEntry: function () { return !!S.sheetEntry; },
+  sheetEntry: function () { return !!(topSnap() && topSnap().sheet); },
   lock: lockUI,
   lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true, b); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
@@ -5383,82 +5370,162 @@ var hist = (window.google && google.script && google.script.history) || null;
 if (!hist && HOSTED) {
   hist = {
     push: function (state) { history.pushState(state, ''); },
-    setChangeHandler: function (fn) { window.addEventListener('popstate', function () { fn(); }); }
+    replace: function (state) { history.replaceState(state, ''); },
+    setChangeHandler: function (fn) { window.addEventListener('popstate', function (e) { fn(e); }); }
   };
 }
 var TAB_ROOT = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
 function tabRootOf(name) { return TAB_ROOT[name] || 'home'; }
-// v40: every open sheet owns ONE history entry, so the phone's Back button closes the sheet (or goes one layer down) instead of leaving the app.
-// A history step back is asynchronous, so while one is pending any new entry waits (pendingPush) until it has happened.
-function histPushNow() { try { if (hist) { hist.push({ n: S.stack.length }); S.hdepth = (S.hdepth || 0) + 1; } } catch (e) { /* back button just leaves the app */ } }
-function histPush() {
-  if (S.sheetRewind) flushSheetRewind();
-  if (S.skipPop > 0) { S.pendingPush = (S.pendingPush || 0) + 1; return; }
-  histPushNow();
+// v43: HISTORY. Chrome skips, when Back is pressed, any history step that a page added without a tap behind it (that is how Back used to leave the app).
+// So: every history entry holds a snapshot of where the person was (the stack of screens and the sheet that was open); a step is ADDED only inside a tap
+// (go, a sheet opening, a tab switch); everything else (Back itself, a save that changes the screen, a sheet that closes) only goes back and/or REPLACES
+// the entry it is on. Back = show the snapshot of the entry arrived at. Nothing here ever adds an entry from inside a Back handler.
+var NAV = { n: 0, snaps: {}, chain: [0], q: [], drop: 0, expect: null, wd: 0, tapAt: 0, inPop: false, restoring: false, layer: false, log: [], deferred: [] };
+NAV.snaps[0] = { stack: [{ name: 'home' }], sheet: false };
+function sheetUp() { var s = byIdEl('sheet'); return !!s && !s.hidden; }
+function snapNow() { return { stack: S.stack.slice(), sheet: sheetUp() ? (S.sheetRestore || true) : false }; }
+function topId() { return NAV.chain[NAV.chain.length - 1]; }
+function topSnap() { return NAV.snaps[topId()]; }
+function inTap() { return Date.now() - NAV.tapAt < 150; }
+['pointerup', 'click', 'keydown', 'touchend'].forEach(function (n) { document.addEventListener(n, function () { NAV.tapAt = Date.now(); flushDeferred(); }, true); });
+function drain() { while (!NAV.expect && NAV.q.length) NAV.q.shift()(); }
+function whenIdle(fn) { if (NAV.expect) NAV.q.push(fn); else fn(); }
+function doPush(why, snap) {
+  var id = ++NAV.n; NAV.snaps[id] = snap; NAV.chain.push(id);
+  if (NAV.n % 40 === 0) Object.keys(NAV.snaps).forEach(function (k) { if (NAV.chain.indexOf(Number(k)) < 0) delete NAV.snaps[k]; });   // steps that are no longer behind us are forgotten
+  NAV.log.push({ why: why, tap: inTap(), pop: NAV.inPop });
+  try { if (hist) hist.push({ rm: id }); } catch (e) { /* Back just leaves the app */ }
 }
-function rewind(n, cb) {   // go back n entries without the Back handler treating it as the person pressing Back
-  S.skipPop = (S.skipPop || 0) + 1; (S.rwQ = S.rwQ || []).push(cb || null);
-  // if the browser drops a step (another navigation overtook it), put the bookkeeping right again instead of waiting for ever
-  clearTimeout(S.rwWD);
-  S.rwWD = setTimeout(function () { if (S.skipPop > 0) { S.skipPop = 0; var q = S.rwQ || []; S.rwQ = []; q.forEach(function (f) { if (f) f(); }); flushPendingPushes(); } }, 1500);
-  try { history.go(-n); } catch (e) { S.skipPop--; S.rwQ.pop(); if (cb) cb(); }
+// add a step holding this snapshot. Outside a tap it waits for the next tap (a sheet that was shut meanwhile never gets one); "force" is for the two
+// moments there can be no tap (a link that opens a page, the admin door).
+function stepPush(why, snap, force) {
+  snap = snap || snapNow();
+  if (NAV.drop) {   // a sheet's step is about to be removed: this screen simply takes its place
+    var k = NAV.drop; NAV.drop = 0;
+    if (k === 1) { stepReplace(snap); return; }
+    stepBack(k - 1, function () { stepReplace(snap); }); return;
+  }
+  if (NAV.expect) { NAV.q.push(function () { stepPush(why, snap, force); }); return; }
+  if (!force && !inTap()) { NAV.deferred.push({ why: why, snap: snap }); return; }
+  doPush(why, snap);
 }
-function flushSheetRewind() {
-  if (!S.sheetRewind) return;
-  S.sheetRewind = false;
-  S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
-  rewind(1, null);
+function flushDeferred() {
+  if (!NAV.deferred.length || NAV.expect) return;
+  var d = NAV.deferred; NAV.deferred = [];
+  d.forEach(function (x) { doPush(x.why, x.snap); });
 }
-function flushPendingPushes() { var n = S.pendingPush || 0; S.pendingPush = 0; for (var i = 0; i < n; i++) histPushNow(); }
+function stepReplace(snap) {
+  var id = topId(); NAV.snaps[id] = snap || snapNow();
+  try { if (hist) hist.replace({ rm: id }); } catch (e) { /* none */ }
+}
+// go back k entries without the Back handler showing anything (the screen is already as it should be), then cb
+function stepBack(k, cb) {
+  whenIdle(function () {
+    k = Math.min(k, NAV.chain.length - 1);
+    if (k <= 0) { if (cb) cb(); drain(); return; }
+    var done = function () { var f = NAV.expect; NAV.expect = null; clearTimeout(NAV.wd); NAV.chain.length = Math.max(1, NAV.chain.length - k); if (f) f(); drain(); };
+    NAV.expect = function () { if (cb) cb(); };
+    clearTimeout(NAV.wd); NAV.wd = setTimeout(function () { if (NAV.expect) done(); }, 1500);   // a step the browser dropped must not wedge us
+    try { history.go(-k); } catch (e) { done(); }
+  });
+}
+function flushDrop() { var k = NAV.drop; if (!k) return; NAV.drop = 0; stepBack(k, null); }
 function go(view, replace) {
-  if (replace) S.stack[S.stack.length - 1] = view; else { S.stack.push(view); histPush(); }
+  if (replace) { S.stack[S.stack.length - 1] = view; stepReplace(); }
+  else { S.stack.push(view); stepPush('go'); }
   render();
   window.scrollTo(0, 0);
 }
-// Put the stack in a known shape and make the phone's own history match it, so Back always goes to the screen before.
-function setStack(stack) {
-  S.sheetRewind = false; S.pendingPush = 0;   // the entries are rebuilt from scratch below (a closing sheet's entry is among those rewound)
-  var d = S.hdepth || 0;
-  S.stack = stack; S.hdepth = 0;
-  var tok = S.stackTok = (S.stackTok || 0) + 1;
-  var again = function () { if (tok !== S.stackTok) return; for (var i = 1; i < S.stack.length; i++) histPush(); };   // an older call that is overtaken must not push again
-  if (d > 0 && hist) rewind(d, again); else again();
+// two screens are the same place if they say the same things (a view object is rebuilt now and then)
+function viewKey(v) { return [v.name, v.id || '', v.key || '', v.cat || '', v.centre || '', v.loc || '', v.text || '', v.f || ''].join('|'); }
+function sameStack(a, b) { return a.length === b.length && a.every(function (v, i) { return v === b[i] || viewKey(v) === viewKey(b[i]); }); }
+// Put the stack in a known shape (a save that changes the screen, a root, Back from a page): history only goes back and REPLACES the step it lands on, so
+// Back from the new top is the entry that already held the screen before it. It adds steps only if nothing in the history holds that screen (a link that opens a page).
+function reshape(stack) {
+  NAV.drop = 0; NAV.deferred = [];
+  S.stack = stack;
+  // an entry already holds exactly this screen (Back from a page to the one under it): go back to it
+  for (var n = NAV.chain.length - 1; n >= 0; n--) {
+    var sx = NAV.snaps[NAV.chain[n]];
+    if (sx && !sx.sheet && sameStack(sx.stack, stack)) {
+      var kk = NAV.chain.length - 1 - n;
+      if (kk > 0) stepBack(kk, function () { stepReplace(); }); else stepReplace();
+      render(); window.scrollTo(0, 0); return;
+    }
+  }
+  var prefix = stack.slice(0, -1), j = -1, found = !prefix.length;
+  if (prefix.length) for (var i = NAV.chain.length - 1; i >= 0; i--) { var sn = NAV.snaps[NAV.chain[i]]; if (sn && !sn.sheet && sameStack(sn.stack, prefix)) { j = i; found = true; break; } }
+  var target = j + 1;   // the entry that will hold the new top
+  if (found && target <= NAV.chain.length - 1) {
+    var k = NAV.chain.length - 1 - target;
+    if (k > 0) stepBack(k, function () { stepReplace(); }); else stepReplace();
+  } else if (found) {   // the screen before it is the top entry: one new step
+    stepPush('shape', snapNow(), true);
+  } else {   // nothing in the history holds the screens before it: start the history again from the first one, then add the rest
+    stepBack(NAV.chain.length - 1, function () {
+      NAV.snaps[topId()] = { stack: stack.slice(0, 1), sheet: false }; stepReplace(NAV.snaps[topId()]);
+      for (var L = 2; L <= stack.length; L++) doPush('shape', { stack: stack.slice(0, L), sheet: false });
+    });
+  }
   render();
   window.scrollTo(0, 0);
 }
-// an Edit page opened from the long-press menu: Back puts that menu up again (a second Back closes it)
-function menuAfter(gone) { if (gone && gone.name === 'edit' && gone.fromMenu && S.byId[gone.fromMenu] && byIdEl('sheet').hidden) reopenMenu(gone.fromMenu); }
+function setStack(stack) { reshape(stack); }
 function popView() {
-  var gone = null;
-  if (S.stack.length > 1) gone = S.stack.pop(); else S.stack = [{ name: 'home' }];
-  render();
+  if (S.stack.length > 1) reshape(S.stack.slice(0, -1)); else reshape([{ name: 'home' }]);
   window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0);
-  menuAfter(gone);
 }
 function back() {
-  if (S.stack.length > 1 && (S.hdepth || 0) > 0 && hist) { try { history.back(); return; } catch (e) { /* fall through */ } }
+  if (NAV.chain.length > 1 && hist) { try { history.back(); return; } catch (e) { /* fall through */ } }
   popView();
 }
 function root(name) {
   if (name === 'home') S.q = '';
-  setStack([{ name: name }]);
+  reshape([{ name: name }]);
 }
-try {
-  // The phone's own back button: close an open sheet, otherwise go up one screen.
-  if (hist) hist.setChangeHandler(function () {
-    if (/[#&]admin/.test(location.hash)) return;   // the address just gained #admin: that is the admin door, not Back (and not the end of one of our own steps)
-    if (S.skipPop > 0) { S.skipPop--; var f = (S.rwQ || []).shift(); if (f) f(); if (S.skipPop === 0) { clearTimeout(S.rwWD); flushPendingPushes(); } return; }
-    if (S.locked) { try { hist.push({ n: S.stack.length }); } catch (e) { /* nothing to restore */ } toast(tl('Saving… one moment.')); return; }
-    S.hdepth = Math.max(0, (S.hdepth || 0) - 1);
-    if (!byIdEl('sheet').hidden) {   // that Back used up the sheet's entry: a layer goes (a room list inside a sheet, a sheet opened from the menu); the last one closes
-      S.sheetEntry = false;
-      if (byIdEl('rp-wrap')) { endRoomPick(); S.sheetEntry = true; histPush(); }
-      else if (SHEETL.length) { SHEETL.pop().rebuild(); S.sheetEntry = true; histPush(); }
-      else closeSheet(true);
+// what Back shows: the snapshot of the entry arrived at
+function restoreStep(snap) {
+  NAV.restoring = true;
+  try {
+    if (typeof snap.sheet === 'function') snap.sheet();
+    else if (!snap.sheet && sheetUp()) hideSheet();
+  } finally { NAV.restoring = false; }
+  var same = snap.stack.length === S.stack.length && snap.stack.every(function (v, i) { return v === S.stack[i]; });
+  if (!same) { S.stack = snap.stack.slice(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); }
+}
+function onStep(ev) {
+  if (/[#&]admin/.test(location.hash)) return;   // the address just gained #admin: that is the admin door, not Back
+  var st = (ev && ev.state) || null, id = st && st.rm, i = id === undefined || id === null ? -1 : NAV.chain.lastIndexOf(id);
+  NAV.inPop = true;
+  try {
+    if (NAV.expect) {   // the end of one of our own steps back
+      if (i >= 0) NAV.chain.length = i + 1;
+      clearTimeout(NAV.wd); var f = NAV.expect; NAV.expect = null; f(); drain(); return;
+    }
+    if (S.locked) {   // a save is running: Back is refused by going forward again
+      NAV.expect = function () { toast(tl('Saving… one moment.')); };
+      try { history.go(1); } catch (e) { NAV.expect = null; }
       return;
     }
-    if (S.stack.length > 1) { var gone = S.stack.pop(); render(); window.scrollTo(0, (S.scrollAt || {})[tabRootOf(cur().name)] || 0); menuAfter(gone); }
-  });
+    if (NAV.deferred.length && sheetUp()) {   // a sheet that has no step yet (it opened without a tap): Back only closes it
+      NAV.deferred = []; hideSheet();
+      NAV.expect = function () { /* back where we were */ };
+      try { history.go(1); } catch (e) { NAV.expect = null; }
+      return;
+    }
+    if (i < 0) {   // an entry from before this page was loaded: nothing remembers it, so it is the list
+      var nid = id === undefined || id === null ? ++NAV.n : id;
+      NAV.snaps[nid] = { stack: [{ name: 'home' }], sheet: false }; NAV.chain = [nid]; i = 0; id = nid;
+    }
+    NAV.chain.length = i + 1; NAV.drop = 0; NAV.deferred = [];
+    restoreStep(NAV.snaps[id]);
+  } finally { NAV.inPop = false; }
+}
+try {
+  if (hist) {
+    hist.setChangeHandler(onStep);
+    hist.replace({ rm: 0 });   // the entry the app was opened on is entry 0 (the list)
+  }
 } catch (e) { /* no history support */ }
 
 // ---------- drawing ----------
@@ -5541,7 +5608,7 @@ function afterRender(v) {
     if (tags0.indexOf('place') >= 0 && placeEl) { els0.push(placeEl); if (!then0) then0 = function () { placeEl.click(); }; }
     if (els0.length) { v._focused = true; glowThen(els0, then0); }
   }
-  if (v.name === 'admin' && S.admin) { if (!S.test && (!S.testInfo || Date.now() - (S.testAt || 0) > 20000)) loadTestInfo(); if (!S.misses || Date.now() - (S.missAt || 0) > 15000) loadMisses(); }
+  if (v.name === 'admin' && S.admin) { if (!S.test && !S.testInfo) loadTestInfo(); }
   if (v.name === 'add' && v._draft) fillAddDraft(v._draft);
 }
 // Refresh what is on screen without wiping something the person is typing
@@ -5579,18 +5646,19 @@ function drawChrome(v) {
     : '<rect x="3" y="6.5" width="18" height="11" rx="2"/><path d="M6.8 10h.01M9.9 10h.01M13 10h.01M16.1 10h.01M17.9 10h.01M7.5 14h9"/>';
   var addBtn = '<button data-act="addOpen" data-mode="' + (scanning ? 'scan' : 'type') + '" aria-label="' + esc(scanning ? tl('Add by scanning') : tl('Add by typing')) + '" class="addb' + (tab === 'add' ? ' on' : '') + '"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + addIcon + '</svg></span><span class="lb">' + tl('Add') + '</span></button>';
   nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), roomsBadge(myCentre())) + b('more', tl('Me')) + '</div>';
-  var n = S.outbox.length, msg = '';
+  var n = S.outbox.length, msg = '', dock = '';
   if (n && S.offline) {
-    msg = '<div class="notice"><span>' + (n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
+    dock = '<div class="notice"><span>' + (n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
       ' ' + '</span><button data-act="flushNow">' + tl('Send now') + '</button></div>';
   } else if (S.offline) {
-    msg = '<div class="notice"><span>' + esc(tl('Offline. Showing the list from {when}.', { when: when(S.syncedAt) })) +
+    dock = '<div class="notice"><span>' + esc(tl('Offline. Showing the list from {when}.', { when: when(S.syncedAt) })) +
       '</span><button data-act="refresh">' + tl('Try again') + '</button></div>';
   }
   if (REVIEW && LANGS_ON.indexOf(LANG) < 0) msg += '<div class="notice"><span>' + esc(tl('Review copy: this language isn’t signed off yet.')) + '</span></div>';
   if (S.asStaff) msg = '<div class="notice staffbar"><span>' + esc(tl('Viewing as staff')) + '</span><button data-act="viewAdmin">' + tl('Back to admin') + '</button></div>' + msg;
   if (S.test) msg = '<div class="notice testbar"><span>' + esc(tl('TEST MODE · made-up data, nothing here is real')) + '</span><button data-act="testOff">' + tl('Leave') + '</button></div>' + msg;
   byIdEl('banner').innerHTML = msg;
+  var dk = byIdEl('dock'); if (dk && dk.innerHTML !== dock) dk.innerHTML = dock;
 }
 // the pill shows whenever this phone is (or is about to be) signed in as admin: from the stored token, before any server answer
 function adminShown() { if (S.admin || S.asStaff) return true; try { var t = store.get('rm_admin_tok', null); return !!(t && t.t); } catch (e) { return false; } }
@@ -5680,7 +5748,8 @@ function recentHtml() {
   if (!gs.length) return '';
   return '<h2 class="sec">' + tl('Recent') + '</h2><div class="cats">' + gs.map(function (g) {
     var hr = g.rows.filter(function (r) { return r.centre === myCentre(); })[0] || g.rows[0];
-    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"' + (hr ? ' data-hold="' + esc(hr.id) + '"' : '') + '><span class="emo" aria-hidden="true">' + (CAT_ICON[g.cat] || '📦') + '</span><span class="lbl2">' + esc(g.dname) + '</span><small>' +
+    var nd = Object.keys(needSetFor(g.rows, g)).length;
+    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"' + (hr ? ' data-hold="' + esc(hr.id) + '"' : '') + (nd ? ' title="' + esc(tl('Needs details')) + '"' : '') + '>' + (nd ? '<i class="nd" aria-hidden="true"></i>' : '') + '<span class="emo" aria-hidden="true">' + (CAT_ICON[g.cat] || '📦') + '</span><span class="lbl2">' + esc(g.dname) + '</span><small>' +
       (g.levelOnly ? LEVEL_LABELS[g.lowest] : esc(amount(g.total, g.unit))) + '</small></button>';
   }).join('') + '</div>';
 }
@@ -5767,22 +5836,6 @@ function vHome(v) {
     '<button class="clear" data-act="clearQ" aria-label="' + tl('Clear') + '"' + (S.q ? '' : ' hidden') + '>' + ICON.x + '</button>' +
     '<button class="filt" data-act="filterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '<span class="fdot"' + (filterCount() ? '' : ' hidden') + '>' + filterCount() + '</span></button></div>' +
     '<div id="results">' + resultsHtml(v) + '</div>';
-}
-// a search that found nothing and was left alone for two seconds is counted (a word and a centre, no name, once per word per opening)
-var missT = 0, missSent = {};
-function missSoon(q) {
-  clearTimeout(missT);
-  q = (q || '').trim();
-  if (S.test || q.length < 3) return;
-  missT = setTimeout(function () {
-    if (cur().name !== 'home' || S.q.trim() !== q || S.test || !S.loaded) return;
-    var key = q.toLowerCase();
-    if (missSent[key] || anyBarcode(q) || /^[\d\s-]+$/.test(q)) return;
-    var r = RMSearch.search(S.groups, q);
-    if (r.strong.length) return;   // found somewhere (here or at another centre): not a miss
-    missSent[key] = 1;
-    callRaw('logMiss', { term: q, centre: myCentre() }).catch(function () { /* a lost count is not worth a message */ });
-  }, 2000);
 }
 function drawResults() {
   var box = byIdEl('results');
@@ -5895,7 +5948,7 @@ function resultsHtml(v) {
     var sh = starterHits(q);
     return sh + '<div class="card empty" style="margin-top:14px"><h2>' + esc(sh ? tl('Not here?') : tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
       (sh ? '' : '<p>' + tl('Check the spelling.') + '</p>') +
-      (S.admin ? '' : '<p class="hint">' + tl('Your admin is told what people search for.') + '</p>') + askBtn() +
+      askBtn() +
       '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></div>' +
       (r.weak.length ? '<p class="count">' + tl('Closest:') + '</p><div class="list">' + r.weak.map(card).join('') + '</div>' : '');
   }
@@ -5927,7 +5980,7 @@ function card(g) {
       return '<span class="pl' + (per[c].low ? ' low' : '') + (c === mine ? ' mine' : '') + '">' + esc(c) + ' <b>' + (per[c].lv !== null && !per[c].qty ? LEVEL_LABELS[per[c].lv] : per[c].qty) + '</b></span>';
     }).join('');
   }
-  var flags = g.rows.length && !g.cat ? ' <span class="badge plain">' + tl('Needs details') + '</span>' : '';
+  var flags = g.rows.length ? ' ' + needBadgeHtml(needSetFor(g.rows, g)) : '';
   g.rows.forEach(function (r) {
     if (STATUS_LABEL[r.status] && flags.indexOf(STATUS_LABEL[r.status]) < 0) flags += ' <span class="badge warn">' + STATUS_LABEL[r.status] + '</span>';
   });
@@ -5973,6 +6026,7 @@ function vItem(v) {
   return top(true) +
     '<div class="headcard">' + (can ? '<button type="button" class="tilebtn" data-act="photoItem" aria-label="' + tl('Photo and notes') + '">' + tile(g.photoRow, g.cat, true) + '</button>' : '<span class="tilebtn">' + tile(g.photoRow, g.cat, true) + '</span>') + '<div style="min-width:0"><h1 class="name">' + esc(g.dname) + '</h1>' +
     (g.dalt ? '<p class="line">' + esc(g.dalt) + '</p>' : '') +
+    (needBadgeHtml(needSetFor(g.rows, g)) ? '<p class="line">' + needBadgeHtml(needSetFor(g.rows, g)) + '</p>' : '') +
     (many ? '<p class="line"><b>' + groupSummary(g) + '</b> ' + esc(tl('in {n} places', { n: g.rows.length })) + '</p>' : '') + '</div></div>' +
     (many ? '' : itemActions(sel, many)) + '<div class="card">' + places + '</div>' +
     (sel.notes ? '<p class="note">' + esc(sel.notes) + '</p>' : '') +
@@ -6006,21 +6060,22 @@ function histLine(h) {
 }
 
 // ----- Bottom sheets -----
-function openSheet(html, focusId, cls) {
-  if (byIdEl('sheet').hidden && hist) {
-    if (S.sheetRewind) { S.sheetRewind = false; S.sheetEntry = true; }   // closed and opened again in one go: keep the entry
-    else if (!S.sheetEntry) { S.sheetEntry = true; histPush(); }
-  }
+function openSheet(html, focusId, cls, restore) {
+  var wasUp = sheetUp();
+  S.sheetRestore = restore || null;
   $('#sheet .panel').className = 'panel' + (cls ? ' ' + cls : '');
   $('#sheet .panel').innerHTML = html;
   byIdEl('sheet').hidden = false;
+  if (!NAV.restoring && hist) {
+    if (!wasUp) stepPush('sheet', snapNow());
+    else if (NAV.layer) { NAV.layer = false; stepPush('layer', snapNow()); }
+  }
   if (focusId && byIdEl(focusId)) byIdEl(focusId).focus();
 }
-var SHEETL = [];   // the sheets underneath the one on top: { rebuild() } puts one back
-function pushSheet(rebuild) { if (!byIdEl('sheet').hidden) SHEETL.push({ rebuild: rebuild }); }
-function closeSheet(fromBack) {
-  SHEETL = [];
-  if (S.sheetEntry) { S.sheetEntry = false; if (fromBack !== true) { S.sheetRewind = true; setTimeout(flushSheetRewind, 0); } }   // the entry goes too (after the current step, so a screen change right after can take it with it)
+// a second sheet over this one: this one can be put back by Back, and the new one gets a step of its own
+function pushSheet(rebuild) { if (sheetUp()) { topSnap().sheet = rebuild; NAV.layer = true; } }
+// the sheet disappears from the screen (history untouched)
+function hideSheet() {
   if (SC.picking && SC.pickSheet) {
     var pe = SC.picking, b = SC.pickBackup || {};
     SC.picking = null; SC.pickSheet = false;
@@ -6029,8 +6084,19 @@ function closeSheet(fromBack) {
   byIdEl('sheet').hidden = true;
   $('#sheet .panel').innerHTML = '';
   $('#sheet .panel').className = 'panel';
+  S.sheetRestore = null; NAV.layer = false;
   M = {};
   softRender();
+}
+// the sheet is done with: its history steps go too, one step back each, after this tap's own work (a screen change right after takes the step's place instead)
+function closeSheet(fromBack) {
+  var wasUp = sheetUp();
+  NAV.deferred = NAV.deferred.filter(function (x) { return !x.snap.sheet; });
+  hideSheet();
+  if (fromBack === true || !wasUp || !hist) return;
+  var k = 0;
+  for (var i = NAV.chain.length - 1; i > 0 && NAV.snaps[NAV.chain[i]] && NAV.snaps[NAV.chain[i]].sheet; i--) k++;
+  if (k) { NAV.drop = k; setTimeout(flushDrop, 0); }
 }
 function stepper(id, val, min, max, label) {
   return '<div class="stepper"><button type="button" data-act="step" data-for="' + id + '" data-d="-1" aria-label="' + tl('One less') + '">−</button>' +
@@ -6108,7 +6174,7 @@ function askRemove(id, fromMenu) {
     '</p><p class="help">' + tl('For mistakes or duplicates. Can’t be undone.') + '</p>' +
     '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="removeItemGo">' + tl('Remove it') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
 }
-function reopenMenu(id) { var it = S.byId[id]; if (!it) return closeSheet(); M = { type: 'itemmenu', id: it.id }; openSheet(itemMenuHtml(it)); }
+function reopenMenu(id) { var it = S.byId[id]; if (!it) return closeSheet(); M = { type: 'itemmenu', id: it.id }; openSheet(itemMenuHtml(it), null, null, function () { reopenMenu(id); }); }
 function itemMenuHtml(it) {
   return '<div class="menu-head"><h2>' + esc(shown(it)) + '</h2><button type="button" class="ib rp-x" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button></div><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
     '<button type="button" class="opt" data-act="menuEdit"><span class="ri" aria-hidden="true">' + ICON.pencil + '</span><span>' + (attentionTags(it).length ? tl('Finish adding') : tl('Edit item')) + '</span></button>' +
@@ -6138,7 +6204,7 @@ document.addEventListener('pointerdown', function (e) {
     LP.firedAt = Date.now();
     try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) { /* no haptics */ }
     M = { type: 'itemmenu', id: it.id };
-    openSheet(itemMenuHtml(it));
+    openSheet(itemMenuHtml(it), null, null, (function (id) { return function () { reopenMenu(id); }; })(it.id));
   }, 500);
 }, true);
 document.addEventListener('pointermove', function (e) { if (LP.timer && (Math.abs(e.clientX - LP.x) > 8 || Math.abs(e.clientY - LP.y) > 8)) lpCancel(); }, true);
@@ -6286,8 +6352,16 @@ function roomPickHtml(o) {
 function showRoomPick(html) {
   var panel = $('#sheet .panel');
   if (byIdEl('sheet').hidden) { M = { type: 'room-pick' }; openSheet(html, null, 'rpanel'); return; }
+  topSnap().sheet = function () { endRoomPick(); };   // Back from the list puts the sheet underneath back
   [].forEach.call(panel.children, function (c) { c.classList.add('rp-hide'); });
   var w = document.createElement('div'); w.id = 'rp-wrap'; w.className = 'rp-in'; w.innerHTML = html; panel.appendChild(w);
+  if (!NAV.restoring) stepPush('roompick', { stack: S.stack.slice(), sheet: true });
+}
+// the person is done with the room list (a tap): the list goes and so does its step
+function leaveRoomPick() {
+  var had = !!byIdEl('rp-wrap');
+  endRoomPick();
+  if (had && sheetUp() && NAV.chain.length > 1) { NAV.drop = 1; setTimeout(flushDrop, 0); }
 }
 function endRoomPick() {
   var w = byIdEl('rp-wrap');
@@ -6298,7 +6372,7 @@ function endRoomPick() {
 function setRoomValue(v) {
   var i = byIdEl(RP.target);
   if (i) { i.value = v; syncPick(RP.target); i.dispatchEvent(new Event('input', { bubbles: true })); }
-  endRoomPick();
+  leaveRoomPick();
 }
 function photoField() {
   return '<label class="lab">' + tl('Photo') + ' <i>' + tl('(optional)') + '</i></label><div class="photorow"><span id="f-thumb">' +
@@ -6461,8 +6535,8 @@ function editDrift() {
   if (!box || !it || !v.base) return;
   if (v.conflictHtml) { box.innerHTML = v.conflictHtml; box.hidden = false; return; }
   var now = editBase(it), moved = Object.keys(now).filter(function (k) { return String(now[k]) !== String(v.base[k]); });
-  box.hidden = !moved.length;
-  if (moved.length) box.textContent = tl('Someone else changed this item. Check it before you save.');
+  box.hidden = true;
+  if (moved.length && !v._drift) { v._drift = true; toast(tl('Someone else changed this item. Check it before you save.')); }
 }
 function vEdit(v) {
   var it = S.byId[v.id];
@@ -6518,6 +6592,10 @@ function shoppingText(lows, broken, scopeLabel) {
   }
   return lines.join('\n');
 }
+// a Low row that is waiting for what has been asked about it: a shimmering block the size of a row, not a label that pops in
+function skelLowRow() {
+  return '<div class="lowskel"><div style="display:flex;gap:var(--s3);align-items:flex-start"><span class="skel" style="flex:none;width:52px;height:52px;border-radius:10px"></span><div style="flex:1;display:flex;flex-direction:column;gap:9px"><span class="skel" style="height:18px;width:62%"></span><span class="skel" style="height:14px;width:42%"></span><span class="skel" style="height:14px;width:55%"></span><span class="skel" style="height:14px;width:30%"></span></div></div></div>';
+}
 function vLow() {
   var mine = myCentre();
   var lows = S.items.filter(function (it) { return it.centre === mine && low(it); })
@@ -6536,6 +6614,7 @@ function vLow() {
     var main = '<button class="card item' + (pick ? ' pickrow' + (on[it.id] ? '' : ' off') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
       (pick ? ' role="checkbox" aria-checked="' + (on[it.id] ? 'true' : 'false') + '"' : '') + '>' +
       (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + lines +
+      (needBadgeHtml(needSetFor([it])) ? '<span class="line">' + needBadgeHtml(needSetFor([it])) + '</span>' : '') +
       (o ? '<span class="line">' + reqChip(o) + '</span>' : '') + '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
     return pick ? main : '<div class="lowwrap' + (o && o.pending ? ' unconf' : '') + '">' + main + (S.admin && low(it) ? admActions(it, o) : '') + '</div>';
   };
@@ -6548,7 +6627,8 @@ function vLow() {
       (!pick && lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
       (S.admin ? '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.x : ICON.pick) + '<span>' + (pick ? tl('Cancel') : tl('Select')) + '</span></button>' : '') + '</div></div>' : '') +
     (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || tl('my centre'))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
-    (lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
+    (lows.length && !Array.isArray(S.open) ? '<div class="list lowlist skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '">' + lows.slice(0, 8).map(skelLowRow).join('') + '</div>'
+    : lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
       var spare = spareOf(it);
       return card(it, (isLevel(it)
         ? '<span class="line"><span class="badge low">' + LEVEL_LABELS[it.qty] + '</span></span>'
@@ -6664,10 +6744,6 @@ function vSettings() {
       return '<button class="chip look' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[2] + '<span>' + o[1] + '</span></button>';
     }).join('') + '</div><p class="help">' + tl('Follow theme uses your phone’s light or dark setting.') + '</p>' +
     '<p class="help">' + tl('Tip: press and hold an item in any list for shortcuts.') + '</p>' +
-    '<label class="lab">' + tl('Bottom strip') + '</label><div class="chips" data-group="strip">' + [['on', tl('On')], ['off', tl('Off')]].map(function (o) {
-      return '<button class="chip' + (store.get('rm_strip', 'on') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_strip" data-val="' + o[0] + '">' + o[1] + '</button>';
-    }).join('') + '</div><p class="help">' + tl('A thin dark line under the bottom bar in light mode, so the phone’s black bar looks planned.') + '</p>' +
-    (store.get('rm_pillfix', 0) ? '<p class="help">' + esc(tl('Admin button was repaired {n} times on this phone.', { n: store.get('rm_pillfix', 0) })) + '</p>' : '') +
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
@@ -6676,7 +6752,6 @@ function vSettings() {
         '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button>' +
         '<button class="rowbtn" data-act="adminLeaveAll"><span class="lead">' + ICON.x + '</span><span>' + tl('Sign out all phones') + (S.admin.phones ? '<small>' + esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) + '</small>' : '') + '</span>' + ICON.go + '</button>'
       : '<button class="rowbtn" data-act="pinOpen"><span class="lead">' + ICON.shield + '</span><span>' + tl('Sign in as admin') + '<small>' + tl('Needs the admin PIN.') + '</small></span>' + ICON.go + '</button>') + '</div>' +
-    (HOSTED ? '<div class="card rows" style="margin-top:var(--s5)"><a class="rowbtn" href="barcheck.html"><span class="lead">' + ICON.phone + '</span><span>' + tl('Check the phone bars') + '<small>' + tl('A small test page for the bars at the top and bottom of the phone.') + '</small></span>' + ICON.go + '</a></div>' : '') +
     '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
@@ -6732,7 +6807,7 @@ function roomListHtml(v) {
   if (list.length) return '<div class="list">' + list.map(function (it) {
     return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
       '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' +
-      (low(it) ? '<span class="line"><span class="badge low">' + tl('Running low') + '</span></span>' : '') + '</span>' +
+      (low(it) || needBadgeHtml(needSetFor([it])) ? '<span class="line">' + (low(it) ? '<span class="badge low">' + tl('Running low') + '</span> ' : '') + needBadgeHtml(needSetFor([it])) + '</span>' : '') + '</span>' +
       '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
   }).join('') + '</div>';
   if (!all.length) return '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>';
@@ -6946,7 +7021,7 @@ function vAdmin() {
       row('go', 'adminRooms', tl('Manage rooms'), tl('Add, rename or remove rooms')) +
       row('pinChange', '', tl('Change PIN'), '')) +
       row('go', 'labels', tl('QR stickers'), '') +
-    '</div>' + testCardHtml() + missHtml() +
+    '</div>' + testCardHtml() +
     '<details class="settings" id="adm-sheet"' + (S.test ? ' hidden' : '') + '><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
       '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
       row('sheetChange', '', tl('Switch Google Sheet'), '') +
@@ -7343,6 +7418,18 @@ function attentionItems(centre) {
   return S.items.filter(function (it) { return (!centre || it.centre === centre) && attentionTags(it).length; })
     .sort(function (a, b) { return attentionTags(b).length - attentionTags(a).length || a.name.localeCompare(b.name); });
 }
+// v43: what an item still needs, as small yellow pills on its card (a row you cannot change shows only the type, which is shared)
+function needSetFor(rows, g) {
+  var set = {};
+  rows.forEach(function (r) { if (mineRow(r)) attentionTags(r).forEach(function (t) { set[t] = 1; }); });
+  if (g && !g.cat) set.type = 1;
+  return set;
+}
+function needBadgeHtml(set) {
+  var out = '';
+  ['name', 'type', 'place'].forEach(function (t) { if (set[t]) out += '<span class="badge need">' + esc(tagLabel(t)) + '</span> '; });
+  return out;
+}
 function tagLabel(t) { return t === 'place' ? tl('Needs place') : t === 'name' ? tl('Needs name') : tl('Needs type'); }
 function tagWord(t) { return t === 'place' ? tl('a place') : t === 'name' ? tl('a name') : tl('a type'); }
 function tagsHtml(it) {
@@ -7597,13 +7684,14 @@ var ACT = {
     if (to === 'home') { S.fil = {}; S.qSort = ''; S.q = ''; }
     var from = tabRootOf(cur().name);
     (S.scrollAt || (S.scrollAt = {}))[from] = window.scrollY;
-    // the tabs visited so far (the start of the stack), then the one left, without repeats: Back walks back through them
-    var seen = S.stack.filter(function (v) { return TABS[v.name] && !v.cat && !v.key && !v.id; }).map(function (v) { return v.name; });
-    if (TABS[from]) seen.push(from);
-    var trail = [];
-    seen.forEach(function (t) { if (t !== to) { trail = trail.filter(function (x) { return x !== t; }); trail.push(t); } });
-    trail = trail.slice(-3);
-    setStack(trail.map(function (t) { return { name: t }; }).concat([{ name: to }]));
+    // Back walks back through the tabs visited: each switch is one step; going to a tab that is already in the history goes back to it (no repeats)
+    var j = -1;
+    for (var i = NAV.chain.length - 2; i >= 0; i--) { var sn = NAV.snaps[NAV.chain[i]]; if (sn && !sn.sheet && sn.stack.length === 1 && sn.stack[0].name === to) { j = i; break; } }
+    var fresh = [{ name: to }];
+    if (sheetUp()) closeSheet();
+    if (j >= 0) { NAV.drop = 0; NAV.deferred = []; S.stack = fresh; stepBack(NAV.chain.length - 1 - j, function () { stepReplace(); }); render(); window.scrollTo(0, 0); }
+    else if (topSnap().stack.length === 1 && topSnap().stack[0].name === to) { S.stack = fresh; stepReplace(); render(); window.scrollTo(0, 0); }
+    else { S.stack = fresh; stepPush('tab', { stack: fresh.slice(), sheet: false }); render(); window.scrollTo(0, 0); }
   },
   go: function (el) { if (el.dataset.to === 'requests') loadRequests(); go({ name: el.dataset.to }); },
   back: back,
@@ -7677,13 +7765,13 @@ var ACT = {
   viewStaff: function () {
     if (!S.admin || S.asStaff || S.locked) return;
     S.held = { admin: S.admin, pin: S.pin }; S.asStaff = true; S.admin = null; S.pin = '';
-    S.requests = null; S.misses = null; S.testInfo = null; S.openGen = (S.openGen || 0) + 1;
+    S.requests = null; S.testInfo = null; S.openGen = (S.openGen || 0) + 1;
     root('home');
   },
   viewAdmin: function () {
     if (!S.asStaff || !S.held) return;
     S.admin = S.held.admin; S.pin = S.held.pin; S.held = null; S.asStaff = false;
-    S.requests = null; S.misses = null; S.testInfo = null; S.openGen = (S.openGen || 0) + 1;
+    S.requests = null; S.testInfo = null; S.openGen = (S.openGen || 0) + 1;
     setStack([{ name: 'home' }, { name: 'admin' }]);
   },
   // ----- Test mode: only the two made-up centres exist; this phone's own queue and saved copy are set aside until it is left -----
@@ -7702,7 +7790,7 @@ var ACT = {
     if (!S.admin) return;
     busy(true, tl('Making test data…'));
     call('testCreate', { pin: S.pin }).then(function (res) {
-      busy(false); S.testInfo = res; S.misses = null; toast(tl('Test centres are ready.')); render();
+      busy(false); S.testInfo = res; toast(tl('Test centres are ready.')); render();
     }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
   },
   testRemoveAsk: function () {
@@ -7713,24 +7801,8 @@ var ACT = {
   testRemoveGo: function () {
     busy(true, tl('Removing…'));
     call('testRemove', { pin: S.pin }).then(function () {
-      busy(false); closeSheet(); S.testInfo = { ok: true, exists: false, items: 0, requests: 0 }; S.misses = null; toast(tl('Test data removed.')); render();
+      busy(false); closeSheet(); S.testInfo = { ok: true, exists: false, items: 0, requests: 0 }; toast(tl('Test data removed.')); render();
     }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
-  },
-  missDismiss: function (el) {
-    if (!S.admin) return;
-    callRaw('dismissMiss', { pin: S.pin, term: el.dataset.term, centre: el.dataset.centre }).then(function (res) { S.misses = res.misses; if (cur().name === 'admin') render(); })
-      .catch(function (e) { toast(e.network ? tl('Offline. Try again.') : e.message); });
-  },
-  missPlan: function (el) {
-    if (!S.admin) return;
-    var term = el.dataset.term, centre = el.dataset.centre || myCentre(), name = term.charAt(0).toUpperCase() + term.slice(1);
-    busy(true);
-    callRaw('addRequest', { name: name, qty: 1, unit: 'pcs', centre: centre, itemId: '', phone: '', room: '', why: tl('People searched for it') }).then(function (res) {
-      return callRaw('decideRequest', { id: res.id, status: 'Approved', note: '', pin: S.pin }).then(function () {
-        return callRaw('dismissMiss', { pin: S.pin, term: term, centre: el.dataset.centre });
-      });
-    }).then(function (res) { busy(false); S.misses = res.misses; S.requests = null; toast(tl('Added to the shopping list.')); if (cur().name === 'admin') render(); })
-      .catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
   },
   admOrder: function (el) {
     var it = S.byId[el.dataset.id], key = it && 'i:' + it.id;
@@ -8069,7 +8141,7 @@ var ACT = {
     showRoomPick(roomPickHtml({ centre: RP.centre, current: val(RP.target), none: RP.none, title: el.dataset.title || (RP.target === 'f-room' ? tl('Where will it go?') : tl('Where is it?')) }));
   },
   roomSet: function (el) { setRoomValue(el.dataset.val); },
-  roomClose: function () { endRoomPick(); },
+  roomClose: function () { leaveRoomPick(); },
   roomNew: function () { byIdEl('rp-add').hidden = true; byIdEl('rp-new').hidden = false; byIdEl('rp-newname').focus(); try { byIdEl('rp-new').scrollIntoView({ block: 'nearest' }); } catch (e) { /* older browsers */ } },
   roomNewGo: function () {
     var v = val('rp-newname').trim(), er = byIdEl('rp-err');
@@ -8201,7 +8273,7 @@ var ACT = {
       if (!isLevel(it) && (parseQty(min) || 0) !== bs.min) f.min = parseQty(min) || 0;
     }
     if (!S.admin && needsNameText(bs.name) && val('f-nname')) f.name = val('f-nname');
-    if (!Object.keys(f).length && !photo) { cur().fromMenu = null; return back(); }
+    if (!Object.keys(f).length && !photo) return popView();   // nothing to save: back to the list (past the menu it came from, if any)
     var sent = {}; Object.keys(f).forEach(function (k) { if (bs[k] !== undefined) sent[k] = bs[k]; });
     formError('');
     busy(true);
@@ -8242,11 +8314,8 @@ var ACT = {
     var id = M.id, it = S.byId[id];
     if (!it) return closeSheet();
     var view = { name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: attentionTags(it).length > 0, fromMenu: it.id };
-    // the menu's own history entry becomes the Edit page's: nothing is rewound and pushed again, so there is no step for a phone to lose
-    var hand = !!hist && S.sheetEntry && !S.sheetRewind;
-    if (hand) S.sheetEntry = false;
-    closeSheet();
-    if (hand) { S.stack.push(view); render(); window.scrollTo(0, 0); } else go(view);
+    hideSheet();                 // off the screen, its step stays: Back from Edit puts the menu up again
+    S.stack.push(view); stepPush('edit', { stack: S.stack.slice(), sheet: false }); render(); window.scrollTo(0, 0);
   },
   menuProblem: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); openProblem(id); },
   menuRemove: function () { var id = M.id; pushSheet(function () { reopenMenu(id); }); askRemove(id, true); },
@@ -8608,7 +8677,7 @@ var ACT = {
 // Test mode on or off: everything on screen belonged to the other mode, so it goes, and the right list is fetched
 function switchMode(back) {
   S.modeGen = (S.modeGen || 0) + 1; S.openGen = (S.openGen || 0) + 1;
-  S.requests = null; S.open = []; S.openAt = 0; S.history = {}; S.starter = []; S.misses = null; S.testInfo = null; S.opt = {};
+  S.requests = null; S.open = back ? store.get('rm_open', undefined) : undefined; S.openAt = 0; S.history = {}; S.starter = []; S.testInfo = null; S.opt = {};
   S.fil = {}; S.q = ''; S.lowOn = {}; S.lowPick = false; S.allCentres = false; S.lowAll = false; S.refreshing = false;
   S.base = []; S.items = []; S.byId = {}; S.groups = []; S.gmap = {}; S.loaded = false; S.failed = false;
   if (back) { var c = store.get('rm_data', null); if (c && c.items) applyData(c); }
@@ -8622,34 +8691,17 @@ function loadTestInfo() {
   var gen = S.modeGen;
   callRaw('testStatus', { pin: S.pin }).then(function (res) { if (gen === S.modeGen) { S.testInfo = res; S.testAt = Date.now(); if (cur().name === 'admin') render(); } }).catch(function () { /* the card shows the button to make them */ }).then(function () { S.testInfoLoading = false; });
 }
-function loadMisses() {
-  if (S.missLoading) return;
-  S.missLoading = true;
-  var gen = S.modeGen;
-  callRaw('getMisses', { pin: S.pin }).then(function (res) { if (gen === S.modeGen) { S.misses = res.misses; S.missAt = Date.now(); if (cur().name === 'admin') render(); } }).catch(function () { /* none to show */ }).then(function () { S.missLoading = false; });
-}
 function admRow(act, icon, title, note) {
   return '<button class="rowbtn" data-act="' + act + '">' + (icon ? '<span class="lead">' + icon + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + ICON.go + '</button>';
 }
 function testCardHtml() {
   var info = S.testInfo, rows;
   if (S.test) rows = admRow('testOff', ICON.door, tl('Leave test mode'), tl('Back to your real centres.'));
-  else if (!info) rows = '<p class="hist muted" style="padding:var(--s3)">' + tl('Loading…') + '</p>';
+  else if (!info) rows = '<div class="skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '"><div class="skelcard" style="padding:var(--s3)"><span class="skel" style="height:46px"></span><span class="skel" style="height:46px"></span></div></div>';
   else if (info.exists) rows = admRow('testOn', ICON.door, tl('Open test mode'), tl('{n} made-up items. Only the test centres, nothing real can be touched.', { n: info.items })) +
     admRow('testCreate', ICON.refresh, tl('Reset test data'), tl('Rebuild the made-up items from scratch.')) + admRow('testRemoveAsk', ICON.x, tl('Remove test data'), '');
   else rows = admRow('testCreate', ICON.plus, tl('Create test centres'), tl('Two made-up centres full of items in every state. Nobody else can see them.'));
   return '<h2 class="sec">' + tl('Testing') + '</h2><div class="card rows">' + admRow('viewStaff', ICON.shield, tl('View as staff'), tl('See what staff see. You stay signed in.')) + rows + '</div>';
-}
-function missHtml() {
-  var m = S.misses;
-  var body = !m ? '<p class="hist muted">' + tl('Loading…') + '</p>' : !m.length ? '<p class="hist muted">' + tl('Nothing missed yet.') + '</p>'
-    : m.slice(0, 20).map(function (x) {
-      return '<div class="missrow"><span class="mt"><b>' + esc(x.term) + '</b><small>' + esc(x.centre) + ' · ' + (x.times === 1 ? tl('1 time') : tl('{n} times', { n: x.times })) + '</small></span>' +
-        '<button type="button" class="btn sm" data-act="missPlan" data-term="' + esc(x.term) + '" data-centre="' + esc(x.centre) + '">' + tl('Add to shopping list') + '</button>' +
-        '<button type="button" class="btn sm quiet" data-act="missDismiss" data-term="' + esc(x.term) + '" data-centre="' + esc(x.centre) + '">' + tl('Dismiss') + '</button></div>';
-    }).join('');
-  return '<details class="settings" id="adm-miss" data-keep="adm-miss"><summary>' + tl('Missed searches') + (m && m.length ? '<small>' + m.length + '</small>' : '') + '</summary><div class="card">' +
-    '<p class="help">' + tl('What people searched for and did not find. Nobody is named.') + '</p>' + body + '</div></details>';
 }
 function openLoad(force) {
   if (S.openLoading) { if (force) S.openAgain = true; return; }
@@ -8660,8 +8712,12 @@ function openLoad(force) {
     S.openLoading = false;
     if (gen !== (S.openGen || 0) || S.openAgain) { S.openAgain = false; openLoad(true); return; }   // an answer older than the last tap says the old thing: ask again, draw nothing from it
     S.open = res.open || []; S.openAt = Date.now();
+    if (!S.test) store.set('rm_open', S.open);
     if (cur().name === 'low') render(); else if (cur().name === 'request') refreshAskNote();
-  }).catch(function () { S.openLoading = false; S.openAt = Date.now(); });
+  }).catch(function () {
+    S.openLoading = false; S.openAt = Date.now();
+    if (!Array.isArray(S.open)) { S.open = []; if (cur().name === 'low') render(); }   // no answer: show the rows as they are rather than shimmer for ever
+  });
 }
 function openForName(centre, name, itemId) {
   var ov = itemId && S.opt && S.opt['i:' + itemId];
@@ -8769,7 +8825,7 @@ document.addEventListener('keydown', function (e) {
 });
 document.addEventListener('input', function (e) {
   var t = e.target;
-  if (t.id === 'q') { S.q = t.value; drawResults(); missSoon(S.q); }
+  if (t.id === 'q') { S.q = t.value; drawResults(); }
   else if (t.id === 'rq') { S.rq = t.value; var rl = byIdEl('roomlist'); if (rl) rl.innerHTML = roomListHtml(cur()); var rc = $('#rsearch .clear'); if (rc) rc.hidden = !S.rq; }
   else if (t.id === 'm-n') { if (M.type === 'move') refreshMove(); else updateStockBtn(); }
   else if (t.id === 'f-name' && !t.readOnly && byIdEl('similar')) { byIdEl('similar').innerHTML = similarAll(t.value); suggestType(t.value.trim()); }
@@ -8894,7 +8950,7 @@ if (HOSTED) {
   var given = parseBackend(location.hash), known = given || parseBackend(store.get('rm_backend', ''));
   if (given) {
     store.set('rm_backend', given);
-    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the code stays in the address bar */ }
+    try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) { /* the code stays in the address bar */ }
   }
   if (known) setBackend(known);
   // installable and usable without signal: the page's own files are kept by the browser
@@ -8914,7 +8970,7 @@ var APP_BUILT = '2026-11-24';   // the label is "Alpha" for now (then "Beta", th
   try { sessionStorage.setItem('rm_launched', '1'); } catch (e) { /* fine */ }   // once per opening of the app, never per page redraw
   el.classList.add('go');
   var done = function () { if (el.parentNode) el.remove(); };
-  setTimeout(done, 1900);
+  setTimeout(done, 1700);
   document.addEventListener('pointerdown', done, { once: true, passive: true });
 })();
 syncThemeColor();
@@ -8933,7 +8989,7 @@ if (HOSTED) {
     ['i', 'c', 'p'].forEach(function (k) { if (q.get(k)) found[k] = q.get(k); });
     if (found.i || (found.c && found.p)) {
       pendingLink = found;
-      history.replaceState(null, '', location.pathname);   // a reload should not open it again
+      history.replaceState(history.state, '', location.pathname);   // a reload should not open it again
       applyLink();
     }
   } catch (e) { /* no link support */ }
