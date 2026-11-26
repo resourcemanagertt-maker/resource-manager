@@ -828,17 +828,24 @@ html[data-text="2"] .sp-ic{width:36px;height:36px}
 .cambtn span{width:32px;height:32px;display:grid;place-items:center;font-size:16px;background:var(--surface);border:1px solid var(--line-strong);border-radius:50%;box-shadow:var(--sh1)}
 #sheet:has(.panel.viewer){align-items:center;justify-content:center}
 #sheet:has(.panel.viewer) .scrim,.ghost-sheet:has(.viewer) .scrim{background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-#sheet .panel.viewer{width:100%;max-width:min(96vw,640px);padding:var(--s3);background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;display:flex;flex-direction:column;align-items:center;gap:var(--s2);pointer-events:none}
-.viewer .vx{align-self:flex-end;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#16181d;border:0;pointer-events:auto}
+html[data-text] #sheet:has(.panel.viewer),html[data-text] .ghost-sheet:has(.viewer){zoom:1}
+#sheet .panel.viewer{width:100%;max-width:none;height:100%;max-height:none;margin:0;padding:0;background:transparent;border:0;box-shadow:none;border-radius:0;overflow:hidden;pointer-events:none}
+.viewer .vx{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;flex:none;width:48px;height:48px;min-width:48px;min-height:48px;padding:0;display:grid;place-items:center;border-radius:50%;background:#fff;color:#16181d;border:0;pointer-events:auto;z-index:2}
 .viewer .vx svg{width:24px;height:24px}
-.vframe{position:relative;display:grid;place-items:center;width:100%;min-height:220px;pointer-events:auto}
-.vframe img{grid-area:1/1;max-width:100%;max-height:70vh;border-radius:var(--r);object-fit:contain}
-.vframe .vsmall{width:min(100%,360px)}
+/* the same room above and below, so the picture's middle is the screen's middle */
+.vframe{position:fixed;left:12px;right:12px;top:calc(72px + env(safe-area-inset-top));bottom:calc(72px + env(safe-area-inset-top));display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);place-items:center;pointer-events:none}
+.vframe img{grid-area:1/1;max-width:100%;max-height:100%;min-width:0;min-height:0;border-radius:var(--r);object-fit:contain;pointer-events:auto}
+.vframe .vsmall{width:100%;height:100%;border-radius:0;pointer-events:none}
 .vframe .vfull:not([src]){display:none}
 .vframe.loading-photo .vfull{opacity:0}
 .vframe.got .vsmall,.vframe.got .vring,.vframe.failed .vring,.vframe.failed .vfull{display:none}
 .vframe .vring{grid-area:1/1;z-index:1;border-color:rgba(255,255,255,.3);border-top-color:#fff}
-.vnote{color:#fff;font-weight:700;text-align:center;pointer-events:auto}
+.vnote{position:fixed;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));color:#fff;font-weight:700;text-align:center;pointer-events:auto}
+.sendlog span{font-size:13px;overflow-wrap:break-word}
+/* while any popup is open the page behind it stays put */
+html.sheetopen,html.sheetopen body{overflow:hidden;overscroll-behavior:none}
+#sheet .scrim{touch-action:none}
+#sheet .panel,#sheet .rp-scroll{overscroll-behavior:contain}
 @media (prefers-reduced-motion:no-preference){#sheet.sheet-in:has(.viewer) .panel{animation:pgFade .16s ease-out both}.ghost-sheet:has(.viewer) .panel{animation:scrimOut .14s ease-in both}}
 /* ===== 6. photos in Recent and in "Needs attention" ===== */
 .cat .tile{width:48px;height:48px}
@@ -3860,6 +3867,7 @@ L.ms = {
   "Labels, stickers and stamps": "Label, pelekat dan setem",
   "Language": "Bahasa",
   "Large": "Besar",
+  "Last sending problem: {when}": "Masalah penghantaran terakhir: {when}",
   "Learning materials": "Bahan pembelajaran",
   "Least: {level}": "Paling sedikit: {level}",
   "Leave": "Keluar",
@@ -4092,6 +4100,7 @@ L.ms = {
   "Send to another centre": "Hantar ke pusat lain",
   "Send waiting changes first.": "Hantar perubahan yang menunggu dahulu.",
   "Send {n} to {centre}": "Hantar {n} ke {centre}",
+  "Sending what was waiting ({n})…": "Menghantar yang menunggu ({n})…",
   "Sending…": "Menghantar…",
   "Sent to another centre": "Dihantar ke pusat lain",
   "Sent {n} to {centre}.": "Dihantar {n} ke {centre}.",
@@ -4616,6 +4625,7 @@ L.zh = {
   "Labels, stickers and stamps": "标签、贴纸与印章",
   "Language": "语言",
   "Large": "大",
+  "Last sending problem: {when}": "最近一次发送问题：{when}",
   "Learning materials": "学习材料",
   "Least: {level}": "最少：{level}",
   "Leave": "退出",
@@ -4848,6 +4858,7 @@ L.zh = {
   "Send to another centre": "送到别的分园",
   "Send waiting changes first.": "请先发送待发的更改。",
   "Send {n} to {centre}": "送 {n} 到 {centre}",
+  "Sending what was waiting ({n})…": "正在发送等待中的内容（{n}）…",
   "Sending…": "发送中…",
   "Sent to another centre": "送到别的分园",
   "Sent {n} to {centre}.": "已把 {n} 送到 {centre}。",
@@ -5544,7 +5555,7 @@ function refresh(manual) {
     saveData();
     if (manual) toast(tl('Your list is up to date.'));
   }).catch(function (e) {
-    S.offline = !!e.network;
+    if (!S.sync) S.offline = !!e.network;
     if (!S.loaded) S.failed = true;
     else if (manual && !e.network) toast(e.message);
   }).then(function () {
@@ -5584,15 +5595,54 @@ var ONLINE_ONLY = ['photo', 'photoItem', 'pinOpen', 'roomAdd', 'roomRename', 'ro
 function offlineNow() { return !!S.offline && !S.test && (navigator.onLine === false || window.__rmOffline === true); }   // a stale flag alone never blocks: the signal may be back
 function needNet() { toast(tl('You’re offline. This needs a connection.')); }
 var retryTimer = 0;
+// After "we are online again" the first real sends often fail once or twice on a phone: each change is tried up to 3 more times (1, 2, 4 s)
+// under the same ring before the app says it is offline. Every queued change is safe to send twice (the sheet ignores a repeat).
+var RETRY_MS = [1000, 2000, 4000];
+function sendProblemHtml() {
+  var p = store.get('rm_sendlog', null);
+  return p && p.at ? '<p class="help sendlog">' + esc(tl('Last sending problem: {when}', { when: when(p.at) })) + '<br><span>' + esc(p.fn + (p.why ? ' · ' + p.why : '')) + '</span></p>' : '';
+}
+// the signal has just come back (or changed) while something is being sent: a send older than 2 s is probably lost, so send it again now
+function resendStale() {
+  if (!S.sync || !S.jobAt || Date.now() - S.jobAt <= 2000) return;
+  S.offline = false; S.flushGen++; S.flushing = false; S.jobAt = 0;
+  clearTimeout(S.sync.t);
+  drawChrome(cur()); flush();
+}
+function noteSendProblem(job, e) {
+  var why = e && e.timeout ? 'timeout' : String(WHY || (e && e.message) || '').slice(0, 90);
+  store.set('rm_sendlog', { at: Date.now(), fn: job.fn, why: why });
+}
+function syncOver(failed) {
+  if (!S.sync) return;
+  clearTimeout(S.sync.t); S.sync = null;
+  softBusy(false, null, 'send');
+  if (!failed) return;
+  S.tried = { n: (S.fails = (S.fails || 0) + 1), at: Date.now(), pulse: true };
+  drawChrome(cur());
+  clearTimeout(S.triedT); S.triedT = setTimeout(function () { if (S.tried) S.tried.pulse = false; drawChrome(cur()); }, 650);
+  clearTimeout(S.triedT2); S.triedT2 = setTimeout(function () { drawChrome(cur()); }, 8100);
+}
 function flush() {
   if (S.flushing || !S.outbox.length) return;
   S.flushing = true;
-  var stale = false;
+  var stale = false, gen = (S.flushGen = (S.flushGen || 0) + 1);   // a run that has been given up on may still answer: it is ignored
   (function next() {
+    if (gen !== S.flushGen) return;
     var job = S.outbox[0];
     if (!job) return end();
+    var sentAt = S.jobAt = Date.now();
+    if (S.sync) setTimeout(function () {
+      if (gen !== S.flushGen || S.jobAt !== sentAt || !S.sync) return;   // it answered, or was already given up
+      noteSendProblem(job, { timeout: true });
+      S.flushGen++; S.flushing = false; S.jobAt = 0;
+      if (S.sync.tries < RETRY_MS.length) { S.sync.tries++; return flush(); }
+      S.offline = true; syncOver(true); softRender(); clearTimeout(retryTimer); retryTimer = setTimeout(flush, 20000);
+    }, window.__rmStall || 15000);
     call(job.fn, job.data).then(function (res) {
-      S.offline = false;
+      if (gen !== S.flushGen) return;
+      S.offline = false; S.jobAt = 0; S.fails = 0;
+      if (S.sync) S.sync.tries = 0;
       if (res.replay) stale = true;
       S.outbox.shift();
       saveOutbox();
@@ -5600,9 +5650,16 @@ function flush() {
       if (res.conflicts && res.conflicts.length) {
         (S.pendingConf || (S.pendingConf = [])).push.apply(S.pendingConf, res.conflicts.map(function (c) { return Object.assign({ centre: job.data.centre, loc: job.data.location }, c); }));
       } else if (job.fn === 'saveCount' && S.roomNotes) delete S.roomNotes[job.data.centre + '|' + job.data.location];
+      if (S.sync) drawChrome(cur());
       next();
     }).catch(function (e) {
-      if (e.network) { S.offline = true; return end(); }
+      if (gen !== S.flushGen) return;
+      S.jobAt = 0;
+      if (e.network) {
+        noteSendProblem(job, e);
+        if (S.sync && S.sync.tries < RETRY_MS.length) { S.sync.t = setTimeout(next, RETRY_MS[S.sync.tries++]); return; }
+        S.offline = true; return end();
+      }
       var failedJob = S.outbox.shift();       // the sheet said no (e.g. item was removed): drop it and say so
       saveOutbox();
       stale = true;
@@ -5614,8 +5671,9 @@ function flush() {
   })();
   function end() {
     S.flushing = false;
-    if (S.softSend) { S.softSend = false; softBusy(false); }
+    var failed = !!S.offline;
     rebuild();
+    syncOver(failed && S.outbox.length > 0);
     softRender();
     if (S.pendingConf && S.pendingConf.length) { var pc = S.pendingConf; S.pendingConf = []; noteCountConflicts(pc); }
     clearTimeout(retryTimer);
@@ -5974,7 +6032,9 @@ function drawChrome(v) {
   var addBtn = '<button data-act="addOpen" data-mode="' + (scanning ? 'scan' : 'type') + '" aria-label="' + esc(scanning ? tl('Add by scanning') : tl('Add by typing')) + '" class="addb' + (tab === 'add' ? ' on' : '') + '"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + addIcon + '</svg></span><span class="lb">' + tl('Add') + '</span></button>';
   nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), roomsBadge(myCentre())) + b('more', tl('Me')) + '</div>';
   var n = S.outbox.length, msg = '', dock = '';
-  if (n && S.offline) {
+  if (n && S.sync) {
+    dock = '<div class="notice"><span>' + tl('Sending what was waiting ({n})…', { n: n }) + '</span></div>';
+  } else if (n && S.offline) {
     var tried = S.tried && Date.now() - S.tried.at < 8000;
     dock = '<div class="notice' + (tried && S.tried.pulse ? ' pulse' : '') + '"><span>' + (tried ? tl('Still offline. Tried again just now ({times}×). {n} waiting.', { times: S.tried.n, n: n }) : n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
       ' ' + '</span><button data-act="flushNow">' + tl('Send now') + '</button></div>';
@@ -6415,6 +6475,7 @@ function openSheet(html, focusId, cls, restore) {
   $('#sheet .panel').className = 'panel' + (cls ? ' ' + cls : '');
   $('#sheet .panel').innerHTML = html;
   byIdEl('sheet').hidden = false;
+  document.documentElement.classList.add('sheetopen');
   if (!wasUp && motionOn()) { var sh = byIdEl('sheet'); sh.classList.remove('sheet-in'); void sh.offsetWidth; sh.classList.add('sheet-in'); setTimeout(function () { sh.classList.remove('sheet-in'); }, 300); }
   if (!NAV.restoring && hist) {
     if (!wasUp) stepPush('sheet', snapNow());
@@ -6440,6 +6501,7 @@ function hideSheet() {
     setTimeout(function () { if (gs.parentNode) gs.parentNode.removeChild(gs); }, 260);
   }
   byIdEl('sheet').hidden = true;
+  document.documentElement.classList.remove('sheetopen');
   $('#sheet .panel').innerHTML = '';
   $('#sheet .panel').className = 'panel';
   S.sheetRestore = null; NAV.layer = false;
@@ -7141,6 +7203,7 @@ function vSettings() {
         '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button>' +
         '<button class="rowbtn" data-act="adminLeaveAll"><span class="lead">' + ICON.x + '</span><span>' + tl('Sign out all phones') + (S.admin.phones ? '<small>' + esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) + '</small>' : '') + '</span>' + ICON.go + '</button>'
       : '<button class="rowbtn" data-act="pinOpen"><span class="lead">' + ICON.shield + '</span><span>' + tl('Sign in as admin') + '<small>' + tl('Needs the admin PIN.') + '</small></span>' + ICON.go + '</button>') + '</div>' +
+    sendProblemHtml() +
     '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
@@ -8003,17 +8066,44 @@ document.addEventListener('touchmove', function (e) {
   holdStill();   // the page may have begun to move before the third finger landed: put it back
 }, { passive: false, capture: true });
 ['touchend', 'touchcancel'].forEach(function (n) { document.addEventListener(n, function (e) { if (MULTI.on && !e.touches.length) { holdStill(); MULTI.on = false; setTimeout(holdStill, 60); } }, { passive: true, capture: true }); });
+// some phones move the page behind a popup whatever the styles say: a one-finger swipe is only allowed where something INSIDE the popup can still move that way
+var DRAG = { x: 0, y: 0 };
+document.addEventListener('touchstart', function (e) { if (e.touches.length === 1) { DRAG.x = e.touches[0].clientX; DRAG.y = e.touches[0].clientY; } }, { passive: true, capture: true });
+function canMove(target, dx, dy) {
+  var sheet = byIdEl('sheet'), up = Math.abs(dy) >= Math.abs(dx);
+  for (var el = target; el && el !== sheet && el.nodeType === 1; el = el.parentNode) {
+    var cs = getComputedStyle(el), o = up ? cs.overflowY : cs.overflowX;
+    if (o !== 'auto' && o !== 'scroll') continue;
+    var at = up ? el.scrollTop : el.scrollLeft, max = up ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth, d = up ? dy : dx;
+    if (max > 1 && ((d < 0 && at < max - 0.5) || (d > 0 && at > 0.5))) return true;
+  }
+  return false;
+}
+document.addEventListener('touchmove', function (e) {
+  if (!sheetUp() || e.touches.length !== 1) return;
+  var t = e.touches[0], dx = t.clientX - DRAG.x, dy = t.clientY - DRAG.y;
+  DRAG.x = t.clientX; DRAG.y = t.clientY;
+  if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;   // moving the text cursor
+  if ((dx || dy) && !canMove(e.target, dx, dy) && e.cancelable) e.preventDefault();
+}, { passive: false });
 ['gesturestart', 'gesturechange'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked) e.preventDefault(); }); });
 function lockLabel(text) { var l = byIdEl('lock-label'); if (l) l.textContent = text || tl('Saving…'); }
 // a wait that must not stop the person (a refresh, queued changes being sent): the same dim, ring and word, but taps go through
-function softBusy(on, label) {
-  var el = byIdEl('lock'); if (!el || S.locked) return;
-  if (on) { S.soft = Date.now(); lockLabel(label); el.classList.add('soft'); el.hidden = false; }
-  else if (el.classList.contains('soft')) {
-    var left = 400 - (Date.now() - (S.soft || 0));
-    var end = function () { if (!S.locked && el.classList.contains('soft')) { el.classList.remove('soft'); el.hidden = true; } };
-    if (left > 0) setTimeout(end, left); else end();
-  }
+function softBusy(on, label, who) {
+  var el = byIdEl('lock'); if (!el) return;
+  who = who || 'list';
+  S.softs = S.softs || {};
+  if (on) S.softs[who] = label || tl('Saving…'); else delete S.softs[who];
+  if (!S.locked) softDraw();
+}
+function softDraw() {
+  var el = byIdEl('lock'), want = S.softs && (S.softs.send || S.softs.list);   // sending says so first
+  if (!el || S.locked) return;
+  if (want) { if (!el.classList.contains('soft')) S.soft = Date.now(); lockLabel(want); el.classList.add('soft'); el.hidden = false; return; }
+  if (!el.classList.contains('soft')) return;
+  var left = 400 - (Date.now() - (S.soft || 0));
+  var end = function () { if (!S.locked && el.classList.contains('soft') && !(S.softs && (S.softs.send || S.softs.list))) { el.classList.remove('soft'); el.hidden = true; } };
+  if (left > 0) setTimeout(end, left); else end();
 }
 function lockUI(on, label) {
   var el = byIdEl('lock');
@@ -8033,6 +8123,7 @@ function lockUI(on, label) {
     S.locked = false; S.lockSettled = false; S.lockPending = false;
     noZoom(false);
     if (el) el.hidden = true;
+    setTimeout(softDraw, 0);   // something may still be going on behind the one that just finished
     document.body.classList.remove('saving'); document.documentElement.classList.remove('locked');
     ['app', 'nav', 'sheet', 'banner'].forEach(function (id) { var x = byIdEl(id); if (x) x.inert = false; });
   }
@@ -8159,14 +8250,14 @@ var ACT = {
   refresh: function (el) { if (el && el.classList) { el.classList.add('spin'); setTimeout(function () { el.classList.remove('spin'); }, 900); } softBusy(true, tl('Updating the list…')); refresh(true); },
   flushNow: function () {
     if (!S.outbox.length) return;
-    if (!S.offline) return flush();
-    if (S.trying) return;   // one attempt at a time: more taps while it runs change nothing
+    if (S.sync || S.trying) return;
+    if (!S.offline) return flush();   // one attempt at a time: more taps while it runs change nothing
     S.trying = true;
-    softBusy(true, tl('Sending…'));
+    softBusy(true, tl('Sending…'), 'send');
     var over = false, finish = function (ok) {
       if (over) return; over = true; clearTimeout(limit); S.trying = false;
-      if (ok) return backOnline();   // keeps the ring until what was waiting has gone
-      softBusy(false);
+      if (ok) { backOnline(); if (!S.sync) softBusy(false, null, 'send'); return; }   // the ring stays until what was waiting has gone
+      softBusy(false, null, 'check'); softBusy(false, null, 'send');
       var again = S.tried && Date.now() - S.tried.at < 8000;
       S.tried = { n: again ? S.tried.n + 1 : 1, at: Date.now(), pulse: true };
       drawChrome(cur());
@@ -9388,7 +9479,7 @@ document.addEventListener('click', function (e) {
   if (fn) { if (el.tagName !== 'A') e.preventDefault(); fn(el, e); if (cur().name === 'add' && cur().fromAdd && el.dataset.act !== 'addGo' && el.dataset.act !== 'addGoMore' && el.dataset.act !== 'addDraftClear') addDraftSave(); }
 });
 window.addEventListener('offline', function () { S.offline = true; try { drawChrome(cur()); } catch (e) { /* not drawn yet */ } });
-window.addEventListener('online', function () { try { if (S.offline) probeNow(); else { flush(); refresh(); } } catch (e) { /* not ready */ } });
+window.addEventListener('online', function () { try { if (S.sync) resendStale(); else if (S.offline) probeNow(); else { flush(); refresh(); } } catch (e) { /* not ready */ } });
 document.addEventListener('keydown', function (e) {
   if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('role') === 'button' && e.target.dataset.act) { e.preventDefault(); e.target.click(); return; }
   if (e.key !== 'Enter' || !e.target || !e.target.id) return;
@@ -9510,14 +9601,19 @@ byIdEl('file').addEventListener('change', function () {
 var PROBE_MS = [2000, 3000, 5000, 8000];
 function backOnline() {
   S.offline = false; S.probeN = 0; S.probeAt = 0; S.tried = null;
-  INFLIGHT.slice().forEach(function (r) { if (r.ctl && Date.now() - r.at > 6000) r.ctl.abort(); });   // give up on requests that stalled while the signal was gone
+  if (S.outbox.length) {
+    if (!S.sync) S.sync = { tries: 0 };
+    softBusy(true, tl('Sending…'), 'send');
+    // a send begun while the signal was gone may never answer: give it up and send again now (sending twice is safe)
+    if (S.flushing && (!S.jobAt || Date.now() - S.jobAt > 2000)) { S.flushGen = (S.flushGen || 0) + 1; S.flushing = false; if (S.sync.t) clearTimeout(S.sync.t); }
+  }
+  INFLIGHT.slice().forEach(function (r) { if (r.ctl && Date.now() - r.at > 6000) r.ctl.abort(); });
   try { drawChrome(cur()); } catch (e) { /* not drawn yet */ }
-  if (S.outbox.length) { S.softSend = true; softBusy(true, tl('Sending…')); flush(); }
-  else softBusy(false);
+  flush();
   refresh();
 }
 function probeNow() {
-  if (!S.offline || S.probing || S.trying || S.test) return;
+  if (!S.offline || S.probing || S.trying || S.sync || S.test) return;
   S.probing = true;
   var done = false, finish = function (ok) {
     if (done) return; done = true; clearTimeout(limit); S.probing = false;
