@@ -159,7 +159,7 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .headcard .name{font-size:28px;line-height:1.15;letter-spacing:-.01em}
 .place{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s2);border-bottom:1px solid var(--line)}
 .place .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--muted)}
-.place.on{background:var(--wash)}
+button.place.on{background:var(--wash)}
 .place.on .dot{border:6px solid var(--ink)}
 .place .where{flex:1;min-width:0;font-size:16px}
 .place .where small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
@@ -362,7 +362,6 @@ body.navless #dock{bottom:calc(150px + env(safe-area-inset-bottom))}
 #cam .camwait[hidden]{display:none}
 #cam .camwait::before{content:"";width:34px;height:34px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:camspin .9s linear infinite}
 @keyframes camspin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){#cam .camwait::before{animation:none}}
 #cam .camtop .ctx + .btn{margin-left:0}
 .modestrip{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--chip-bg,rgba(0,0,0,.07));margin:12px 0}
 .modestrip button{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;border:0;border-radius:999px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}
@@ -441,7 +440,6 @@ div.card.empty{padding:var(--s5) var(--s4)}
 .btn.primary[disabled]{background:color-mix(in srgb,var(--ink) 14%,var(--paper));border-color:color-mix(in srgb,var(--ink) 14%,var(--paper));color:var(--muted)}
 .btn:not(.primary):not(.quiet)[disabled]{border-color:var(--line-strong);color:var(--muted)}
 .btn.quiet[disabled]{color:var(--muted);text-decoration:none}
-.btn.primary.loading,.btn.primary.loading[disabled]{background:var(--brand);border-color:var(--brand)}
 .btn:focus-visible,.chip:focus-visible,.opt:focus-visible,.ib:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
 .chip{box-shadow:var(--sh1)}
 .chip.on{box-shadow:none}
@@ -523,7 +521,6 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 /* the refresh arrows run counter-clockwise, so the spin does too */
 .ib.spin svg,.rowbtn.spin .lead svg{animation:spinr .8s linear infinite}
 /* a button that is waiting: a spinner shows after a third of a second, so quick taps do not flicker */
-.btn.loading::before,.chip.loading::before{content:"";flex:none;width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
 .splash:not(:has(.btn))::before{content:"";display:block;width:28px;height:28px;margin:0 auto var(--s3);border:3px solid var(--line-strong);border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite}
 .roomrow{display:flex;align-items:center;gap:var(--s2);border-bottom:1px solid var(--line);padding-right:var(--s3)}
 .roomrow:last-child{border-bottom:0}
@@ -642,16 +639,16 @@ details.more,details[data-keep],details.notwhat,details.histfold{border-top:1px 
 details.histfold{margin-top:var(--s5)}
 .help:empty{display:none}
 /* a waiting button keeps its size: the label is hidden and a spinner sits in the middle */
-.btn.loading,.chip.loading,.ib.loading{position:relative;color:transparent!important;pointer-events:none;--spin:var(--ink)}
-.btn.primary.loading{--spin:var(--on-brand)}
-.chip.on.loading{--spin:var(--paper)}
-.btn.loading > *,.chip.loading > *,.ib.loading > *{opacity:0}
-.btn.loading::before,.chip.loading::before,.ib.loading::before{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;content:"";animation:spin .8s linear infinite;opacity:1}
 /* v31: while one thing is saving, ONE layer covers everything (page, bar, sheets), so it all dims and releases in the same frame */
 #lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 55%,transparent);cursor:progress;touch-action:none}
 html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavior:none}
+#lock:not([hidden]){display:flex;align-items:center;justify-content:center}
+#lock.soft{pointer-events:none;cursor:auto}
+.lockcard{display:flex;flex-direction:column;align-items:center;gap:var(--s3);min-width:140px;max-width:80vw;padding:var(--s4) var(--s5);border-radius:var(--r);background:var(--surface);color:var(--ink);border:1px solid var(--line-strong);box-shadow:var(--sh2);font-weight:700;font-size:15px;text-align:center}
+/* the ring always turns, also with "reduce motion": it is the only thing that says the app is working */
+.lockring{width:34px;height:34px;border:4px solid color-mix(in srgb,var(--ink) 18%,transparent);border-top-color:var(--ink);border-radius:50%;animation:spin .8s linear infinite;flex:none}
+.btn.loading,.chip.loading,.ib.loading,.opt.loading,.rowbtn.loading{pointer-events:none}
 /* the button that started the save keeps its normal look (the dim layer has a hole where it is) */
-.btn.loading,.btn.loading[disabled],.chip.loading,.chip.loading[disabled],.ib.loading,.ib.loading[disabled]{opacity:1}
 #lock[hidden]{display:none}
 /* v29: skeletons (they appear after 150 ms, so a fast load never flashes) */
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -782,8 +779,6 @@ html[data-text="2"] .rp-in{max-height:none;height:calc((100dvh - 200px) / 1.3)}
 html[data-text="1"] .rp-scroll,html[data-text="2"] .rp-scroll{min-height:min(30dvh,170px)}
 html[data-text="1"] .rp-count,html[data-text="2"] .rp-count{display:none}
 html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);padding-bottom:calc(var(--s3) + env(safe-area-inset-bottom))}
-.opt.loading{position:relative;pointer-events:none}
-.opt.loading::after{content:"";position:absolute;right:16px;top:50%;width:20px;height:20px;margin-top:-10px;border:2.5px solid var(--ink);border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
 .visnote{margin:var(--s3) 0 var(--s4)}
 #sheet:has(.panel.pmenu){align-items:flex-start;justify-content:flex-end;padding:0 var(--s3)}
 #sheet:has(.panel.pmenu) .scrim{background:transparent}
@@ -810,6 +805,24 @@ html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);
 .wfeat span{display:flex;align-items:center;gap:var(--s3);font-size:15px;color:var(--ink)}
 .wfeat svg{width:22px;height:22px;flex:none}
 .wnote{margin-top:var(--s3)}
+.formend.edit{display:flex;flex-wrap:wrap;gap:var(--s3)}
+.formend.edit .btn{flex:1 1 0;min-width:0;width:auto;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
+.formend.edit .btn[data-act=removeItem]{flex:0 0 100%;margin-top:var(--s5);border:1px solid var(--line-strong);background:transparent}
+/* the two links are two things: air between them */
+#adm-links > .card{padding:var(--s4)}
+#adm-links .linkrow + .lab{margin-top:var(--s6)}
+/* "Not sorted yet": the tick sits in the corner, the words get the width */
+.sp{position:relative}
+.sp .sp-ok{position:absolute;top:6px;right:6px}
+.sp.on .sp-t b{padding-right:18px}
+html[data-text="2"] .sp{gap:var(--s2);padding-left:var(--s3);padding-right:var(--s3)}
+html[data-text="2"] .sp-ic{width:36px;height:36px}
+.sp-t b{overflow-wrap:normal;word-break:normal}
+/* a "Needs …" pill you can tap: a bigger target than it looks */
+.badge.need[data-act]{position:relative;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.badge.need[data-act]::after{content:"";position:absolute;inset:-10px -3px}
+.badge.need[data-act]:active{filter:brightness(.9)}
+.elsewhere{margin:var(--s3) 0;font-size:15px;color:var(--muted);overflow-wrap:break-word}
 .optsub{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
 .rp-in .rp-head,.rp-in .rp-scroll,.rp-in .rp-foot{padding-left:0;padding-right:0}
 .rp-in .rp-head{padding-top:0}
@@ -934,7 +947,7 @@ html[data-text="1"] .tot b.word,html[data-text="2"] .tot b.word{font-size:18px}
 </style>
 </head>
 <body>
-<div id="lock" hidden aria-hidden="true"></div>
+<div id="lock" hidden role="status" aria-live="polite"><div class="lockcard"><span class="lockring" aria-hidden="true"></span><span id="lock-label">Saving…</span></div></div>
 <div id="launch" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)">
 <g class="st1" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M14 14v8M20 11v9M26 14v8"/></g>
 <g class="st2" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M38 14v8M44 11v9M50 14v8"/></g>
@@ -3634,6 +3647,7 @@ L.ms = {
   "Already here? Tap it.": "Sudah ada? Ketik.",
   "Already on the shopping list.": "Sudah ada dalam senarai beli-belah.",
   "Already sent.": "Sudah dihantar.",
+  "Also at: {list}": "Juga ada di: {list}",
   "Also kept elsewhere": "Disimpan di tempat lain juga",
   "Also kept elsewhere?": "Disimpan di tempat lain juga?",
   "Also send on WhatsApp": "Hantar juga melalui WhatsApp",
@@ -3654,6 +3668,7 @@ L.ms = {
   "Asked today": "Ditanya hari ini",
   "Asked yesterday": "Ditanya semalam",
   "Asked {date}": "Ditanya pada {date}",
+  "At other centres: {list}": "Di pusat lain: {list}",
   "Back": "Kembali",
   "Back to admin": "Kembali ke admin",
   "Back to your real centres.": "Kembali ke pusat sebenar anda.",
@@ -3976,7 +3991,6 @@ L.ms = {
   "Puzzles": "Puzzle",
   "QR stickers": "Pelekat QR",
   "Quantities only": "Kuantiti sahaja",
-  "Quantity only": "Kuantiti sahaja",
   "RM {price}": "RM {price}",
   "Read {code}…": "Dibaca {code}…",
   "Reading the barcode…": "Membaca kod bar…",
@@ -4080,6 +4094,7 @@ L.ms = {
   "Sign out all phones?": "Log keluar semua telefon?",
   "Signed in as admin": "Log masuk sebagai admin",
   "Signed out everywhere.": "Telah log keluar di semua tempat.",
+  "Signing out…": "Sedang log keluar…",
   "Skip for now": "Langkau dahulu",
   "Soap and hand wash": "Sabun dan pencuci tangan",
   "Someone else changed this item. Check it before you save.": "Orang lain mengubah barang ini. Semak sebelum simpan.",
@@ -4205,6 +4220,7 @@ L.ms = {
   "Unit": "Unit",
   "Updated by someone else: {fields}. Check it and save again.": "Dikemas kini oleh orang lain: {fields}. Semak dan simpan semula.",
   "Updated {when}": "Dikemas kini {when}",
+  "Updating the list…": "Mengemas kini senarai…",
   "Use Add more or Take some.": "Guna Tambah atau Ambil.",
   "Use this room": "Guna bilik ini",
   "Use this sheet": "Guna helaian ini",
@@ -4385,6 +4401,7 @@ L.zh = {
   "Already here? Tap it.": "已经有了？点它。",
   "Already on the shopping list.": "购物清单上已有。",
   "Already sent.": "之前已发送。",
+  "Also at: {list}": "其他中心也有：{list}",
   "Also kept elsewhere": "别处也有存放",
   "Also kept elsewhere?": "别处也有存放？",
   "Also send on WhatsApp": "也用 WhatsApp 发送",
@@ -4405,6 +4422,7 @@ L.zh = {
   "Asked today": "今天提出",
   "Asked yesterday": "昨天提出",
   "Asked {date}": "{date} 提出",
+  "At other centres: {list}": "其他中心：{list}",
   "Back": "返回",
   "Back to admin": "返回管理员",
   "Back to your real centres.": "返回您真实的分园。",
@@ -4727,7 +4745,6 @@ L.zh = {
   "Puzzles": "拼图",
   "QR stickers": "二维码贴纸",
   "Quantities only": "仅数量",
-  "Quantity only": "仅显示数量",
   "RM {price}": "RM {price}",
   "Read {code}…": "已读取 {code}…",
   "Reading the barcode…": "正在读取条形码…",
@@ -4831,6 +4848,7 @@ L.zh = {
   "Sign out all phones?": "退出所有手机？",
   "Signed in as admin": "已以管理员身份登录",
   "Signed out everywhere.": "已在所有设备退出。",
+  "Signing out…": "正在退出…",
   "Skip for now": "先跳过",
   "Soap and hand wash": "肥皂与洗手液",
   "Someone else changed this item. Check it before you save.": "别人修改了这件物品。保存前请先检查。",
@@ -4956,6 +4974,7 @@ L.zh = {
   "Unit": "单位",
   "Updated by someone else: {fields}. Check it and save again.": "已被别人更新：{fields}。请检查后再保存。",
   "Updated {when}": "{when} 更新",
+  "Updating the list…": "正在更新清单…",
   "Use Add more or Take some.": "请用“增加”或“取用”。",
   "Use this room": "使用这个房间",
   "Use this sheet": "使用这张表",
@@ -5256,10 +5275,12 @@ function parseBackend(text) {
 function setBackend(id) { BACKEND.id = id; BACKEND.url = 'https://script.google.com/macros/s/' + id + '/exec'; }
 
 // ---------- talking to the sheet ----------
+var INFLIGHT = [];
 function hostedCall(fn, data) {
   return new Promise(function (resolve, reject) {
     var done = false, ctl = window.AbortController ? new AbortController() : null;
-    function finish(f, v) { if (done) return; done = true; clearTimeout(timer); f(v); }
+    var rec = { ctl: ctl, at: Date.now() }; INFLIGHT.push(rec);
+    function finish(f, v) { if (done) return; done = true; clearTimeout(timer); var i = INFLIGHT.indexOf(rec); if (i >= 0) INFLIGHT.splice(i, 1); f(v); }
     function offline() { return Object.assign(new Error(tl('Offline.')), { network: true }); }
     var timer = setTimeout(function () { if (ctl) ctl.abort(); var o = offline(); o.timeout = true; finish(reject, o); }, window.__rmTimeout || 45000);
     if (!BACKEND.url) return finish(reject, Object.assign(new Error(tl('This page isn’t connected to a list yet.')), { network: false }));
@@ -5280,15 +5301,16 @@ function call(fn, data) {
   var owner = S.lockPending; S.lockPending = false;
   var p = callRaw(fn, data);
   if (!owner) return p;
-  var settled = function () { if (S.locked) { S.lockSettled = true; clearTimeout(S.lockT); S.lockT = setTimeout(function () { if (S.lockSettled) lockUI(false); }, 140); } };
-  return p.then(function (v) { settled(); return v; }, function (e) { settled(); throw e; });
+  return p.then(function (v) { lockSettle(); return v; }, function (e) { lockSettle(); throw e; });
 }
+function lockSettle() { if (S.locked) { S.lockSettled = true; clearTimeout(S.lockT); S.lockT = setTimeout(function () { if (S.lockSettled) lockUI(false); }, 140); } }
 // v42: the writes that belong to one centre say which centre this phone is ("as"); an admin phone also sends its token so the server knows it
 // may change any centre; in Test mode every call says so ("test") and carries the token for that ("tpin", kept apart from "pin" so View as staff
 // inside Test mode keeps staff rights).
 var OWN_FNS = ['changeStock', 'setLevel', 'saveCount', 'moveStock', 'updateItem', 'addItem', 'addMany', 'nameItem', 'missingPiece'];
 function decorate(fn, data) {
   data = Object.assign({}, data || {});
+  if (data.photoData && !data.thumbData && THUMBS[data.photoData]) data.thumbData = THUMBS[data.photoData];
   if (OWN_FNS.indexOf(fn) >= 0) {
     if (!data.as && S.me && S.me.centre) data.as = S.me.centre;
     if (S.admin && S.pin && !data.pin) data.pin = S.pin;
@@ -5310,7 +5332,11 @@ function minWait(p, ms) {
   };
   return p.then(function (v) { return later(function () { return v; }); }, function (e) { return later(function () { throw e; }); });
 }
-function callB(fn, data) { return minWait(call(fn, data)); }
+function callB(fn, data) {
+  var owner = S.lockPending; S.lockPending = false;
+  var p = minWait(callRaw(fn, data));
+  return owner ? p.then(function (v) { lockSettle(); return v; }, function (e) { lockSettle(); throw e; }) : p;
+}
 function callRaw(fn, data) {
   var p = callRaw0(fn, decorate(fn, data));
   if (S.test) p.catch(function (e) { if (e && e.data && e.data.expired && S.test) { ACT.testOff(); toast(tl('Your admin sign-in ended. Sign in again.')); } });
@@ -5369,7 +5395,7 @@ window.RMPoll = { draw: function () { render(); }, kb: function (n) { placeSheet
   adminPending: function () { return !!(S.admin && S.admin.pending); },
   sheetEntry: function () { return !!(topSnap() && topSnap().sheet); },
   lock: lockUI,
-  lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true, b); } };
+  lockBtn: function (sel) { var b = document.querySelector(sel); b.classList.add('loading'); lockUI(true); } };
 ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (n) { document.addEventListener(n, function () { S.touched = Date.now(); }, { passive: true, capture: true }); });
 function applyData(d) {
   if (d.ver != null) S.ver = d.ver;
@@ -5389,7 +5415,7 @@ function applyData(d) {
 }
 // an item of another centre as a staff phone sees it: what it is and how many, nothing about where or how it is kept (mirrors the sheet)
 function qtyOnly(it) {
-  return { id: it.id, name: it.name, alt: it.alt, cat: it.cat, centre: it.centre, loc: '', qty: it.qty, unit: it.unit, min: it.min, tracking: it.tracking, kind: it.kind, parts: '', subtype: it.subtype, barcode: '', status: 'Good', notes: '', photo: '', counted: 0, updated: it.updated, ro: 1 };
+  return { id: it.id, name: it.name, alt: it.alt, cat: it.cat, centre: it.centre, loc: '', qty: it.qty, unit: it.unit, min: it.min, tracking: it.tracking, kind: it.kind, parts: '', subtype: it.subtype, barcode: '', status: 'Good', notes: '', photo: '', thumb: '', counted: 0, updated: it.updated, ro: 1 };
 }
 function scrubBase() {
   var me = S.me && S.me.centre;
@@ -5498,6 +5524,7 @@ function refresh(manual) {
     else if (manual && !e.network) toast(e.message);
   }).then(function () {
     S.refreshing = false;
+    softBusy(false);
     softRender();
     applyLink();
     adminEntry();
@@ -5562,6 +5589,7 @@ function flush() {
   })();
   function end() {
     S.flushing = false;
+    if (S.softSend) { S.softSend = false; softBusy(false); }
     rebuild();
     softRender();
     if (S.pendingConf && S.pendingConf.length) { var pc = S.pendingConf; S.pendingConf = []; noteCountConflicts(pc); }
@@ -5853,6 +5881,7 @@ function afterRender(v) {
     store.set('rm_lptip', 1);
     setTimeout(function () { if (cur().name === 'home') toast(tl('Tip: press and hold an item for shortcuts.')); }, 1500);
   }
+  if (v.name === 'edit' && v.need && !v._focused) { v._focused = true; showNeed(v.need); }
   if (v.name === 'edit' && !v._focused) {   // an item that still needs something: every missing thing glows twice, then the keyboard (name) or the room list (place) opens on the first
     var it0 = S.byId[v.id], tags0 = it0 ? attentionTags(it0) : [], els0 = [], then0 = null;
     var nameEl = byIdEl('f-nname') || byIdEl('f-name'), placeEl = byIdEl('f-loc-btn'), typeEl = byIdEl('f-type');
@@ -5945,8 +5974,9 @@ function photoSrc(it, w) {
   return /^https:\/\//.test(p) ? p : '';
 }
 function tile(it, cat, big) {
-  var src = photoSrc(it, big ? 480 : 160);
-  var m = it && /\/d\/([\w-]{10,})/.exec(it.photo || '');
+  var tiny = !big && it && !S.localPhoto[it.id] && /^data:image\/jpeg;base64,/.test(it.thumb || '') ? it.thumb : '';   // already on the phone: no download
+  var src = tiny || photoSrc(it, big ? 480 : 160);
+  var m = !tiny && it && /\/d\/([\w-]{10,})/.exec(it.photo || '');
   return '<span class="tile' + (big ? ' big' : '') + '"><span class="emo">' + (CAT_ICON[cat] || (it && it.kind === 'Supplies' ? '🧴' : it && it.kind === 'Equipment' ? '🧰' : '📦')) + '</span>' +
     (src ? '<img alt="" loading="lazy" decoding="async" fetchpriority="low" src="' + esc(src) + '"' +
       (m ? ' data-fb="https://drive.google.com/thumbnail?id=' + esc(m[1]) + '&amp;sz=w' + (big ? 480 : 160) + '"' : '') + '>' : '') +
@@ -6234,7 +6264,7 @@ function card(g) {
       return '<span class="pl' + (per[c].low ? ' low' : '') + (c === mine ? ' mine' : '') + '">' + esc(c) + ' <b>' + (per[c].lv !== null && !per[c].qty ? LEVEL_LABELS[per[c].lv] : per[c].qty) + '</b></span>';
     }).join('');
   }
-  var flags = g.rows.length ? ' ' + needBadgeHtml(needSetFor(g.rows, g)) : '';
+  var flags = g.rows.length ? ' ' + needBadgeHtml(needSetFor(g.rows, g), g.rows) : '';
   g.rows.forEach(function (r) {
     if (STATUS_LABEL[r.status] && flags.indexOf(STATUS_LABEL[r.status]) < 0) flags += ' <span class="badge warn">' + STATUS_LABEL[r.status] + '</span>';
   });
@@ -6264,16 +6294,21 @@ function typeLockMsg() { return tl('The type is shared by every centre. Ask your
 function vItem(v) {
   var g = S.gmap[v.key];
   if (!g) return top(true) + '<div class="card empty"><h2>' + tl('That item was removed.') + '</h2><button class="btn" data-act="nav" data-to="home">' + tl('Search again') + '</button></div>';
+  // for staff, other centres that are sent as numbers only are one quiet line, not rows to look through
+  var quiet = S.admin ? [] : g.rows.filter(function (r) { return r.ro; });
+  var full = g.rows.filter(function (r) { return quiet.indexOf(r) < 0; });
   var sel = pickRow(g, v.id);
+  if (quiet.indexOf(sel) >= 0 && full.length) sel = full[0];
   v.id = sel.id;
   var can = mineRow(sel);
-  var many = g.rows.length > 1;
-  var places = g.rows.map(function (r) {
-    return '<' + (many ? 'button data-act="pick" data-id="' + esc(r.id) + '"' : 'div') + ' class="place' + (r.id === sel.id && many ? ' on' : '') + '">' +
+  var many = full.length > 1;
+  var sum = quiet.length ? { levelOnly: full.every(isLevel), lowest: Math.min.apply(null, full.filter(isLevel).map(function (r) { return r.qty; })), total: full.reduce(function (n, r) { return n + (isLevel(r) ? 0 : r.qty); }, 0), unit: g.unit } : g;
+  var places = full.map(function (r) {
+    return '<' + (many ? 'button data-act="pick" data-id="' + esc(r.id) + '"' : 'div') + ' class="place' + (r.id === sel.id ? ' on' : '') + '">' +
       (many ? '<span class="dot"></span>' : '') +
-      '<span class="where">' + esc(r.centre) + (r.ro ? '' : ' · ' + esc(r.loc)) +
-      (r.ro ? '<small>' + tl('Quantity only') + '</small></span>' : (badges(r) ? '<small>' + badges(r) + '</small>' : '') +
-      '<small>' + (r.parts ? r.parts.split(';').join(' +') + ' · ' : '') + (!isLevel(r) && r.min > 0 ? tl('Low at {n}', { n: r.min }) + ' · ' : '') + (isLevel(r) ? tl('Checked {when}', { when: ago(r.counted) }) : tl('Checked {when}', { when: ago(r.counted) })) + '</small></span>') +
+      '<span class="where">' + esc(r.centre) + ' · ' + esc(r.loc) +
+      (badges(r) ? '<small>' + badges(r) + '</small>' : '') +
+      '<small>' + (r.parts ? r.parts.split(';').join(' +') + ' · ' : '') + (!isLevel(r) && r.min > 0 ? tl('Low at {n}', { n: r.min }) + ' · ' : '') + (isLevel(r) ? tl('Checked {when}', { when: ago(r.counted) }) : tl('Checked {when}', { when: ago(r.counted) })) + '</small></span>' +
       '<span class="qty' + (low(r) ? ' low' : '') + '">' + (isLevel(r) ? LEVEL_LABELS[r.qty] : r.qty + '<small>' + esc(unitFor(r.qty, r.unit)) + '</small>') + '</span>' +
       '</' + (many ? 'button' : 'div') + '>';
   }).join('');
@@ -6281,9 +6316,10 @@ function vItem(v) {
   return top(true) +
     '<div class="headcard">' + (can ? '<button type="button" class="tilebtn" data-act="photoItem" aria-label="' + tl('Photo and notes') + '">' + tile(g.photoRow, g.cat, true) + '</button>' : '<span class="tilebtn">' + tile(g.photoRow, g.cat, true) + '</span>') + '<div style="min-width:0"><h1 class="name">' + esc(g.dname) + '</h1>' +
     (g.dalt ? '<p class="line">' + esc(g.dalt) + '</p>' : '') +
-    (needBadgeHtml(needSetFor(g.rows, g)) ? '<p class="line">' + needBadgeHtml(needSetFor(g.rows, g)) + '</p>' : '') +
-    (many ? '<p class="line"><b>' + groupSummary(g) + '</b> ' + esc(tl('in {n} places', { n: g.rows.length })) + '</p>' : '') + '</div></div>' +
-    (many ? '' : itemActions(sel, many)) + '<div class="card">' + places + '</div>' +
+    (needBadgeHtml(needSetFor(g.rows, g), g.rows) ? '<p class="line">' + needBadgeHtml(needSetFor(g.rows, g), g.rows) + '</p>' : '') +
+    (many ? '<p class="line"><b>' + groupSummary(sum) + '</b> ' + esc(tl('in {n} places', { n: full.length })) + '</p>' : '') + '</div></div>' +
+    (many ? '' : itemActions(sel, many)) + (places ? '<div class="card">' + places + '</div>' : '') +
+    (quiet.length ? '<p class="elsewhere">' + esc(full.length ? tl('Also at: {list}', { list: quietList(quiet) }) : tl('At other centres: {list}', { list: quietList(quiet) })) + '</p>' : '') +
     (sel.notes ? '<p class="note">' + esc(sel.notes) + '</p>' : '') +
     (many ? itemActions(sel, many) : '') +
     (can ? '<div class="card rows">' +
@@ -6296,9 +6332,20 @@ function vItem(v) {
     '<button class="rowbtn" data-act="addPlace"><span>' + tl('Also kept elsewhere') + '</span>' + ICON.go + '</button>' +
     (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Needs details') + '</small></span>' + ICON.go + '</button>' : '') +
     '</div></details>' +
-    '<details class="histfold" id="histfold"' + (cur().histOpen ? ' open' : '') + '><summary>' + tl('History') + '</summary>' + (cur().histOpen ? histBody(past) : '') + '</details>';
+    (quiet.indexOf(sel) >= 0 ? '' : '<details class="histfold" id="histfold"' + (cur().histOpen ? ' open' : '') + '><summary>' + tl('History') + '</summary>' + (cur().histOpen ? histBody(past) : '') + '</details>');
+}
+// "North 60 · East 15": one number (or level) per centre
+function quietList(rows) {
+  var names = [], per = {};
+  rows.forEach(function (r) {
+    if (!per[r.centre]) { per[r.centre] = { n: 0, lv: null }; names.push(r.centre); }
+    if (isLevel(r)) per[r.centre].lv = per[r.centre].lv === null ? r.qty : Math.min(per[r.centre].lv, r.qty);
+    else per[r.centre].n += r.qty;
+  });
+  return names.map(function (c) { return c + ' ' + (per[c].lv !== null && !per[c].n ? LEVEL_LABELS[per[c].lv] : per[c].n); }).join(' · ');
 }
 function itemActions(sel, many) {
+  if (!mineRow(sel) && sel.ro) return '';
   if (!mineRow(sel)) return '<p class="note locknote">' + esc(tl('Only {centre} can change this.', { centre: sel.centre })) + '</p>';
   return isLevel(sel)
     ? '<div class="levels" role="group" aria-label="' + tl('How much is left?') + '">' + levelButtons('setLevel', sel.qty) + '</div>' +
@@ -6577,6 +6624,10 @@ var ROOM_KEYS = [[/receiv/i, 'received'], [/store|storage|stock/i, 'store'], [/h
 function roomIconKey(name) {
   var set = (S.rooms || []).filter(function (r) { return r.icon && ICON.room[r.icon] && String(r.name).trim().toLowerCase() === String(name || '').trim().toLowerCase(); })[0];   // the admin's choice wins
   if (set) return set.icon;
+  return autoIconKey(name);
+}
+// the picture picked from the room's name
+function autoIconKey(name) {
   for (var i = 0; i < ROOM_KEYS.length; i++) if (ROOM_KEYS[i][0].test(String(name || ''))) return ROOM_KEYS[i][1];
   return 'door';
 }
@@ -6855,7 +6906,7 @@ function vEdit(v) {
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
     photoField() +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="formend' + ((v.finish && tags.length && more) || S.admin ? ' pair' : '') + '"><button class="btn primary" id="f-go" data-act="editGo">' + tl('Save') + '</button>' +
+    '<div class="formend edit"><button class="btn primary" id="f-go" data-act="editGo">' + tl('Save') + '</button>' +
     (v.finish && tags.length && more ? '<button type="button" class="btn next" id="f-next" data-act="editNext">' + tl('Save & next') + '</button>' : '') +
     (S.admin ? '<button type="button" class="btn quiet" data-act="removeItem">' + tl('Remove item') + '</button>' : '') + '</div>';
 }
@@ -6906,7 +6957,7 @@ function vLow() {
     var main = '<button class="card item' + (pick ? ' pickrow' + (on[it.id] ? '' : ' off') : '') + '" data-act="' + (pick ? 'lowTog' : 'open') + '" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '"' +
       (pick ? ' role="checkbox" aria-checked="' + (on[it.id] ? 'true' : 'false') + '"' : '') + '>' +
       (pick ? '<i class="pk" aria-hidden="true"></i>' : '') + tile(it, it.cat) + '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' + lines +
-      (needBadgeHtml(needSetFor([it])) ? '<span class="line">' + needBadgeHtml(needSetFor([it])) + '</span>' : '') +
+      (needBadgeHtml(needSetFor([it]), [it]) ? '<span class="line">' + needBadgeHtml(needSetFor([it]), [it]) + '</span>' : '') +
       (o ? '<span class="line">' + reqChip(o) + '</span>' : '') + '<span class="line">' + esc(it.loc) + '</span></span></button>';   // how much is left is in the yellow tag, so the name gets the whole width
     return pick ? main : '<div class="lowwrap' + (o && o.pending ? ' unconf' : '') + '">' + main + (S.admin && low(it) ? admActions(it, o) : '') + '</div>';
   };
@@ -7098,7 +7149,7 @@ function roomListHtml(v) {
   if (list.length) return '<div class="list">' + list.map(function (it) {
     return '<button class="card item" data-act="open" data-key="' + esc(RMSearch.norm(it.name)) + '" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
       '<span class="body"><span class="name">' + esc(shown(it)) + '</span>' +
-      (low(it) || needBadgeHtml(needSetFor([it])) ? '<span class="line">' + (low(it) ? '<span class="badge low">' + tl('Running low') + '</span> ' : '') + needBadgeHtml(needSetFor([it])) + '</span>' : '') + '</span>' +
+      (low(it) || needBadgeHtml(needSetFor([it]), [it]) ? '<span class="line">' + (low(it) ? '<span class="badge low">' + tl('Running low') + '</span> ' : '') + needBadgeHtml(needSetFor([it]), [it]) + '</span>' : '') + '</span>' +
       '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
   }).join('') + '</div>';
   if (!all.length) return '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>';
@@ -7725,15 +7776,31 @@ function needSetFor(rows, g) {
   if (g && !g.cat) set.type = 1;
   return set;
 }
-function needBadgeHtml(set) {
+// which row a tap on the pill opens: one this phone may change that still needs it (this centre first)
+function needTarget(rows, t) {
+  var own = (rows || []).filter(function (r) { return mineRow(r) && !r.ro; }).sort(function (a, b) { return (b.centre === myCentre() ? 1 : 0) - (a.centre === myCentre() ? 1 : 0); });
+  return own.filter(function (r) { return attentionTags(r).indexOf(t) >= 0; })[0] || (t === 'type' ? own[0] : null) || null;
+}
+function needBadgeHtml(set, rows) {
   var out = '';
-  ['name', 'type', 'place'].forEach(function (t) { if (set[t]) out += '<span class="badge need">' + esc(tagLabel(t)) + '</span> '; });
+  ['name', 'type', 'place'].forEach(function (t) {
+    if (!set[t]) return;
+    var to = needTarget(rows, t);
+    out += '<span class="badge need"' + (to ? ' role="button" tabindex="0" data-act="needGo" data-id="' + esc(to.id) + '" data-need="' + t + '"' : '') + '>' + esc(tagLabel(t)) + '</span> ';
+  });
   return out;
+}
+// land on the one field that is missing: scroll to it, let it glow, then the keyboard (name) or the room list (place)
+function needEl(need) { return need === 'name' ? (byIdEl('f-nname') || byIdEl('f-name')) : need === 'type' ? byIdEl('f-type') : byIdEl('f-loc-btn'); }
+function showNeed(need) {
+  var el = needEl(need); if (!el) return;
+  glowThen([el], need === 'name' ? function () { el.focus(); selectBarcode(el); } : need === 'place' ? function () { el.click(); } : null);
 }
 function tagLabel(t) { return t === 'place' ? tl('Needs place') : t === 'name' ? tl('Needs name') : tl('Needs type'); }
 function tagWord(t) { return t === 'place' ? tl('a place') : t === 'name' ? tl('a name') : tl('a type'); }
 function tagsHtml(it) {
-  return '<span class="tags">' + attentionTags(it).map(function (t) { return '<span class="badge need">' + esc(tagLabel(t)) + '</span>'; }).join('') + '</span>';
+  var set = {}; attentionTags(it).forEach(function (t) { set[t] = 1; });
+  return '<span class="tags">' + needBadgeHtml(set, [it]) + '</span>';
 }
 function attRow(it) {
   return '<div class="roomrow"><button class="rowmain" data-act="finish" data-id="' + esc(it.id) + '"><span class="ri" aria-hidden="true">' + (CAT_ICON[it.cat] || '📦') + '</span>' +
@@ -7859,11 +7926,6 @@ function formError(msg) {
 var busyEl = null;
 // The lock belongs to ONE call: the first call made after busy(true). When that call has answered, the lock is released a moment
 // after the screen has been redrawn (render() releases it too), so the layer lifts together with the new screen.
-// the dim layer with a rounded hole over the button that is working
-function holePath(r) {
-  var W = window.innerWidth, H = window.innerHeight, x = Math.max(0, r.left), y = Math.max(0, r.top), w = r.width, h = r.height, k = Math.min(12, w / 2, h / 2);
-  return 'path(evenodd, "M0 0H' + W + 'V' + H + 'H0Z M' + (x + k) + ' ' + y + 'H' + (x + w - k) + 'A' + k + ' ' + k + ' 0 0 1 ' + (x + w) + ' ' + (y + k) + 'V' + (y + h - k) + 'A' + k + ' ' + k + ' 0 0 1 ' + (x + w - k) + ' ' + (y + h) + 'H' + (x + k) + 'A' + k + ' ' + k + ' 0 0 1 ' + x + ' ' + (y + h - k) + 'V' + (y + k) + 'A' + k + ' ' + k + ' 0 0 1 ' + (x + k) + ' ' + y + 'Z")';
-}
 var viewportOrig = null;
 function noZoom(on) {
   var m = document.querySelector('meta[name=viewport]');
@@ -7872,21 +7934,46 @@ function noZoom(on) {
   else if (viewportOrig !== null) { m.setAttribute('content', viewportOrig); viewportOrig = null; }
 }
 ['touchmove', 'wheel'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked && e.cancelable) e.preventDefault(); }, { passive: false }); });
-['gesturestart', 'gesturechange'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked) e.preventDefault(); }); });
-// while the layer is up, the hole is re-cut every frame at the button's real place (the keyboard closing, a sheet settling or a rotation all move it)
-function trackHole() {
-  var el = byIdEl('lock'), b = S.holeEl;
-  if (!S.locked || !el || !b) return;
-  try { if (document.body.contains(b)) { var p = holePath(b.getBoundingClientRect()); if (p !== S.holePath) { S.holePath = p; el.style.clipPath = p; } } } catch (e) { /* keep the last hole */ }
-  S.holeRaf = requestAnimationFrame(trackHole);
+var MULTI = { on: false, y: 0, boxes: [] };
+function holdStill() {
+  if (Math.abs(window.pageYOffset - MULTI.y) > 0) window.scrollTo(0, MULTI.y);
+  MULTI.boxes.forEach(function (b) { if (b.el.scrollTop !== b.top) b.el.scrollTop = b.top; });
 }
-function lockUI(on, holeEl) {
+document.addEventListener('touchstart', function (e) {
+  var n = e.touches.length;
+  if (n === 1) {   // where everything stood when the first finger landed
+    MULTI.on = false; MULTI.y = window.pageYOffset; MULTI.boxes = [];
+    for (var el = e.target; el && el !== document.body && el.nodeType === 1; el = el.parentNode) if (el.scrollHeight > el.clientHeight + 1) MULTI.boxes.push({ el: el, top: el.scrollTop });
+    return;
+  }
+  lpCancel();
+  if (n >= 3) { MULTI.on = true; holdStill(); }
+}, { passive: true, capture: true });
+document.addEventListener('touchmove', function (e) {
+  if (!MULTI.on && e.touches.length < 3) return;
+  MULTI.on = true;
+  if (e.cancelable) e.preventDefault();
+  holdStill();   // the page may have begun to move before the third finger landed: put it back
+}, { passive: false, capture: true });
+['touchend', 'touchcancel'].forEach(function (n) { document.addEventListener(n, function (e) { if (MULTI.on && !e.touches.length) { holdStill(); MULTI.on = false; setTimeout(holdStill, 60); } }, { passive: true, capture: true }); });
+['gesturestart', 'gesturechange'].forEach(function (n) { document.addEventListener(n, function (e) { if (S.locked) e.preventDefault(); }); });
+function lockLabel(text) { var l = byIdEl('lock-label'); if (l) l.textContent = text || tl('Saving…'); }
+// a wait that must not stop the person (a refresh, queued changes being sent): the same dim, ring and word, but taps go through
+function softBusy(on, label) {
+  var el = byIdEl('lock'); if (!el || S.locked) return;
+  if (on) { S.soft = Date.now(); lockLabel(label); el.classList.add('soft'); el.hidden = false; }
+  else if (el.classList.contains('soft')) {
+    var left = 400 - (Date.now() - (S.soft || 0));
+    var end = function () { if (!S.locked && el.classList.contains('soft')) { el.classList.remove('soft'); el.hidden = true; } };
+    if (left > 0) setTimeout(end, left); else end();
+  }
+}
+function lockUI(on, label) {
   var el = byIdEl('lock');
   clearTimeout(S.lockWD);
-  cancelAnimationFrame(S.holeRaf); S.holeEl = null; S.holePath = '';
+  if (el) el.classList.remove('soft');
   if (on) {
-    if (el) { try { el.style.clipPath = holeEl ? holePath(holeEl.getBoundingClientRect()) : ''; } catch (e) { el.style.clipPath = ''; } }
-    if (holeEl) { S.holeEl = holeEl; S.holeRaf = requestAnimationFrame(trackHole); }
+    lockLabel(label);
     noZoom(true);
     S.locked = true; S.lockSettled = false; S.lockPending = true;
     if (el) el.hidden = false;
@@ -7898,7 +7985,7 @@ function lockUI(on, holeEl) {
   } else {
     S.locked = false; S.lockSettled = false; S.lockPending = false;
     noZoom(false);
-    if (el) { el.hidden = true; el.style.clipPath = ''; }
+    if (el) el.hidden = true;
     document.body.classList.remove('saving'); document.documentElement.classList.remove('locked');
     ['app', 'nav', 'sheet', 'banner'].forEach(function (id) { var x = byIdEl(id); if (x) x.inert = false; });
   }
@@ -7908,7 +7995,7 @@ function busy(on, label) {
     var b = S.lastBtn && S.lastBtnAt > Date.now() - 1500 && document.body.contains(S.lastBtn) && /^(BUTTON|A)$/.test(S.lastBtn.tagName) ? S.lastBtn : (byIdEl('f-go') || byIdEl('m-go'));
     busyEl = b;
     if (b) { b.classList.add('loading'); b.disabled = true; b.setAttribute('aria-busy', 'true'); }
-    lockUI(true, b);
+    lockUI(true, label);
   } else {
     lockUI(false);
     var e = busyEl; busyEl = null;
@@ -7958,6 +8045,19 @@ function failed(e) {
   busy(false);
   formError(e.timeout ? tl('No reply yet. It may have saved: check before trying again.') : e.network ? tl('Offline. Try again later.') : e.message);
 }
+var THUMBS = {};   // full photo -> its tiny thumbnail, kept until the photo is sent
+// about 96 px: sharp enough for a list row, about 2 to 4 KB
+function tinyThumb(img) {
+  var tries = [[96, 0.6], [96, 0.45], [72, 0.45]];
+  for (var i = 0; i < tries.length; i++) {
+    var k = Math.min(1, tries[i][0] / Math.max(img.width, img.height)), c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    var d = c.toDataURL('image/jpeg', tries[i][1]);
+    if (d.length <= 9000) return d;
+  }
+  return '';
+}
 function shrink(file) {
   return new Promise(function (resolve, reject) {
     var url = URL.createObjectURL(file), img = new Image();
@@ -7967,8 +8067,10 @@ function shrink(file) {
       c.width = Math.max(1, Math.round(img.width * k));
       c.height = Math.max(1, Math.round(img.height * k));
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      var full = c.toDataURL('image/jpeg', 0.72);
+      THUMBS[full] = tinyThumb(img);
       URL.revokeObjectURL(url);
-      resolve(c.toDataURL('image/jpeg', 0.72));
+      resolve(full);
     };
     img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('photo')); };
     img.src = url;
@@ -8007,7 +8109,7 @@ var ACT = {
   },
   go: function (el) { if (el.dataset.to === 'requests') loadRequests(); go({ name: el.dataset.to }); },
   back: back,
-  refresh: function (el) { if (el && el.classList) { el.classList.add('spin'); setTimeout(function () { el.classList.remove('spin'); }, 900); } refresh(true); },
+  refresh: function (el) { if (el && el.classList) { el.classList.add('spin'); setTimeout(function () { el.classList.remove('spin'); }, 900); } softBusy(true, tl('Updating the list…')); refresh(true); },
   flushNow: function () {
     if (S.offline && S.outbox.length) {   // still no signal: say so, so a second tap is never met with silence
       var again = S.tried && Date.now() - S.tried.at < 8000;
@@ -8705,10 +8807,11 @@ var ACT = {
   },
   roomIcon: function (el) {
     M = { type: 'roomicon', centre: el.dataset.centre, name: el.dataset.val };
-    var cur0 = (S.rooms || []).filter(function (r) { return r.centre === M.centre && r.name === M.name; })[0], on = cur0 && cur0.icon;
+    var cur0 = (S.rooms || []).filter(function (r) { return r.centre === M.centre && r.name === M.name; })[0];
+    var chosen = cur0 && ICON.room[cur0.icon] ? cur0.icon : '', auto = autoIconKey(M.name), now = chosen || auto;
     openSheet('<h2>' + esc(tl('Icon for “{name}”', { name: M.name })) + '</h2><div class="igrid">' +
-      '<button type="button" class="igo' + (on ? '' : ' on') + '" data-act="roomIconSet" data-val=""><span class="ri">' + roomIcon('') + '</span><small>' + tl('Default') + '</small></button>' +
-      Object.keys(ICON.room).map(function (k) { return '<button type="button" class="igo' + (on === k ? ' on' : '') + '" data-act="roomIconSet" data-val="' + k + '" aria-label="' + esc(k) + '"><span class="ri">' + ICON.room[k] + '</span></button>'; }).join('') +
+      // the room's own automatic picture sends "" (back to automatic); there is no separate extra tile
+      Object.keys(ICON.room).map(function (k) { return '<button type="button" class="igo' + (now === k ? ' on' : '') + '" aria-pressed="' + (now === k) + '" data-act="roomIconSet" data-key="' + k + '" data-val="' + (k === auto ? '' : k) + '" aria-label="' + esc(k) + '"><span class="ri">' + ICON.room[k] + '</span>' + (!chosen && k === auto ? '<small>' + tl('Default') + '</small>' : '') + '</button>'; }).join('') +
       '</div><p class="err" id="m-err" hidden></p><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
   roomIconSet: function (el) {
@@ -8924,6 +9027,12 @@ var ACT = {
     catch (e) { box.select(); toast(tl('Press and hold, then Copy.')); }
   },
   // the Admin pill: a small menu under it. It is a sheet in a dropdown's clothes, so Back, tapping outside and every history rule already work.
+  needGo: function (el) {
+    var it = S.byId[el.dataset.id], need = el.dataset.need, v = cur();
+    if (!it) return;
+    if (v.name === 'edit' && v.id === it.id) return showNeed(need);
+    go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: true, need: need });
+  },
   pillMenu: function (el) {
     var r = el.getBoundingClientRect();
     var item = function (act, ic, label, cls) { return '<button type="button" role="menuitem" class="pmi' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"><span class="lead">' + ic + '</span><span>' + label + '</span></button>'; };
@@ -9017,7 +9126,7 @@ var ACT = {
   },
   adminLeave: function (el) {
     if (el && el.dataset && !S.locked && !el.__left) {   // tapped: a short loading state first (the programmatic call, after "sign out everywhere", has had its own)
-      busy(true);
+      busy(true, tl('Signing out…'));
       setTimeout(function () { busy(false); el.__left = true; ACT.adminLeave(); }, BUFFER_MS);
       return;
     }
@@ -9204,8 +9313,9 @@ document.addEventListener('click', function (e) {
   if (fn) { if (el.tagName !== 'A') e.preventDefault(); fn(el, e); if (cur().name === 'add' && cur().fromAdd && el.dataset.act !== 'addGo' && el.dataset.act !== 'addGoMore' && el.dataset.act !== 'addDraftClear') addDraftSave(); }
 });
 window.addEventListener('offline', function () { S.offline = true; try { drawChrome(cur()); } catch (e) { /* not drawn yet */ } });
-window.addEventListener('online', function () { try { refresh(); } catch (e) { /* not ready */ } });
+window.addEventListener('online', function () { try { if (S.offline) probeNow(); else { flush(); refresh(); } } catch (e) { /* not ready */ } });
 document.addEventListener('keydown', function (e) {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('role') === 'button' && e.target.dataset.act) { e.preventDefault(); e.target.click(); return; }
   if (e.key !== 'Enter' || !e.target || !e.target.id) return;
   if (e.target.id === 'ns-name') { e.preventDefault(); ACT.nameStepSave(); }
   else if (e.target.id === 'cam-name') { e.preventDefault(); ACT.nameSave(); }
@@ -9305,13 +9415,13 @@ byIdEl('file').addEventListener('change', function () {
   var forItem = S.photoFor;
   if (forItem) {
     S.photoFor = '';
-    toast(tl('Saving the photo…'));
+    busy(true, tl('Saving the photo…'));
     shrink(f).then(function (dataUrl) {
       return call('updateItem', { itemId: forItem, fields: {}, photoData: dataUrl }).then(function (res) {
-        S.localPhoto[forItem] = dataUrl; mergeItems(res.items); rebuild(); render();
+        busy(false); S.localPhoto[forItem] = dataUrl; mergeItems(res.items); rebuild(); render();
         toast(res.photoFailed ? tl('Photo didn’t work. Try another.') : tl('Photo saved.'));
       });
-    }).catch(function (e) { toast(e && e.network ? tl('Offline. Try again later.') : tl('Photo didn’t work. Try another.')); });
+    }).catch(function (e) { busy(false); toast(e && e.network ? tl('Offline. Try again later.') : tl('Photo didn’t work. Try another.')); });
     return;
   }
   shrink(f).then(function (dataUrl) {
@@ -9320,10 +9430,36 @@ byIdEl('file').addEventListener('change', function () {
     if (th) th.innerHTML = '<span class="tile"><img alt="" src="' + dataUrl + '"></span>';
   }).catch(function () { toast(tl('Photo didn’t work. Try another.')); });
 });
-window.addEventListener('online', function () { flush(); });
+// While the app believes it is offline it asks the sheet a tiny question after 2, 3, 5 and then every 8 seconds (only while it is on screen).
+// The phone's own "online" announcement is often late or missing, so it is only a hint to ask at once.
+var PROBE_MS = [2000, 3000, 5000, 8000];
+function backOnline() {
+  S.offline = false; S.probeN = 0; S.probeAt = 0; S.tried = null;
+  INFLIGHT.slice().forEach(function (r) { if (r.ctl && Date.now() - r.at > 6000) r.ctl.abort(); });   // give up on requests that stalled while the signal was gone
+  try { drawChrome(cur()); } catch (e) { /* not drawn yet */ }
+  if (S.outbox.length) { S.softSend = true; softBusy(true, tl('Sending…')); flush(); }
+  refresh();
+}
+function probeNow() {
+  if (!S.offline || S.probing || S.test) return;
+  S.probing = true;
+  var done = false, finish = function (ok) {
+    if (done) return; done = true; clearTimeout(limit); S.probing = false;
+    if (ok) backOnline();
+    else { S.probeN = (S.probeN || 0) + 1; S.probeAt = Date.now() + PROBE_MS[Math.min(S.probeN, PROBE_MS.length - 1)]; }
+  };
+  var limit = setTimeout(function () { finish(false); }, 6000);
+  callRaw('version', {}).then(function () { finish(true); }, function (e) { finish(!(e && e.network)); });
+}
+setInterval(function () {
+  if (!S.offline || document.hidden) { S.probeAt = 0; return; }
+  if (!S.probeAt) { S.probeN = 0; S.probeAt = Date.now() + PROBE_MS[0]; return; }
+  if (Date.now() >= S.probeAt) probeNow();
+}, 500);
 document.addEventListener('visibilitychange', function () {
   if (document.hidden) return;
   S.touched = Date.now();
+  if (S.offline) return probeNow();
   if (Date.now() - S.syncedAt > 120000) refresh(); else pollNow();
 });
 S.touched = Date.now();
