@@ -119,6 +119,15 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .tot{flex:none;display:flex;flex-direction:column;align-items:flex-end;min-width:48px;text-align:right}
 .tot b{font-size:30px;line-height:1;font-weight:700;letter-spacing:-.02em}
 .tot b.word{font-size:20px;line-height:1.2;letter-spacing:0}
+.tot.low b{text-decoration:underline;text-decoration-color:var(--mark);text-decoration-thickness:4px;text-underline-offset:4px}
+.stat.loading{background:var(--wash)}
+.stat.loading > span{opacity:.55}
+/* the waiting dots always move, also with "reduce motion": they are the only sign that something is coming */
+.dots3{display:inline-flex;align-items:flex-end;gap:5px;height:1em}
+.dots3 i{display:block;width:8px;height:8px;margin-bottom:.2em;border-radius:50%;background:currentColor;animation:wave 1s ease-in-out infinite}
+.dots3 i:nth-child(2){animation-delay:.15s}
+.dots3 i:nth-child(3){animation-delay:.3s}
+@keyframes wave{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-8px);opacity:1}}
 .tot small{font-size:12px;color:var(--muted);margin-top:var(--s1)}
 .badge{display:inline-block;font-size:13px;font-weight:600;padding:1px var(--s2);border-radius:2px;white-space:nowrap;margin-right:var(--s1)}
 .badge.low{background:var(--mark);color:var(--on-mark)}
@@ -643,7 +652,9 @@ details.histfold{margin-top:var(--s5)}
 #lock{position:fixed;inset:0;z-index:150;background:color-mix(in srgb,var(--paper) 55%,transparent);cursor:progress;touch-action:none}
 html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavior:none}
 #lock:not([hidden]){display:flex;align-items:center;justify-content:center}
-#lock.soft{pointer-events:none;cursor:auto}
+html.softlock,html.softlock body{overflow:hidden;overscroll-behavior:none}
+#lock-free{width:auto;min-width:160px;margin:var(--s2) 0 0;pointer-events:auto}
+.minispin{display:inline-block;flex:none;width:16px;height:16px;border:2.5px solid color-mix(in srgb,currentColor 25%,transparent);border-top-color:currentColor;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-3px;margin-right:var(--s2)}
 .lockcard{display:flex;flex-direction:column;align-items:center;gap:var(--s3);min-width:140px;max-width:80vw;padding:var(--s4) var(--s5);border-radius:var(--r);background:var(--surface);color:var(--ink);border:1px solid var(--line-strong);box-shadow:var(--sh2);font-weight:700;font-size:15px;text-align:center}
 /* the ring always turns, also with "reduce motion": it is the only thing that says the app is working */
 .lockring{width:34px;height:34px;border:4px solid color-mix(in srgb,var(--ink) 18%,transparent);border-top-color:var(--ink);border-radius:50%;animation:spin .8s linear infinite;flex:none}
@@ -879,6 +890,18 @@ html.sheetopen,html.sheetopen body{overflow:hidden;overscroll-behavior:none}
 details.glow{border-radius:0}
 @media (prefers-reduced-motion:reduce){.glow{animation:none;box-shadow:0 0 0 3px var(--mark),0 0 0 6px color-mix(in srgb,var(--ink) 38%,transparent)}}
 .rp-or{margin:var(--s2) 0 0;font-size:14px;font-weight:600;color:var(--muted)}
+#sheet .panel.compact{display:block;overflow-y:auto;max-height:calc(100% - 8px);overscroll-behavior:contain}
+html[data-text] #sheet .panel.compact{max-height:calc(100% - 8px)}
+#sheet .panel.compact .rp-in{display:block;height:auto;max-height:none}
+#sheet .panel.compact .rp-head{display:contents}
+#sheet .panel.compact .rp-head > *{margin-left:var(--s4);margin-right:var(--s4)}
+#sheet .panel.compact .rp-in .rp-head > *{margin-left:0;margin-right:0}
+#sheet .panel.compact .rp-title{position:sticky;top:0;z-index:3;margin:0;padding:var(--s3) var(--s4);background:var(--paper);border-bottom:1px solid var(--line)}
+#sheet .panel.compact .rp-in .rp-title{padding-left:0;padding-right:0}
+#sheet .panel.compact .rp-head > #rp-q{width:calc(100% - 2 * var(--s4))}
+#sheet .panel.compact .rp-in .rp-head > #rp-q{width:100%}
+#sheet .panel.compact .rp-scroll{overflow:visible;min-height:0;height:auto;max-height:none;flex:none;background:none}
+#sheet .panel.compact .rp-foot{border-top:1px solid var(--line-strong)}
 .menu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
 .menu-head h2{margin:0;overflow-wrap:anywhere}
 #sheet .opt + .btn{margin-top:var(--s4)}
@@ -975,7 +998,7 @@ html[data-text="1"] .tot b.word,html[data-text="2"] .tot b.word{font-size:18px}
 </style>
 </head>
 <body>
-<div id="lock" hidden role="status" aria-live="polite"><div class="lockcard"><span class="lockring" aria-hidden="true"></span><span id="lock-label">Saving…</span></div></div>
+<div id="lock" hidden role="status" aria-live="polite"><div class="lockcard"><span class="lockring" aria-hidden="true"></span><span id="lock-label">Saving…</span><button type="button" id="lock-free" class="btn" data-act="keepWorking" hidden>Keep working</button></div></div>
 <div id="launch" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)">
 <g class="st1" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M14 14v8M20 11v9M26 14v8"/></g>
 <g class="st2" stroke="#0113a1" stroke-width="2" stroke-linecap="round" opacity="0"><path d="M38 14v8M44 11v9M50 14v8"/></g>
@@ -3666,7 +3689,7 @@ L.ms = {
   "All items": "Semua barang",
   "All rooms": "Semua bilik",
   "Almost out": "Hampir habis",
-  "Alpha · updated {date}": "Alfa · dikemas kini {date}",
+  "Alpha · version {v} · updated {date}": "Alpha · versi {v} · dikemas kini {date}",
   "Already asked": "Sudah diminta",
   "Already asked at {centre}: {who}. Tap “Me too” to add yours.": "Sudah diminta di {centre}: {who}. Ketik “Saya juga” untuk menambah anda.",
   "Already have in 1 place": "Sudah ada di 1 tempat",
@@ -3859,6 +3882,7 @@ L.ms = {
   "It’s already on the list here. Use “Add more”.": "Sudah ada di sini. Guna “Tambah”.",
   "Just added": "Baru ditambah",
   "Keep at least one centre.": "Simpan sekurang-kurangnya satu pusat.",
+  "Keep working": "Teruskan kerja",
   "Kept at {room}": "Disimpan di {room}",
   "Kept for years, like toys or keys.": "Disimpan bertahun-tahun, seperti mainan atau kunci.",
   "Kept in {place} at {centre}.": "Disimpan di {place} di {centre}.",
@@ -4146,7 +4170,7 @@ L.ms = {
   "Stationery and paper": "Alat tulis dan kertas",
   "Status": "Status",
   "Stay signed in": "Kekal log masuk",
-  "Still offline. Tried again just now ({times}×). {n} waiting.": "Masih di luar talian. Dicuba sekali lagi tadi ({times}×). {n} menunggu.",
+  "Still offline. {n} waiting.": "Masih di luar talian. {n} menunggu.",
   "Subtype": "Subjenis",
   "Suggestion sent": "Cadangan dihantar",
   "Suggestion withdrawn.": "Cadangan ditarik balik.",
@@ -4335,6 +4359,7 @@ L.ms = {
   "scan to count this shelf": "imbas untuk kira rak ini",
   "the original sheet": "helaian asal",
   "today": "hari ini",
+  "try {n}": "cubaan {n}",
   "was {a}, now {b}": "tadi {a}, kini {b}",
   "yesterday": "semalam",
   "{amount} left": "Baki {amount}",
@@ -4424,7 +4449,7 @@ L.zh = {
   "All items": "全部物品",
   "All rooms": "所有房间",
   "Almost out": "快没了",
-  "Alpha · updated {date}": "Alpha · 更新于 {date}",
+  "Alpha · version {v} · updated {date}": "Alpha · 版本 {v} · 更新于 {date}",
   "Already asked": "已经有人申请",
   "Already asked at {centre}: {who}. Tap “Me too” to add yours.": "{centre} 已有人申请：{who}。点“我也要”加上你。",
   "Already have in 1 place": "已有 1 处",
@@ -4617,6 +4642,7 @@ L.zh = {
   "It’s already on the list here. Use “Add more”.": "这里已经有了，请用“增加”。",
   "Just added": "刚刚添加的",
   "Keep at least one centre.": "至少要保留一个分园。",
+  "Keep working": "继续使用",
   "Kept at {room}": "存放在 {room}",
   "Kept for years, like toys or keys.": "长期保留，如玩具或钥匙。",
   "Kept in {place} at {centre}.": "{centre} 放在 {place}。",
@@ -4904,7 +4930,7 @@ L.zh = {
   "Stationery and paper": "文具与纸张",
   "Status": "状态",
   "Stay signed in": "保持登录",
-  "Still offline. Tried again just now ({times}×). {n} waiting.": "仍然离线。刚刚又试了一次（{times}次）。{n} 项等待中。",
+  "Still offline. {n} waiting.": "仍然离线。{n} 项等待中。",
   "Subtype": "细类",
   "Suggestion sent": "建议已提交",
   "Suggestion withdrawn.": "建议已撤回。",
@@ -5093,6 +5119,7 @@ L.zh = {
   "scan to count this shelf": "扫码盘点这个架子",
   "the original sheet": "原来的表格",
   "today": "今天",
+  "try {n}": "第 {n} 次尝试",
   "was {a}, now {b}": "原来 {a}，现在 {b}",
   "yesterday": "昨天",
   "{amount} left": "剩 {amount}",
@@ -5560,7 +5587,7 @@ function refresh(manual) {
     else if (manual && !e.network) toast(e.message);
   }).then(function () {
     S.refreshing = false;
-    softBusy(false);
+    if (!S.refreshAgain) softBusy(false);   // another round was asked for while this one ran: the wait is not over until that one has arrived
     softRender();
     applyLink();
     adminEntry();
@@ -5600,7 +5627,7 @@ var retryTimer = 0;
 var RETRY_MS = [1000, 2000, 4000];
 function sendProblemHtml() {
   var p = store.get('rm_sendlog', null);
-  return p && p.at ? '<p class="help sendlog">' + esc(tl('Last sending problem: {when}', { when: when(p.at) })) + '<br><span>' + esc(p.fn + (p.why ? ' · ' + p.why : '')) + '</span></p>' : '';
+  return p && p.at && p.tryNo ? '<p class="help sendlog">' + esc(tl('Last sending problem: {when}', { when: when(p.at) })) + '<br><span>' + esc(p.fn + (p.why ? ' · ' + p.why : '') + ' · ' + tl('try {n}', { n: p.tryNo })) + '</span></p>' : '';
 }
 // the signal has just come back (or changed) while something is being sent: a send older than 2 s is probably lost, so send it again now
 function resendStale() {
@@ -5609,9 +5636,10 @@ function resendStale() {
   clearTimeout(S.sync.t);
   drawChrome(cur()); flush();
 }
-function noteSendProblem(job, e) {
-  var why = e && e.timeout ? 'timeout' : String(WHY || (e && e.message) || '').slice(0, 90);
-  store.set('rm_sendlog', { at: Date.now(), fn: job.fn, why: why });
+// only a failure AFTER the online check passed tells us anything (a failure with no signal is expected)
+function noteSendProblem(job, e, tryNo) {
+  var why = e && e.timeout ? 'no answer' : String(WHY || (e && e.message) || '').slice(0, 90);
+  store.set('rm_sendlog', { at: Date.now(), fn: job.fn, why: why, tryNo: tryNo });
 }
 function syncOver(failed) {
   if (!S.sync) return;
@@ -5634,7 +5662,7 @@ function flush() {
     var sentAt = S.jobAt = Date.now();
     if (S.sync) setTimeout(function () {
       if (gen !== S.flushGen || S.jobAt !== sentAt || !S.sync) return;   // it answered, or was already given up
-      noteSendProblem(job, { timeout: true });
+      noteSendProblem(job, { timeout: true }, S.sync.tries + 1);
       S.flushGen++; S.flushing = false; S.jobAt = 0;
       if (S.sync.tries < RETRY_MS.length) { S.sync.tries++; return flush(); }
       S.offline = true; syncOver(true); softRender(); clearTimeout(retryTimer); retryTimer = setTimeout(flush, 20000);
@@ -5656,7 +5684,7 @@ function flush() {
       if (gen !== S.flushGen) return;
       S.jobAt = 0;
       if (e.network) {
-        noteSendProblem(job, e);
+        if (S.sync) noteSendProblem(job, e, S.sync.tries + 1);
         if (S.sync && S.sync.tries < RETRY_MS.length) { S.sync.t = setTimeout(next, RETRY_MS[S.sync.tries++]); return; }
         S.offline = true; return end();
       }
@@ -6033,10 +6061,12 @@ function drawChrome(v) {
   nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), roomsBadge(myCentre())) + b('more', tl('Me')) + '</div>';
   var n = S.outbox.length, msg = '', dock = '';
   if (n && S.sync) {
-    dock = '<div class="notice"><span>' + tl('Sending what was waiting ({n})…', { n: n }) + '</span></div>';
+    dock = '<div class="notice sendingnote"><span><i class="minispin" aria-hidden="true"></i>' + tl('Sending what was waiting ({n})…', { n: n }) + '</span></div>';
+  } else if (S.softQuiet) {
+    dock = '<div class="notice sendingnote"><span><i class="minispin" aria-hidden="true"></i>' + esc(S.softQuiet) + '</span></div>';
   } else if (n && S.offline) {
     var tried = S.tried && Date.now() - S.tried.at < 8000;
-    dock = '<div class="notice' + (tried && S.tried.pulse ? ' pulse' : '') + '"><span>' + (tried ? tl('Still offline. Tried again just now ({times}×). {n} waiting.', { times: S.tried.n, n: n }) : n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
+    dock = '<div class="notice' + (tried && S.tried.pulse ? ' pulse' : '') + '"><span>' + (tried ? tl('Still offline. {n} waiting.', { n: n }) : n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
       ' ' + '</span><button data-act="flushNow">' + tl('Send now') + '</button></div>';
   } else if (S.offline) {
     dock = '<div class="notice"><span>' + esc(tl('Offline. Showing the list from {when}.', { when: when(S.syncedAt) })) +
@@ -6355,8 +6385,7 @@ function card(g) {
   var mine = myCentre(), places;
   if (g.rows.length === 1) {
     var r = g.rows[0];
-    places = '<span class="pl' + (low(r) ? ' low' : '') + (r.centre === mine ? ' mine' : '') + '">' + esc(r.centre) + ' · ' +
-      (r.ro ? '' : esc(r.loc) + ' ') + '<b>' + qtyText(r) + '</b></span>';
+    places = '<span class="pl' + (low(r) ? ' low' : '') + (r.centre === mine ? ' mine' : '') + '">' + esc(r.centre) + (r.ro ? '' : ' · ' + esc(r.loc)) + '</span>';
   } else {
     var per = {}, names = [];
     g.rows.forEach(function (r) {
@@ -6366,7 +6395,7 @@ function card(g) {
       if (low(r)) per[r.centre].low = true;
     });
     places = names.map(function (c) {
-      return '<span class="pl' + (per[c].low ? ' low' : '') + (c === mine ? ' mine' : '') + '">' + esc(c) + ' <b>' + (per[c].lv !== null && !per[c].qty ? LEVEL_LABELS[per[c].lv] : per[c].qty) + '</b></span>';
+      return '<span class="pl' + (per[c].low ? ' low' : '') + (c === mine ? ' mine' : '') + '">' + esc(c) + ': <b>' + (per[c].lv !== null && !per[c].qty ? LEVEL_LABELS[per[c].lv] : per[c].qty) + '</b></span>';
     }).join('');
   }
   var flags = g.rows.length ? ' ' + needBadgeHtml(needSetFor(g.rows, g), g.rows) : '';
@@ -6378,7 +6407,7 @@ function card(g) {
     '<span class="body"><span class="name">' + esc(g.dname) + '</span>' +
     (g.dalt ? '<span class="alt">' + esc(g.dalt) + '</span>' : '') +
     '<span class="places">' + places + '</span>' + (flags ? '<span class="line">' + flags + '</span>' : '') + '</span>' +
-    '<span class="tot">' + (g.levelOnly ? '<b class="word">' + LEVEL_LABELS[g.lowest] + '</b><small>' + tl('least') + '</small>'
+    '<span class="tot' + (g.rows.length === 1 && low(g.rows[0]) ? ' low' : '') + '">' + (g.levelOnly ? '<b class="word">' + LEVEL_LABELS[g.lowest] + '</b><small>' + tl('least') + '</small>'
       : '<b>' + g.total + '</b><small>' + esc(unitFor(g.total, g.unit)) + '</small>') + '</span></button>';
 }
 
@@ -6449,7 +6478,7 @@ function quietList(rows) {
     if (isLevel(r)) per[r.centre].lv = per[r.centre].lv === null ? r.qty : Math.min(per[r.centre].lv, r.qty);
     else per[r.centre].n += r.qty;
   });
-  return names.map(function (c) { return c + ' ' + (per[c].lv !== null && !per[c].n ? LEVEL_LABELS[per[c].lv] : per[c].n); }).join(' · ');
+  return names.map(function (c) { return c + ': ' + (per[c].lv !== null && !per[c].n ? LEVEL_LABELS[per[c].lv] : per[c].n); }).join(' · ');
 }
 function itemActions(sel, many) {
   if (!mineRow(sel) && sel.ro) return '';
@@ -6482,6 +6511,7 @@ function openSheet(html, focusId, cls, restore) {
     else if (NAV.layer) { NAV.layer = false; stepPush('layer', snapNow()); }
   }
   if (focusId && byIdEl(focusId)) byIdEl(focusId).focus();
+  fitSheet();
 }
 // a second sheet over this one: this one can be put back by Back, and the new one gets a step of its own
 function pushSheet(rebuild) { if (sheetUp()) { topSnap().sheet = rebuild; NAV.layer = true; } }
@@ -6807,6 +6837,7 @@ function showRoomPick(html) {
   topSnap().sheet = function () { endRoomPick(); };   // Back from the list puts the sheet underneath back
   [].forEach.call(panel.children, function (c) { c.classList.add('rp-hide'); });
   var w = document.createElement('div'); w.id = 'rp-wrap'; w.className = 'rp-in'; w.innerHTML = html; panel.appendChild(w);
+  setTimeout(fitSheet, 0);
   if (!NAV.restoring) stepPush('roompick', { stack: S.stack.slice(), sheet: true });
 }
 // the person is done with the room list (a tap): the list goes and so does its step
@@ -7204,7 +7235,7 @@ function vSettings() {
         '<button class="rowbtn" data-act="adminLeaveAll"><span class="lead">' + ICON.x + '</span><span>' + tl('Sign out all phones') + (S.admin.phones ? '<small>' + esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) + '</small>' : '') + '</span>' + ICON.go + '</button>'
       : '<button class="rowbtn" data-act="pinOpen"><span class="lead">' + ICON.shield + '</span><span>' + tl('Sign in as admin') + '<small>' + tl('Needs the admin PIN.') + '</small></span>' + ICON.go + '</button>') + '</div>' +
     sendProblemHtml() +
-    '<p class="help verline">' + esc(tl('Alpha · updated {date}', { date: builtText() })) + '</p>';
+    '<p class="help verline">' + esc(tl('Alpha · version {v} · updated {date}', { v: APP_VER, date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
 function itemsIn(centre, room) { return S.items.filter(function (it) { return it.centre === centre && sameRoom(it.loc, room); }); }
@@ -7436,7 +7467,7 @@ function vRequests() {
       var waiting = list.filter(function (r) { return r.status === 'New'; }), tobuy = list.filter(function (r) { return r.status === 'Approved'; }), done = list.filter(function (r) { return r.status !== 'New' && r.status !== 'Approved'; });
       body = (S.admin ? scopeChips() : '') +
         (waiting.length ? '<h2 class="sec tidyhead firstsec">' + tl('Waiting') + '<span class="pn">' + waiting.length + '</span></h2><div class="rqlist">' + waiting.map(reqCard).join('') + '</div>' : '') +
-        (tobuy.length ? '<h2 class="sec' + (waiting.length ? '' : ' firstsec') + '">' + tl('To buy') + '<span class="pn">' + tobuy.length + '</span></h2><div class="rqlist">' + tobuy.map(reqCard).join('') + '</div>' : '') +
+        (tobuy.length ? '<h2 class="sec tidyhead' + (waiting.length ? '' : ' firstsec') + '">' + tl('To buy') + '<span class="pn">' + tobuy.length + '</span></h2><div class="rqlist">' + tobuy.map(reqCard).join('') + '</div>' : '') +
         (done.length ? '<details class="settings" data-keep="req-done"><summary>' + esc(tl('Answered ({n})', { n: done.length })) + '</summary><div class="rqlist">' + done.map(reqCard).join('') + '</div></details>' : '');
     }
   }
@@ -7462,7 +7493,8 @@ function vAdmin() {
   var planned = (S.requests || []).filter(function (r) { return r.status === 'New' || r.status === 'Approved'; }).length;
   var lowN = S.items.filter(low).length, broken = S.items.filter(function (it) { return STATUS_LABEL[it.status]; }).length;
   var tile = function (n, label, to) {
-    return '<button class="stat" data-act="go" data-to="' + to + '"><b>' + n + '</b><span>' + label + '</span></button>';
+    var wait = n === null;
+    return '<button class="stat' + (wait ? ' loading' : '') + '"' + (wait ? ' aria-busy="true"' : '') + ' data-act="go" data-to="' + to + '"><b>' + (wait ? '<span class="dots3" role="img" aria-label="' + esc(tl('Loading…')) + '"><i></i><i></i><i></i></span>' : n) + '</b><span>' + label + '</span></button>';
   };
   var ROW_ICON = { addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, visOpen: ICON.eye, pinChange: ICON.key, labels: ICON.qr };
   var row = function (act, to, title, note, extra) {
@@ -7472,7 +7504,7 @@ function vAdmin() {
   var link = HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : '';
   return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
     '<div class="stats">' +
-      tile(S.requests ? planned : '…', tl('on the shopping list'), 'requests') +
+      tile(S.requests ? planned : null, tl('on the shopping list'), 'requests') +
       '<button class="stat" data-act="nav" data-to="low"><b>' + lowN + '</b><span>' + tl('running low') + '</span></button>' +
       '<button class="stat" data-act="nav" data-to="low" data-jump="low-broken"><b>' + broken + '</b><span>' + tl('broken or missing') + '</span></button></div>' +
     '<h2 class="sec">' + tl('Set up') + '</h2><div class="card rows">' +
@@ -8096,19 +8128,52 @@ function softBusy(on, label, who) {
   if (on) S.softs[who] = label || tl('Saving…'); else delete S.softs[who];
   if (!S.locked) softDraw();
 }
+// How tall the screen is without the keyboard, per width: much shorter than that means the keyboard is up
+var FULLH = {};
+function noteHeight() { var w = window.innerWidth; FULLH[w] = Math.max(FULLH[w] || 0, window.innerHeight); }
+function kbOpen() { return (FULLH[window.innerWidth] || window.innerHeight) - window.innerHeight > 150; }
+function inTextBox() { var a = document.activeElement; return !!a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && !/^(checkbox|radio|button|submit|hidden|file)$/.test(a.type); }
+function typingNow() { return inTextBox() && kbOpen(); }
+function blockPage(on) {
+  document.documentElement.classList.toggle('softlock', on);
+  if (S.locked) return;   // the full lock has its own hold
+  ['app', 'nav', 'sheet', 'banner', 'dock'].forEach(function (id) { var x = byIdEl(id); if (x) x.inert = on; });
+}
+function softRedraw() { try { drawChrome(cur()); } catch (e) { /* not drawn yet */ } }
 function softDraw() {
-  var el = byIdEl('lock'), want = S.softs && (S.softs.send || S.softs.list);   // sending says so first
+  var el = byIdEl('lock'), btn = byIdEl('lock-free'), want = S.softs && (S.softs.send || S.softs.list);   // sending says so first
   if (!el || S.locked) return;
-  if (want) { if (!el.classList.contains('soft')) S.soft = Date.now(); lockLabel(want); el.classList.add('soft'); el.hidden = false; return; }
-  if (!el.classList.contains('soft')) return;
-  var left = 400 - (Date.now() - (S.soft || 0));
-  var end = function () { if (!S.locked && el.classList.contains('soft') && !(S.softs && (S.softs.send || S.softs.list))) { el.classList.remove('soft'); el.hidden = true; } };
-  if (left > 0) setTimeout(end, left); else end();
+  if (!want) {
+    S.softFree = false; S.softSince = 0; clearTimeout(S.keepT);
+    var was = S.softQuiet; S.softQuiet = '';
+    if (!el.classList.contains('soft')) { if (was) softRedraw(); return; }
+    var left = 400 - (Date.now() - (S.soft || 0));
+    var end = function () {
+      if (S.locked || !el.classList.contains('soft') || (S.softs && (S.softs.send || S.softs.list))) return;
+      el.classList.remove('soft'); el.hidden = true; if (btn) btn.hidden = true; blockPage(false); softRedraw();
+    };
+    if (left > 0) setTimeout(end, left); else end();
+    return;
+  }
+  var keepMs = window.__rmKeepMs || 15000;
+  if (!S.softSince) { S.softSince = Date.now(); clearTimeout(S.keepT); S.keepT = setTimeout(softDraw, keepMs + 60); }
+  if (S.softFree || typingNow()) {   // let the person carry on: a small spinner in the yellow notice instead
+    el.classList.remove('soft'); el.hidden = true; if (btn) btn.hidden = true; blockPage(false);
+    S.softQuiet = want; softRedraw(); return;
+  }
+  S.softQuiet = '';
+  if (!el.classList.contains('soft')) S.soft = Date.now();
+  lockLabel(want); el.classList.add('soft'); el.hidden = false;
+  if (btn) { btn.textContent = tl('Keep working'); btn.hidden = Date.now() - S.softSince < keepMs; }
+  blockPage(true); softRedraw();
 }
 function lockUI(on, label) {
   var el = byIdEl('lock');
   clearTimeout(S.lockWD);
   if (el) el.classList.remove('soft');
+  if (byIdEl('lock-free')) byIdEl('lock-free').hidden = true;
+  document.documentElement.classList.remove('softlock');
+  if (byIdEl('dock')) byIdEl('dock').inert = false;
   if (on) {
     lockLabel(label);
     noZoom(true);
@@ -8200,12 +8265,13 @@ function shrink(file) {
   return new Promise(function (resolve, reject) {
     var url = URL.createObjectURL(file), img = new Image();
     img.onload = function () {
-      var k = Math.min(1, 900 / Math.max(img.width, img.height));
+      var k = Math.min(1, 1600 / Math.max(img.width, img.height));
       var c = document.createElement('canvas');
       c.width = Math.max(1, Math.round(img.width * k));
       c.height = Math.max(1, Math.round(img.height * k));
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      var full = c.toDataURL('image/jpeg', 0.72);
+      var full = c.toDataURL('image/jpeg', 0.82);
+      for (var q = 0.72; full.length > 2800000 && q > 0.3; q -= 0.15) full = c.toDataURL('image/jpeg', q);   // the sheet refuses anything over 3,000,000
       THUMBS[full] = tinyThumb(img);
       URL.revokeObjectURL(url);
       resolve(full);
@@ -8217,6 +8283,16 @@ function shrink(file) {
 
 document.addEventListener('load', function (e) { var t = e.target; if (t && t.tagName === 'IMG' && t.parentNode && t.parentNode.classList && t.parentNode.classList.contains('tile')) t.classList.add('ld'); }, true);
 // a phone that lets the keyboard cover the page (it ignores interactive-widget) gets the open sheet lifted above the keyboard
+// a room popup on a short screen (the keyboard is up) becomes one scrolling page under its title
+function fitSheet() {
+  var panel = $('#sheet .panel'); if (!panel) return;
+  var has = sheetUp() && !!panel.querySelector('.rp-head');
+  var on = has && (typingNow() || window.innerHeight < 480);   // a keyboard only counts while a text box in the popup is in use
+  var was = panel.classList.contains('compact');
+  panel.classList.toggle('compact', on);
+  var a = document.activeElement;
+  if (on && a && panel.contains(a) && inTextBox()) setTimeout(function () { try { a.scrollIntoView({ block: 'center' }); } catch (e) { /* old browser */ } }, was ? 0 : 60);
+}
 function placeSheet(kb) {
   var s = byIdEl('sheet'); if (!s) return;
   s.style.bottom = kb > 80 ? kb + 'px' : '';
@@ -9183,7 +9259,7 @@ var ACT = {
   // the large photo: a sheet (so Back and a tap outside close it) shown in the middle over a blurred page; the tiny copy shows while the real one loads
   viewPhoto: function (el) {
     var it = S.byId[el.dataset.id]; if (!it) return;
-    var full = photoSrc(it, 900), m = /\/d\/([\w-]{10,})/.exec(it.photo || ''), small = /^data:image\/jpeg;base64,/.test(it.thumb || '') ? it.thumb : '';
+    var full = photoSrc(it, 1600), m = /\/d\/([\w-]{10,})/.exec(it.photo || ''), small = /^data:image\/jpeg;base64,/.test(it.thumb || '') ? it.thumb : '';
     M = { type: 'viewer' };
     openSheet('<button type="button" class="vx" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button><div class="vframe loading-photo">' +
       (small ? '<img class="vsmall" alt="" src="' + esc(small) + '">' : '') + '<img class="vfull" alt="' + esc(shown(it)) + '"><span class="lockring vring" aria-hidden="true"></span></div>' +
@@ -9196,9 +9272,10 @@ var ACT = {
       if (!ok) { img.removeAttribute('src'); document.querySelector('#sheet .vnote').hidden = false; }
     };
     img.onload = function () { end(true); };
-    img.onerror = function () { if (!tried && m && !S.localPhoto[it.id]) { tried = true; img.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w900'; } else end(false); };
+    img.onerror = function () { if (!tried && m && !S.localPhoto[it.id]) { tried = true; img.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1600'; } else end(false); };
     if (full) img.src = full; else end(false);
   },
+  keepWorking: function () { S.softFree = true; softDraw(); },
   pillMenu: function (el) {
     var r = el.getBoundingClientRect();
     var item = function (act, ic, label, cls) { return '<button type="button" role="menuitem" class="pmi' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"><span class="lead">' + ic + '</span><span>' + label + '</span></button>'; };
@@ -9628,6 +9705,10 @@ setInterval(function () {
   if (!S.probeAt) { S.probeN = 0; S.probeAt = Date.now() + PROBE_MS[0]; return; }
   if (Date.now() >= S.probeAt) probeNow();
 }, 500);
+noteHeight();
+window.addEventListener('resize', function () { noteHeight(); fitSheet(); softDraw(); });
+document.addEventListener('focusin', function () { setTimeout(function () { fitSheet(); if (S.softs && (S.softs.send || S.softs.list)) softDraw(); }, 120); });
+document.addEventListener('focusout', function () { setTimeout(function () { if (S.softs && (S.softs.send || S.softs.list)) softDraw(); }, 250); });
 document.addEventListener('visibilitychange', function () {
   if (document.hidden) return;
   S.touched = Date.now();
@@ -9656,7 +9737,8 @@ if (HOSTED) {
   });
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* works without it */ }); } catch (e) { /* works without it */ }
 }
-var APP_BUILT = '2026-11-24';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
+var APP_VER = '50';
+var APP_BUILT = '2026-11-26';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
   var el = document.getElementById('launch'), skip = false;
   if (!el) return;

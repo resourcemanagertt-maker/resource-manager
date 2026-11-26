@@ -1,5 +1,5 @@
-// Resource Manager service worker, build 97dc7d48dd
-const CACHE = 'rm-shell-97dc7d48dd';
+// Resource Manager service worker, build 180276963b
+const CACHE = 'rm-shell-180276963b';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
