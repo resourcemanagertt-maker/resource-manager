@@ -807,7 +807,7 @@ html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);
 .wnote{margin-top:var(--s3)}
 .formend.edit{display:flex;flex-wrap:wrap;gap:var(--s3)}
 .formend.edit .btn{flex:1 1 0;min-width:0;width:auto;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
-.formend.edit .btn[data-act=removeItem]{flex:0 0 100%;margin-top:var(--s5);border:1px solid var(--line-strong);background:transparent}
+.formend.edit .btn[data-act=removeItem]{flex:0 0 100%;margin-top:0;border:1px solid var(--line-strong);background:transparent}
 /* the two links are two things: air between them */
 #adm-links > .card{padding:var(--s4)}
 #adm-links .linkrow + .lab{margin-top:var(--s6)}
@@ -823,6 +823,28 @@ html[data-text="2"] .sp-ic{width:36px;height:36px}
 .badge.need[data-act]::after{content:"";position:absolute;inset:-10px -3px}
 .badge.need[data-act]:active{filter:brightness(.9)}
 .elsewhere{margin:var(--s3) 0;font-size:15px;color:var(--muted);overflow-wrap:break-word}
+.photobox{position:relative;flex:none;display:block;width:96px;height:96px}
+.cambtn{position:absolute;right:-12px;bottom:-12px;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;padding:0;cursor:pointer}
+.cambtn span{width:32px;height:32px;display:grid;place-items:center;font-size:16px;background:var(--surface);border:1px solid var(--line-strong);border-radius:50%;box-shadow:var(--sh1)}
+#sheet:has(.panel.viewer){align-items:center;justify-content:center}
+#sheet:has(.panel.viewer) .scrim,.ghost-sheet:has(.viewer) .scrim{background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#sheet .panel.viewer{width:100%;max-width:min(96vw,640px);padding:var(--s3);background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;display:flex;flex-direction:column;align-items:center;gap:var(--s2);pointer-events:none}
+.viewer .vx{align-self:flex-end;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#16181d;border:0;pointer-events:auto}
+.viewer .vx svg{width:24px;height:24px}
+.vframe{position:relative;display:grid;place-items:center;width:100%;min-height:220px;pointer-events:auto}
+.vframe img{grid-area:1/1;max-width:100%;max-height:70vh;border-radius:var(--r);object-fit:contain}
+.vframe .vsmall{width:min(100%,360px)}
+.vframe .vfull:not([src]){display:none}
+.vframe.loading-photo .vfull{opacity:0}
+.vframe.got .vsmall,.vframe.got .vring,.vframe.failed .vring,.vframe.failed .vfull{display:none}
+.vframe .vring{grid-area:1/1;z-index:1;border-color:rgba(255,255,255,.3);border-top-color:#fff}
+.vnote{color:#fff;font-weight:700;text-align:center;pointer-events:auto}
+@media (prefers-reduced-motion:no-preference){#sheet.sheet-in:has(.viewer) .panel{animation:pgFade .16s ease-out both}.ghost-sheet:has(.viewer) .panel{animation:scrimOut .14s ease-in both}}
+/* ===== 6. photos in Recent and in "Needs attention" ===== */
+.cat .tile{width:48px;height:48px}
+.cat .tile .emo{font-size:26px}
+.roomrow .rowmain > .tile{width:40px;height:40px;flex:none;margin-right:var(--s3)}
+.roomrow .rowmain > .tile .emo{font-size:22px}
 .optsub{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
 .rp-in .rp-head,.rp-in .rp-scroll,.rp-in .rp-foot{padding-left:0;padding-right:0}
 .rp-in .rp-head{padding-top:0}
@@ -938,7 +960,6 @@ html[data-text="1"] .tot b,html[data-text="2"] .tot b{font-size:26px}
 html[data-text="1"] .tot b.word,html[data-text="2"] .tot b.word{font-size:18px}
 #cam .camwait{inset:auto;left:10%;right:10%;top:28%;height:28%;position:absolute}
 .tilebtn{position:relative;flex:none;display:block;width:96px;height:96px;line-height:0;background:none;border:0;padding:0;cursor:pointer;color:inherit}
-.tilebtn::after{content:"📷";position:absolute;right:-6px;bottom:-6px;width:30px;height:30px;display:grid;place-items:center;font-size:15px;background:var(--surface);border:1px solid var(--line-strong,rgba(0,0,0,.3));border-radius:50%}
 .roomrow .rowmain svg{flex:none;width:20px;height:20px;color:var(--ink)}
 .roomrow .rowmain > .rtext{flex:1;min-width:0}
 /* a name with no spaces (a room, an item) wraps rather than widening the page */
@@ -4060,6 +4081,7 @@ L.ms = {
   "See all": "Lihat semua",
   "See all {n}": "Lihat semua {n}",
   "See it under Me › Suggestions.": "Lihat di Saya › Cadangan.",
+  "See the photo larger": "Lihat gambar lebih besar",
   "See what is low": "Lihat apa yang hampir habis",
   "See what staff see. You stay signed in.": "Lihat apa yang kakitangan lihat. Anda kekal log masuk.",
   "Select": "Pilih",
@@ -4162,6 +4184,7 @@ L.ms = {
   "That’s too big.": "Terlalu besar.",
   "The Google Sheet won’t open. Tell your admin.": "Google Sheet tidak dapat dibuka. Beritahu admin.",
   "The PIN is 6 digits.": "PIN ialah 6 digit.",
+  "The full photo needs a connection.": "Gambar penuh memerlukan sambungan.",
   "The item and how many. No room, notes or photo.": "Barang dan berapa banyak. Tiada bilik, nota atau gambar.",
   "The list couldn’t open the shopping list.": "Senarai tidak dapat membuka senarai beli-belah.",
   "The list is busy. Try again in a moment.": "Senarai sibuk. Cuba sebentar lagi.",
@@ -4814,6 +4837,7 @@ L.zh = {
   "See all": "查看全部",
   "See all {n}": "查看全部 {n} 项",
   "See it under Me › Suggestions.": "在“我的”›“建议”里查看。",
+  "See the photo larger": "放大查看照片",
   "See what is low": "查看快用完的东西",
   "See what staff see. You stay signed in.": "看看员工看到的内容。您仍保持登录。",
   "Select": "选择",
@@ -4916,6 +4940,7 @@ L.zh = {
   "That’s too big.": "数字太大了。",
   "The Google Sheet won’t open. Tell your admin.": "Google 表格打不开，请告诉管理员。",
   "The PIN is 6 digits.": "PIN 是 6 位数字。",
+  "The full photo needs a connection.": "查看完整照片需要网络连接。",
   "The item and how many. No room, notes or photo.": "物品和数量。没有房间、备注或照片。",
   "The list couldn’t open the shopping list.": "列表无法打开购物清单。",
   "The list is busy. Try again in a moment.": "清单正忙，请稍后再试。",
@@ -5381,7 +5406,7 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { draw: function () { render(); }, kb: function (n) { placeSheet(n); }, setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIconKey,
+window.RMPoll = { roomIcons: function () { return ICON.room; }, draw: function () { render(); }, kb: function (n) { placeSheet(n); }, setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIconKey,
   pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
@@ -5837,13 +5862,17 @@ document.addEventListener('toggle', function (e) {
 // the smooth scroll stops where it is, the glow goes, and the follow-up (keyboard / room list) is cancelled.
 // The follow-up only happens if the person has not touched anything, nothing else has focus and no sheet is open.
 var GLOW_EVENTS = ['pointerdown', 'touchstart', 'touchmove', 'wheel', 'keydown'];
+// where the page should be for this field: a small one in the middle; a tall block near the top, with its label showing
+function glowSpot(el) {
+  var r = el.getBoundingClientRect(), h = window.innerHeight, max = Math.max(0, document.documentElement.scrollHeight - h);
+  var y = window.pageYOffset + r.top - (r.height > h * 0.4 ? 110 : (h - r.height) / 2);
+  return Math.max(0, Math.min(max, Math.round(y)));
+}
 function glowThen(els, fn) {
   els = [].concat(els);
-  var first = els[0], done = false, calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  try { first.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' }); } catch (e) { /* older browsers */ }
-  els.forEach(function (el) { el.classList.add('glow'); });
+  var first = els[0], done = false, lit = false, t = 0, tick = 0, calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var stop = function (run, halt) {
-    if (done) return; done = true; clearTimeout(t);
+    if (done) return; done = true; clearTimeout(t); clearTimeout(tick);
     GLOW_EVENTS.forEach(function (n) { document.removeEventListener(n, cancel, true); });
     if (halt) { try { window.scrollTo({ top: window.pageYOffset, left: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, window.pageYOffset); } }
     els.forEach(function (el) { el.classList.remove('glow'); });
@@ -5851,8 +5880,24 @@ function glowThen(els, fn) {
     if (run && fn && idle && !sheetUp() && document.body.contains(first)) fn();
   };
   var cancel = function () { stop(false, true); };
-  var t = setTimeout(function () { stop(true, false); }, calm ? 600 : 950);
+  var light = function () {
+    if (done || lit) return; lit = true;
+    els.forEach(function (el) { el.classList.add('glow'); });
+    t = setTimeout(function () { stop(true, false); }, calm ? 800 : 1000);
+  };
   GLOW_EVENTS.forEach(function (n) { document.addEventListener(n, cancel, { capture: true, passive: true }); });
+  // one beat later: whoever opened this page jumps to its top AFTER drawing it, and that jump would cancel a scroll already started
+  tick = setTimeout(function () {
+    if (done || !document.body.contains(first)) return stop(false, false);
+    var to = glowSpot(first), began = Date.now(), last = -1, same = 0;
+    try { window.scrollTo({ top: to, left: 0, behavior: calm ? 'instant' : 'smooth' }); } catch (e) { window.scrollTo(0, to); }
+    (function settle() {   // glow once the page has arrived (or has stopped moving, or after 0.8 s at the latest)
+      var y = Math.round(window.pageYOffset);
+      same = y === last ? same + 1 : 0; last = y;
+      if (Math.abs(y - to) <= 2 || same >= 4 || Date.now() - began > 800) return light();
+      tick = setTimeout(settle, 50);
+    })();
+  }, 30);
 }
 // a name that is still "Barcode 123…" is selected whole, so the first key typed replaces it
 function selectBarcode(el) { if (el && /^barcode\b/i.test(el.value || '')) { try { el.select(); } catch (e) { /* none */ } } }
@@ -6033,7 +6078,7 @@ function recentHtml() {
   if (!gs.length) return '';
   return '<h2 class="sec">' + tl('Recent') + '</h2><div class="cats">' + gs.map(function (g) {
     var hr = g.rows.filter(function (r) { return r.centre === myCentre(); })[0] || g.rows[0];
-    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"' + (hr ? ' data-hold="' + esc(hr.id) + '"' : '') + '><span class="emo" aria-hidden="true">' + (CAT_ICON[g.cat] || '📦') + '</span><span class="lbl2">' + esc(g.dname) + '</span><small>' +
+    return '<button class="cat" data-act="open" data-key="' + esc(g.key) + '"' + (hr ? ' data-hold="' + esc(hr.id) + '"' : '') + '>' + tile(g.photoRow, g.cat) + '<span class="lbl2">' + esc(g.dname) + '</span><small>' +
       (g.levelOnly ? LEVEL_LABELS[g.lowest] : esc(amount(g.total, g.unit))) + '</small></button>';
   }).join('') + '</div>';
 }
@@ -6314,7 +6359,8 @@ function vItem(v) {
   }).join('');
   var past = S.history[sel.id];
   return top(true) +
-    '<div class="headcard">' + (can ? '<button type="button" class="tilebtn" data-act="photoItem" aria-label="' + tl('Photo and notes') + '">' + tile(g.photoRow, g.cat, true) + '</button>' : '<span class="tilebtn">' + tile(g.photoRow, g.cat, true) + '</span>') + '<div style="min-width:0"><h1 class="name">' + esc(g.dname) + '</h1>' +
+    '<div class="headcard"><span class="photobox">' + (hasPhoto(g.photoRow) ? '<button type="button" class="tilebtn" data-act="viewPhoto" data-id="' + esc(g.photoRow.id) + '" aria-label="' + esc(tl('See the photo larger')) + '">' + tile(g.photoRow, g.cat, true) + '</button>' : '<span class="tilebtn">' + tile(g.photoRow, g.cat, true) + '</span>') +
+    (can ? '<button type="button" class="cambtn" data-act="photoItem" aria-label="' + tl('Photo and notes') + '"><span aria-hidden="true">📷</span></button>' : '') + '</span><div style="min-width:0"><h1 class="name">' + esc(g.dname) + '</h1>' +
     (g.dalt ? '<p class="line">' + esc(g.dalt) + '</p>' : '') +
     (needBadgeHtml(needSetFor(g.rows, g), g.rows) ? '<p class="line">' + needBadgeHtml(needSetFor(g.rows, g), g.rows) + '</p>' : '') +
     (many ? '<p class="line"><b>' + groupSummary(sum) + '</b> ' + esc(tl('in {n} places', { n: full.length })) + '</p>' : '') + '</div></div>' +
@@ -6335,6 +6381,7 @@ function vItem(v) {
     (quiet.indexOf(sel) >= 0 ? '' : '<details class="histfold" id="histfold"' + (cur().histOpen ? ' open' : '') + '><summary>' + tl('History') + '</summary>' + (cur().histOpen ? histBody(past) : '') + '</details>');
 }
 // "North 60 · East 15": one number (or level) per centre
+function hasPhoto(r) { return !!(r && (r.photo || r.thumb || S.localPhoto[r.id])); }
 function quietList(rows) {
   var names = [], per = {};
   rows.forEach(function (r) {
@@ -7803,7 +7850,7 @@ function tagsHtml(it) {
   return '<span class="tags">' + needBadgeHtml(set, [it]) + '</span>';
 }
 function attRow(it) {
-  return '<div class="roomrow"><button class="rowmain" data-act="finish" data-id="' + esc(it.id) + '"><span class="ri" aria-hidden="true">' + (CAT_ICON[it.cat] || '📦') + '</span>' +
+  return '<div class="roomrow"><button class="rowmain" data-act="finish" data-id="' + esc(it.id) + '">' + tile(it, it.cat) +
     '<span class="rtext">' + esc(shown(it)) + tagsHtml(it) + '</span>' + ICON.go + '</button></div>';
 }
 // Title from Open Library (free). If it is not reachable or does not know the book, the person types the title.
@@ -8111,14 +8158,23 @@ var ACT = {
   back: back,
   refresh: function (el) { if (el && el.classList) { el.classList.add('spin'); setTimeout(function () { el.classList.remove('spin'); }, 900); } softBusy(true, tl('Updating the list…')); refresh(true); },
   flushNow: function () {
-    if (S.offline && S.outbox.length) {   // still no signal: say so, so a second tap is never met with silence
+    if (!S.outbox.length) return;
+    if (!S.offline) return flush();
+    if (S.trying) return;   // one attempt at a time: more taps while it runs change nothing
+    S.trying = true;
+    softBusy(true, tl('Sending…'));
+    var over = false, finish = function (ok) {
+      if (over) return; over = true; clearTimeout(limit); S.trying = false;
+      if (ok) return backOnline();   // keeps the ring until what was waiting has gone
+      softBusy(false);
       var again = S.tried && Date.now() - S.tried.at < 8000;
       S.tried = { n: again ? S.tried.n + 1 : 1, at: Date.now(), pulse: true };
       drawChrome(cur());
       clearTimeout(S.triedT); S.triedT = setTimeout(function () { if (S.tried) S.tried.pulse = false; drawChrome(cur()); }, 650);
       clearTimeout(S.triedT2); S.triedT2 = setTimeout(function () { drawChrome(cur()); }, 8100);
-    }
-    flush();
+    };
+    var limit = setTimeout(function () { finish(false); }, 8000);
+    callRaw('version', {}).then(function () { finish(true); }, function (e) { finish(!(e && e.network)); });
   },
   toastAct: function () { byIdEl('toast').hidden = true; if (toastFn) toastFn(); },
   closeSheet: closeSheet,
@@ -8811,7 +8867,7 @@ var ACT = {
     var chosen = cur0 && ICON.room[cur0.icon] ? cur0.icon : '', auto = autoIconKey(M.name), now = chosen || auto;
     openSheet('<h2>' + esc(tl('Icon for “{name}”', { name: M.name })) + '</h2><div class="igrid">' +
       // the room's own automatic picture sends "" (back to automatic); there is no separate extra tile
-      Object.keys(ICON.room).map(function (k) { return '<button type="button" class="igo' + (now === k ? ' on' : '') + '" aria-pressed="' + (now === k) + '" data-act="roomIconSet" data-key="' + k + '" data-val="' + (k === auto ? '' : k) + '" aria-label="' + esc(k) + '"><span class="ri">' + ICON.room[k] + '</span>' + (!chosen && k === auto ? '<small>' + tl('Default') + '</small>' : '') + '</button>'; }).join('') +
+      (chosen ? Object.keys(ICON.room) : [auto].concat(Object.keys(ICON.room).filter(function (k) { return k !== auto; }))).map(function (k) { return '<button type="button" class="igo' + (now === k ? ' on' : '') + '" aria-pressed="' + (now === k) + '" data-act="roomIconSet" data-key="' + k + '" data-val="' + (k === auto ? '' : k) + '" aria-label="' + esc(k) + '"><span class="ri">' + ICON.room[k] + '</span>' + (!chosen && k === auto ? '<small>' + tl('Default') + '</small>' : '') + '</button>'; }).join('') +
       '</div><p class="err" id="m-err" hidden></p><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
   roomIconSet: function (el) {
@@ -9032,6 +9088,25 @@ var ACT = {
     if (!it) return;
     if (v.name === 'edit' && v.id === it.id) return showNeed(need);
     go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: true, need: need });
+  },
+  // the large photo: a sheet (so Back and a tap outside close it) shown in the middle over a blurred page; the tiny copy shows while the real one loads
+  viewPhoto: function (el) {
+    var it = S.byId[el.dataset.id]; if (!it) return;
+    var full = photoSrc(it, 900), m = /\/d\/([\w-]{10,})/.exec(it.photo || ''), small = /^data:image\/jpeg;base64,/.test(it.thumb || '') ? it.thumb : '';
+    M = { type: 'viewer' };
+    openSheet('<button type="button" class="vx" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button><div class="vframe loading-photo">' +
+      (small ? '<img class="vsmall" alt="" src="' + esc(small) + '">' : '') + '<img class="vfull" alt="' + esc(shown(it)) + '"><span class="lockring vring" aria-hidden="true"></span></div>' +
+      '<p class="vnote" role="status" hidden>' + tl('The full photo needs a connection.') + '</p>', null, 'viewer');
+    var frame = document.querySelector('#sheet .vframe'), img = frame && frame.querySelector('.vfull');
+    if (!img) return;
+    var tried = false, end = function (ok) {
+      if (!document.body.contains(img)) return;
+      frame.classList.remove('loading-photo'); frame.classList.add(ok ? 'got' : 'failed');
+      if (!ok) { img.removeAttribute('src'); document.querySelector('#sheet .vnote').hidden = false; }
+    };
+    img.onload = function () { end(true); };
+    img.onerror = function () { if (!tried && m && !S.localPhoto[it.id]) { tried = true; img.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w900'; } else end(false); };
+    if (full) img.src = full; else end(false);
   },
   pillMenu: function (el) {
     var r = el.getBoundingClientRect();
@@ -9360,7 +9435,7 @@ document.addEventListener('keydown', function (e) {
 // a photo that will not load falls back to the Drive thumbnail, then to the picture of its category
 document.addEventListener('error', function (e) {
   var t = e.target;
-  if (!t || t.tagName !== 'IMG') return;
+  if (!t || t.tagName !== 'IMG' || t.classList.contains('vfull')) return;   // the large photo handles its own failure
   if (t.dataset.fb) { var fb = t.dataset.fb; delete t.dataset.fb; t.src = fb; }
   else t.remove();
 }, true);
@@ -9438,10 +9513,11 @@ function backOnline() {
   INFLIGHT.slice().forEach(function (r) { if (r.ctl && Date.now() - r.at > 6000) r.ctl.abort(); });   // give up on requests that stalled while the signal was gone
   try { drawChrome(cur()); } catch (e) { /* not drawn yet */ }
   if (S.outbox.length) { S.softSend = true; softBusy(true, tl('Sending…')); flush(); }
+  else softBusy(false);
   refresh();
 }
 function probeNow() {
-  if (!S.offline || S.probing || S.test) return;
+  if (!S.offline || S.probing || S.trying || S.test) return;
   S.probing = true;
   var done = false, finish = function (ok) {
     if (done) return; done = true; clearTimeout(limit); S.probing = false;
