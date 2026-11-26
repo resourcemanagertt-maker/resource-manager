@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <base target="_top">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#fbfbf9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1a1815" media="(prefers-color-scheme: dark)">
@@ -48,8 +48,9 @@ a{color:inherit}
 #app{padding:var(--s2) var(--s4) calc(104px + var(--stripH,0px))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);min-height:48px;margin-bottom:var(--s1)}
 .org{color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topr{display:flex;align-items:center;justify-content:flex-end;gap:var(--s2);min-width:0;max-width:72%;flex:0 1 auto}
-.topr .me{flex:0 1 auto}
+.topr{display:flex;align-items:center;justify-content:flex-end;gap:var(--s2);min-width:0;flex:1 1 0}
+.topr .me{flex:0 1 auto;min-width:0;max-width:11em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand{flex:none;white-space:nowrap}
 @media (max-width:420px){html[data-text] .adminpill span,.adminpill.tight span{display:none}html[data-text] .adminpill,.adminpill.tight{padding:0;width:44px;justify-content:center}}
 @media (max-width:340px){.adminpill span{display:none}.adminpill{padding:0;width:44px;justify-content:center}}
 .adminpill{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3);border:1.5px solid var(--ink);border-radius:999px;background:var(--mark);color:var(--on-mark);font-size:14px;font-weight:700}
@@ -73,6 +74,10 @@ a{color:inherit}
 .back svg{width:22px;height:22px}
 .notice{margin:var(--s2) var(--s4) 0;padding:var(--s2) var(--s3);border-radius:var(--r);background:var(--mark);color:var(--on-mark);font-size:14px;display:flex;align-items:center;gap:var(--s3);justify-content:space-between}
 .notice button{font-weight:700;text-decoration:underline;white-space:nowrap;min-height:44px;padding:0 var(--s1)}
+@media (prefers-reduced-motion:no-preference){
+  @keyframes dockPulse{0%{transform:scale(1)}35%{transform:scale(1.03);box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 35%,transparent)}100%{transform:scale(1)}}
+  .notice.pulse{animation:dockPulse .5s ease-out}
+}
 
 .hero{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.015em;margin:var(--s3) 0 var(--s4)}
 h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;margin:var(--s1) 0 var(--s1)}
@@ -124,7 +129,9 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.need{background:color-mix(in srgb,var(--mark) 20%,var(--surface))}}
 :root[data-theme="dark"] .badge.need{background:color-mix(in srgb,var(--mark) 20%,var(--surface))}
 .cat{position:relative}
-/* a photo only appears when there is one */
+/* a photo only appears when there is one; it fades in when it has arrived, so nothing jumps */
+.tile img{opacity:0;transition:opacity .2s ease-out}
+.tile img.ld{opacity:1}
 .tile{position:relative;flex:none;width:52px;height:52px;border-radius:var(--r);background:var(--wash);display:grid;place-items:center;overflow:hidden}
 .tile .emo{font-size:28px;line-height:1}
 .tile.big .emo{font-size:46px}
@@ -299,7 +306,8 @@ html[data-text] .search input{font-size:16px}
 #nav button.on{color:var(--ink)}
 #nav button.on::before{content:"";position:absolute;top:-1px;left:var(--s4);right:var(--s4);height:4px;background:var(--brand)}
 .kindfixed{color:var(--muted);margin:var(--s2) 0 var(--s3)}
-.card.item.starter{border:1px dashed var(--line-strong);background:transparent}
+.list:has(> .card.item.starter){padding:0;margin-left:0;margin-right:0;border:0;border-radius:0;box-shadow:none;background:transparent;overflow:visible}
+.card.item.starter,.list .card.item.starter{border:1px dashed var(--line-strong);border-radius:var(--r);background:transparent;box-shadow:none;outline:0;padding:var(--s3);margin:var(--s2) 0;width:100%;box-sizing:border-box}
 .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-top:var(--s2)}
 .tgt{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:var(--s1);min-height:84px;padding:var(--s2) var(--s1);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);font-size:13px;font-weight:600;text-align:center;line-height:1.2}
 .tgt .emo{font-size:26px;line-height:1}
@@ -686,18 +694,22 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 .opt.rp .rp-n{flex:1;min-width:0;text-align:left;overflow-wrap:anywhere}
 .opt.rp small{display:block;color:var(--muted);font-size:13px;font-weight:400}
 .opt.rp svg{width:20px;height:20px;flex:none}
-#rp-q{margin-top:var(--s2)}
+#rp-q{margin-top:var(--s3)}
+.rp-head{padding-bottom:var(--s3)}
+.rp-scroll{padding-top:var(--s3);padding-bottom:var(--s3)}
+.rp-foot{padding-top:var(--s4)}
 #rp-new{margin-top:var(--s2)}
 .rp-hide{display:none!important}
 .rp-name b{font-weight:800;text-decoration:underline;text-decoration-color:var(--mark);text-decoration-thickness:3px;text-underline-offset:2px}
 .rp-none{padding:var(--s3) 0}
 /* v45: motion (about 0.2 s; nothing at all when the phone asks for reduced motion) */
-.ghost{position:fixed;z-index:4;margin:0;pointer-events:none;overflow:hidden;background:var(--paper)}
+html,body{overflow-x:clip}   /* a page that slides in must never make the page wider: a phone would zoom out to fit it and the bottom bar would drop */
+.ghost{position:fixed;z-index:4;max-width:100vw;margin:0;pointer-events:none;overflow:hidden;background:var(--paper)}
 @media (prefers-reduced-motion:no-preference){
-  @keyframes pgInFwd{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
-  @keyframes pgInBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
-  @keyframes pgOutFwd{to{opacity:0;transform:translateX(-28px)}}
-  @keyframes pgOutBack{to{opacity:0;transform:translateX(28px)}}
+  @keyframes pgInFwd{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+  @keyframes pgInBack{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+  @keyframes pgOutFwd{to{opacity:0;transform:translateX(-12px)}}
+  @keyframes pgOutBack{to{opacity:0;transform:translateX(12px)}}
   @keyframes pgFade{from{opacity:0}to{opacity:1}}
   @keyframes shUp{from{transform:translateY(100%)}to{transform:none}}
   @keyframes shDown{to{transform:translateY(100%)}}
@@ -718,6 +730,7 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 .igo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);color:var(--ink);padding:var(--s2)}
 .igo.on{box-shadow:inset 0 0 0 2px var(--ink)}
 .igo svg{width:26px;height:26px}
+.igo .ri{display:grid;place-items:center;width:100%;margin:0}
 .igo small{font-size:11px}
 .roomicon{flex:none;margin-right:var(--s2)}
 /* the small i next to a label: the note under it is hidden until it is tapped */
@@ -737,7 +750,9 @@ html.locked,html.locked body{overflow:hidden;touch-action:none;overscroll-behavi
 /* Ask to buy is never the loud button: outlined, as wide as its words */
 .btn.ask{width:auto;min-height:44px;padding:0 var(--s4);background:transparent;color:var(--ink);border:1px solid var(--line-strong);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:var(--s2)}
 .btn.ask svg{width:18px;height:18px;flex:none}
-.empty .btn.ask{margin-right:var(--s2)}
+.empty .btn.ask{margin-right:0}
+div.card.empty .btn{display:flex;align-items:center;justify-content:center;width:100%;margin-left:0;margin-right:0}
+div.card.empty .btn + .btn{margin-top:var(--s2)}
 .lowact{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0 0 var(--s3);padding-left:calc(52px + var(--s3))}
 html[data-text] .lowact{padding-left:calc(44px + var(--s3))}
 .lowwrap:has(.lowact){padding-bottom:0}
@@ -767,6 +782,34 @@ html[data-text="2"] .rp-in{max-height:none;height:calc((100dvh - 200px) / 1.3)}
 html[data-text="1"] .rp-scroll,html[data-text="2"] .rp-scroll{min-height:min(30dvh,170px)}
 html[data-text="1"] .rp-count,html[data-text="2"] .rp-count{display:none}
 html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);padding-bottom:calc(var(--s3) + env(safe-area-inset-bottom))}
+.opt.loading{position:relative;pointer-events:none}
+.opt.loading::after{content:"";position:absolute;right:16px;top:50%;width:20px;height:20px;margin-top:-10px;border:2.5px solid var(--ink);border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+.visnote{margin:var(--s3) 0 var(--s4)}
+#sheet:has(.panel.pmenu){align-items:flex-start;justify-content:flex-end;padding:0 var(--s3)}
+#sheet:has(.panel.pmenu) .scrim{background:transparent}
+#sheet .panel.pmenu{width:auto;min-width:210px;max-width:calc(100% - 24px);padding:var(--s1);border-radius:var(--r);box-shadow:var(--sh2);border:1px solid var(--line-strong);max-height:none}
+.pmenu .pmi{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:48px;padding:0 var(--s3);border-radius:var(--r);font-size:16px;font-weight:600;color:var(--ink);text-align:left}
+.pmenu .pmi + .pmi{border-top:1px solid var(--line)}
+.pmenu .pmi svg{width:20px;height:20px;flex:none}
+.pmenu .pmi.out{color:var(--ink);font-weight:700}
+@media (prefers-reduced-motion:no-preference){
+  @keyframes pmIn{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes pmOut{to{opacity:0;transform:translateY(-6px) scale(.98)}}
+  #sheet.sheet-in:has(.pmenu) .panel{animation:pmIn .14s ease-out both}
+  .ghost-sheet:has(.pmenu) .panel{animation:pmOut .12s ease-in both}
+}
+.welcome{padding-top:var(--s6);text-align:left}
+.wmark{display:block;margin-bottom:var(--s3)}
+.wsub{margin-bottom:var(--s5)}
+.ccards{display:grid;gap:var(--s3)}
+.ccard{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);width:100%;min-height:64px;padding:var(--s3) var(--s4);background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r);box-shadow:var(--sh1);font-size:18px;font-weight:700;color:var(--ink);text-align:left}
+.ccard .cn{min-width:0;overflow-wrap:break-word}
+.ccard small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:2px}
+.ccard svg{width:20px;height:20px;flex:none}
+.wfeat{display:grid;gap:var(--s2);margin:var(--s6) 0 var(--s3)}
+.wfeat span{display:flex;align-items:center;gap:var(--s3);font-size:15px;color:var(--ink)}
+.wfeat svg{width:22px;height:22px;flex:none}
+.wnote{margin-top:var(--s3)}
 .optsub{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
 .rp-in .rp-head,.rp-in .rp-scroll,.rp-in .rp-foot{padding-left:0;padding-right:0}
 .rp-in .rp-head{padding-top:0}
@@ -791,6 +834,7 @@ html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);
 .sp-ok svg{width:22px;height:22px;color:var(--brand)}
 @keyframes glow2{0%,100%{box-shadow:0 0 0 0 transparent,0 0 0 0 transparent}50%{box-shadow:0 0 0 3px var(--mark),0 0 0 8px color-mix(in srgb,var(--ink) 38%,transparent)}}
 .glow{animation:glow2 .45s ease-in-out 2;border-radius:var(--r)}
+details.glow{border-radius:0}
 @media (prefers-reduced-motion:reduce){.glow{animation:none;box-shadow:0 0 0 3px var(--mark),0 0 0 6px color-mix(in srgb,var(--ink) 38%,transparent)}}
 .rp-or{margin:var(--s2) 0 0;font-size:14px;font-weight:600;color:var(--muted)}
 .menu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
@@ -815,6 +859,8 @@ html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);
 .ri2 svg{width:18px;height:18px}
 .formend.pair{display:flex;gap:var(--s3)}
 .formend.pair .btn{flex:1 1 0;min-width:0;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
+.formend.pair .btn.quiet:not(.next){border:1px solid var(--line-strong);background:transparent}
+.formend.pair .btn.quiet:not(.next):not(.next){order:2}
 details.more summary,details.histfold summary,details[data-keep] summary,details.notwhat summary,details.settings summary{color:var(--ink);font-weight:600}
 details > summary::after{color:var(--ink)}
 .chip.look{display:inline-flex;align-items:center;gap:8px}
@@ -899,7 +945,7 @@ html[data-text="1"] .tot b.word,html[data-text="2"] .tot b.word{font-size:18px}
 <div id="banner"></div>
 <div id="app"><div class="splash">Getting the list…</div></div>
 <script>/* an admin phone: the Admin button is in the very first paint, before the big script below has even been read */
-try{var __t=JSON.parse(localStorage.getItem('rm_admin_tok')||'null');if(__t&&__t.t)document.getElementById('app').insertAdjacentHTML('afterbegin','<header class="top"><span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span><span class="topr"><button class="adminpill" aria-label="Admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg><span>Admin</span></button></span></header>')}catch(e){}</script>
+try{var __t=JSON.parse(localStorage.getItem('rm_admin_tok')||'null');if(__t&&__t.t)document.getElementById('app').insertAdjacentHTML('afterbegin','<header class="top"><span class="brand"><svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg><b>Ada Tak?</b></span><span class="topr"><button class="adminpill" data-act="pillMenu" aria-haspopup="menu" aria-label="Admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg><span>Admin</span></button></span></header>')}catch(e){}</script>
 <nav id="nav" hidden></nav>
 <div id="sheet" hidden><div class="scrim" data-act="closeSheet"></div><div class="panel" role="dialog" aria-modal="true"></div></div>
 <div id="toast" hidden role="status"></div>
@@ -3608,7 +3654,6 @@ L.ms = {
   "Asked today": "Ditanya hari ini",
   "Asked yesterday": "Ditanya semalam",
   "Asked {date}": "Ditanya pada {date}",
-  "Automatic": "Automatik",
   "Back": "Kembali",
   "Back to admin": "Kembali ke admin",
   "Back to your real centres.": "Kembali ke pusat sebenar anda.",
@@ -3642,6 +3687,7 @@ L.ms = {
   "Change icon": "Tukar ikon",
   "Change type": "Tukar jenis",
   "Changed while you counted:": "Berubah semasa anda mengira:",
+  "Check a room": "Semak sebuah bilik",
   "Check again": "Semak semula",
   "Check the barcode digits.": "Semak digit kod bar.",
   "Check the price.": "Semak harga.",
@@ -3701,6 +3747,7 @@ L.ms = {
   "Decline": "Tolak",
   "Decline?": "Tolak?",
   "Decorations and lanterns": "Hiasan dan tanglung",
+  "Default": "Lalai",
   "Delete": "Padam",
   "Details": "Butiran",
   "Details changed": "Butiran diubah",
@@ -3728,6 +3775,7 @@ L.ms = {
   "Files, folders and books": "Fail, folder dan buku",
   "Fill in every number": "Isi semua nombor",
   "Find": "Cari",
+  "Find anything": "Cari apa-apa sahaja",
   "Finish": "Selesai",
   "Finish adding": "Siapkan penambahan",
   "First 30 shown. Type more.": "30 pertama ditunjuk. Taip lagi.",
@@ -3843,6 +3891,7 @@ L.ms = {
   "Not confirmed · 0 in stock": "Belum disahkan · 0 dalam stok",
   "Not found online. Name it once.": "Tiada dalam talian. Namakan sekali.",
   "Not here?": "Tiada di sini?",
+  "Not listed? Ask your admin to add it.": "Tiada dalam senarai? Minta pentadbir menambahnya.",
   "Not sorted yet": "Belum disusun",
   "Not sure": "Tidak pasti",
   "Not what you need?": "Bukan yang anda cari?",
@@ -3904,6 +3953,7 @@ L.ms = {
   "Photo of a barcode": "Gambar kod bar",
   "Photo saved.": "Foto disimpan.",
   "Pick one type to narrow by subtype.": "Pilih satu jenis untuk menyempitkan mengikut subjenis.",
+  "Pick your centre to get started.": "Pilih pusat anda untuk bermula.",
   "Piece missing": "Bahagian hilang",
   "Place": "Tempat",
   "Place and notes stay at {centre}.": "Tempat dan nota kekal di {centre}.",
@@ -3996,6 +4046,7 @@ L.ms = {
   "See all": "Lihat semua",
   "See all {n}": "Lihat semua {n}",
   "See it under Me › Suggestions.": "Lihat di Saya › Cadangan.",
+  "See what is low": "Lihat apa yang hampir habis",
   "See what staff see. You stay signed in.": "Lihat apa yang kakitangan lihat. Anda kekal log masuk.",
   "Select": "Pilih",
   "Select all": "Pilih semua",
@@ -4049,6 +4100,7 @@ L.ms = {
   "Stationery and paper": "Alat tulis dan kertas",
   "Status": "Status",
   "Stay signed in": "Kekal log masuk",
+  "Still offline. Tried again just now ({times}×). {n} waiting.": "Masih di luar talian. Dicuba sekali lagi tadi ({times}×). {n} menunggu.",
   "Subtype": "Subjenis",
   "Suggestion sent": "Cadangan dihantar",
   "Suggestion withdrawn.": "Cadangan ditarik balik.",
@@ -4117,7 +4169,6 @@ L.ms = {
   "This will be a new purchase.": "Ini akan menjadi pembelian baharu.",
   "Tip: hold Add to type instead.": "Petua: tekan lama Tambah untuk menaip.",
   "Tip: press and hold an item for shortcuts.": "Petua: tekan dan tahan satu item untuk pintasan.",
-  "Tip: press and hold an item in any list for shortcuts.": "Petua: tekan dan tahan satu item dalam mana-mana senarai untuk pintasan.",
   "Tissues and wipes": "Tisu dan tuala basah",
   "To buy": "Untuk dibeli",
   "To confirm ({n})": "Untuk disahkan ({n})",
@@ -4196,6 +4247,7 @@ L.ms = {
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
   "You have {amount} here.": "Anda ada {amount} di sini.",
+  "You still see everything as admin. Use View as staff to check.": "Sebagai pentadbir anda masih nampak semuanya. Guna Lihat sebagai kakitangan untuk menyemak.",
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
   "Your admin sign-in ended. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your admin sign-in has expired. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
@@ -4353,7 +4405,6 @@ L.zh = {
   "Asked today": "今天提出",
   "Asked yesterday": "昨天提出",
   "Asked {date}": "{date} 提出",
-  "Automatic": "自动",
   "Back": "返回",
   "Back to admin": "返回管理员",
   "Back to your real centres.": "返回您真实的分园。",
@@ -4387,6 +4438,7 @@ L.zh = {
   "Change icon": "更改图标",
   "Change type": "更改类型",
   "Changed while you counted:": "你清点时被改动：",
+  "Check a room": "盘点一个房间",
   "Check again": "再看一次",
   "Check the barcode digits.": "请检查条码数字。",
   "Check the price.": "请检查价格。",
@@ -4446,6 +4498,7 @@ L.zh = {
   "Decline": "拒绝",
   "Decline?": "拒绝？",
   "Decorations and lanterns": "装饰与灯笼",
+  "Default": "默认",
   "Delete": "删除",
   "Details": "详情",
   "Details changed": "信息已修改",
@@ -4473,6 +4526,7 @@ L.zh = {
   "Files, folders and books": "文件夹与簿本",
   "Fill in every number": "请填好每个数字",
   "Find": "查找",
+  "Find anything": "快速查找任何东西",
   "Finish": "完成",
   "Finish adding": "完成添加",
   "First 30 shown. Type more.": "显示前 30 个。多输入几个字。",
@@ -4588,6 +4642,7 @@ L.zh = {
   "Not confirmed · 0 in stock": "未确认 · 库存 0",
   "Not found online. Name it once.": "网上没有，命名一次即可。",
   "Not here?": "没找到？",
+  "Not listed? Ask your admin to add it.": "没有您的中心？请让管理员添加。",
   "Not sorted yet": "还没整理",
   "Not sure": "不确定",
   "Not what you need?": "不是你要找的？",
@@ -4649,6 +4704,7 @@ L.zh = {
   "Photo of a barcode": "拍条码照片",
   "Photo saved.": "照片已保存。",
   "Pick one type to narrow by subtype.": "选一个类型才能按子类型筛选。",
+  "Pick your centre to get started.": "请选择您的中心开始使用。",
   "Piece missing": "缺少零件",
   "Place": "位置",
   "Place and notes stay at {centre}.": "位置和备注只属于 {centre}。",
@@ -4741,6 +4797,7 @@ L.zh = {
   "See all": "查看全部",
   "See all {n}": "查看全部 {n} 项",
   "See it under Me › Suggestions.": "在“我的”›“建议”里查看。",
+  "See what is low": "查看快用完的东西",
   "See what staff see. You stay signed in.": "看看员工看到的内容。您仍保持登录。",
   "Select": "选择",
   "Select all": "全选",
@@ -4794,6 +4851,7 @@ L.zh = {
   "Stationery and paper": "文具与纸张",
   "Status": "状态",
   "Stay signed in": "保持登录",
+  "Still offline. Tried again just now ({times}×). {n} waiting.": "仍然离线。刚刚又试了一次（{times}次）。{n} 项等待中。",
   "Subtype": "细类",
   "Suggestion sent": "建议已提交",
   "Suggestion withdrawn.": "建议已撤回。",
@@ -4862,7 +4920,6 @@ L.zh = {
   "This will be a new purchase.": "这将是一次新的购买。",
   "Tip: hold Add to type instead.": "小提示：长按“添加”可改为输入。",
   "Tip: press and hold an item for shortcuts.": "提示：长按物品可使用快捷操作。",
-  "Tip: press and hold an item in any list for shortcuts.": "提示：在任何列表中长按物品可使用快捷操作。",
   "Tissues and wipes": "纸巾与湿巾",
   "To buy": "待购买",
   "To confirm ({n})": "待确认（{n}）",
@@ -4941,6 +4998,7 @@ L.zh = {
   "Write it down.": "请记下。",
   "Yes": "好",
   "You have {amount} here.": "这里有 {amount}。",
+  "You still see everything as admin. Use View as staff to check.": "作为管理员您仍能看到全部。请用“以员工身份查看”来检查。",
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
   "Your admin sign-in ended. Sign in again.": "你的管理员登录已结束，请重新登录。",
   "Your admin sign-in has expired. Sign in again.": "你的管理员登录已过期，请重新登录。",
@@ -5236,7 +5294,7 @@ function decorate(fn, data) {
     if (S.admin && S.pin && !data.pin) data.pin = S.pin;
   }
   if (fn === 'getData' || fn === 'getHistory') {
-    if (!data.as && S.me && S.me.centre) data.as = S.me.centre;
+    if (!data.as) data.as = (S.me && S.me.centre) || '~';   // a phone that has not chosen a centre yet is a visitor to every centre: quantities only
     if (S.admin && S.pin && !data.pin) data.pin = S.pin;
   }
   if (S.test) { data.test = 1; if (!data.tpin) data.tpin = S.tpin; }
@@ -5297,7 +5355,7 @@ function pollTick() {
   S.pollT = setTimeout(pollTick, window.__rmPollMs || 30000);
   pollNow();
 }
-window.RMPoll = { setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIconKey,
+window.RMPoll = { draw: function () { render(); }, kb: function (n) { placeSheet(n); }, setAll: function (on) { S.allCentres = !!on; S.lowAll = !!on; render(); }, now: function () { S.touched = Date.now(); return pollNow(); }, ver: function () { return S.ver; }, setVer: function (v) { S.ver = v; }, looksSame: looksSame, rememberType: rememberType, roomIcon: roomIconKey,
   pluralUnit: pluralUnit, unitFor: unitFor,
   skel: function (mode) { S.requests = null; S.reqErr = mode === 'err'; render(); },
   skelHist: function (on) { var v = cur(); v.histOpen = !!on; delete S.history[v.id]; render(); },
@@ -5336,7 +5394,8 @@ function qtyOnly(it) {
 function scrubBase() {
   var me = S.me && S.me.centre;
   if (!me || S.test) return;
-  S.base = S.base.map(function (it) { return it.centre === me || it.ro ? it : qtyOnly(it); });
+  var drop = S.otherMode === 'nothing';
+  S.base = S.base.filter(function (it) { return !(drop && it.centre !== me); }).map(function (it) { return it.centre === me || it.ro ? it : qtyOnly(it); });
   S.starter = [];
   saveData(); rebuild();
 }
@@ -5726,6 +5785,7 @@ function render() {
     rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
   delete views.bulk;
   views.unsorted = vAttention;
+  rememberOpen(app);
   app.innerHTML = (views[v.name] || vHome)(v);
   restoreOpen();
   afterRender(v);
@@ -5733,6 +5793,10 @@ function render() {
   pillCheck();
 }
 // a fold (<details data-keep="…">) stays open or shut the way the person left it, however often the page is redrawn
+// read what is open straight from the page before it is replaced: the browser announces an opened fold a moment late, and a redraw in that gap would shut it
+function rememberOpen(app) {
+  [].forEach.call(app.querySelectorAll('details[data-keep]'), function (d) { (S.keep || (S.keep = {}))[d.dataset.keep] = d.open; });
+}
 function restoreOpen() {
   var keep = S.keep || {};
   [].forEach.call(document.querySelectorAll('details[data-keep]'), function (d) { if (keep[d.dataset.keep]) d.open = true; });
@@ -5837,7 +5901,8 @@ function drawChrome(v) {
   nav.innerHTML = '<div class="in">' + b('home', tl('Find')) + b('low', tl('Low'), lows) + addBtn + b('rooms', tl('Rooms'), roomsBadge(myCentre())) + b('more', tl('Me')) + '</div>';
   var n = S.outbox.length, msg = '', dock = '';
   if (n && S.offline) {
-    dock = '<div class="notice"><span>' + (n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
+    var tried = S.tried && Date.now() - S.tried.at < 8000;
+    dock = '<div class="notice' + (tried && S.tried.pulse ? ' pulse' : '') + '"><span>' + (tried ? tl('Still offline. Tried again just now ({times}×). {n} waiting.', { times: S.tried.n, n: n }) : n === 1 ? tl('1 change will send when you’re online.') : tl('{n} changes will send when you’re online.', { n: n })) +
       ' ' + '</span><button data-act="flushNow">' + tl('Send now') + '</button></div>';
   } else if (S.offline) {
     dock = '<div class="notice"><span>' + esc(tl('Offline. Showing the list from {when}.', { when: when(S.syncedAt) })) +
@@ -5853,7 +5918,7 @@ function drawChrome(v) {
 function adminShown() { if (S.admin || S.asStaff) return true; try { var t = store.get('rm_admin_tok', null); return !!(t && t.t); } catch (e) { return false; } }
 function pillHtml() {
   if (S.asStaff) return '<button class="adminpill" data-act="viewAdmin" aria-label="' + esc(tl('Back to admin')) + '">' + ICON.shield + '<span>' + tl('Back to admin') + '</span></button>';
-  return adminShown() ? '<button class="adminpill" data-act="go" data-to="admin" aria-label="' + esc(tl('Admin')) + '">' + ICON.shield + '<span>' + tl('Admin') + '</span></button>' : ''; }
+  return adminShown() ? '<button class="adminpill" data-act="pillMenu" aria-haspopup="menu" aria-label="' + esc(tl('Admin')) + '">' + ICON.shield + '<span>' + tl('Admin') + '</span></button>' : ''; }
 // a last check after every page is drawn: if the pill should be there and is not, put it back (and count it, so Settings can say so)
 function pillCheck() {
   var box = document.querySelector('#app .top .topr');
@@ -5862,6 +5927,7 @@ function pillCheck() {
   if (want && !has) { box.insertAdjacentHTML('afterbegin', pillHtml()); try { store.set('rm_pillfix', (store.get('rm_pillfix', 0) || 0) + 1); } catch (e) { /* none */ } }
   else if (!want && has) has.remove();
 }
+var BRAND_SVG = '<svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#f7f856"/><g transform="translate(32 32) scale(.62) translate(-32.5 -32)"><rect x="9" y="33" width="23" height="23" rx="4" fill="#0113a1"/><rect x="33" y="33" width="23" height="23" rx="4" fill="#fff" stroke="#0113a1" stroke-width="3.5"/><g transform="rotate(-9 32 20)"><rect x="20" y="8" width="23" height="23" rx="4" fill="#0113a1"/><path d="M26.5 20l4.5 4.5 7-8" fill="none" stroke="#f7f856" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="44.5" cy="44.5" r="3.4" fill="#0113a1"/></g></svg>';
 function top(hasBack, noMe) {
   var me = S.me && !noMe ? '<button class="me" data-act="centrePick" aria-label="' + esc(tl('Centre')) + '">' + esc(S.me.centre) + '</button>' : '';
   return '<header class="top">' + (hasBack
@@ -5879,11 +5945,11 @@ function photoSrc(it, w) {
   return /^https:\/\//.test(p) ? p : '';
 }
 function tile(it, cat, big) {
-  var src = photoSrc(it, big ? 600 : 200);
+  var src = photoSrc(it, big ? 480 : 160);
   var m = it && /\/d\/([\w-]{10,})/.exec(it.photo || '');
   return '<span class="tile' + (big ? ' big' : '') + '"><span class="emo">' + (CAT_ICON[cat] || (it && it.kind === 'Supplies' ? '🧴' : it && it.kind === 'Equipment' ? '🧰' : '📦')) + '</span>' +
-    (src ? '<img alt="" loading="lazy" src="' + esc(src) + '"' +
-      (m ? ' data-fb="https://drive.google.com/thumbnail?id=' + esc(m[1]) + '&amp;sz=w' + (big ? 600 : 200) + '"' : '') + '>' : '') +
+    (src ? '<img alt="" loading="lazy" decoding="async" fetchpriority="low" src="' + esc(src) + '"' +
+      (m ? ' data-fb="https://drive.google.com/thumbnail?id=' + esc(m[1]) + '&amp;sz=w' + (big ? 480 : 160) + '"' : '') + '>' : '') +
     '</span>';
 }
 function badges(it) {
@@ -6789,7 +6855,7 @@ function vEdit(v) {
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
     photoField() +
     '<p class="err" id="f-err" hidden></p>' +
-    '<div class="formend' + (v.finish && tags.length && more ? ' pair' : '') + '"><button class="btn primary" id="f-go" data-act="editGo">' + tl('Save') + '</button>' +
+    '<div class="formend' + ((v.finish && tags.length && more) || S.admin ? ' pair' : '') + '"><button class="btn primary" id="f-go" data-act="editGo">' + tl('Save') + '</button>' +
     (v.finish && tags.length && more ? '<button type="button" class="btn next" id="f-next" data-act="editNext">' + tl('Save & next') + '</button>' : '') +
     (S.admin ? '<button type="button" class="btn quiet" data-act="removeItem">' + tl('Remove item') + '</button>' : '') + '</div>';
 }
@@ -6969,7 +7035,6 @@ function vSettings() {
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Follow theme'), ICON.auto], ['light', tl('Light'), ICON.sun], ['dark', tl('Dark'), ICON.moon]].map(function (o) {
       return '<button class="chip look' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[2] + '<span>' + o[1] + '</span></button>';
     }).join('') + '</div><p class="help">' + tl('Follow theme uses your phone’s light or dark setting.') + '</p>' +
-    '<p class="help">' + tl('Tip: press and hold an item in any list for shortcuts.') + '</p>' +
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
@@ -7131,10 +7196,18 @@ function vPick() {
   if (!S.centres.length) {
     return '<h1 class="hero">' + tl('Welcome') + '</h1><div class="card empty"><h2>' + tl('No centres yet.') + '</h2><p>' + tl('Ask your admin to add them in the Setup tab of the Google Sheet.') + '</p><button class="btn" data-act="refresh">' + tl('Check again') + '</button></div>';
   }
-  return '<h1 class="hero">' + tl('Which centre are you at?') + '</h1>' +
-    '<div class="chips">' + S.centres.map(function (c) {
-      return '<button class="chip" data-act="pickCentre" data-val="' + esc(c) + '">' + esc(c) + '</button>';
-    }).join('') + '</div>';
+  var counts = {};
+  (S.base || []).forEach(function (it) { counts[it.centre] = (counts[it.centre] || 0) + 1; });
+  return '<div class="welcome"><span class="wmark">' + BRAND_SVG.replace('width="32" height="32"', 'width="72" height="72"') + '</span>' +
+    '<h1 class="hero">' + tl('Welcome') + '</h1>' +
+    '<p class="sub wsub">' + (S.org ? esc(S.org) + ' · ' : '') + tl('Pick your centre to get started.') + '</p>' +
+    '<h2 class="sec">' + tl('Which centre are you at?') + '</h2>' +
+    '<div class="ccards">' + S.centres.map(function (c) {
+      var n = counts[c];
+      return '<button class="ccard" data-act="pickCentre" data-val="' + esc(c) + '"><span class="cn">' + esc(c) + (n ? '<small>' + (n === 1 ? tl('1 item') : tl('{n} items', { n: n })) + '</small>' : '') + '</span>' + ICON.go + '</button>';
+    }).join('') + '</div>' +
+    '<div class="wfeat"><span>' + ICON.search + '<b>' + tl('Find anything') + '</b></span><span>' + ICON.done + '<b>' + tl('Check a room') + '</b></span><span>' + ICON.low + '<b>' + tl('See what is low') + '</b></span></div>' +
+    '<p class="help wnote">' + tl('Not listed? Ask your admin to add it.') + '</p></div>';
 }
 var REQ_BADGE = { 'New': 'plain', 'Approved': 'ok', 'Bought': 'ok', 'Declined': 'low' };
 function skelRq() { return '<div class="rq"><div class="rq-top"><span class="skel" style="height:20px;width:55%"></span><span class="skel" style="height:26px;width:88px;border-radius:999px"></span></div><span class="skel" style="height:16px;width:35%"></span><span class="skel" style="height:13px;width:70%"></span></div>'; }
@@ -7230,7 +7303,7 @@ function vAdmin() {
   var tile = function (n, label, to) {
     return '<button class="stat" data-act="go" data-to="' + to + '"><b>' + n + '</b><span>' + label + '</span></button>';
   };
-  var ROW_ICON = { addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, pinChange: ICON.key, labels: ICON.qr };
+  var ROW_ICON = { addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, visOpen: ICON.eye, pinChange: ICON.key, labels: ICON.qr };
   var row = function (act, to, title, note, extra) {
     var ic = ROW_ICON[to || act];
     return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '>' + (ic ? '<span class="lead">' + ic + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + (extra || '') + ICON.go + '</button>';
@@ -7249,17 +7322,17 @@ function vAdmin() {
       row('pinChange', '', tl('Change PIN'), '')) +
       row('go', 'labels', tl('QR stickers'), '') +
     '</div>' + testCardHtml() +
-    '<details class="settings" id="adm-sheet"' + (S.test ? ' hidden' : '') + '><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
+    '<details class="settings" id="adm-sheet" data-keep="adm-sheet"' + (S.test ? ' hidden' : '') + '><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
       '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
       row('sheetChange', '', tl('Switch Google Sheet'), '') +
       row('csv', '', tl('Download'), '') +
     '</div></details>' +
-    (link ? '<details class="settings" id="adm-links"><summary>' + tl('Share links') + '<small>' + tl('Staff link and admin link') + '</small></summary><div class="card">' +
+    (link ? '<details class="settings" id="adm-links" data-keep="adm-links"><summary>' + tl('Share links') + '<small>' + tl('Staff link and admin link') + '</small></summary><div class="card">' +
       '<p class="lab">' + tl('Staff link (share only with staff)') + '</p><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="' + tl('Staff link (share only with staff)') + '" value="' + link + '" onclick="this.select()">' +
       '<button class="btn" data-act="copyLink" data-for="staff-link">' + tl('Copy') + '</button></div>' +
       '<p class="lab">' + tl('Admin link (keep private)') + '</p><div class="linkrow"><input id="admin-link" class="inp" readonly aria-label="' + tl('Admin link (keep private)') + '" value="' + link + '&admin" onclick="this.select()">' +
       '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div></div></details>' : '') +
-    '<details class="settings" id="adm-hist"><summary>' + tl('History') + '</summary><div class="card">' +
+    '<details class="settings" id="adm-hist" data-keep="adm-hist"><summary>' + tl('History') + '</summary><div class="card">' +
     (S.admin.log.length ? S.admin.log.slice(0, 8).map(function (h) {
       return '<p class="hist"><b>' + esc(tl(h.action)) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
         (h.change != null && h.change !== 0 && h.action !== 'Level set' ? ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')' : '') +
@@ -7902,6 +7975,18 @@ function shrink(file) {
   });
 }
 
+document.addEventListener('load', function (e) { var t = e.target; if (t && t.tagName === 'IMG' && t.parentNode && t.parentNode.classList && t.parentNode.classList.contains('tile')) t.classList.add('ld'); }, true);
+// a phone that lets the keyboard cover the page (it ignores interactive-widget) gets the open sheet lifted above the keyboard
+function placeSheet(kb) {
+  var s = byIdEl('sheet'); if (!s) return;
+  s.style.bottom = kb > 80 ? kb + 'px' : '';
+}
+(function () {
+  var vv = window.visualViewport; if (!vv) return;
+  var fix = function () { placeSheet(Math.max(0, window.innerHeight - vv.height - vv.offsetTop)); };
+  vv.addEventListener('resize', fix); vv.addEventListener('scroll', fix);
+})();
+
 // ---------- what each tap does ----------
 var ACT = {
   nav: function (el) {
@@ -7923,7 +8008,16 @@ var ACT = {
   go: function (el) { if (el.dataset.to === 'requests') loadRequests(); go({ name: el.dataset.to }); },
   back: back,
   refresh: function (el) { if (el && el.classList) { el.classList.add('spin'); setTimeout(function () { el.classList.remove('spin'); }, 900); } refresh(true); },
-  flushNow: function () { flush(); },
+  flushNow: function () {
+    if (S.offline && S.outbox.length) {   // still no signal: say so, so a second tap is never met with silence
+      var again = S.tried && Date.now() - S.tried.at < 8000;
+      S.tried = { n: again ? S.tried.n + 1 : 1, at: Date.now(), pulse: true };
+      drawChrome(cur());
+      clearTimeout(S.triedT); S.triedT = setTimeout(function () { if (S.tried) S.tried.pulse = false; drawChrome(cur()); }, 650);
+      clearTimeout(S.triedT2); S.triedT2 = setTimeout(function () { drawChrome(cur()); }, 8100);
+    }
+    flush();
+  },
   toastAct: function () { byIdEl('toast').hidden = true; if (toastFn) toastFn(); },
   closeSheet: closeSheet,
 
@@ -7994,7 +8088,7 @@ var ACT = {
     if (!S.admin || S.asStaff || S.locked) return;
     S.held = { admin: S.admin, pin: S.pin }; S.asStaff = true; S.admin = null; S.pin = '';
     S.requests = null; S.testInfo = null; S.openGen = (S.openGen || 0) + 1;
-    scrubBase();
+    scrubBase(); refresh();
     root('home');
   },
   viewAdmin: function () {
@@ -8613,7 +8707,7 @@ var ACT = {
     M = { type: 'roomicon', centre: el.dataset.centre, name: el.dataset.val };
     var cur0 = (S.rooms || []).filter(function (r) { return r.centre === M.centre && r.name === M.name; })[0], on = cur0 && cur0.icon;
     openSheet('<h2>' + esc(tl('Icon for “{name}”', { name: M.name })) + '</h2><div class="igrid">' +
-      '<button type="button" class="igo' + (on ? '' : ' on') + '" data-act="roomIconSet" data-val=""><span class="ri">' + roomIcon('') + '</span><small>' + tl('Automatic') + '</small></button>' +
+      '<button type="button" class="igo' + (on ? '' : ' on') + '" data-act="roomIconSet" data-val=""><span class="ri">' + roomIcon('') + '</span><small>' + tl('Default') + '</small></button>' +
       Object.keys(ICON.room).map(function (k) { return '<button type="button" class="igo' + (on === k ? ' on' : '') + '" data-act="roomIconSet" data-val="' + k + '" aria-label="' + esc(k) + '"><span class="ri">' + ICON.room[k] + '</span></button>'; }).join('') +
       '</div><p class="err" id="m-err" hidden></p><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
@@ -8679,7 +8773,7 @@ var ACT = {
   pickCentre: function (el) {
     S.me = { centre: el.dataset.val };
     if (!S.test) store.set('rm_me', S.me);
-    refresh();
+    scrubBase(); refresh();
     root('home');
     applyLink();
     adminEntry();
@@ -8829,6 +8923,18 @@ var ACT = {
     try { navigator.clipboard.writeText(v).then(done, function () { box.select(); toast(tl('Press and hold, then Copy.')); }); }
     catch (e) { box.select(); toast(tl('Press and hold, then Copy.')); }
   },
+  // the Admin pill: a small menu under it. It is a sheet in a dropdown's clothes, so Back, tapping outside and every history rule already work.
+  pillMenu: function (el) {
+    var r = el.getBoundingClientRect();
+    var item = function (act, ic, label, cls) { return '<button type="button" role="menuitem" class="pmi' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"><span class="lead">' + ic + '</span><span>' + label + '</span></button>'; };
+    M = { type: 'pmenu' };
+    openSheet('<div role="menu" aria-label="' + esc(tl('Admin')) + '">' + item('pmAdmin', ICON.shield, tl('Admin panel')) + item('pmSettings', ICON.cog, tl('Settings')) + item('pmOut', ICON.door, tl('Sign out'), 'out') + '</div>', null, 'pmenu');
+    var z = parseFloat(getComputedStyle(byIdEl('sheet')).zoom) || 1;
+    $('#sheet .panel').style.marginTop = Math.max(8, (r.bottom + 6) / z) + 'px';
+  },
+  pmAdmin: function () { closeSheet(); go({ name: 'admin' }); },
+  pmSettings: function () { closeSheet(); go({ name: 'settings' }); },
+  pmOut: function () { closeSheet(); ACT.adminLeave({ dataset: {} }); },
   visOpen: function () {
     M = { type: 'vis' };
     var opt = function (val, label, sub) { return '<button class="opt' + ((S.otherMode || 'quantities') === val ? ' on' : '') + '" data-act="visSet" data-val="' + val + '"><span class="dot"></span><span>' + label + '<small class="optsub">' + sub + '</small></span></button>'; };
@@ -8836,6 +8942,7 @@ var ACT = {
       opt('quantities', tl('Quantities only'), tl('The item and how many. No room, notes or photo.')) +
       opt('nothing', tl('Nothing'), tl('Staff see only their own centre.')) +
       opt('everything', tl('Everything'), tl('Rooms, notes and photos too.')) +
+      '<p class="help visnote">' + tl('You still see everything as admin. Use View as staff to check.') + '</p>' +
       '<p class="err" id="m-err" hidden></p><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
   },
   visSet: function (el) {
