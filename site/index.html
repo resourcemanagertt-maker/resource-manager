@@ -307,12 +307,6 @@ html[data-text] .search input{font-size:16px}
 /* text-only tabs: no icon set to look generic */
 #nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--ink);padding-bottom:env(safe-area-inset-bottom)}
 #nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-#nav button.addb{color:var(--ink)}
-#nav button.addb{padding-top:0}
-#nav button.addb .ic{width:60px;height:60px;margin-top:-34px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 6px var(--surface),0 6px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
-#nav button.addb svg{width:30px;height:30px;stroke:var(--on-brand);stroke-width:2.1}
-#nav button.addb.on::before{display:none}
-#nav button.addb .lb{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 #nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;padding:12px 0 4px;font-size:13px;font-weight:600;color:var(--muted);text-align:center}
 #nav button.on{color:var(--ink)}
 #nav button.on::before{content:"";position:absolute;top:-1px;left:var(--s4);right:var(--s4);height:4px;background:var(--brand)}
@@ -1096,22 +1090,53 @@ html[data-text="1"] .tot b.word,html[data-text="2"] .tot b.word{font-size:18px}
 /* v54 */
 html.testmode #nav,html.testmode .savebar{background:#4a3b00;border-top:2px solid #c9a227}
 html.testmode #nav button:not(.addb){color:#ffe9a6}
-html.testmode #nav button.addb .ic{box-shadow:0 0 0 4px #4a3b00}
 .modechip{display:inline-flex;align-items:center;gap:var(--s2);flex:none;min-height:44px;padding:0 var(--s3);border:1.5px dashed #c9a227;border-radius:999px;background:#4a3b00;color:#ffe9a6;font:inherit;font-size:14px;cursor:pointer}
 .modechip span{text-decoration:underline;text-underline-offset:3px;font-weight:700}
 .modechip.staffchip{background:var(--wash);color:var(--ink);border-color:var(--line-strong)}
 .modechip.staffchip ~ .topr .adminpill{display:none}   /* the chip is already the way back */
-/* the round Add button sits mostly inside the bar, so it covers little of the page */
-#nav button.addb .ic{width:52px;height:52px;margin-top:-14px;box-shadow:0 0 0 4px var(--surface),0 3px 8px rgba(0,0,0,.25)}
-/* the narrowest phones at the biggest text: a smaller circle, so it stays clear of the numbers beside it */
-@media (max-width:340px){html[data-text="2"] #nav button.addb .ic{width:44px;height:44px;margin-top:-10px}}
+/* v55: Add is a tab like the others: a filled circle where the icon goes, its name underneath, nothing outside the bar */
+#nav button.addb .ic{width:34px;height:34px;margin:-7px 0 -3px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center}
+#nav button.addb svg{width:22px;height:22px;stroke:var(--on-brand);stroke-width:2.2}
 #cam .campanel.addcard .cardhead{flex:none;padding:var(--s3) var(--s4) var(--s2);border-bottom:1px solid var(--line)}
 #cam .campanel.addcard.newcard{top:calc(env(safe-area-inset-top) + 74px);max-height:none}
 #cam .addcard .footrow{display:grid;grid-template-columns:1fr 2fr;gap:var(--s2)}
 .addcard .unitgrid .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:var(--s2)}
 .addcard .unitgrid .chip{margin:0;width:100%;justify-content:center;text-align:center}
-.sublist{max-height:60vh;overflow-y:auto}
 .ownpic{font-size:22px}
+/* v55 */
+#sheet .two .btn,#sheet .two .btn.primary,#sheet .two .btn + .btn{margin-top:0}
+#sheet .panel.subpanel{max-height:60vh}
+html[data-text="1"] #sheet .panel.subpanel{max-height:calc(60vh / 1.15)}
+html[data-text="2"] #sheet .panel.subpanel{max-height:calc(60vh / 1.3)}
+@media (max-height:560px){#sheet .panel.subpanel{max-height:92vh}}
+#sheet .panel.subpanel .sheetfoot{padding-top:var(--s2);padding-bottom:calc(var(--s2) + env(safe-area-inset-bottom))}
+.subpanel .subhead{flex:none;padding:var(--s3) var(--s4) var(--s2);border-bottom:1px solid var(--line)}
+#sheet .panel.subpanel .sheetbody{padding:var(--s3) var(--s4);scrollbar-gutter:stable}
+.sublist{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+#sheet .sublist .opt{margin:0;width:100%;min-width:0;min-height:48px;height:100%;overflow-wrap:anywhere;text-align:left;padding:6px var(--s3);font-size:15px;line-height:1.2}
+.sublist .opt:first-child{grid-column:1 / -1}
+html[data-text="2"] .sublist{grid-template-columns:1fr}
+#sheet .igrid.emojis{max-height:min(214px,30vh);overflow-y:auto;padding:2px 10px 2px 2px;overscroll-behavior:contain}
+.ownfold summary{min-height:44px}
+.ownfold .inp{margin-bottom:var(--s2)}
+.top .me{border-radius:999px;border-width:1.5px;font-size:14px;padding-top:0;padding-bottom:0}
+div.card.empty.art{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s3);min-height:min(58vh,440px);text-align:center}
+div.card.empty.art.small{min-height:0;gap:var(--s2)}
+div.card.empty.art.mid{min-height:min(32vh,260px);gap:var(--s2)}
+.empty.art.mid svg{width:min(160px,50%)}
+.empty.art svg{width:min(210px,64%);height:auto;flex:none}
+.empty.art.small svg{width:min(120px,38%)}
+.empty.art h2{margin:0}
+.empty.art p{margin:0;color:var(--muted)}
+.empty.art .btn{align-self:stretch}
+.remrow{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) 0}
+.remrow + .remrow{border-top:1px solid var(--line)}
+.remrow .emo{font-size:26px;flex:none}
+.remrow .rtext{flex:1;min-width:0;overflow-wrap:anywhere}
+.remrow .rtext small{display:block;color:var(--muted);font-size:14px}
+.remrow .chip{flex:none;margin:0;min-height:44px}
+.meadmin{display:block;margin:var(--s5) auto 0;min-height:44px;color:var(--muted)}
+.titleinfo{display:flex;align-items:center;gap:var(--s2)}
 </style>
 </head>
 <body>
@@ -3763,10 +3788,12 @@ L.ms = {
   "1 change will send when you’re online.": "1 perubahan akan dihantar apabila dalam talian.",
   "1 item": "1 barang",
   "1 item uses it. Where should it go?": "1 barang menggunakannya. Ke mana ia patut pergi?",
+  "1 item will move to Not sorted yet.": "1 barang akan dipindahkan ke Belum disusun.",
   "1 person asked": "1 orang meminta",
   "1 phone is signed in": "1 telefon sedang log masuk",
   "1 room": "1 bilik",
   "1 subtype": "1 subjenis",
+  "1 thing is still kept in “{name}”.": "1 barang masih disimpan di “{name}”.",
   "100 at most.": "Paling banyak 100.",
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
@@ -3777,7 +3804,6 @@ L.ms = {
   "Add": "Tambah",
   "Add & next": "Tambah & seterusnya",
   "Add & scan next": "Tambah & imbas seterusnya",
-  "Add Malay and Chinese names too.": "Tambah nama Melayu dan Cina juga.",
   "Add a barcode": "Tambah kod bar",
   "Add a centre": "Tambah pusat",
   "Add a new room": "Tambah bilik baru",
@@ -3825,6 +3851,7 @@ L.ms = {
   "All done.": "Semua siap.",
   "All items": "Semua barang",
   "All rooms": "Semua bilik",
+  "All stocked up.": "Stok semuanya mencukupi.",
   "Almost out": "Hampir habis",
   "Alpha · version {v} · updated {date}": "Alpha · versi {v} · dikemas kini {date}",
   "Already asked": "Sudah diminta",
@@ -3836,8 +3863,6 @@ L.ms = {
   "Already on the shopping list.": "Sudah ada dalam senarai beli-belah.",
   "Already sent.": "Sudah dihantar.",
   "Also at: {list}": "Juga ada di: {list}",
-  "Also kept elsewhere": "Disimpan di tempat lain juga",
-  "Also kept elsewhere?": "Disimpan di tempat lain juga?",
   "Also send on WhatsApp": "Hantar juga melalui WhatsApp",
   "Also used by {list}.": "Turut digunakan oleh {list}.",
   "Another centre has this item too. Ask your admin to change its barcodes.": "Pusat lain juga ada barang ini. Minta pentadbir menukar kod barnya.",
@@ -3957,7 +3982,6 @@ L.ms = {
   "Couldn’t read it. Move closer.": "Tidak dapat dibaca. Dekatkan.",
   "Count corrected": "Kiraan dibetulkan",
   "Count it": "Kira",
-  "Count packs, not pieces.": "Kira bungkusan, bukan keping.",
   "Count packs, not sheets.": "Kira bungkusan, bukan helai.",
   "Counted": "Dikira",
   "Counted in: {unit}": "Dikira dalam: {unit}",
@@ -3971,7 +3995,6 @@ L.ms = {
   "Decline?": "Tolak?",
   "Decorations and lanterns": "Hiasan dan tanglung",
   "Default": "Lalai",
-  "Delete": "Padam",
   "Details": "Butiran",
   "Details changed": "Butiran diubah",
   "Do we have it?": "Ada tak?",
@@ -4010,8 +4033,6 @@ L.ms = {
   "Flash cards and posters": "Kad imbasan dan poster",
   "Flashlight": "Lampu suluh",
   "Follow theme": "Ikut tema",
-  "Follow theme uses your phone’s light or dark setting.": "Ikut tema menggunakan tetapan cerah atau gelap telefon anda.",
-  "For mistakes or duplicates. Can’t be undone.": "Untuk kesilapan atau pendua. Tidak boleh dibatalkan.",
   "For {centre}": "Untuk {centre}",
   "Full": "Penuh",
   "Furniture and fittings": "Perabot dan kelengkapan",
@@ -4042,6 +4063,7 @@ L.ms = {
   "In each set": "Isi setiap set",
   "It depends": "Bergantung",
   "It has changed since you added it. Open the item to fix it.": "Ia telah berubah sejak anda menambahnya. Buka barang untuk membetulkannya.",
+  "It is already back on the list.": "Ia sudah kembali dalam senarai.",
   "It is on more than one item.": "Ia ada pada lebih daripada satu barang.",
   "It isn’t on the list saved on this phone, and the latest list can’t be reached. Adding something new needs a connection.": "Ia tiada dalam senarai yang disimpan pada telefon ini, dan senarai terkini tidak dapat dicapai. Menambah barang baharu memerlukan sambungan.",
   "It needs a connection.": "Ia memerlukan sambungan.",
@@ -4063,7 +4085,6 @@ L.ms = {
   "Learning materials": "Bahan pembelajaran",
   "Least: {level}": "Paling sedikit: {level}",
   "Leave": "Keluar",
-  "Leave blank if it never runs out.": "Kosongkan jika tidak pernah habis.",
   "Leave test mode": "Keluar dari mod ujian",
   "Leave test mode first.": "Keluar dari mod ujian dahulu.",
   "Letters and phonics": "Huruf dan fonik",
@@ -4071,7 +4092,7 @@ L.ms = {
   "Light": "Cerah",
   "Link copied.": "Pautan disalin.",
   "Link or code": "Pautan atau kod",
-  "Link to something we already have": "Pautkan kepada barang yang sudah ada",
+  "Link to an item": "Pautkan ke barang",
   "Link to the new sheet": "Pautan helaian baru",
   "Linking to: {name}": "Dipautkan kepada: {name}",
   "Linking…": "Menyambung…",
@@ -4105,7 +4126,6 @@ L.ms = {
   "Needs fixing": "Perlu dibaiki",
   "Needs name": "Perlu nama",
   "Needs place": "Perlu tempat",
-  "Needs the admin PIN.": "Perlukan PIN admin.",
   "Needs type": "Perlu jenis",
   "New PIN": "PIN baru",
   "New at {centre}": "Baharu di {centre}",
@@ -4149,8 +4169,9 @@ L.ms = {
   "Nothing": "Tiada apa-apa",
   "Nothing at {centre} yet.": "Belum ada apa-apa di {centre}.",
   "Nothing changed, save": "Tiada perubahan, simpan",
-  "Nothing has been saved.": "Tiada apa-apa disimpan.",
+  "Nothing has been removed.": "Belum ada barang dibuang.",
   "Nothing here yet.": "Belum ada barang.",
+  "Nothing is kept there.": "Tiada apa disimpan di situ.",
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
   "Nothing matches the filters.": "Tiada yang sepadan dengan penapis.",
@@ -4177,7 +4198,6 @@ L.ms = {
   "One per item": "Satu setiap barang",
   "One per shelf": "Satu setiap rak",
   "Only empty centres can be removed.": "Hanya pusat yang kosong boleh dibuang.",
-  "Only empty rooms can be removed.": "Hanya bilik kosong boleh dibuang.",
   "Only the admin has the shopping list.": "Hanya admin mempunyai senarai beli-belah.",
   "Only {centre} can change this.": "Hanya {centre} boleh mengubah ini.",
   "Only {n} here.": "Hanya ada {n} di sini.",
@@ -4190,7 +4210,6 @@ L.ms = {
   "Opening the sticker…": "Membuka pelekat…",
   "Or choose a room": "Atau pilih bilik",
   "Or type a new room": "Atau taip bilik baru",
-  "Or type your own": "Atau taip sendiri",
   "Other": "Lain-lain",
   "Other centres": "Pusat lain",
   "Other centres have spare:": "Pusat lain ada lebihan:",
@@ -4230,6 +4249,9 @@ L.ms = {
   "Problem reported": "Masalah dilaporkan",
   "Projectors and screens": "Projektor dan skrin",
   "Put away in {room}.": "Disimpan di {room}.",
+  "Put back": "Kembalikan",
+  "Put back.": "Telah dikembalikan.",
+  "Putting it back…": "Mengembalikan…",
   "Puzzles": "Puzzle",
   "QR stickers": "Pelekat QR",
   "Quantities only": "Kuantiti sahaja",
@@ -4245,16 +4267,19 @@ L.ms = {
   "Remove from list": "Buang daripada senarai",
   "Remove it": "Buang",
   "Remove item": "Buang barang",
+  "Remove room": "Buang bilik",
   "Remove test data": "Buang data ujian",
   "Remove the test data?": "Buang data ujian?",
   "Remove this type": "Buang jenis ini",
   "Remove {name}": "Buang {name}",
   "Remove “{name}”?": "Buang “{name}”?",
+  "Removed items": "Barang yang dibuang",
+  "Removed {when}": "Dibuang {when}",
   "Removed.": "Sudah dibuang.",
+  "Removed. {n} moved to Not sorted yet.": "Dibuang. {n} dipindahkan ke Belum disusun.",
   "Removing…": "Membuang…",
   "Rename": "Namakan semula",
-  "Rename a centre and its items follow.": "Tukar nama pusat dan barangnya mengikut.",
-  "Rename a room and its items follow.": "Tukar nama bilik dan barangnya ikut berubah.",
+  "Rename room": "Namakan semula bilik",
   "Rename the subtype": "Namakan semula subjenis",
   "Rename {name}": "Namakan semula {name}",
   "Rename “{name}”": "Namakan semula “{name}”",
@@ -4313,7 +4338,6 @@ L.ms = {
   "Search in this room": "Cari dalam bilik ini",
   "Search rooms": "Cari bilik",
   "Search this room…": "Cari dalam bilik ini…",
-  "Searching still checks the other centres.": "Carian masih menyemak pusat lain.",
   "Search…": "Cari…",
   "See all": "Lihat semua",
   "See all {n}": "Lihat semua {n}",
@@ -4336,9 +4360,6 @@ L.ms = {
   "Set the type": "Tetapkan jenis",
   "Set to {level}.": "Ditetapkan ke {level}.",
   "Set up": "Tetapan",
-  "Settings": "Tetapan",
-  "Settings and the Google Sheet": "Tetapan dan Google Sheet",
-  "Settings, shopping list and the Google Sheet": "Tetapan, senarai beli-belah dan Google Sheet",
   "Setup checklist": "Senarai semak persediaan",
   "Share links": "Pautan kongsi",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "Kongsi helaian dengan pemilik apl (Editor). Kakitangan guna pautan yang sama.",
@@ -4352,7 +4373,6 @@ L.ms = {
   "Sign out": "Log keluar",
   "Sign out all phones": "Log keluar semua telefon",
   "Sign out all phones?": "Log keluar semua telefon?",
-  "Signed in as admin": "Log masuk sebagai admin",
   "Signed out everywhere.": "Telah log keluar di semua tempat.",
   "Signing out…": "Sedang log keluar…",
   "Skip": "Langkau",
@@ -4362,6 +4382,7 @@ L.ms = {
   "Someone else changed this item. Check it before you save.": "Orang lain mengubah barang ini. Semak sebelum simpan.",
   "Someone else changed this while you were working.": "Orang lain mengubah ini semasa anda bekerja.",
   "Someone just changed this. Showing their version.": "Orang lain baru mengubah ini. Menunjukkan versi mereka.",
+  "Something is kept in this room now, so only your admin can change it.": "Ada barang disimpan di bilik ini sekarang, jadi hanya admin boleh mengubahnya.",
   "Something went wrong. Try again.": "Ada masalah. Cuba lagi.",
   "Sort": "Isih",
   "Sort and filter": "Isih dan tapis",
@@ -4396,7 +4417,6 @@ L.ms = {
   "Tap Full, Half, Almost out or Empty.": "Ketik Penuh, Separuh, Hampir habis atau Kosong.",
   "Tap Plan to buy on a low item, or add something new.": "Ketik Rancang beli pada barang yang kurang, atau tambah sesuatu yang baharu.",
   "Tap a sticker to skip it.": "Ketik pelekat untuk melangkaunya.",
-  "Tap one to fill in what is missing.": "Ketik satu untuk mengisi yang tertinggal.",
   "Tell me when below": "Beritahu saya bila kurang daripada",
   "Test": "Ujian",
   "Test centres are ready.": "Pusat ujian sudah sedia.",
@@ -4413,6 +4433,7 @@ L.ms = {
   "That isn’t the right link. Ask your admin to send it again.": "Pautan ini tidak betul. Minta admin hantar semula.",
   "That item already has 12 barcodes.": "Barang itu sudah ada 12 kod bar.",
   "That item already has a name.": "Barang itu sudah ada nama.",
+  "That item can’t be put back any more.": "Barang itu tidak boleh dikembalikan lagi.",
   "That item has already been removed.": "Barang itu sudah dibuang.",
   "That item was removed.": "Barang itu telah dibuang.",
   "That leaves {n}.": "Baki {n}.",
@@ -4485,7 +4506,6 @@ L.ms = {
   "Type a name for the item.": "Taip nama barang.",
   "Type a name — this barcode isn’t on the list yet.": "Taip nama — kod bar ini belum ada.",
   "Type a name.": "Taip nama.",
-  "Type a number, like 24 pens.": "Taip nombor, cth. 24 batang pen.",
   "Type a number.": "Taip nombor.",
   "Type and subtype are shared by all centres.": "Jenis dan subjenis dikongsi oleh semua pusat.",
   "Type how many (0 or more).": "Taip berapa banyak (0 atau lebih).",
@@ -4493,6 +4513,7 @@ L.ms = {
   "Type how many to send.": "Taip berapa yang hendak dihantar.",
   "Type how many you need.": "Taip berapa yang diperlukan.",
   "Type number": "Taip nombor",
+  "Type one instead": "Taip sendiri",
   "Type the centre name.": "Taip nama pusat.",
   "Type the item’s name.": "Taip nama barang.",
   "Type the new name.": "Taip nama baru.",
@@ -4553,6 +4574,7 @@ L.ms = {
   "Write it down.": "Catatkan.",
   "Yes": "Ya",
   "Yes, it runs out": "Ya, ia akan habis",
+  "You can put it back from Me, under Removed items.": "Anda boleh mengembalikannya di Saya, bahagian Barang yang dibuang.",
   "You have {amount} here.": "Anda ada {amount} di sini.",
   "You still see everything as admin. Use View as staff to check.": "Sebagai pentadbir anda masih nampak semuanya. Guna Lihat sebagai kakitangan untuk menyemak.",
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
@@ -4611,6 +4633,7 @@ L.ms = {
   "{amount} left (needs {min})": "{amount} tinggal (perlu {min})",
   "{centre} doesn’t have it yet. Which room?": "{centre} belum ada. Bilik yang mana?",
   "{centre} has {amount}": "{centre} ada {amount}",
+  "{centre} is not a centre any more.": "{centre} bukan lagi sebuah pusat.",
   "{centre} will have {amount} left.": "{centre} akan ada {amount} tinggal.",
   "{centre}’s list isn’t on this phone yet.": "Senarai {centre} belum ada pada telefon ini.",
   "{kind}. Can’t be changed.": "{kind}. Tidak boleh diubah.",
@@ -4626,6 +4649,7 @@ L.ms = {
   "{n} items use it. Where should they go?": "{n} barang menggunakannya. Ke mana ia patut pergi?",
   "{n} items use this subtype. Choose where they go.": "{n} barang menggunakan subjenis ini. Pilih ke mana ia pergi.",
   "{n} items use this type. Choose where they go.": "{n} barang menggunakan jenis ini. Pilih ke mana ia pergi.",
+  "{n} items will move to Not sorted yet.": "{n} barang akan dipindahkan ke Belum disusun.",
   "{n} made-up items. Only the test centres, nothing real can be touched.": "{n} barang rekaan. Hanya pusat ujian, tiada apa yang sebenar boleh disentuh.",
   "{n} matches:": "{n} padanan:",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
@@ -4639,11 +4663,13 @@ L.ms = {
   "{n} running low": "{n} hampir habis",
   "{n} selected": "{n} dipilih",
   "{n} subtypes": "{n} subjenis",
+  "{n} things are still kept in “{name}”.": "{n} barang masih disimpan di “{name}”.",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
   "“Received” is kept for stock that hasn’t been put away yet.": "“Received” dikhaskan untuk stok yang belum disimpan.",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received” dikhaskan untuk stok yang belum disimpan. Pilih bilik.",
   "“{name}” already has some of these.": "“{name}” sudah ada sebahagian ini.",
+  "“{name}” is already in that room again. Open it to change the count.": "“{name}” sudah ada semula di bilik itu. Buka untuk menukar bilangan.",
   "“{name}” is now an Every-centre room.": "“{name}” kini bilik Setiap pusat.",
   "“{name}” wasn’t added.": "“{name}” tidak ditambah.",
   "…and {n} more. Open the app for the rest.": "…dan {n} lagi. Buka apl untuk selebihnya.",
@@ -4653,10 +4679,12 @@ L.zh = {
   "1 change will send when you’re online.": "1 项更改联网后会发送。",
   "1 item": "1 件",
   "1 item uses it. Where should it go?": "有 1 个物品在用它。要移到哪里？",
+  "1 item will move to Not sorted yet.": "1 件物品将移到“尚未整理”。",
   "1 person asked": "1 人申请",
   "1 phone is signed in": "有 1 部手机已登录",
   "1 room": "1 个房间",
   "1 subtype": "1 个子类型",
+  "1 thing is still kept in “{name}”.": "“{name}”里还存放着 1 件物品。",
   "100 at most.": "最多 100 个。",
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
@@ -4667,7 +4695,6 @@ L.zh = {
   "Add": "添加",
   "Add & next": "添加并下一个",
   "Add & scan next": "添加并扫描下一个",
-  "Add Malay and Chinese names too.": "也加上马来文和中文名称。",
   "Add a barcode": "添加条码",
   "Add a centre": "添加分园",
   "Add a new room": "添加新房间",
@@ -4715,6 +4742,7 @@ L.zh = {
   "All done.": "全部完成。",
   "All items": "全部物品",
   "All rooms": "所有房间",
+  "All stocked up.": "库存都很充足。",
   "Almost out": "快没了",
   "Alpha · version {v} · updated {date}": "Alpha · 版本 {v} · 更新于 {date}",
   "Already asked": "已经有人申请",
@@ -4726,8 +4754,6 @@ L.zh = {
   "Already on the shopping list.": "购物清单上已有。",
   "Already sent.": "之前已发送。",
   "Also at: {list}": "其他中心也有：{list}",
-  "Also kept elsewhere": "别处也有存放",
-  "Also kept elsewhere?": "别处也有存放？",
   "Also send on WhatsApp": "也用 WhatsApp 发送",
   "Also used by {list}.": "{list} 也在用。",
   "Another centre has this item too. Ask your admin to change its barcodes.": "其他中心也有这个物品。请让管理员修改条码。",
@@ -4847,7 +4873,6 @@ L.zh = {
   "Couldn’t read it. Move closer.": "读不出来，请靠近一点。",
   "Count corrected": "盘点已更正",
   "Count it": "数数",
-  "Count packs, not pieces.": "按包数，不按单件数。",
   "Count packs, not sheets.": "按包数，不数张数。",
   "Counted": "已盘点",
   "Counted in: {unit}": "计数单位：{unit}",
@@ -4861,7 +4886,6 @@ L.zh = {
   "Decline?": "拒绝？",
   "Decorations and lanterns": "装饰与灯笼",
   "Default": "默认",
-  "Delete": "删除",
   "Details": "详情",
   "Details changed": "信息已修改",
   "Do we have it?": "我们有吗？",
@@ -4900,8 +4924,6 @@ L.zh = {
   "Flash cards and posters": "识字卡和海报",
   "Flashlight": "手电筒",
   "Follow theme": "跟随主题",
-  "Follow theme uses your phone’s light or dark setting.": "“跟随主题”使用手机的浅色或深色设置。",
-  "For mistakes or duplicates. Can’t be undone.": "用于错误或重复。无法撤销。",
   "For {centre}": "给 {centre}",
   "Full": "满的",
   "Furniture and fittings": "家具与设施",
@@ -4932,6 +4954,7 @@ L.zh = {
   "In each set": "每套包含",
   "It depends": "看情况",
   "It has changed since you added it. Open the item to fix it.": "添加之后它有了变化。请打开物品修改。",
+  "It is already back on the list.": "它已经回到清单上。",
   "It is on more than one item.": "多个物品用了这个条码。",
   "It isn’t on the list saved on this phone, and the latest list can’t be reached. Adding something new needs a connection.": "这部手机保存的清单里没有它，而且现在无法取得最新清单。添加新物品需要网络连接。",
   "It needs a connection.": "需要网络连接。",
@@ -4953,7 +4976,6 @@ L.zh = {
   "Learning materials": "学习材料",
   "Least: {level}": "最少：{level}",
   "Leave": "退出",
-  "Leave blank if it never runs out.": "不会用完就留空。",
   "Leave test mode": "退出测试模式",
   "Leave test mode first.": "请先退出测试模式。",
   "Letters and phonics": "字母与拼读",
@@ -4961,7 +4983,7 @@ L.zh = {
   "Light": "浅色",
   "Link copied.": "链接已复制。",
   "Link or code": "链接或代码",
-  "Link to something we already have": "关联到已有的物品",
+  "Link to an item": "关联到物品",
   "Link to the new sheet": "新表格的链接",
   "Linking to: {name}": "正在关联到：{name}",
   "Linking…": "正在连接…",
@@ -4995,7 +5017,6 @@ L.zh = {
   "Needs fixing": "需要修理",
   "Needs name": "需要名称",
   "Needs place": "需要位置",
-  "Needs the admin PIN.": "需要管理员 PIN。",
   "Needs type": "需要类型",
   "New PIN": "新 PIN",
   "New at {centre}": "{centre} 的新物品",
@@ -5039,8 +5060,9 @@ L.zh = {
   "Nothing": "什么都不显示",
   "Nothing at {centre} yet.": "{centre} 还没有任何物品。",
   "Nothing changed, save": "没有变化，保存",
-  "Nothing has been saved.": "没有保存任何内容。",
+  "Nothing has been removed.": "还没有移除任何物品。",
   "Nothing here yet.": "这里还没有物品。",
+  "Nothing is kept there.": "那里没有存放任何物品。",
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
   "Nothing matches the filters.": "没有符合筛选的项目。",
@@ -5067,7 +5089,6 @@ L.zh = {
   "One per item": "每件物品一张",
   "One per shelf": "每个架子一张",
   "Only empty centres can be removed.": "只有空的分园才能删除。",
-  "Only empty rooms can be removed.": "只能删除空房间。",
   "Only the admin has the shopping list.": "只有管理员能看购物清单。",
   "Only {centre} can change this.": "只有{centre}可以更改这个。",
   "Only {n} here.": "这里只有 {n}。",
@@ -5080,7 +5101,6 @@ L.zh = {
   "Opening the sticker…": "正在打开贴纸…",
   "Or choose a room": "或选择一个房间",
   "Or type a new room": "或输入新房间",
-  "Or type your own": "或自己输入",
   "Other": "其他",
   "Other centres": "其他中心",
   "Other centres have spare:": "其他中心有多余的：",
@@ -5120,6 +5140,9 @@ L.zh = {
   "Problem reported": "已报告问题",
   "Projectors and screens": "投影仪与屏幕",
   "Put away in {room}.": "已放在 {room}。",
+  "Put back": "放回",
+  "Put back.": "已放回。",
+  "Putting it back…": "正在放回…",
   "Puzzles": "拼图",
   "QR stickers": "二维码贴纸",
   "Quantities only": "仅数量",
@@ -5135,16 +5158,19 @@ L.zh = {
   "Remove from list": "从列表移除",
   "Remove it": "删除",
   "Remove item": "删除物品",
+  "Remove room": "删除房间",
   "Remove test data": "删除测试数据",
   "Remove the test data?": "删除测试数据？",
   "Remove this type": "删除这个类型",
   "Remove {name}": "删除 {name}",
   "Remove “{name}”?": "删除“{name}”？",
+  "Removed items": "已移除的物品",
+  "Removed {when}": "移除于 {when}",
   "Removed.": "已删除。",
+  "Removed. {n} moved to Not sorted yet.": "已删除。{n} 件移到“尚未整理”。",
   "Removing…": "正在删除…",
   "Rename": "改名",
-  "Rename a centre and its items follow.": "改分园名称，里面的东西会跟着改。",
-  "Rename a room and its items follow.": "改房间名，物品会跟着改。",
+  "Rename room": "重命名房间",
   "Rename the subtype": "重命名子类型",
   "Rename {name}": "重命名 {name}",
   "Rename “{name}”": "重命名“{name}”",
@@ -5203,7 +5229,6 @@ L.zh = {
   "Search in this room": "在这个房间里搜索",
   "Search rooms": "搜索房间",
   "Search this room…": "在这个房间里搜索…",
-  "Searching still checks the other centres.": "搜索仍会查找其他中心。",
   "Search…": "搜索…",
   "See all": "查看全部",
   "See all {n}": "查看全部 {n} 项",
@@ -5226,9 +5251,6 @@ L.zh = {
   "Set the type": "设定类型",
   "Set to {level}.": "已设为{level}。",
   "Set up": "设置",
-  "Settings": "设置",
-  "Settings and the Google Sheet": "设置和 Google 表格",
-  "Settings, shopping list and the Google Sheet": "设置、购物清单和 Google 表格",
   "Setup checklist": "设置清单",
   "Share links": "分享链接",
   "Share the sheet with the app owner (Editor). Staff keep the same link.": "与应用所有者共享表格（编辑者）。员工继续用同一链接。",
@@ -5242,7 +5264,6 @@ L.zh = {
   "Sign out": "退出登录",
   "Sign out all phones": "退出所有手机",
   "Sign out all phones?": "退出所有手机？",
-  "Signed in as admin": "已以管理员身份登录",
   "Signed out everywhere.": "已在所有设备退出。",
   "Signing out…": "正在退出…",
   "Skip": "跳过",
@@ -5252,6 +5273,7 @@ L.zh = {
   "Someone else changed this item. Check it before you save.": "别人修改了这件物品。保存前请先检查。",
   "Someone else changed this while you were working.": "在你操作时，别人修改了这里。",
   "Someone just changed this. Showing their version.": "别人刚修改了这里。显示对方的版本。",
+  "Something is kept in this room now, so only your admin can change it.": "这个房间现在放着东西，只有管理员能修改。",
   "Something went wrong. Try again.": "出了点问题，请再试一次。",
   "Sort": "排序",
   "Sort and filter": "排序与筛选",
@@ -5286,7 +5308,6 @@ L.zh = {
   "Tap Full, Half, Almost out or Empty.": "请点“满的”“一半”“快没了”或“空的”。",
   "Tap Plan to buy on a low item, or add something new.": "在库存不足的物品上点“计划购买”，或添加新东西。",
   "Tap a sticker to skip it.": "点一张贴纸即可跳过。",
-  "Tap one to fill in what is missing.": "点一项，补上缺少的内容。",
   "Tell me when below": "低于此数时告诉我",
   "Test": "测试",
   "Test centres are ready.": "测试分园已准备好。",
@@ -5303,6 +5324,7 @@ L.zh = {
   "That isn’t the right link. Ask your admin to send it again.": "这个链接不对。请管理员重新发给你。",
   "That item already has 12 barcodes.": "这个物品已经有 12 个条码。",
   "That item already has a name.": "这个物品已经有名称了。",
+  "That item can’t be put back any more.": "该物品无法再放回。",
   "That item has already been removed.": "这个物品已经被删除了。",
   "That item was removed.": "该物品已被删除。",
   "That leaves {n}.": "之后还剩 {n}。",
@@ -5375,7 +5397,6 @@ L.zh = {
   "Type a name for the item.": "请输入物品名称。",
   "Type a name — this barcode isn’t on the list yet.": "请输入名称——这个条码还没有记录。",
   "Type a name.": "请输入名称。",
-  "Type a number, like 24 pens.": "输入数字，如 24 支笔。",
   "Type a number.": "请输入数字。",
   "Type and subtype are shared by all centres.": "类型和子类型由所有中心共用。",
   "Type how many (0 or more).": "请输入数量（0 或更大）。",
@@ -5383,6 +5404,7 @@ L.zh = {
   "Type how many to send.": "请输入要送多少。",
   "Type how many you need.": "请输入需要多少。",
   "Type number": "输入号码",
+  "Type one instead": "自己输入",
   "Type the centre name.": "请输入分园名称。",
   "Type the item’s name.": "请输入物品名称。",
   "Type the new name.": "请输入新名称。",
@@ -5443,6 +5465,7 @@ L.zh = {
   "Write it down.": "请记下。",
   "Yes": "好",
   "Yes, it runs out": "会，用着用着就没了",
+  "You can put it back from Me, under Removed items.": "可以在“我”里的“已移除的物品”中放回。",
   "You have {amount} here.": "这里有 {amount}。",
   "You still see everything as admin. Use View as staff to check.": "作为管理员您仍能看到全部。请用“以员工身份查看”来检查。",
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
@@ -5501,6 +5524,7 @@ L.zh = {
   "{amount} left (needs {min})": "剩 {amount}（需要 {min}）",
   "{centre} doesn’t have it yet. Which room?": "{centre} 还没有。放在哪个房间？",
   "{centre} has {amount}": "{centre} 有 {amount}",
+  "{centre} is not a centre any more.": "{centre} 已不再是中心。",
   "{centre} will have {amount} left.": "{centre} 将剩下 {amount}。",
   "{centre}’s list isn’t on this phone yet.": "这部手机上还没有 {centre} 的清单。",
   "{kind}. Can’t be changed.": "{kind}。不能更改。",
@@ -5516,6 +5540,7 @@ L.zh = {
   "{n} items use it. Where should they go?": "有 {n} 个物品在用它。要移到哪里？",
   "{n} items use this subtype. Choose where they go.": "有 {n} 个物品在用这个子类型。请选择移到哪里。",
   "{n} items use this type. Choose where they go.": "有 {n} 个物品在用这个类型。请选择移到哪里。",
+  "{n} items will move to Not sorted yet.": "{n} 件物品将移到“尚未整理”。",
   "{n} made-up items. Only the test centres, nothing real can be touched.": "{n} 件虚构物品。只有测试分园，不会碰到任何真实数据。",
   "{n} matches:": "{n} 个相符：",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
@@ -5529,11 +5554,13 @@ L.zh = {
   "{n} running low": "{n} 件快用完",
   "{n} selected": "已选 {n} 项",
   "{n} subtypes": "{n} 个子类型",
+  "{n} things are still kept in “{name}”.": "“{name}”里还存放着 {n} 件物品。",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
   "“Received” is kept for stock that hasn’t been put away yet.": "“Received”留给还没收好的物品。",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received”留给还没放好的物品。请选择一个房间。",
   "“{name}” already has some of these.": "“{name}”里已有其中一些。",
+  "“{name}” is already in that room again. Open it to change the count.": "“{name}”已经又在那个房间里了。打开它修改数量。",
   "“{name}” is now an Every-centre room.": "“{name}”现在是所有中心共用的房间。",
   "“{name}” wasn’t added.": "“{name}”没有添加。",
   "…and {n} more. Open the app for the rest.": "…还有 {n} 项，请打开应用查看。",
@@ -5726,7 +5753,7 @@ function drawFunit() {
 function kindBox() {
   return kindAsk(F.kind, 'chip', function () { return 'data-act="chip"'; }, 'kind') +
     (F.kind === 'Supplies' ? '<label class="lab">' + tl('How to check it?') + '</label>' + chips('tracking', ['count', 'level'], F.tracking, TRACK_LABEL) +
-      '<p class="help">' + (F.tracking === 'level' ? tl('Tap Full, Half, Almost out or Empty.') : tl('Type a number, like 24 pens.')) + '</p>' : '') +
+      '' : '') +
     (F.kind === 'Equipment' && F.set ? '<label class="lab" for="f-parts">' + tl('In each set') + ' <i>' + tl('(optional)') + '</i></label><input id="f-parts" class="inp" maxlength="120" autocomplete="off" value="' + esc(F.parts || '') + '" placeholder="' + esc(tl('e.g. 3 keys, 3 locks')) + '">' : '');
 }
 function redrawKind() { var b = byIdEl('f-kindwrap'); if (b) b.innerHTML = kindBox(); }
@@ -5795,7 +5822,7 @@ function lockSettle() { if (S.locked) { S.lockSettled = true; clearTimeout(S.loc
 // v42: the writes that belong to one centre say which centre this phone is ("as"); an admin phone also sends its token so the server knows it
 // may change any centre; in Test mode every call says so ("test") and carries the token for that ("tpin", kept apart from "pin" so View as staff
 // inside Test mode keeps staff rights).
-var OWN_FNS = ['changeStock', 'setLevel', 'saveCount', 'moveStock', 'updateItem', 'addItem', 'addMany', 'nameItem', 'missingPiece', 'linkBarcode', 'unlinkBarcode', 'addRoom', 'undoAdd'];
+var OWN_FNS = ['myRoom', 'removeItem', 'listRemoved', 'restoreItem', 'changeStock', 'setLevel', 'saveCount', 'moveStock', 'updateItem', 'addItem', 'addMany', 'nameItem', 'missingPiece', 'linkBarcode', 'unlinkBarcode', 'addRoom', 'undoAdd'];
 function decorate(fn, data) {
   data = Object.assign({}, data || {});
   if (data.photoData && !data.thumbData && THUMBS[data.photoData]) data.thumbData = THUMBS[data.photoData];
@@ -5826,7 +5853,7 @@ function callB(fn, data) {
   return owner ? p.then(function (v) { lockSettle(); return v; }, function (e) { lockSettle(); throw e; }) : p;
 }
 // Every change the sheet confirms moves this on. A list that was asked for before that is out of date: it is not used.
-var READS = { getData: 1, getHistory: 1, version: 1, getRequests: 1, openRequests: 1, adminOpen: 1, testStatus: 1 };
+var READS = { listRemoved: 1, getData: 1, getHistory: 1, version: 1, getRequests: 1, openRequests: 1, adminOpen: 1, testStatus: 1 };
 function listStamp() { return { seq: S.writeSeq || 0, centre: S.me ? S.me.centre : '', gen: S.modeGen || 0 }; }
 function listStale(st) { return st.seq !== (S.writeSeq || 0) || st.centre !== (S.me ? S.me.centre : ''); }
 function callRaw(fn, data) {
@@ -5923,7 +5950,8 @@ function vCentreWait() {
     '<h2>' + esc(stuck ? tl('{centre}’s list isn’t on this phone yet.', { centre: myCentre() }) : tl('Loading {centre}…', { centre: myCentre() })) + '</h2>' +
     (stuck ? '<p>' + tl('It needs a connection.') + '</p><button type="button" class="btn primary" data-act="waitRetry">' + tl('Try again') + '</button>' : '') + '</div>';
 }
-function loadCentre() { refresh(); softBusy(true, tl('Loading {centre}…', { centre: myCentre() })); }
+// a list page already says "Loading …" itself; only a page that cannot say it gets the dimmed popup
+function loadCentre() { refresh(); if (!(centreWaiting() && WAIT_PAGES[cur().name])) softBusy(true, tl('Loading {centre}…', { centre: myCentre() })); }
 function scrubBase() {
   var me = S.me && S.me.centre;
   if (!me || S.test) return;
@@ -6085,7 +6113,7 @@ function sendOrQueue(fn, data) {
   });
 }
 // things that cannot wait: they say so before the person starts
-var ONLINE_ONLY = ['photo', 'photoItem', 'pinOpen', 'roomAdd', 'roomRename', 'roomRemove', 'roomTidy', 'starterAdmin', 'starterOpen', 'removeItem', 'menuRemove',
+var ONLINE_ONLY = ['photo', 'photoItem', 'pinOpen', 'roomAdd', 'roomRename', 'roomRemove', 'roomTidy', 'starterAdmin', 'starterOpen', 'removeItem', 'menuRemove', 'putBack', 'myRoomRename', 'myRoomRemove',
   'typeAdd', 'typeEdit', 'typeDrop', 'subNew', 'subRename', 'subDrop', 'centreAdd', 'centreRename', 'centreRemove', 'pinChange', 'sheetChange', 'visOpen', 'visSet', 'roomIcon', 'roomIconSet', 'adminLeaveAll', 'decide', 'withdraw', 'reqNew', 'testOn', 'testCreate'];
 function phoneHasNoSignal() { return navigator.onLine === false || window.__rmOffline === true; }
 function offlineNow() { return !!S.offline && !S.test && (navigator.onLine === false || window.__rmOffline === true); }   // a stale flag alone never blocks: the signal may be back
@@ -6208,7 +6236,7 @@ if (!hist && HOSTED) {
     setChangeHandler: function (fn) { window.addEventListener('popstate', function (e) { fn(e); }); }
   };
 }
-var TAB_ROOT = { adminTypes: 'more', adminType: 'more', unknown: 'home', home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
+var TAB_ROOT = { adminTypes: 'more', adminType: 'more', unknown: 'home', home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', removed: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
 function tabRootOf(name) { return TAB_ROOT[name] || 'home'; }
 // v43: HISTORY. Chrome skips, when Back is pressed, any history step that a page added without a tap behind it (that is how Back used to leave the app).
 // So: every history entry holds a snapshot of where the person was (the stack of screens and the sheet that was open); a step is ADDED only inside a tap
@@ -6411,7 +6439,7 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vRooms,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, adminTypes: vAdminTypes, adminType: vAdminType, unknown: vUnknown, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vSettings, adminCentres: vAdminCentres };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, adminTypes: vAdminTypes, adminType: vAdminType, unknown: vUnknown, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vMore, removed: vRemoved, adminCentres: vAdminCentres };
   delete views.bulk;
   views.unsorted = vAttention;
   rememberOpen(app);
@@ -6531,7 +6559,7 @@ function drawChrome(v) {
   nav.hidden = v.name === 'pick' || task;
   document.body.classList.toggle('navless', task);
   var tab0 = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'rooms',
-    countList: 'rooms', needName: 'rooms', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'rooms', room: 'rooms', adminRooms: 'more', settings: 'more', adminCentres: 'more', unknown: 'home', adminTypes: 'more', adminType: 'more', scanBooks: 'add' }[v.name];
+    countList: 'rooms', needName: 'rooms', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'rooms', room: 'rooms', adminRooms: 'more', settings: 'more', adminCentres: 'more', removed: 'more', unknown: 'home', adminTypes: 'more', adminType: 'more', scanBooks: 'add' }[v.name];
   var tab = v.name === 'add' && v.fromAdd ? 'add' : v.name === 'scanBooks' && v.f ? 'home' : tab0;
   var lows = centreWaiting() ? 0 : S.items.filter(function (it) { return it.centre === myCentre() && low(it); }).length;
   var ICON = {
@@ -6678,7 +6706,7 @@ function allItemsHtml() {
 function vAllItems() {
   var gs = sortGroups(applyFilters(scoped(S.groups)), 'az');
   return top(true) + '<h1 class="title">' + tl('All items') + '</h1><p class="sub">' + esc(myCentre()) + ' · ' + esc(tl('{n} items', { n: gs.length })) + '</p>' +
-    (gs.length ? '<div class="list fulllist">' + gs.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No items yet.') + '</h2>' + addOneHtml() + '</div>');
+    (gs.length ? '<div class="list fulllist">' + gs.map(card).join('') + '</div>' : emptyArt('box', tl('No items yet.'), addOneHtml()));
 }
 function recentHtml() {
   var gs = scoped((store.get('rm_recent', []) || []).map(function (k) { return S.gmap[k]; }).filter(Boolean));
@@ -6745,7 +6773,7 @@ function vStarter() {
         '<div class="two" style="margin-top:var(--s2)"><button class="btn primary" data-act="starterOpen" data-id="' + esc(s.id) + '">' + tl('We have it') + '</button>' +
         '<button class="btn" data-act="starterNo" data-id="' + esc(s.id) + '">' + tl('We don’t have it') + '</button></div>' +
         '<button class="btn quiet" data-act="starterSkip" data-id="' + esc(s.id) + '">' + tl('Skip for now') + '</button></div>';
-    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Your setup checklist is finished.') + '</h2></div>');
+    }).join('') + '</div>' : emptyArt('yay', tl('Your setup checklist is finished.')));
 }
 function vAttention(v) {
   var centre = myCentre(), all = attentionItems(centre), f = v.f || 'all';
@@ -6755,14 +6783,14 @@ function vAttention(v) {
   var chipRow = '<div class="chips" data-group="attf">' + [['all', tl('All')], ['place', tl('Needs place')], ['name', tl('Needs name')], ['type', tl('Needs type')]].map(function (o) {
     return '<button type="button" class="chip' + (f === o[0] ? ' on' : '') + '" data-act="attFilter" data-val="' + o[0] + '">' + o[1] + ' <b>' + cnt[o[0]] + '</b></button>';
   }).join('') + '</div>';
-  var body = !list.length ? '<div class="card empty"><h2>' + tl('All done.') + '</h2></div>'
+  var body = !list.length ? emptyArt('yay', tl('All done.'))
     : f === 'name' ? '<div class="rows">' + list.map(function (it) {
       return '<div class="brow"><p class="name">' + esc(it.name) + '</p><p class="line">' + esc(isReceivedRoom(it.loc) ? tl('Not sorted yet') : it.loc) + '</p>' +
         '<input id="nn-' + esc(it.id) + '" class="inp" maxlength="80" autocomplete="off" aria-label="' + esc(tl('Name')) + '">' +
         '<button class="btn primary" data-act="nameGo" data-id="' + esc(it.id) + '">' + tl('Save') + '</button></div>';
     }).join('') + '</div>'
     : '<div class="card rows">' + list.map(attRow).join('') + '</div>';
-  return top(true) + '<h1 class="title">' + tl('Needs attention') + '</h1><p class="sub">' + tl('Tap one to fill in what is missing.') + '</p>' + chipRow + body;
+  return top(true) + '<h1 class="title">' + tl('Needs attention') + '</h1>' + chipRow + body;
 }
 function vHome(v) {
   return top(false) +
@@ -6862,14 +6890,14 @@ function resultsHtml(v) {
         return '<button class="chip' + (v.sub === x ? ' on' : '') + '" data-act="subFilter" data-val="' + esc(x) + '">' + esc(tl(x)) + '</button>';
       }).join('') + '</div>' : '') +
       (inCat.length ? '<div class="list">' + inCat.map(card).join('') + '</div>'
-        : all.length && v.lowOnly ? '<div class="card empty"><h2>' + tl('Nothing running low.') + '</h2></div>'
-        : '<div class="card empty"><h2>' + tl('Nothing of this type yet.') + '</h2>' + addOneHtml() + '</div>');
+        : all.length && v.lowOnly ? emptyArt('yay', tl('Nothing running low.'))
+        : emptyArt('box', tl('Nothing of this type yet.'), addOneHtml()));
   }
   var fchips = filterChipsHtml();
   if (!q && filtersActive()) {
     var fl = sortGroups(applyFilters(scoped(S.groups)), 'az');
     return fchips + (fl.length ? '<div class="list">' + fl.map(card).join('') + '</div>'
-      : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>');
+      : emptyArt('search', tl('Nothing matches the filters.'), '<button class="btn" data-act="filterClear">' + tl('Clear all') + '</button>'));
   }
   if (!q) {
     return starterStrip() + lowStripHtml() + recentHtml() + allItemsHtml() + (scoped(S.groups).length ? '' : emptyHomeHtml());
@@ -6879,12 +6907,12 @@ function resultsHtml(v) {
   if (!r.strong.length) {
     if (elsewhere.length) {
       var og = elsewhere[0];
-      return starterHits(q) + '<div class="card empty" style="margin-top:14px"><h2>' + esc(tl('Not at {centre}.', { centre: myCentre() })) + '</h2>' +
+      return starterHits(q) + '<div class="card empty art small" style="margin-top:14px">' + artSvg('search') + '<h2>' + esc(tl('Not at {centre}.', { centre: myCentre() })) + '</h2>' +
         '<p>' + esc(og.rows.filter(function (r) { return r.centre !== myCentre(); }).slice(0, 3).map(function (r) { return tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) + (isLevel(r) ? '' : ' ' + unitFor(r.qty, r.unit)) }); }).join(' · ')) + '</p>' +
-        askBtn() + '</div>';
+        askBtn() + '<button type="button" class="btn quiet" data-act="addElsewhere" data-key="' + esc(og.key) + '">' + tl('We have it. Add it') + '</button></div>';
     }
     var sh = starterHits(q);
-    return sh + '<div class="card empty" style="margin-top:14px"><h2>' + esc(sh ? tl('Not here?') : tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
+    return sh + '<div class="card empty art small" style="margin-top:14px">' + artSvg('search') + '<h2>' + esc(sh ? tl('Not here?') : tl('We don’t have “{name}”.', { name: q })) + '</h2>' +
       (sh ? '' : '<p>' + tl('Check the spelling.') + '</p>') +
       askBtn() +
       '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></div>' +
@@ -6893,11 +6921,27 @@ function resultsHtml(v) {
   var found = sortGroups(applyFilters(r.strong));
   var shown = found.slice(0, 30);
   return filterChipsHtml() + '<p class="count">' + (found.length === 1 ? tl('We have it:') : tl('{n} matches:', { n: found.length })) + '</p>' +
-    (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="filterClear">' + tl('Clear all') + '</button></div>') +
+    (shown.length ? '<div class="list">' + shown.map(card).join('') + '</div>' : emptyArt('search', tl('Nothing matches the filters.'), '<button class="btn" data-act="filterClear">' + tl('Clear all') + '</button>')) +
     (found.length > shown.length ? '<p class="hint">' + tl('First 30 shown. Type more.') + '</p>' : '') + starterHits(q) +
     '<details class="notwhat"><summary>' + tl('Not what you need?') + '</summary>' + askBtn() +
     '<button class="btn quiet" data-act="toAdd">' + tl('We have it. Add it') + '</button></details>';
 }
+// small drawings for pages with nothing on them, in the app's own colours
+var FACE = function (x, y, mood) { return '<g stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="none"><path d="M' + (x - 14) + ' ' + y + 'h.1M' + (x + 14) + ' ' + y + 'h.1" stroke-width="6"/><path d="' + (mood === 'happy' ? 'M' + (x - 11) + ' ' + (y + 10) + 'q11 12 22 0' : mood === 'hmm' ? 'M' + (x - 8) + ' ' + (y + 15) + 'h16' : 'M' + (x - 8) + ' ' + (y + 12) + 'q8 7 16 0') + '"/></g>'; };
+function artSvg(kind) {
+  var line = ' stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"', paper = ' fill="var(--surface)"' + line, d = '';
+  if (kind === 'yay') d = '<rect x="55" y="58" width="90" height="76" rx="14" fill="var(--brand)"' + line + '/><rect x="64" y="68" width="72" height="56" rx="10"' + paper + '/>' + FACE(100, 90, 'happy') +
+    '<path d="M100 12l7 15 16 2-12 11 3 16-14-8-14 8 3-16-12-11 16-2z" fill="var(--mark)"' + line + '/>' +
+    '<g' + line + ' fill="none"><path d="M34 52l12 7M30 86h14M166 52l-12 7M170 86h-14M52 24l7 10M148 24l-7 10"/></g><circle cx="38" cy="118" r="5" fill="var(--mark)"' + line + '/><circle cx="166" cy="114" r="5" fill="var(--brand)"' + line + '/>';
+  else if (kind === 'search') d = '<path d="M124 100l34 32" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/><circle cx="92" cy="68" r="48" fill="var(--brand)"' + line + '/><circle cx="92" cy="68" r="36"' + paper + '/>' + FACE(92, 62, 'hmm') +
+    '<path d="M156 30q0-12 12-12t12 11q0 8-12 12v7M168 62h.1" fill="none"' + line + '/>';
+  else if (kind === 'door') d = '<rect x="62" y="22" width="76" height="114" rx="8" fill="var(--brand)"' + line + '/><rect x="73" y="34" width="54" height="102" rx="5"' + paper + '/>' + FACE(100, 72, 'happy') + '<circle cx="116" cy="106" r="4" fill="var(--ink)"/><path d="M36 136h128" fill="none"' + line + '/><circle cx="164" cy="40" r="13" fill="var(--mark)"' + line + '/>';
+  else d = '<path d="M50 64l-18-22 46-8 22 22zM150 64l18-22-46-8-22 22z" fill="var(--mark)"' + line + '/><path d="M50 62h100v66a8 8 0 0 1-8 8H58a8 8 0 0 1-8-8z"' + paper + '/><path d="M50 62h100v14H50z" fill="var(--brand)"' + line + '/>' + FACE(100, 100, 'calm') +
+    (kind === 'back' ? '<path d="M126 24q-30-18-48 6M76 14l1 18 18-1" fill="none"' + line + '/>' : '<path d="M88 22l-4-9M100 20v-10M112 22l4-9" fill="none"' + line + '/>');
+  return '<svg viewBox="0 0 200 150" aria-hidden="true" focusable="false">' + d + '</svg>';
+}
+function emptyArt(kind, title, more, small) { return '<div class="card empty art' + (small === 'mid' ? ' mid' : small ? ' small' : '') + '">' + artSvg(kind) + '<h2>' + title + '</h2>' + (more || '') + '</div>'; }
+function goneHtml() { return emptyArt('back', tl('That item was removed.'), '<button type="button" class="btn primary" data-act="go" data-to="removed">' + tl('Removed items') + '</button><button type="button" class="btn" data-act="nav" data-to="home">' + tl('Search again') + '</button>'); }
 function addOneHtml() { return '<button type="button" class="btn primary" data-act="addTyped">' + tl('Add one') + '</button>'; }
 // a centre with nothing yet is told so, and shown the steps in order
 function emptyHomeHtml() {
@@ -6910,7 +6954,7 @@ function emptyHomeHtml() {
     '<ol class="gsteps">' +
     step(1, hasRoom, tl('Add your rooms'), btn('staffRoomAdd', hasRoom ? tl('Add another room') : tl('Add a room'), !hasRoom)) +
     step(2, false, tl('Add your things'), (scanOk() ? btn('addScanning', tl('Scan to add'), hasRoom) : '') + btn('addTyped', tl('Type to add'), hasRoom && !scanOk())) +
-    '</ol>' + (S.groups.length ? '<p class="help">' + tl('Searching still checks the other centres.') + '</p>' : '') + '</div>';
+    '</ol>' + '</div>';
 }
 // the admin can put something new on the shopping list from a search that found nothing; staff have no such button
 function askBtn() { return S.admin && shopOn() ? '<button class="btn ask" data-act="toRequest">' + ICON.cart + tl('Add to shopping list') + '</button>' : ''; }
@@ -6960,7 +7004,7 @@ function visLabel() { return S.otherMode === 'nothing' ? tl('Hidden from staff')
 function typeLockMsg() { return tl('The type is shared by every centre. Ask your admin to change it.'); }
 function vItem(v) {
   var g = S.gmap[v.key];
-  if (!g) return top(true) + '<div class="card empty"><h2>' + tl('That item was removed.') + '</h2><button class="btn" data-act="nav" data-to="home">' + tl('Search again') + '</button></div>';
+  if (!g) return top(true) + goneHtml();
   // for staff, other centres that are sent as numbers only are one quiet line, not rows to look through
   var quiet = S.admin ? [] : g.rows.filter(function (r) { return r.ro; });
   var full = g.rows.filter(function (r) { return quiet.indexOf(r) < 0; });
@@ -6998,8 +7042,9 @@ function vItem(v) {
     '<details class="more" data-keep="item-more"><summary>' + tl('More') + '</summary><div class="card rows">' +
     (can && !isLevel(sel) && sel.qty > 0 && S.centres.length > 1
       ? '<button class="rowbtn" data-act="moveOpen"><span>' + tl('Send to another centre') + '</span>' + ICON.go + '</button>' : '') +
-    '<button class="rowbtn" data-act="addPlace"><span>' + tl('Also kept elsewhere') + '</span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="addPlace"><span>' + (g.rows.some(function (r) { return r.centre === myCentre(); }) ? tl('Add in another room') : esc(tl('Add it at {centre}', { centre: myCentre() }))) + '</span>' + ICON.go + '</button>' +
     (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Needs details') + '</small></span>' + ICON.go + '</button>' : '') +
+    (can && !sel.ro ? '<button class="rowbtn" data-act="removeItem"><span>' + tl('Remove item') + (many ? '<small>' + esc(sel.centre + ' · ' + sel.loc) + '</small>' : '') + '</span>' + ICON.go + '</button>' : '') +
     '</div></details>' +
     (quiet.indexOf(sel) >= 0 ? '' : '<details class="histfold" id="histfold"' + (cur().histOpen ? ' open' : '') + '><summary>' + tl('History') + '</summary>' + (cur().histOpen ? histBody(past) : '') + '</details>');
 }
@@ -7157,20 +7202,48 @@ function refreshMove() {
       : tl('{centre} doesn’t have it yet. Which room?', { centre: M.to });
   }
 }
+function putBack(id) {
+  if (offlineNow()) return needNet();
+  busy(true, tl('Putting it back…'));
+  callB('restoreItem', { itemId: id }).then(function (res) {
+    busy(false);
+    mergeItems(res.items); rebuild();
+    var v = cur();
+    if (v.name === 'removed' && v.list) v.list = v.list.filter(function (x) { return x.id !== id; });
+    render(); toast(tl('Put back.'));
+  }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
+}
+// what was removed and can be put back: asked from the sheet each time the page is opened
+function loadRemoved(v) {
+  callRaw('listRemoved', {}).then(function (res) { v.list = res.removed || []; v.loading = false; if (cur() === v) render(); })
+    .catch(function (e) { v.loading = false; v.err = e.network ? tl('Can’t reach the list.') : e.message; if (cur() === v) render(); });
+}
+function vRemoved(v) {
+  if (!v.list && !v.err && !v.loading) { v.loading = true; setTimeout(function () { loadRemoved(v); }, 0); }
+  var head = top(true) + '<h1 class="title">' + tl('Removed items') + '</h1>';
+  if (v.err) return head + emptyArt('search', esc(v.err), '<button type="button" class="btn primary" data-act="removedRetry">' + tl('Try again') + '</button>', true);
+  if (!v.list) return head + '<div class="card empty centreload" role="status"><span class="lockring" aria-hidden="true"></span><h2>' + tl('Loading…') + '</h2></div>';
+  if (!v.list.length) return head + emptyArt('back', tl('Nothing has been removed.'));
+  return head + '<div class="card rows">' + v.list.map(function (x) {
+    var bits = (S.admin ? [x.centre] : []).concat([isReceivedRoom(x.loc) ? tl('Not sorted yet') : x.loc, x.tracking === 'Level' ? LEVEL_LABELS[x.qty] : amount(x.qty, x.unit)]);
+    return '<div class="remrow"><span class="emo" aria-hidden="true">' + (catIcon(x.cat) || '📦') + '</span><span class="rtext">' + esc(x.name) + '<small>' + esc(bits.join(' · ')) + '</small>' +
+      (x.when ? '<small>' + esc(tl('Removed {when}', { when: ago(x.when) })) + '</small>' : '') + '</span><button type="button" class="chip" data-act="putBack" data-id="' + esc(x.id) + '">' + tl('Put back') + '</button></div>';
+  }).join('') + '</div>';
+}
 function askRemove(id, fromMenu) {
   var it = S.byId[id];
   if (!it) return;
   M = { type: 'remove', id: it.id, fromMenu: !!fromMenu };
   openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: shown(it) })) + '</h2><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + ' · ' + esc(amountOf(it)) +
-    '</p><p class="help">' + tl('For mistakes or duplicates. Can’t be undone.') + '</p>' +
-    '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="removeItemGo">' + tl('Remove it') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
+    '</p><p class="help">' + tl('You can put it back from Me, under Removed items.') + '</p>' +
+    '<p class="err" id="m-err" hidden></p><div class="two"><button class="btn" data-act="closeSheet">' + tl('Cancel') + '</button><button class="btn primary" id="m-go" data-act="removeItemGo">' + tl('Remove') + '</button></div>');
 }
 function reopenMenu(id) { var it = S.byId[id]; if (!it) return closeSheet(); M = { type: 'itemmenu', id: it.id }; openSheet(itemMenuHtml(it), null, null, function () { reopenMenu(id); }); }
 function itemMenuHtml(it) {
   return '<div class="menu-head"><h2>' + esc(shown(it)) + '</h2><button type="button" class="ib rp-x" data-act="closeSheet" aria-label="' + esc(tl('Close')) + '">' + ICON.x + '</button></div><p class="sub">' + esc(it.centre) + ' · ' + esc(it.loc) + '</p>' +
     '<button type="button" class="opt" data-act="menuEdit"><span class="ri" aria-hidden="true">' + ICON.pencil + '</span><span>' + (attentionTags(it).length ? tl('Finish adding') : tl('Edit item')) + '</span></button>' +
     '<button type="button" class="opt" data-act="menuProblem"><span class="ri" aria-hidden="true">' + ICON.warn + '</span><span>' + tl('Report a problem') + '</span></button>' +
-    (S.admin ? '<button type="button" class="opt danger" data-act="menuRemove"><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span>' + tl('Delete') + '</span></button>' : '');
+    (mineRow(it) && !it.ro ? '<button type="button" class="opt danger" data-act="menuRemove"><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span>' + tl('Remove') + '</span></button>' : '');
 }
 var LP = { timer: 0, show: 0, x: 0, y: 0, firedAt: 0, row: null };
 function lpRow(t) { return t && t.closest ? t.closest('[data-hold],[data-id][data-act=open],[data-id][data-act=finish]') : null; }
@@ -7416,7 +7489,7 @@ function vAdd(v) {
     F.level = dr.level || 'Plenty'; F.set = !!dr.set; F.parts = dr.parts || ''; v.text = dr.name || ''; v._draft = dr;
   } else { v._draft = null; if (v.fromAdd) v.text = ''; }
   if (kept) { F.cat = kept.cat; F.sub = kept.sub; F.kind = kept.kind; F.kindTouched = kept.kindTouched; F.tracking = kept.tracking; F.set = kept.set; F.parts = kept.parts; }
-  return top(true) + '<h1 class="title">' + (g ? (scanned ? esc(tl('Add it at {centre}', { centre: F.centre })) : tl('Also kept elsewhere?')) : tl('Add an item')) + '</h1>' +
+  return top(true) + '<h1 class="title">' + (g ? (scanned || !g.rows.some(function (r) { return r.centre === F.centre; }) ? esc(tl('Add it at {centre}', { centre: F.centre })) : tl('Add in another room')) : tl('Add an item')) + '</h1>' +
     (scanned && !g ? '<p class="note" role="status" id="scan-note">' + (v.text ? tl('This barcode isn’t on the list yet. Check the details, then tap Add. Nothing is saved before that.') : tl('This barcode isn’t on the list yet, and no name was found for it. Type the name, then tap Add. Nothing is saved before that.')) + '</p>' : '') +
     (v.fromAdd ? modeStrip('type') + '<button class="btn ctxchip" id="bk-ctx" data-act="ctxOpen" title="' + esc(ctxLabel()) + '">' + ctxHtml() + '</button>' : '') +
     (dr ? '<p class="note" id="draft-note">' + tl('Draft restored.') + ' <button type="button" class="chip" data-act="addDraftClear">' + tl('Clear') + '</button></p>' : '') +
@@ -7431,17 +7504,17 @@ function vAdd(v) {
     (g ? '<div><label class="lab" for="f-unit">' + tl('Unit') + '</label><input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" value="' + esc(g.unit === 'level' ? '' : g.unit) + '" placeholder="pcs"></div>' : '') + '</div>' +
     (g ? '' : '<label class="lab">' + tl('Unit') + '</label><div id="f-funit">' + funitHtml(kept ? kept.unit : scanned && isBookCode(scanned) ? 'books' : '') + '</div>' +
       '<input id="f-unit" class="inp" maxlength="20" autocomplete="off" autocapitalize="off" aria-label="' + esc(tl('Unit')) + '" placeholder="' + esc(tl('e.g. ream')) + '" value="' + esc(kept ? kept.unit : scanned && isBookCode(scanned) ? 'books' : '') + '"' + (unitChipOf(kept ? kept.unit : scanned && isBookCode(scanned) ? 'books' : '') === 'other' ? '' : ' hidden') + '>') +
-    '<p class="help" id="unit-prev"></p><p class="help">' + tl('Count packs, not pieces.') + '</p></div>' +
+    '<p class="help" id="unit-prev"></p></div>' +
     '<div id="f-levelbox"' + (levelOn() ? '' : ' hidden') + '><label class="lab">' + tl('How much is left?') + '</label>' + chips('level', ['Plenty', 'Half', 'Low', 'Out'], F.level, LEVEL_CHIP) + '</div>' +
     (v.fromAdd ? '' : (S.admin ? '<label class="lab">' + tl('Which centre?') + '</label>' + chips('centre', S.centres, F.centre) : '<p class="forline">' + esc(tl('For {centre}', { centre: F.centre })) + '</p>') +
     '<label class="lab" for="f-loc-btn">' + tl('Which room?') + '</label>' + roomField('f-loc', here && here.centre === F.centre ? here.loc : '', F.centre, tl('Choose a room'))) +
     '<details data-keep="add-more"><summary>' + tl('More') + '</summary>' +
     (g ? '' : '<label class="lab" for="f-alt">' + tl('Other names') + '</label>' +
       '<input id="f-alt" class="inp" maxlength="200" autocomplete="off" placeholder="' + tl('e.g. kertas A4, 复印纸') + '">' +
-      '<p class="help">' + tl('Add Malay and Chinese names too.') + '</p>') +
-    '<div id="f-minbox"' + (levelOn() || F.kind === 'Equipment' ? ' hidden' : '') + '><label class="lab" for="f-min">' + tl('Tell me when below') + '</label>' +
+      '') +
+    '<div id="f-minbox"' + (levelOn() || F.kind === 'Equipment' ? ' hidden' : '') + '><label class="lab" for="f-min">' + tl('Tell me when below') + ' <i>' + tl('(optional)') + '</i></label>' +
     '<input id="f-min" class="inp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="0">' +
-    '<p class="help">' + tl('Leave blank if it never runs out.') + '</p></div>' +
+    '</div>' +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" placeholder="' + tl('e.g. set of 10, check all pieces') + '">' +
     photoField() + '</details>' +
     '<p class="err" id="f-err" hidden></p>' +
@@ -7573,7 +7646,7 @@ function editDrift() {
 }
 function vEdit(v) {
   var it = S.byId[v.id];
-  if (!it) return top(true) + '<div class="card empty"><h2>' + tl('That item was removed.') + '</h2></div>';
+  if (!it) return top(true) + goneHtml();
   if (!mineRow(it)) return top(true) + '<div class="card empty"><h2>' + esc(tl('Only {centre} can change this.', { centre: it.centre })) + '</h2></div>';
   F = { centre: it.centre, cat: it.cat, sub: it.subtype || '', photo: '', tracking: 'count', kind: it.kind };
   var admin = S.admin ?
@@ -7599,7 +7672,7 @@ function vEdit(v) {
     '<p class="err" id="f-err" hidden></p>' +
     '<div class="formend edit"><button class="btn primary" id="f-go" data-act="editGo">' + tl('Save') + '</button>' +
     (v.finish && tags.length && more ? '<button type="button" class="btn next" id="f-next" data-act="editNext">' + tl('Save & next') + '</button>' : '') +
-    (S.admin ? '<button type="button" class="btn quiet" data-act="removeItem">' + tl('Remove item') + '</button>' : '') + '</div>';
+    '<button type="button" class="btn quiet" data-act="removeItem">' + tl('Remove item') + '</button></div>';
 }
 
 // ----- Running low -----
@@ -7669,7 +7742,7 @@ function vLow() {
         : '<span class="line"><span class="badge low">' + tl('{amount} left', { amount: amount(it.qty, it.unit) }) + '</span> ' + esc(tl('needs {min}', { min: it.min })) + '</span>') +
         (spare.length ? '<span class="line">' + spare.map(function (r) { return esc(tl('{centre} has {amount}', { centre: r.centre, amount: qtyText(r) })); }).join(' · ') + '</span>'
           : '<span class="line nootherline">' + esc(tl('No other centre has spare')) + '</span>'));
-    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('Nothing is running low.') + '</h2></div>') +
+    }).join('') + '</div>' : emptyArt('yay', tl('Nothing is running low.'), '<p>' + tl('All stocked up.') + '</p>', broken.length > 0)) +
     (broken.length ? '<details class="settings lowfold" data-keep="low-broken"' + (pick ? ' open' : '') + '><summary>' + tl('Broken or missing') + '<small>' + broken.length + '</small></summary><div class="list lowlist">' + broken.map(function (it) {
       return card(it, '<span class="line"><span class="badge warn">' + STATUS_LABEL[it.status] + '</span></span>' + (it.notes ? '<span class="line">' + esc(it.notes) + '</span>' : ''));
     }).join('') + '</div></details>' : '') +
@@ -7750,15 +7823,6 @@ function langChips() {
     return '<button type="button" class="chip' + (v === LANG ? ' on' : '') + '" data-act="setLang" data-val="' + v + '">' + LANG_NAMES[v] + '</button>';
   }).join('') + '</div>';
 }
-function vMore() {
-  return top(false, true) + '<h1 class="title">' + tl('Me') + '</h1>' +
-    '<div class="card rows" style="margin-top:var(--s3)">' +
-    '<button class="rowbtn" data-act="centrePick"><span class="lead">' + ICON.pin + '</span><span>' + tl('Centre') + '<small>' + esc(S.me.centre) + '</small></span>' + ICON.go + '</button>' +
-    (S.admin && shopOn() ? '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + tl('Shopping list') + '</span>' + ICON.go + '</button>' : '') +
-    '<button class="rowbtn" data-act="go" data-to="settings"><span class="lead">' + ICON.cog + '</span><span>' + tl('Settings') + '</span>' + ICON.go + '</button>' +
-    (S.admin ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin') + '<small>' + (shopOn() ? tl('Settings, shopping list and the Google Sheet') : tl('Settings and the Google Sheet')) + '</small></span>' + ICON.go + '</button>' : '') +
-    '</div>';
-}
 function centreSheet(act, current) {
   return '<h2>' + tl('Centre') + '</h2>' + S.centres.map(function (c) {
     return '<button type="button" class="opt' + (c === current ? ' on' : '') + '" data-act="' + act + '" data-val="' + esc(c) + '">' + esc(c) + '</button>';
@@ -7769,23 +7833,28 @@ function fit() { return S.centres.length <= 3 ? ' fit' : ''; }
 function builtText() {
   try { return new Date(APP_BUILT + 'T12:00:00').toLocaleDateString(LANG === 'ms' ? 'ms-MY' : LANG === 'zh' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return APP_BUILT; }
 }
-function vSettings() {
+function vMore() {
   var waiting = S.outbox.length;
-  return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Settings') + '</h1>' +
+  return top(false, true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Me') + '</h1>' +
     '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p></div>' +
     '<button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
+    '<div class="card rows" style="margin-top:var(--s3)">' +
+    '<button class="rowbtn" data-act="centrePick"><span class="lead">' + ICON.pin + '</span><span>' + tl('Centre') + '<small>' + esc(S.me.centre) + '</small></span>' + ICON.go + '</button>' +
+    '<button class="rowbtn" data-act="go" data-to="removed"><span class="lead">' + ICON.trash + '</span><span>' + tl('Removed items') + '</span>' + ICON.go + '</button>' +
+    (S.admin && shopOn() ? '<button class="rowbtn" data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + tl('Shopping list') + '</span>' + ICON.go + '</button>' : '') +
+    '</div>' +
     langChips() + '<label class="lab">' + tl('Colours') + '</label><div class="chips" data-group="theme">' + [['', tl('Follow theme'), ICON.auto], ['light', tl('Light'), ICON.sun], ['dark', tl('Dark'), ICON.moon]].map(function (o) {
       return '<button class="chip look' + (store.get('rm_theme', '') === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_theme" data-val="' + o[0] + '">' + o[2] + '<span>' + o[1] + '</span></button>';
-    }).join('') + '</div><p class="help">' + tl('Follow theme uses your phone’s light or dark setting.') + '</p>' +
+    }).join('') + '</div>' +
     '<label class="lab">' + tl('Text size') + '</label><div class="chips" data-group="text">' + [[0, tl('Normal')], [1, tl('Large')], [2, tl('Extra Large')]].map(function (o) {
       return '<button class="chip' + (store.get('rm_text', 0) === o[0] ? ' on' : '') + '" data-act="setLook" data-k="rm_text" data-val="' + o[0] + '">' + o[1] + '</button>';
     }).join('') + '</div>' +
-    '<h2 class="sec">' + tl('Admin') + '</h2><div class="card rows">' + (S.admin
-      ? '<button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin panel') + '<small>' + tl('Signed in as admin') + '</small></span>' + ICON.go + '</button>' +
-        '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button>' +
-        '<button class="rowbtn" data-act="adminLeaveAll"><span class="lead">' + ICON.x + '</span><span>' + tl('Sign out all phones') + (S.admin.phones ? '<small>' + esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) + '</small>' : '') + '</span>' + ICON.go + '</button>'
-      : '<button class="rowbtn" data-act="pinOpen"><span class="lead">' + ICON.shield + '</span><span>' + tl('Sign in as admin') + '<small>' + tl('Needs the admin PIN.') + '</small></span>' + ICON.go + '</button>') + '</div>' +
+    (S.admin
+      ? '<h2 class="sec">' + tl('Admin') + '</h2><div class="card rows"><button class="rowbtn" data-act="go" data-to="admin"><span class="lead">' + ICON.shield + '</span><span>' + tl('Admin panel') + '</span>' + ICON.go + '</button>' +
+        '<button class="rowbtn" data-act="adminLeave"><span class="lead">' + ICON.door + '</span><span>' + tl('Sign out') + '</span>' + ICON.go + '</button></div>'
+      : '') +
     connLogHtml() +
+    (S.admin ? '' : '<button type="button" class="linkbtn meadmin" data-act="pinOpen">' + tl('Sign in as admin') + '</button>') +
     '<p class="help verline">' + esc(tl('Alpha · version {v} · updated {date}', { v: APP_VER, date: builtText() })) + '</p>';
 }
 // ----- Rooms: what is kept where -----
@@ -7811,7 +7880,7 @@ function vRooms(v) {
       return '<div class="roomrow"><button class="rowmain" data-act="roomOpen" data-val="' + esc(loc) + '"><span class="ri" aria-hidden="true">' + roomIcon(loc) + '</span><span class="rtext">' + esc(loc) + '<small>' +
         (p.n && days > 30 ? '<span class="due" role="img" aria-label="' + esc(tl('Overdue')) + '"><i></i></span>' : '') +
         (p.n ? (p.n === 1 ? tl('1 item') : tl('{n} items', { n: p.n })) + ' · ' + (p.oldest ? tl('checked {when}', { when: ago(p.oldest) }) : tl('not checked yet')) : tl('Empty')) + '</small></span>' + ICON.go + '</button></div>';
-    }).join('') + '</div>' : '<div class="card empty"><h2>' + tl('No rooms yet.') + '</h2></div>') +
+    }).join('') + '</div>' : emptyArt('door', tl('No rooms yet.'), '', true)) +
     '<button type="button" class="btn' + (names.length ? ' quiet' : ' primary') + '" id="room-add-mine" data-act="staffRoomAdd">' + tl('Add a room') + '</button>' +
     (att.length ? '<h2 class="sec tidyhead attnhead">' + tl('Needs attention') + '<span class="pn">' + att.length + '</span></h2>' +
       '<div class="card rows">' + att.slice(0, 4).map(attRow).join('') +
@@ -7845,10 +7914,12 @@ function roomListHtml(v) {
       (low(it) || needBadgeHtml(needSetFor([it]), [it]) ? '<span class="line">' + (low(it) ? '<span class="badge low">' + tl('Running low') + '</span> ' : '') + needBadgeHtml(needSetFor([it]), [it]) + '</span>' : '') + '</span>' +
       '<span class="tot">' + (isLevel(it) ? '<b class="word">' + LEVEL_LABELS[it.qty] + '</b>' : '<b>' + it.qty + '</b><small>' + esc(unitFor(it.qty, it.unit)) + '</small>') + '</span></button>';
   }).join('') + '</div>';
-  if (!all.length) return '<div class="card empty"><h2>' + tl('Nothing here yet.') + '</h2></div>';
-  if (words.length) return '<div class="card empty"><h2>' + esc(tl('Nothing matches “{q}”.', { q: S.rq.trim() })) + '</h2></div>';
-  return '<div class="card empty"><h2>' + tl('Nothing matches the filters.') + '</h2><button class="btn" data-act="roomFilterClear">' + tl('Clear all') + '</button></div>';
+  if (!all.length) return emptyArt('box', tl('Nothing here yet.'), '', 'mid');   // buttons follow, and must stay in view
+  if (words.length) return emptyArt('search', esc(tl('Nothing matches “{q}”.', { q: S.rq.trim() })), '', true);
+  return emptyArt('search', tl('Nothing matches the filters.'), '<button class="btn" data-act="roomFilterClear">' + tl('Clear all') + '</button>');
 }
+// a room on this centre's own list (an Every-centre room is the admin's)
+function ownRoom(centre, loc) { return (S.rooms || []).some(function (r) { return r.centre === centre && sameRoom(r.name, loc); }); }
 function vRoom(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc);
   var chipsOn = selCats(f).map(function (c) { return ['cat', c, tl(c)]; }).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
@@ -7862,7 +7933,8 @@ function vRoom(v) {
     ((S.roomNotes || {})[v.centre + '|' + v.loc] ? '<p class="note" role="status"><b>' + esc(tl('Changed while you counted:')) + '</b><br>' + S.roomNotes[v.centre + '|' + v.loc].map(esc).join('<br>') + '</p>' : '') +
     '<div id="roomlist">' + roomListHtml(v) + '</div>' +
     (all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button></div>'
-      : (S.admin || v.centre === myCentre()) && !isReceivedRoom(v.loc) ? '<div class="after"><button class="btn primary" data-act="addHere">' + tl('Add something here') + '</button></div>' : '');
+      : (S.admin || v.centre === myCentre()) && !isReceivedRoom(v.loc) ? '<div class="after"><button class="btn primary" data-act="addHere">' + tl('Add something here') + '</button>' +
+        (ownRoom(v.centre, v.loc) ? '<div class="two"><button type="button" class="btn quiet" data-act="myRoomRename">' + tl('Rename room') + '</button><button type="button" class="btn quiet" data-act="myRoomRemove">' + tl('Remove room') + '</button></div>' : '') + '</div>' : '');
 }
 function roomFilterSheet(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), counts = {};
@@ -7905,15 +7977,20 @@ function mergedToast(list) {
     chain.then(function () { saveData(); rebuild(); render(); toast(tl('Undone.')); }).catch(function (e) { toast(e.network ? tl('Offline. Try again.') : e.message); });
   });
 }
+function itemsIn0(centre) { var seen = []; S.items.forEach(function (it) { if (it.centre === centre && it.loc && !isReceivedRoom(it.loc) && seen.indexOf(it.loc) < 0) seen.push(it.loc); }); return seen; }
 function vAdminRooms() {
   if (!S.admin) return vMore();
   var tidy = tidyCandidates();
   var groups = S.centres.concat([ALL_CENTRES]);
-  return top(true) + '<h1 class="title">' + tl('Manage rooms') + '</h1><p class="sub">' + tl('Rename a room and its items follow.') + '</p>' +
+  return top(true) + '<h1 class="title">' + tl('Manage rooms') + '</h1>' +
     (tidy.length ? '<div class="card tidycard" style="padding:var(--s4);margin-bottom:var(--s4)"><h2 style="margin:0 0 var(--s1)">' + tl('Same room in every centre') + '</h2><p class="help" style="margin:0 0 var(--s2)">' + esc(tidy.join(', ')) + '</p>' +
       '<p class="help" style="margin:0 0 var(--s3)">' + tl('These are listed once for each centre. Make each one a single Every-centre room.') + '</p><button class="btn" data-act="roomTidy">' + tl('Merge into Every centre') + '</button></div>' : '') +
     groups.map(function (c) {
-      var mine = (S.rooms || []).filter(function (r) { return r.centre === c; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+      var mine = (S.rooms || []).filter(function (r) { return r.centre === c; });
+      if (c !== ALL_CENTRES) itemsIn0(c).forEach(function (loc) {
+        if (!(S.rooms || []).concat(mine).some(function (r) { return (r.centre === c || r.centre === ALL_CENTRES) && sameRoom(r.name, loc); })) mine.push({ centre: c, name: loc });
+      });
+      mine.sort(function (a, b) { return a.name.localeCompare(b.name); });
       return '<h2 class="sec">' + esc(c === ALL_CENTRES ? tl('Every centre') : c) + '</h2><div class="rows">' +
         (mine.length ? mine.map(function (r) {
           var n = c === ALL_CENTRES ? S.items.filter(function (it) { return sameRoom(it.loc, r.name); }).length : itemsIn(c, r.name).length;
@@ -7928,7 +8005,7 @@ function vAdminRooms() {
 // ----- Admin: manage the centres -----
 function vAdminCentres() {
   if (!S.admin) return vMore();
-  return top(true) + '<h1 class="title">' + tl('Manage centres') + '</h1><p class="sub">' + tl('Rename a centre and its items follow.') + '</p>' +
+  return top(true) + '<h1 class="title">' + tl('Manage centres') + '</h1>' +
     '<div class="rows">' + S.centres.map(function (c) {
       var n = S.items.filter(function (it) { return it.centre === c; }).length;
       return '<div class="rowbtn"><span>' + esc(c) + '<small>' + (n ? (n === 1 ? tl('1 item') : tl('{n} items', { n: n })) : tl('Empty')) + '</small></span>' +
@@ -8044,12 +8121,13 @@ function csvText() {
 function vAdmin() {
   if (!S.admin) return vMore();
   var planned = (S.requests || []).filter(function (r) { return r.status === 'New' || r.status === 'Approved'; }).length;
-  var lowN = S.items.filter(low).length, broken = S.items.filter(function (it) { return STATUS_LABEL[it.status]; }).length;
+  var here = S.items.filter(function (it) { return it.centre === myCentre(); });   // the same centre the Low page lists
+  var lowN = here.filter(low).length, broken = here.filter(function (it) { return STATUS_LABEL[it.status]; }).length;
   var tile = function (n, label, to) {
     var wait = n === null;
     return '<button class="stat' + (wait ? ' loading' : '') + '"' + (wait ? ' aria-busy="true"' : '') + ' data-act="go" data-to="' + to + '"><b>' + (wait ? '<span class="dots3" role="img" aria-label="' + esc(tl('Loading…')) + '"><i></i><i></i><i></i></span>' : n) + '</b><span>' + label + '</span></button>';
   };
-  var ROW_ICON = { adminTypes: ICON.tag, addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, visOpen: ICON.eye, pinChange: ICON.key, labels: ICON.qr };
+  var ROW_ICON = { adminLeaveAll: ICON.x, adminTypes: ICON.tag, addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, visOpen: ICON.eye, pinChange: ICON.key, labels: ICON.qr };
   var row = function (act, to, title, note, extra) {
     var ic = ROW_ICON[to || act];
     return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '>' + (ic ? '<span class="lead">' + ic + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + (extra || '') + ICON.go + '</button>';
@@ -8066,7 +8144,8 @@ function vAdmin() {
       row('go', 'adminRooms', tl('Manage rooms'), tl('Add, rename or remove rooms')) +
       row('go', 'adminTypes', tl('Types'), tl('Add, rename or remove types and subtypes')) +
       row('visOpen', '', tl('Other centres'), visLabel()) +
-      row('pinChange', '', tl('Change PIN'), '')) +
+      row('pinChange', '', tl('Change PIN'), '') +
+      row('adminLeaveAll', '', tl('Sign out all phones'), S.admin.phones ? esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) : '')) +
       row('go', 'labels', tl('QR stickers'), '') +
     '</div>' + testCardHtml() +
     '<details class="settings" id="adm-sheet" data-keep="adm-sheet"' + (S.test ? ' hidden' : '') + '><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
@@ -8467,7 +8546,11 @@ function scannedView(code, rows) {
 }
 function showScanned(code, rows) { scanShow(scannedView(code, rows)); }
 // a barcode nobody has, or one that is on the wrong thing: nothing is saved here, the person chooses
-var TYPE_ICONS = ['📚', '🧸', '🎨', '✏️', '🖨️', '🪑', '🧼', '🩹', '🏮', '🌱', '⚽', '🎵', '🍽️', '🧺', '🔧', '💡', '🧵', '🧩', '🚲', '👕', '🛏️', '📦', '🔬', '🎒'];
+var TYPE_ICONS = ['📚', '🧸', '🎨', '✏️', '🖨️', '🪑', '🧼', '🩹', '🏮', '🌱', '⚽', '🎵', '🍽️', '🧺', '🔧', '💡', '🧵', '🧩', '🚲', '👕', '🛏️', '📦', '🔬', '🎒',
+  '🖍️', '🖌️', '✂️', '📏', '📐', '📎', '📌', '🖊️', '📝', '📓', '📖', '📁', '🗂️', '🏷️', '🧮', '🔤', '🔢', '🌍', '🗺️', '🔭', '🧪', '🧲',
+  '🐠', '🐛', '🦋', '🐢', '🌻', '🌳', '🪴', '💧', '☀️', '🌈', '⭐', '❤️', '🎲', '🪁', '🪀', '🎈', '🎭', '🎪', '📷', '🎤', '🥁', '🎹', '🎸', '🔔',
+  '🏀', '🎾', '🏓', '🤸', '⛺', '🚗', '🚂', '🧱', '🦖', '🍎', '🥕', '🍼', '🥣', '🥄', '☕', '🍳', '🧃', '🎂', '🧽', '🧹', '🪣', '🧻', '🪥', '🗑️', '🧴',
+  '💊', '🌡️', '🧯', '🔒', '🔑', '🔨', '🪛', '🧰', '🔋', '🔌', '💻', '⌨️', '🖱️', '📱', '🔊', '📺', '⏰', '🪞', '🚪', '🛋️', '🧦', '🧢', '👟', '🎁', '🏆', '🎀', '🪡', '🧶'];
 function typeUses(c, sub) { return S.items.filter(function (it) { return it.cat === c && (sub === undefined || it.subtype === sub); }).length; }
 function typeCountText(c) {
   var n = typeUses(c), m = ((S.subtypes || {})[c] || []).length;
@@ -8475,7 +8558,7 @@ function typeCountText(c) {
 }
 function vAdminTypes() {
   if (!S.admin) return vMore();
-  return top(true) + '<h1 class="title">' + tl('Types') + '</h1><p class="sub">' + tl('Types and subtypes are shared by every centre.') + '</p>' +
+  return top(true) + '<div class="titleinfo"><h1 class="title">' + tl('Types') + '</h1><button type="button" class="info" data-act="infoToggle" data-for="note-types" aria-expanded="false" aria-label="' + esc(tl('More information')) + '"><i aria-hidden="true">i</i></button></div><p class="typenote" id="note-types" role="note" hidden>' + tl('Types and subtypes are shared by every centre.') + '</p>' +
     '<div class="card rows">' + S.categories.map(function (c) {
       return '<div class="roomrow"><button class="rowmain" data-act="typeOpen" data-val="' + esc(c) + '"><span class="ri" aria-hidden="true">' + (catIcon(c) || '📦') + '</span><span class="rtext">' + esc(tl(c)) + '<small>' + esc(typeCountText(c)) + '</small></span>' + ICON.go + '</button></div>';
     }).join('') + '</div><button type="button" class="btn primary" data-act="typeAdd">' + tl('Add a type') + '</button>';
@@ -8507,7 +8590,8 @@ function typeSheet() {
   openSheet('<h2>' + (m.op === 'add' ? tl('Add a type') : tl('Change name or picture')) + '</h2><label class="lab" for="m-tname">' + tl('Name') + '</label><input id="m-tname" class="inp" maxlength="40" autocomplete="off" value="' + esc(m.name) + '">' +
     '<p class="lab">' + tl('Picture') + '</p><div class="igrid emojis">' + TYPE_ICONS.map(function (e) {
       return '<button type="button" class="igo' + (e === m.icon ? ' on' : '') + '" aria-pressed="' + (e === m.icon) + '" data-act="typeIcon" data-val="' + e + '" aria-label="' + esc(tl('Picture {p}', { p: e })) + '">' + e + '</button>'; }).join('') + '</div>' +
-    '<label class="lab" for="m-own">' + tl('Or type your own') + '</label><input id="m-own" class="inp ownpic" maxlength="16" autocomplete="off" placeholder="' + esc(tl('one emoji')) + '" value="' + (TYPE_ICONS.indexOf(m.icon) < 0 ? esc(m.icon) : '') + '"><p class="help" id="m-used" role="status">' + esc(usedPictureText(m)) + '</p>' +
+    '<p class="help" id="m-used" role="status">' + esc(usedPictureText(m)) + '</p>' +
+    '<details class="ownfold"' + (TYPE_ICONS.indexOf(m.icon) < 0 ? ' open' : '') + '><summary>' + tl('Type one instead') + '</summary><input id="m-own" class="inp ownpic" maxlength="16" autocomplete="off" aria-label="' + esc(tl('Type one instead')) + '" placeholder="' + esc(tl('one emoji')) + '" value="' + (TYPE_ICONS.indexOf(m.icon) < 0 ? esc(m.icon) : '') + '"></details>' +
     kindAsk(m.kind, 'ptile', function () { return 'data-act="typeKind"'; }, '', true) +
     '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="typeSave">' + tl('Save') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
 }
@@ -8554,10 +8638,10 @@ function vUnknown(v) {
   }
   return top(true) + '<h1 class="title">' + (v.notIt ? tl('Not this one?') : tl('Not on the list')) + '</h1>' +
     '<p class="sub">' + esc(tl('Barcode {code}', { code: v.code })) + '</p>' +
-    '<p class="note" role="status">' + (v.notIt ? esc(tl('The barcode is on “{name}”. Choose what it really is.', { name: v.notName })) : tl('Nothing has been saved.')) + '</p>' +
+    (v.notIt ? '<p class="note" role="status">' + esc(tl('The barcode is on “{name}”. Choose what it really is.', { name: v.notName })) + '</p>' : '') +
     '<div class="formend"><button class="btn primary" data-act="unknownAdd">' + (v.notIt ? tl('Add it as something new') : tl('Add it')) + '</button>' +
-    '<button class="btn" data-act="linkPick">' + tl('Link to something we already have') + '</button>' +
-    '<button class="btn quiet" data-act="findScan">' + tl('Scan next') + '</button></div>';
+    '<div class="two"><button class="btn" data-act="linkPick">' + tl('Link to an item') + '</button>' +
+    '<button class="btn quiet" data-act="findScan">' + tl('Scan next') + '</button></div></div>';
 }
 // "Add it": ask the free catalogues for a name, then open the Add form. Nothing is saved here.
 function addScanned(code) {
@@ -8851,13 +8935,14 @@ function placeAim() {
 function growName() { var n = byIdEl('card-name'); if (n && n.scrollHeight) { n.style.height = 'auto'; n.style.height = (n.scrollHeight + 3) + 'px'; } }
 function unitWord(u) { return u === 'box' ? tl('box') : u === 'pack' ? tl('pack') : u === 'bottle' ? tl('bottle') : tl('pcs'); }
 function subLine(sub, act) { return '<button type="button" class="pickfield subfield" data-act="' + act + '"><span>' + esc(sub ? tl('Subtype: {name}', { name: tl(sub) }) : tl('Subtype (optional)')) + '</span>' + ICON.go + '</button>'; }
-function subListHtml(cat, chosen, act) {
-  return '<h2>' + tl('Subtype') + '</h2><div class="sublist">' + [''].concat((S.subtypes || {})[cat] || []).map(function (x) {
+function subListHtml(cat, chosen, act, cancel) {
+  return '<div class="subhead"><h2>' + tl('Subtype') + '</h2></div><div class="sheetbody"><div class="sublist">' + [''].concat((S.subtypes || {})[cat] || []).map(function (x) {
     return '<button type="button" class="opt' + (x === (chosen || '') ? ' on' : '') + '" aria-pressed="' + (x === (chosen || '')) + '" data-act="' + act + '" data-val="' + esc(x) + '">' + (x ? esc(tl(x)) : tl('No subtype')) + '</button>';
-  }).join('') + '</div>';
+  }).join('') + '</div></div><div class="sheetfoot"><button type="button" class="btn quiet" data-act="' + cancel + '">' + tl('Cancel') + '</button></div>';
 }
+var SUB_PANEL = 'has-foot subpanel';
 function typeHtml(e) {
-  if (e.subList) return subListHtml(e.cat, e.sub, 'pickSubSet');
+  if (e.subList) return subListHtml(e.cat, e.sub, 'pickSubSet', 'pickSubsBack');
   return '<h2>' + esc(e.title) + '</h2><p class="lab">' + tl('Type') + '</p><div class="ptiles">' + S.categories.map(function (c) {
     return '<button type="button" class="ptile' + (c === e.cat ? ' on' : '') + '" aria-pressed="' + (c === e.cat) + '" data-act="pickCat" data-val="' + esc(c) + '"><span class="emo" aria-hidden="true">' + (catIcon(c) || '📦') + '</span><span>' + esc(tl(c)) + '</span></button>'; }).join('') + '</div>' +
     (((S.subtypes || {})[e.cat] || []).length ? subLine(e.sub, 'pickSubs') : '') +
@@ -8865,7 +8950,7 @@ function typeHtml(e) {
     '<p class="err" id="pick-err" role="alert" hidden>' + tl('Say whether it gets used up.') + '</p>' +
     '<button class="btn primary" data-act="pickDone">' + tl('Done') + '</button><button class="btn quiet" data-act="pickCancel">' + tl('Cancel') + '</button>';
 }
-function openPick(e) { SC.picking = e; openSheet(typeHtml(e)); }
+function openPick(e) { SC.picking = e; openSheet(typeHtml(e), null, e.subList ? SUB_PANEL : ''); }
 // a type set once on something that has none: anyone may do it, no PIN (the sheet refuses it once a type exists).
 // It goes through the saved queue, so the page shows it at once and it is kept with no signal.
 function applyType(e) {
@@ -9483,6 +9568,7 @@ var ACT = {
   addNew: function () { S.q = ''; go({ name: 'add', text: '' }); },
   toAdd: function () { go({ name: 'add', text: S.q.trim() }); },
   addPlace: function () { go({ name: 'add', key: cur().key }); },
+  addElsewhere: function (el) { go({ name: 'add', key: el.dataset.key }); },
   finish: function (el) { var it = S.byId[el.dataset.id]; if (it) go({ name: 'edit', id: it.id, key: RMSearch.norm(it.name), base: editBase(it), finish: true }); },
   attFilter: function (el) { cur().f = el.dataset.val; render(); },
   editNext: function () { S.editNext = true; ACT.editGo(); },
@@ -9645,12 +9731,13 @@ var ACT = {
     camStop();
     if (rows.length || g) go(scannedView(c.code, rows.length ? rows : g.rows), true);
   },
-  cardSubs: function () { var c = SC.card; if (!c) return; cardRead(); M = { type: 'cardsub' }; openSheet(subListHtml(c.cat, c.sub, 'cardSubPick')); },
+  cardSubs: function () { var c = SC.card; if (!c) return; cardRead(); M = { type: 'cardsub' }; openSheet(subListHtml(c.cat, c.sub, 'cardSubPick', 'closeSheet'), null, SUB_PANEL); },
   cardSubPick: function (el) {
     var c = SC.card; closeSheet(); if (!c) return;
     c.sub = el.dataset.val; if (!c.kindTouched && !isBookCode(c.code)) c.kind = kindFor(c.cat, c.sub);
     cardRedraw();
   },
+  pickSubsBack: function () { var e = SC.picking; if (!e) return closeSheet(); e.subList = false; openPick(e); },
   pickSubs: function () { var e = SC.picking; if (!e) return; e.subList = true; openPick(e); },
   pickSubSet: function (el) { var e = SC.picking; if (!e) return; e.sub = el.dataset.val; e.subList = false; e.picked = true; if (!e.touched) e.kind = typeDepends(e.cat) ? '' : kindFor(e.cat, e.sub) || e.kind; openPick(e); },
   cardSimilar: function (el) { var g = S.gmap[el.dataset.key]; if (!g || !SC.card) return; cardRead(); SC.card.name = g.name; cardRedraw(); },
@@ -9693,7 +9780,7 @@ var ACT = {
   },
   // ----- "Added this time" -----
   addedUndo: function (el) { var e = addedList()[Number(el.dataset.i)]; if (e) undoAdded(e); },
-  addedOpen: function (el) { var e = addedList()[Number(el.dataset.i)], row = e && addedRow(e); if (row) go({ name: 'item', key: RMSearch.norm(row.name), id: row.id }); },
+  addedOpen: function (el) { var e = addedList()[Number(el.dataset.i)], row = e && addedRow(e); if (row) go({ name: 'edit', id: row.id, key: RMSearch.norm(row.name), base: editBase(row), finish: attentionTags(row).length > 0, ret: true }); },
   addedType: function (el) { var e = addedList()[Number(el.dataset.i)], row = e && addedRow(e); if (row) openPick({ itemId: row.id, title: row.name, cat: '', kind: row.kind || '' }); },
   addedDrop: function (el) { var e = addedList()[Number(el.dataset.i)]; if (e) dropAdded(e); },
   addedRetry: function (el) {
@@ -9772,6 +9859,29 @@ var ACT = {
     callB('addRoom', { centre: myCentre(), name: name }).then(function (res) {
       busy(false); S.rooms = res.rooms || S.rooms; saveData(); closeSheet(); render(); toast(tl('Saved.'));
     }).catch(function (err) { busy(false); var x = byIdEl('m-err'); if (x) { x.textContent = err.network ? tl('Offline. Try again later.') : err.message; x.hidden = false; } });
+  },
+  myRoomRename: function () {
+    if (offlineNow()) return needNet();
+    var v = cur(); M = { type: 'myroom', op: 'rename', centre: v.centre, name: v.loc };
+    openSheet('<h2>' + esc(tl('Rename “{name}”', { name: M.name })) + '</h2><label class="lab" for="m-room">' + tl('New name') + '</label><input id="m-room" class="inp" maxlength="60" autocomplete="off" value="' + esc(M.name) + '">' +
+      '<p class="err" id="m-err" hidden></p><div class="two"><button class="btn" data-act="closeSheet">' + tl('Cancel') + '</button><button class="btn primary" id="m-go" data-act="myRoomGo">' + tl('Rename') + '</button></div>');
+  },
+  myRoomRemove: function () {
+    if (offlineNow()) return needNet();
+    var v = cur(); M = { type: 'myroom', op: 'remove', centre: v.centre, name: v.loc };
+    openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: M.name })) + '</h2><p class="sub">' + tl('Nothing is kept there.') + '</p>' +
+      '<p class="err" id="m-err" hidden></p><div class="two"><button class="btn" data-act="closeSheet">' + tl('Cancel') + '</button><button class="btn primary" id="m-go" data-act="myRoomGo">' + tl('Remove room') + '</button></div>');
+  },
+  myRoomGo: function () {
+    var m = M, typed = m.op === 'rename' ? val('m-room') : '';
+    if (m.op === 'rename' && !typed) return;
+    busy(true, tl('Saving…'));
+    callB('myRoom', { centre: m.centre, name: m.name, op: m.op, newName: typed }).then(function (res) {
+      busy(false); S.rooms = res.rooms || S.rooms; saveData(); rebuild();
+      if (sameRoom(store.get('rm_scanloc', ''), m.name)) store.set('rm_scanloc', typed);
+      closeSheet();
+      if (m.op === 'remove') { var st = S.stack.slice(0, -1); setStack(st.length ? st : [{ name: 'rooms' }]); toast(tl('Removed.')); } else { var v = cur(); if (v.name === 'room') v.loc = typed; render(); toast(tl('Renamed.')); }
+    }).catch(function (err) { busy(false); var x = byIdEl('m-err'); if (x) { x.textContent = err.network ? tl('Offline. Try again.') : err.message; x.hidden = false; } });
   },
   // ----- a link that points this phone at a different list -----
   listSwitch: function () {
@@ -10064,7 +10174,7 @@ var ACT = {
     }).catch(failed);
   },
   editGo: function () {
-    var it = S.byId[cur().id], fin = !!cur().finish, nextWanted = !!S.editNext; S.editNext = false;
+    var it = S.byId[cur().id], fin = !!cur().finish, ret = !!cur().ret, nextWanted = !!S.editNext; S.editNext = false;
     if (!it) return;
     var bs = cur().base || editBase(it);
     var f = {}, loc = val('f-loc'), photo = F.photo;
@@ -10100,7 +10210,7 @@ var ACT = {
       }
       rebuild(); n = S.byId[it.id] || n;
       if (res.queued) toast(queuedMsg());
-      if (fin || (isReceivedRoom(bs.loc) && !isReceivedRoom(n.loc))) {   // finishing an item: back to the list it came from (one shorter), or straight on to the next one
+      if (fin || ret || (isReceivedRoom(bs.loc) && !isReceivedRoom(n.loc))) {   // finishing an item: back to the list it came from (one shorter), or straight on to the next one
         var left = attentionTags(n), nxt = nextWanted ? attentionItems(n.centre).filter(function (x) { return x.id !== n.id; })[0] : null;
         var back = S.stack.slice(0, -1);
         if (nxt) back.push({ name: 'edit', id: nxt.id, key: RMSearch.norm(nxt.name), base: editBase(nxt), finish: true });
@@ -10129,6 +10239,8 @@ var ACT = {
   lowScope: function (el) { S.lowAll = !!el.dataset.val; render(); },
   countCentre: function (el) { cur().centre = el.dataset.val; render(); },
   removeItem: function () { askRemove(cur().id, false); },
+  putBack: function (el) { putBack(el.dataset.id); },
+  removedRetry: function () { var v = cur(); v.err = ''; v.list = null; render(); },
   menuEdit: function () {
     var id = M.id, it = S.byId[id];
     if (!it) return closeSheet();
@@ -10141,11 +10253,19 @@ var ACT = {
   removeItemGo: function () {
     var id = M.id, fromMenu = !!M.fromMenu;
     busy(true, tl('Removing…'));
-    callB('removeItem', { itemId: id, pin: S.pin }).then(function () {
+    callB('removeItem', { itemId: id }).then(function () {
+      var left = addedList().filter(function (e) { var row = addedState(e) === 'saved' && addedRow(e); return !row || row.id !== id; });
+      if (S.test) S.testAdded = left; else S.added = left;
+      saveAdded();
       S.base = S.base.filter(function (b) { return b.id !== id; });
       saveData(); rebuild(); closeSheet();
-      if (fromMenu) render(); else setStack(S.stack.length > 2 ? S.stack.slice(0, -2) : [{ name: 'home' }]);
-      toast(tl('Removed.'));
+      if (fromMenu) render();
+      else {   // leave the pages that were about this item; whatever list lies under them stays
+        var st = S.stack.slice();
+        while (st.length > 1 && (st[st.length - 1].name === 'edit' || st[st.length - 1].name === 'item')) st.pop();
+        setStack(st);
+      }
+      toast(tl('Removed.'), tl('Undo'), function () { putBack(id); });
     }).catch(function (e) {
       busy(false);
       var err = byIdEl('m-err');
@@ -10212,8 +10332,9 @@ var ACT = {
   },
   roomRemove: function (el) {
     M = { type: 'room', op: 'remove', centre: el.dataset.centre, name: el.dataset.val };
-    openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: M.name })) + '</h2><p class="sub">' + tl('Only empty rooms can be removed.') + '</p>' +
-      '<p class="err" id="m-err" hidden></p><button class="btn primary" id="m-go" data-act="roomGo">' + tl('Remove') + '</button><button class="btn quiet" data-act="closeSheet">' + tl('Cancel') + '</button>');
+    var n = (M.centre === ALL_CENTRES ? S.items.filter(function (it) { return sameRoom(it.loc, M.name); }) : itemsIn(M.centre, M.name)).length;
+    openSheet('<h2>' + esc(tl('Remove “{name}”?', { name: M.name })) + '</h2><p class="sub">' + (n === 1 ? tl('1 item will move to Not sorted yet.') : n ? esc(tl('{n} items will move to Not sorted yet.', { n: n })) : tl('Nothing is kept there.')) + '</p>' +
+      '<p class="err" id="m-err" hidden></p><div class="two"><button class="btn" data-act="closeSheet">' + tl('Cancel') + '</button><button class="btn primary" id="m-go" data-act="roomGo">' + tl('Remove room') + '</button></div>');
   },
   roomTidy: function () {
     busy(true, tl('Saving…'));
@@ -10226,12 +10347,14 @@ var ACT = {
     var m = M, typed = m.op === 'remove' ? '' : val('m-room');
     if (m.op !== 'remove' && !typed) return;
     busy(true, tl('Saving…'));
-    callB('adminRooms', { pin: S.pin, op: m.op, centre: m.centre, name: m.op === 'add' ? typed : m.name, newName: m.op === 'rename' ? typed : '' }).then(function (res) {
+    callB('adminRooms', { pin: S.pin, op: m.op, centre: m.centre, name: m.op === 'add' ? typed : m.name, newName: m.op === 'rename' ? typed : '', move: m.op === 'remove' }).then(function (res) {
+      if (m.op === 'remove' && sameRoom(store.get('rm_scanloc', ''), m.name)) store.set('rm_scanloc', '');
       S.rooms = res.rooms || [];
       if (res.items && res.items.length) mergeItems(res.items);
       saveData(); rebuild(); closeSheet();
       if (res.merged && res.merged.length) mergedToast(res.merged);
-      else toast(m.op === 'add' ? tl('Added.') : m.op === 'rename' ? tl('Renamed.') : tl('Removed.'));
+      else toast(m.op === 'add' ? tl('Added.') : m.op === 'rename' ? tl('Renamed.') : res.items && res.items.length ? tl('Removed. {n} moved to Not sorted yet.', { n: res.items.length }) : tl('Removed.'));
+      render();
     }).catch(function (e) {
       busy(false);
       var err = byIdEl('m-err');
@@ -10449,7 +10572,7 @@ var ACT = {
     var r = el.getBoundingClientRect();
     var item = function (act, ic, label, cls) { return '<button type="button" role="menuitem" class="pmi' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"><span class="lead">' + ic + '</span><span>' + label + '</span></button>'; };
     M = { type: 'pmenu' };
-    openSheet('<div role="menu" aria-label="' + esc(tl('Admin')) + '">' + item('pmAdmin', ICON.shield, tl('Admin panel')) + item('pmSettings', ICON.cog, tl('Settings')) + item('pmOut', ICON.door, tl('Sign out'), 'out') + '</div>', null, 'pmenu');
+    openSheet('<div role="menu" aria-label="' + esc(tl('Admin')) + '">' + item('pmAdmin', ICON.shield, tl('Admin panel')) + item('pmOut', ICON.door, tl('Sign out'), 'out') + '</div>', null, 'pmenu');
     var z = parseFloat(getComputedStyle(byIdEl('sheet')).zoom) || 1;
     $('#sheet .panel').style.marginTop = Math.max(8, (r.bottom + 6) / z) + 'px';
   // its right edge under the button's right edge (on a wide screen the window's edge is far from the button)
@@ -10457,7 +10580,6 @@ var ACT = {
   $('#sheet .panel').style.marginRight = Math.max(0, (sh.getBoundingClientRect().right - r.right) / z - (parseFloat(getComputedStyle(sh).paddingRight) || 0)) + 'px';
   },
   pmAdmin: function () { closeSheet(); go({ name: 'admin' }); },
-  pmSettings: function () { closeSheet(); go({ name: 'settings' }); },
   pmOut: function () { closeSheet(); ACT.adminLeave({ dataset: {} }); },
   visOpen: function () {
     M = { type: 'vis' };
@@ -10952,7 +11074,7 @@ if (S.otherList) {
   openSheet('<h2>' + tl('This link opens a different list') + '</h2><p class="sub">' + tl('Your phone is connected to another list. Switch only if your admin sent you this link.') + '</p>' +
     '<p class="err" id="m-err" hidden></p><button class="btn primary" data-act="listStay">' + tl('Stay with my list') + '</button><button class="btn quiet" data-act="listSwitch">' + tl('Switch to the new list') + '</button>');
 }
-var APP_VER = '54';
+var APP_VER = '55';
 var APP_BUILT = '2026-11-28';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
   var el = document.getElementById('launch'), skip = false;
