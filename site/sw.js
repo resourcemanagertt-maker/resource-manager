@@ -1,5 +1,5 @@
-// Resource Manager service worker, build c6641c9611
-const CACHE = 'rm-shell-c6641c9611';
+// Resource Manager service worker, build d0ad80427a
+const CACHE = 'rm-shell-d0ad80427a';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
@@ -11,7 +11,7 @@ self.addEventListener('activate', function (e) {
 });
 // Item photos (small thumbnails only) are kept on the phone: seen once, they never load again, so Find stays quick.
 var PHOTOS = 'rm-photos';
-function trim(c) { return c.keys().then(function (ks) { if (ks.length > 150) return Promise.all(ks.slice(0, ks.length - 150).map(function (k) { return c.delete(k); })); }); }
+function trim(c) { return c.keys().then(function (ks) { if (ks.length > 300) return Promise.all(ks.slice(0, ks.length - 300).map(function (k) { return c.delete(k); })); }); }
 self.addEventListener('fetch', function (e) {
   var url = new URL(e.request.url);
   if (e.request.method === 'GET' && url.hostname === 'lh3.googleusercontent.com' && url.pathname.indexOf('/d/') === 0) {
