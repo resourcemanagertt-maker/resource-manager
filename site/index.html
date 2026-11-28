@@ -121,8 +121,6 @@ h1.title{font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em;m
 .tot b{font-size:30px;line-height:1;font-weight:700;letter-spacing:-.02em}
 .tot b.word{font-size:20px;line-height:1.2;letter-spacing:0}
 .tot.low b{text-decoration:underline;text-decoration-color:var(--mark);text-decoration-thickness:4px;text-underline-offset:4px}
-.stat.loading{background:var(--wash)}
-.stat.loading > span{opacity:.55}
 /* the waiting dots always move, also with "reduce motion": they are the only sign that something is coming */
 .dots3{display:inline-flex;align-items:flex-end;gap:5px;height:1em}
 .dots3 i{display:block;width:8px;height:8px;margin-bottom:.2em;border-radius:50%;background:currentColor;animation:wave 1s ease-in-out infinite}
@@ -232,10 +230,6 @@ button.place.on{background:var(--wash)}
 .note{margin-top:var(--s3);padding:var(--s3);border-radius:var(--r);background:var(--wash);font-size:15px;overflow-wrap:anywhere}
 .rows{margin-top:var(--s4);border-top:1px solid var(--ink)}
 a.rowbtn{text-decoration:none;color:inherit}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:var(--s2);margin:var(--s2) 0 var(--s2)}
-.stat{display:flex;flex-direction:column;gap:2px;padding:var(--s3);border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);text-align:left}
-.stat b{font-size:28px;line-height:1.1}
-.stat span{font-size:13px;color:var(--muted);line-height:1.25}
 .linkrow{display:flex;gap:var(--s2);align-items:stretch}
 .linkrow .inp{flex:1;min-width:0}
 .linkrow .btn{width:auto;flex:none}
@@ -527,7 +521,7 @@ body{background:linear-gradient(180deg,var(--tint) 0,var(--paper) 280px) no-repe
 .rows{margin-top:var(--s4)}
 .list > .item:last-child,.rows > .rowbtn:last-child,.cats > .cat:last-child,div.card > .rowbtn:last-child,div.card > .cline:last-child{border-bottom:0}
 div.card.empty{padding:var(--s5) var(--s4)}
-.stats .stat{box-shadow:var(--sh1);border-radius:var(--r)}
+
 /* v39: one spec for every button state. Solid fills only: no gradient, no shadow, no opacity wash.
    primary = brand fill; pressed/hover = a darker solid; disabled = a grey solid; loading = the normal solid with a spinner */
 .btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
@@ -588,6 +582,21 @@ div.card.empty{padding:var(--s5) var(--s4)}
 .movenote{background:var(--tint);border-radius:var(--r);padding:var(--s3);margin:var(--s3) 0 0;font-size:15px}
 .movenote[hidden]{display:none}
 .sheetfoot .movenote{margin:0 0 var(--s2)}
+#sheet .panel.has-foot .sheetfoot{border-top:1px solid var(--line-strong)}
+#m-newbox{margin-bottom:var(--s2)}
+#m-newbox .inp{margin:0}
+.newchip{border-style:dashed;gap:6px}
+.newchip .ce{display:inline-flex}
+.newchip .ce svg{width:18px;height:18px}
+.newchip.on{border-style:solid}
+/* the room rows on an item page reach the card's edges, so the shading has room around what is in it */
+div.card:has(> .place){padding-left:0;padding-right:0}
+div.card > .place{padding-left:var(--s4);padding-right:var(--s4)}
+button.opt[disabled]{cursor:default;box-shadow:none;background:var(--wash);border-color:var(--line);color:var(--muted)}
+.opt .opt-t small{display:block;font-size:14px}
+.lowbar .ib.on{color:var(--on-brand)}
+.lowbar .ib.on::before{background:var(--brand);border-color:var(--brand)}
+.lowbar .tools{display:flex;flex:none;margin-left:auto}
 #sheet .opt + .help{margin:var(--s2) 0 var(--s3)}
 .search input{padding-right:104px}
 .fchips{margin-top:0}
@@ -913,7 +922,7 @@ html[data-text="1"] .rp-foot,html[data-text="2"] .rp-foot{padding-top:var(--s4);
 .formend.edit .btn{flex:1 1 0;min-width:0;width:auto;margin:0;padding-left:var(--s2);padding-right:var(--s2);line-height:1.2}
 .formend.edit .btn[data-act=removeItem]{flex:0 0 100%;margin-top:0;border:1px solid var(--line-strong);background:transparent}
 /* the two links are two things: air between them */
-#adm-links > .card{padding:var(--s4)}
+#adm-links{padding:var(--s4)}
 #adm-links .linkrow + .lab{margin-top:var(--s6)}
 /* "Not sorted yet": the tick sits in the corner, the words get the width */
 .sp{position:relative}
@@ -981,7 +990,6 @@ html.sheetopen,html.sheetopen body{overflow:hidden;overscroll-behavior:none}
 .sp-ok svg{width:22px;height:22px;color:var(--brand)}
 @keyframes glow2{0%,100%{box-shadow:0 0 0 0 transparent,0 0 0 0 transparent}50%{box-shadow:0 0 0 3px var(--mark),0 0 0 8px color-mix(in srgb,var(--ink) 38%,transparent)}}
 .glow{animation:glow2 .45s ease-in-out 2;border-radius:var(--r)}
-details.glow{border-radius:0}
 @media (prefers-reduced-motion:reduce){.glow{animation:none;box-shadow:0 0 0 3px var(--mark),0 0 0 6px color-mix(in srgb,var(--ink) 38%,transparent)}}
 .rp-or{margin:var(--s2) 0 0;font-size:14px;font-weight:600;color:var(--muted)}
 #sheet .panel.compact{display:block;overflow-y:auto;max-height:calc(100% - 8px);overscroll-behavior:contain}
@@ -3832,7 +3840,7 @@ var ICON = {
     received: s('<path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/>')
   };
   ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
-  ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
+  ICON.pick = s('<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 12.4l2.8 2.8L16.2 9"/>');
   ICON.dots = s('<circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
   ICON.refresh = s('<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>');
@@ -3876,7 +3884,6 @@ L.ms = {
   "A photo needs a connection. Wait, or add it without the photo.": "Gambar perlukan sambungan. Tunggu, atau tambah tanpa gambar.",
   "A piece is missing": "Ada bahagian hilang",
   "A request that has been decided can’t be withdrawn.": "Permintaan yang sudah diputuskan tidak boleh ditarik balik.",
-  "A room that isn’t listed? Ask your admin to add it.": "Bilik tiada dalam senarai? Minta admin menambahnya.",
   "A to Z": "A hingga Z",
   "About RM": "Lebih kurang RM",
   "About RM {price}.": "Anggaran RM {price}.",
@@ -3961,7 +3968,6 @@ L.ms = {
   "Ask": "Tanya",
   "Ask to join": "Minta sertai",
   "Ask to join, then show this code to your admin.": "Minta sertai, kemudian tunjukkan kod ini kepada admin.",
-  "Ask your admin to add it.": "Minta pentadbir menambahnya.",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "Minta admin tambah di tab Setup dalam Google Sheet.",
   "Asked": "Diminta",
   "Asked for: {list}": "Diminta: {list}",
@@ -4011,6 +4017,7 @@ L.ms = {
   "Carry on with the saved list": "Teruskan dengan senarai tersimpan",
   "Centre": "Pusat",
   "Centre name": "Nama pusat",
+  "Centres": "Pusat",
   "Centres (one or two)": "Pusat (satu atau dua)",
   "Centres, rooms, phones, backups": "Pusat, bilik, telefon, sandaran",
   "Certificates and graduation": "Sijil dan konvokesyen",
@@ -4118,7 +4125,6 @@ L.ms = {
   "Downloaded. Open it in Excel or Sheets.": "Dimuat turun. Buka dalam Excel atau Sheets.",
   "Downloads don’t work here. Use the Google Sheet instead.": "Muat turun tidak berfungsi di sini. Guna Google Sheet.",
   "Draft restored.": "Draf dipulihkan.",
-  "Each centre at a glance": "Setiap pusat sepintas lalu",
   "Each centre gets its own.": "Setiap pusat dapat bilik sendiri.",
   "Edit item": "Ubah barang",
   "Empty": "Kosong",
@@ -4132,7 +4138,6 @@ L.ms = {
   "Estimated ones keep the level in that room, and this can’t be undone.": "Yang dianggar mengekalkan tahap di bilik itu, dan tidak boleh dibatalkan.",
   "Every centre": "Semua pusat",
   "Every phone that isn’t approved stops working until you approve it. Approve your admin and staff phones first.": "Setiap telefon yang belum diluluskan akan berhenti berfungsi sehingga diluluskan. Luluskan telefon admin dan staf dahulu.",
-  "Everyday": "Harian",
   "Everyone will need the PIN again.": "Semua orang perlu PIN semula.",
   "Everything is saved": "Semua sudah disimpan",
   "Extra Large": "Sangat besar",
@@ -4178,6 +4183,7 @@ L.ms = {
   "How many sets?": "Berapa set?",
   "How many {name} are here?": "Berapa {name} di sini?",
   "How many?": "Berapa banyak?",
+  "How many? (of {n})": "Berapa? (daripada {n})",
   "How much is left?": "Berapa yang tinggal?",
   "How to add": "Cara menambah",
   "How to check it?": "Cara semak?",
@@ -4255,6 +4261,7 @@ L.ms = {
   "Move ({n})": "Pindah ({n})",
   "Move it here": "Pindahkan ke sini",
   "Move it only if it is on the wrong item.": "Pindahkan hanya jika ia pada barang yang salah.",
+  "Move its things out first.": "Pindahkan barangnya dahulu.",
   "Move one centre’s things at a time.": "Pindah barang satu pusat pada satu masa.",
   "Move one lot of “{name}” at a time.": "Pindah satu kumpulan “{name}” pada satu masa.",
   "Move to another room": "Pindah ke bilik lain",
@@ -4276,6 +4283,7 @@ L.ms = {
   "New barcode": "Kod bar baharu",
   "New item": "Barang baru",
   "New name": "Nama baru",
+  "New room": "Bilik baharu",
   "New sheet ready": "Helaian baru sedia",
   "Newest": "Terbaharu",
   "No answer. Check the link and sharing, and your signal, then try again.": "Tiada jawapan. Semak pautan, perkongsian dan isyarat, kemudian cuba lagi.",
@@ -4363,7 +4371,6 @@ L.ms = {
   "Open the full list": "Buka senarai penuh",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
   "Opening the sticker…": "Membuka pelekat…",
-  "Or a new room": "Atau bilik baharu",
   "Or choose a room": "Atau pilih bilik",
   "Or type a new room": "Atau taip bilik baru",
   "Other": "Lain-lain",
@@ -4372,11 +4379,11 @@ L.ms = {
   "Other…": "Lain…",
   "Outdoor and sports": "Luar dan sukan",
   "Overdue": "Lewat",
+  "PIN and sign-in": "PIN dan log masuk",
   "PIN changed.": "PIN ditukar.",
   "Paints and brushes": "Cat dan berus",
   "Paper (A4, rolls)": "Kertas (A4, gulung)",
   "Pens and pencils": "Pen dan pensel",
-  "People and access": "Orang dan akses",
   "Phone approval is off": "Kelulusan telefon dimatikan",
   "Phone approval is on": "Kelulusan telefon dihidupkan",
   "Phone {code}": "Telefon {code}",
@@ -4541,7 +4548,6 @@ L.ms = {
   "Set the type": "Tetapkan jenis",
   "Set to {level}.": "Ditetapkan ke {level}.",
   "Set up the first developer phone": "Sediakan telefon pembangun pertama",
-  "Setting up": "Persediaan",
   "Setup checklist": "Senarai semak persediaan",
   "Setup code": "Kod persediaan",
   "Share links": "Pautan kongsi",
@@ -4576,7 +4582,6 @@ L.ms = {
   "Sort and filter": "Isih dan tapis",
   "Speakers and microphones": "Pembesar suara dan mikrofon",
   "Staff link (share only with staff)": "Pautan kakitangan (kongsi dengan kakitangan sahaja)",
-  "Staff link and admin link": "Pautan kakitangan dan pautan admin",
   "Stage items and flags": "Barang pentas dan bendera",
   "Start checking": "Mula menyemak",
   "Starting camera…": "Memulakan kamera…",
@@ -4707,7 +4712,6 @@ L.ms = {
   "Tissues and wipes": "Tisu dan tuala basah",
   "To buy": "Untuk dibeli",
   "To confirm ({n})": "Untuk disahkan ({n})",
-  "To remove this room, move its things out first.": "Untuk membuang bilik ini, pindahkan barangnya dahulu.",
   "To which room?": "Ke bilik mana?",
   "Together they have more than 12 barcodes. Remove some first.": "Gabungan mempunyai lebih 12 kod bar. Buang sebahagian dahulu.",
   "Toilet supplies": "Keperluan tandas",
@@ -4824,7 +4828,6 @@ L.ms = {
   "Your admin sign-in has expired. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your centre (one or two)": "Pusat anda (satu atau dua)",
   "Your centre has nothing on the list yet.": "Pusat anda belum ada apa-apa dalam senarai.",
-  "Your data": "Data anda",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your own picture must be one emoji.": "Gambar anda sendiri mesti satu emoji.",
   "Your phone is connected to another list. Switch only if your admin sent you this link.": "Telefon anda disambungkan ke senarai lain. Tukar hanya jika pentadbir menghantar pautan ini.",
@@ -4952,7 +4955,6 @@ L.zh = {
   "A photo needs a connection. Wait, or add it without the photo.": "照片需要网络。请稍候，或不带照片添加。",
   "A piece is missing": "缺了一个零件",
   "A request that has been decided can’t be withdrawn.": "已处理的申请不能撤回。",
-  "A room that isn’t listed? Ask your admin to add it.": "房间不在列表里？请管理员添加。",
   "A to Z": "A 到 Z",
   "About RM": "大约 RM",
   "About RM {price}.": "大约 RM {price}。",
@@ -5037,7 +5039,6 @@ L.zh = {
   "Ask": "询问",
   "Ask to join": "申请加入",
   "Ask to join, then show this code to your admin.": "申请加入，然后把此代码给管理员看。",
-  "Ask your admin to add it.": "请让管理员添加。",
   "Ask your admin to add them in the Setup tab of the Google Sheet.": "请管理员在 Google Sheet 的 Setup 页添加。",
   "Asked": "已申请",
   "Asked for: {list}": "申请：{list}",
@@ -5087,6 +5088,7 @@ L.zh = {
   "Carry on with the saved list": "用已保存的清单继续",
   "Centre": "分园",
   "Centre name": "分园名称",
+  "Centres": "分园",
   "Centres (one or two)": "分园（一或两个）",
   "Centres, rooms, phones, backups": "分园、房间、手机、备份",
   "Certificates and graduation": "证书与毕业用品",
@@ -5194,7 +5196,6 @@ L.zh = {
   "Downloaded. Open it in Excel or Sheets.": "已下载，可用 Excel 或 Sheets 打开。",
   "Downloads don’t work here. Use the Google Sheet instead.": "这里不能下载，请改用 Google Sheet。",
   "Draft restored.": "已恢复草稿。",
-  "Each centre at a glance": "各分园一览",
   "Each centre gets its own.": "每个分园各有一个。",
   "Edit item": "编辑物品",
   "Empty": "空的",
@@ -5208,7 +5209,6 @@ L.zh = {
   "Estimated ones keep the level in that room, and this can’t be undone.": "估计类物品保留该房间的存量，且无法撤销。",
   "Every centre": "所有分园",
   "Every phone that isn’t approved stops working until you approve it. Approve your admin and staff phones first.": "未获批的手机会停止使用，直到您批准。请先批准管理员和员工的手机。",
-  "Everyday": "日常",
   "Everyone will need the PIN again.": "所有人都需要重新输入 PIN。",
   "Everything is saved": "全部已保存",
   "Extra Large": "特大",
@@ -5254,6 +5254,7 @@ L.zh = {
   "How many sets?": "有几套？",
   "How many {name} are here?": "这里有多少 {name}？",
   "How many?": "数量",
+  "How many? (of {n})": "移动多少？（共 {n}）",
   "How much is left?": "还剩多少？",
   "How to add": "添加方式",
   "How to check it?": "怎么核对？",
@@ -5331,6 +5332,7 @@ L.zh = {
   "Move ({n})": "移动（{n}）",
   "Move it here": "移到这里",
   "Move it only if it is on the wrong item.": "只有记错了物品时才移动。",
+  "Move its things out first.": "请先把物品移出。",
   "Move one centre’s things at a time.": "一次只能移动一个分园的物品。",
   "Move one lot of “{name}” at a time.": "“{name}”请一次移动一批。",
   "Move to another room": "移到其他房间",
@@ -5352,6 +5354,7 @@ L.zh = {
   "New barcode": "新条码",
   "New item": "新物品",
   "New name": "新名称",
+  "New room": "新房间",
   "New sheet ready": "新表格已就绪",
   "Newest": "最新",
   "No answer. Check the link and sharing, and your signal, then try again.": "没有回应。请检查链接、分享设置和信号后再试。",
@@ -5439,7 +5442,6 @@ L.zh = {
   "Open the full list": "打开完整列表",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
   "Opening the sticker…": "正在打开贴纸…",
-  "Or a new room": "或新房间",
   "Or choose a room": "或选择一个房间",
   "Or type a new room": "或输入新房间",
   "Other": "其他",
@@ -5448,11 +5450,11 @@ L.zh = {
   "Other…": "其他…",
   "Outdoor and sports": "户外与运动",
   "Overdue": "已逾期",
+  "PIN and sign-in": "PIN 与登录",
   "PIN changed.": "PIN 已更改。",
   "Paints and brushes": "颜料与画笔",
   "Paper (A4, rolls)": "纸张（A4、卷纸）",
   "Pens and pencils": "笔类",
-  "People and access": "人员与访问",
   "Phone approval is off": "手机审批已关闭",
   "Phone approval is on": "手机审批已开启",
   "Phone {code}": "手机 {code}",
@@ -5617,7 +5619,6 @@ L.zh = {
   "Set the type": "设定类型",
   "Set to {level}.": "已设为{level}。",
   "Set up the first developer phone": "设置第一部开发者手机",
-  "Setting up": "设置",
   "Setup checklist": "设置清单",
   "Setup code": "设置码",
   "Share links": "分享链接",
@@ -5652,7 +5653,6 @@ L.zh = {
   "Sort and filter": "排序与筛选",
   "Speakers and microphones": "音响与麦克风",
   "Staff link (share only with staff)": "员工链接（仅与员工分享）",
-  "Staff link and admin link": "员工链接和管理员链接",
   "Stage items and flags": "舞台用品与旗帜",
   "Start checking": "开始检查",
   "Starting camera…": "正在启动相机…",
@@ -5783,7 +5783,6 @@ L.zh = {
   "Tissues and wipes": "纸巾与湿巾",
   "To buy": "待购买",
   "To confirm ({n})": "待确认（{n}）",
-  "To remove this room, move its things out first.": "要删除此房间，请先移走里面的物品。",
   "To which room?": "移到哪个房间？",
   "Together they have more than 12 barcodes. Remove some first.": "合起来超过 12 个条码。请先删除一些。",
   "Toilet supplies": "厕所用品",
@@ -5900,7 +5899,6 @@ L.zh = {
   "Your admin sign-in has expired. Sign in again.": "你的管理员登录已过期，请重新登录。",
   "Your centre (one or two)": "您的分园（一或两个）",
   "Your centre has nothing on the list yet.": "你的中心在清单上还没有物品。",
-  "Your data": "您的数据",
   "Your list is up to date.": "清单已是最新。",
   "Your own picture must be one emoji.": "自定义图标必须是一个表情符号。",
   "Your phone is connected to another list. Switch only if your admin sent you this link.": "你的手机连接的是另一个清单。只有管理员发给你这个链接时才切换。",
@@ -6544,7 +6542,7 @@ function rebuild() {
 function refresh(manual) {
   if (S.refreshing) { S.refreshAgain = true; return; }
   S.refreshing = true;
-  var gen = S.modeGen || 0, stamp = listStamp();
+  var gen = S.modeGen || 0, stamp = listStamp(), sentPin = S.admin && !S.test ? S.pin : '';
   call('getData', {}).then(function (d) {
     if (gen !== (S.modeGen || 0)) return;   // asked before the mode changed: that list belongs to the other mode
     S.offline = false; S.failed = false;
@@ -6553,6 +6551,9 @@ function refresh(manual) {
     applyData(d);
     gotCentre(stamp.centre);
     saveData();
+    // the PIN went with the question and was refused (changed, or "sign out all phones", on another phone): say so and sign out.
+    // Not while this phone is changing the PIN itself, and not if it has a newer PIN than the one it sent.
+    if (d.pinRefused && sentPin && S.admin && S.pin === sentPin && !S.pinBusy) { store.set('rm_admin_tok', null); S.admin = null; S.pin = ''; S.requests = null; S.sel = null; toast(tl('Your admin sign-in ended. Sign in again.')); }
     if (S.joinWanted) setTimeout(joinEntry, 0);
     if (!S.joinWanted) S.gate = ''; adoptCentre();
     if (S.cover && !S.refreshAgain) coverEnd();
@@ -6738,7 +6739,7 @@ if (!hist && HOSTED) {
     setChangeHandler: function (fn) { window.addEventListener('popstate', function (e) { fn(e); }); }
   };
 }
-var TAB_ROOT = { overview: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', adminTypes: 'more', adminType: 'more', unknown: 'home', home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', removed: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
+var TAB_ROOT = { adminPin: 'more', adminSheet: 'more', adminHist: 'more', adminLinks: 'more', adminTest: 'more', overview: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', adminTypes: 'more', adminType: 'more', unknown: 'home', home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', removed: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
 function tabRootOf(name) { return TAB_ROOT[name] || 'home'; }
 // v43: HISTORY. Chrome skips, when Back is pressed, any history step that a page added without a tap behind it (that is how Back used to leave the app).
 // So: every history entry holds a snapshot of where the person was (the stack of screens and the sheet that was open); a step is ADDED only inside a tap
@@ -6943,7 +6944,7 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vRooms,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, adminTypes: vAdminTypes, adminType: vAdminType, unknown: vUnknown, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vMore, removed: vRemoved, adminCentres: vAdminCentres, howto: vHowto, conncheck: vConncheck, overview: vOverview, backups: vBackups, phones: vPhones };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, adminTypes: vAdminTypes, adminType: vAdminType, unknown: vUnknown, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vMore, removed: vRemoved, adminPin: vAdminPin, adminSheet: vAdminSheet, adminHist: vAdminHist, adminLinks: vAdminLinks, adminTest: vAdminTest, adminCentres: vAdminCentres, howto: vHowto, conncheck: vConncheck, overview: vOverview, backups: vBackups, phones: vPhones };
   delete views.bulk;
   views.unsorted = vAttention;
   rememberOpen(app);
@@ -7015,21 +7016,7 @@ document.addEventListener('focusin', function (e) {
   var el = e.target;
   if (el && el.id === 'f-name' && !el.dataset.sel && /^barcode\b/i.test(el.value || '')) { el.dataset.sel = '1'; setTimeout(function () { if (document.activeElement === el) selectBarcode(el); }, 0); }
 });
-// a tap that said where to land (data-jump): open that fold, scroll it into view, and let it glow
-function doJump() {
-  var key = S.jump; if (!key) return;
-  var d = document.querySelector('details[data-keep="' + key + '"]');
-  if (!d) { S.jumpTries = (S.jumpTries || 0) + 1; if (S.jumpTries > 8) { S.jump = ''; S.jumpTries = 0; } return; }   // the page may still be loading: try again on its next drawing
-  S.jump = ''; S.jumpTries = 0;
-  d.open = true; (S.keep || (S.keep = {}))[key] = true;
-  var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(function () {
-    try { d.scrollIntoView({ block: 'start', behavior: calm ? 'auto' : 'smooth' }); } catch (e) { d.scrollIntoView(); }
-    d.classList.add('glow'); setTimeout(function () { d.classList.remove('glow'); }, 1100);
-  }, 80);
-}
 function afterRender(v) {
-  if (S.jump) doJump();
   if (v.name === 'countList') restoreCheck(v);
   if (v.name === 'request') { openLoad(); refreshAskNote(); }
   if (v.name === 'home' && !store.get('rm_lptip', 0) && S.items.length) {   // once: the shortcut is invisible until somebody is told
@@ -7046,7 +7033,7 @@ function afterRender(v) {
     if (tags0.indexOf('place') >= 0 && placeEl) { els0.push(placeEl); if (!then0) then0 = function () { placeEl.click(); }; }
     if (els0.length) { v._focused = true; glowThen(els0, then0); }
   }
-  if (v.name === 'admin' && S.admin) { if (!S.test && !S.testInfo) loadTestInfo(); }
+  if (v.name === 'adminTest' && S.admin) { if (!S.test && !S.testInfo) loadTestInfo(); }
   if (v.name === 'add' && v._draft) fillAddDraft(v._draft);
 }
 // Refresh what is on screen without wiping something the person is typing
@@ -7064,7 +7051,7 @@ function drawChrome(v) {
   nav.hidden = !!S.gate || v.name === 'pick' || task;
   document.body.classList.toggle('navless', task);
   var tab0 = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'rooms',
-    countList: 'rooms', needName: 'rooms', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'rooms', room: 'rooms', adminRooms: 'more', settings: 'more', adminCentres: 'more', removed: 'more', overview: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', unknown: 'home', adminTypes: 'more', adminType: 'more', scanBooks: 'add' }[v.name];
+    countList: 'rooms', needName: 'rooms', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'rooms', room: 'rooms', adminRooms: 'more', settings: 'more', adminCentres: 'more', removed: 'more', adminPin: 'more', adminSheet: 'more', adminHist: 'more', adminLinks: 'more', adminTest: 'more', overview: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', unknown: 'home', adminTypes: 'more', adminType: 'more', scanBooks: 'add' }[v.name];
   var tab = v.name === 'add' && v.fromAdd ? 'add' : v.name === 'scanBooks' && v.f ? 'home' : tab0;
   var lows = centreWaiting() ? 0 : S.items.filter(function (it) { return (S.admin ? true : it.centre === myCentre()) && low(it); }).length;
   var ICON = {
@@ -7916,7 +7903,7 @@ function filterRooms(raw) {
   rows.sort(function (a, b) { return q ? a.r - b.r || a.b.dataset.val.localeCompare(b.b.dataset.val, undefined, { sensitivity: 'base' }) : a.i - b.i; });
   rows.forEach(function (x) { list.appendChild(x.b); });
   var none = byIdEl('rp-none');
-  if (none) { none.hidden = !(q && !shown); if (!none.hidden) none.textContent = tl('No room called “{name}”.', { name: raw.trim() }) + (S.admin ? '' : ' ' + tl('Ask your admin to add it.')); }
+  if (none) { none.hidden = !(q && !shown); if (!none.hidden) none.textContent = tl('No room called “{name}”.', { name: raw.trim() }); }
 }
 function roomPickHtml(o) {
   var rooms = pickRooms(o.centre), use = {};
@@ -7934,7 +7921,7 @@ function roomPickHtml(o) {
     '<div class="rp-scroll" id="rp-list">' +
     (o.none ? '<button type="button" class="opt rp' + (o.current ? '' : ' on') + '" data-act="roomSet" data-val=""><span class="ri" aria-hidden="true">' + ICON.x + '</span><span class="rp-n">' + tl('No room yet') + '</span>' + (o.current ? '' : ICON.done) + '</button>' : '') +
     rows + '<p class="help rp-none" id="rp-none" hidden></p></div>' +
-    '<div class="rp-foot">' + (!S.admin ? '<p class="help">' + esc(tl('A room that isn’t listed? Ask your admin to add it.')) + '</p>' : '<button type="button" class="opt rp" id="rp-add" data-act="roomNew"><span class="ri" aria-hidden="true">' + ICON.plus + '</span><span class="rp-n">' + tl('Add a new room') + '</span></button>' +
+    '<div class="rp-foot">' + ('<button type="button" class="opt rp" id="rp-add" data-act="roomNew"><span class="ri" aria-hidden="true">' + ICON.plus + '</span><span class="rp-n">' + tl('Add a new room') + '</span></button>' +
     '<div id="rp-new" hidden><input id="rp-newname" class="inp" maxlength="60" autocomplete="off" placeholder="' + esc(tl('e.g. Reading corner')) + '" aria-label="' + esc(tl('Add a new room')) + '">' +
     '<p class="err" id="rp-err" hidden></p><button type="button" class="btn primary" data-act="roomNewGo">' + tl('Use this room') + '</button></div>') + '</div>';
 }
@@ -8240,10 +8227,10 @@ function vLow() {
   var n = lows.length + broken.length;
   var sl = lows.filter(function (it) { return on[it.id]; }), sb = broken.filter(function (it) { return on[it.id]; }), shareN = sl.length + sb.length;
   var tools = !n ? '' : (!pick && lows.length > 1 ? iconTool('lowSortOpen', ICON.filter, tl('Sort')) : '') + (S.admin ? iconTool('lowPick', ICON.pick, pick ? tl('Stop selecting') : tl('Select'), pick) : '');
-  return top(false) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Running low') + '</h1></div><div class="tools">' + tools + '</div></div>' + lowChips() +
+  return top(false) + '<h1 class="title">' + tl('Running low') + '</h1>' + lowChips() +
     (n ? '<div class="lowbar">' + (pick
         ? '<button type="button" class="triall" data-act="lowAllSel" role="checkbox" aria-checked="' + (shareN === n ? 'true' : shareN ? 'mixed' : 'false') + '"><i class="pk2 ' + (shareN === n ? 'on' : shareN ? 'mixed' : '') + '" aria-hidden="true"></i><span>' + esc(tl('{n} selected', { n: shareN })) + '</span></button>'
-        : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '</div>' : '') +
+        : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '<div class="tools">' + tools + '</div></div>' : '') +
     (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || (S.admin ? tl('all centres') : tl('my centre')))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
     (shopOn() && lows.length && !Array.isArray(S.open) ? '<div class="list lowlist skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '">' + lows.slice(0, 8).map(skelLowRow).join('') + '</div>'
     : lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
@@ -8602,50 +8589,57 @@ function vAdmin() {
   var planned = (S.requests || []).filter(function (r) { return r.status === 'New' || r.status === 'Approved'; }).length;
   var here = S.items;   // every centre, as the admin's Low page lists them
   var lowN = here.filter(low).length, broken = here.filter(function (it) { return STATUS_LABEL[it.status]; }).length;
-  var tile = function (n, label, to) {
-    var wait = n === null;
-    return '<button class="stat' + (wait ? ' loading' : '') + '"' + (wait ? ' aria-busy="true"' : '') + ' data-act="go" data-to="' + to + '"><b>' + (wait ? '<span class="dots3" role="img" aria-label="' + esc(tl('Loading…')) + '"><i></i><i></i><i></i></span>' : n) + '</b><span>' + label + '</span></button>';
-  };
-  var ROW_ICON = { overview: ICON.pin, adminLeaveAll: ICON.x, adminTypes: ICON.tag, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, backups: ICON56.copy, phones: ICON56.phone, pinChange: ICON.key, labels: ICON.qr };
-  var row = function (act, to, title, note, extra) {
-    var ic = ROW_ICON[to || act];
-    return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '>' + (ic ? '<span class="lead">' + ic + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + (extra || '') + ICON.go + '</button>';
-  };
-  var group = function (title, rows, id) { return '<h2 class="sec"' + (id ? ' id="' + id + '"' : '') + '>' + title + '</h2><div class="card rows">' + rows + '</div>'; };
-  var link = HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : '';
-  var sheetFold = '<details class="settings" id="adm-sheet" data-keep="adm-sheet"><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
-    '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
-    row('sheetChange', '', tl('Switch Google Sheet'), '') +
-    row('csv', '', tl('Download'), '') +
-  '</div></details>';
-  var histFold = '<details class="settings" id="adm-hist" data-keep="adm-hist"><summary>' + tl('History') + '</summary><div class="card">' +
-    (S.admin.log.length ? S.admin.log.slice(0, 8).map(function (h) {
-      return '<p class="hist"><b>' + esc(tl(h.action)) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
-        (h.change != null && h.change !== 0 && h.action !== 'Level set' ? ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')' : '') +
-        (h.note ? '<br>' + esc(h.note) : '') + '<br><small>' + esc(h.centre) + (h.loc ? ' · ' + esc(h.loc) : '') + ' · ' + esc(when(h.when)) + '</small></p>';
-    }).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div></details>';
-  var linkFold = link ? '<details class="settings" id="adm-links" data-keep="adm-links"><summary>' + tl('Share links') + '<small>' + tl('Staff link and admin link') + '</small></summary><div class="card">' +
+  // in test mode only the made-up centres exist: the settings of the real list are left alone
+  var real = !S.test;
+  var shop = shopOn() ? '<button class="rowbtn' + (S.requests ? '' : ' loading') + '"' + (S.requests ? '' : ' aria-busy="true"') + ' data-act="go" data-to="requests"><span class="lead">' + ICON.receipt + '</span><span>' + tl('Shopping list') + '<small><b>' + (S.requests ? planned : '<span class="dots3" role="img" aria-label="' + esc(tl('Loading…')) + '"><i></i><i></i><i></i></span>') + '</b> ' + tl('on the shopping list') + '</small></span>' + ICON.go + '</button>' : '';
+  return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
+    '<div class="card rows onelist">' + shop +
+      admLink('overview', ICON.pin, tl('All centres'), lowN + ' ' + tl('running low') + ' · ' + broken + ' ' + tl('broken or missing')) +
+      (real ? admLink('adminRooms', ICON.door, tl('Rooms'), '') + admLink('adminCentres', ICON56.building, tl('Centres'), '') + admLink('adminTypes', ICON.tag, tl('Types'), '') : '') +
+      admLink('labels', ICON.qr, tl('QR stickers'), '') +
+      (real ? admLink('phones', ICON56.phone, tl('Phones'), S.access && S.access.on ? tl('Phone approval is on') : tl('Phone approval is off')) +
+        admLink('adminPin', ICON.key, tl('PIN and sign-in'), '') +
+        admLink('backups', ICON56.copy, tl('Backups'), esc(!S.backup ? '' : S.backup.failed ? tl('The last copy failed') : S.backup.last ? tl('Last copy {when}', { when: when(S.backup.last) }) : tl('No copy yet'))) +
+        admLink('adminSheet', ICON56.grid, tl('Google Sheet'), '') : '') +
+      admLink('adminHist', ICON56.clock, tl('History'), '') +
+      (shareLink() ? admLink('adminLinks', ICON.list, tl('Share links'), '') : '') +
+      (real ? admRow('starterAdmin', ICON56.clip, tl('Setup checklist'), '') : '') +
+      admLink('adminTest', ICON56.camera, tl('Testing'), '') + '</div>' +
+    '<button class="btn quiet adminout" data-act="adminLeave">' + tl('Sign out') + '</button>';
+}
+function admLink(to, icon, title, note) { return '<button type="button" class="rowbtn" data-act="go" data-to="' + to + '"><span class="lead">' + icon + '</span><span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + ICON.go + '</button>'; }
+function shareLink() { return HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : ''; }
+function admPage(title, body) { return top(true) + '<h1 class="title">' + title + '</h1>' + body; }
+function vAdminPin() {
+  if (!S.admin) return vMore();
+  return admPage(tl('PIN and sign-in'), '<div class="card rows">' + admRow('pinChange', ICON.key, tl('Change PIN'), '') +
+    admRow('adminLeaveAll', ICON.x, tl('Sign out all phones'), S.admin.phones ? esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) : '') + '</div>');
+}
+function vAdminSheet() {
+  if (!S.admin) return vMore();
+  return admPage(tl('Google Sheet'), '<div class="card rows"><a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span class="lead">' + ICON56.grid + '</span><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
+    admRow('sheetChange', ICON.refresh, tl('Switch Google Sheet'), '') + admRow('csv', ICON56.copy, tl('Download'), '') + '</div>');
+}
+function vAdminHist() {
+  if (!S.admin) return vMore();
+  return admPage(tl('History'), '<div class="card" id="adm-hist">' + (S.admin.log.length ? S.admin.log.slice(0, 8).map(function (h) {
+    return '<p class="hist"><b>' + esc(tl(h.action)) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
+      (h.change != null && h.change !== 0 && h.action !== 'Level set' ? ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')' : '') +
+      (h.note ? '<br>' + esc(h.note) : '') + '<br><small>' + esc(h.centre) + (h.loc ? ' · ' + esc(h.loc) : '') + ' · ' + esc(when(h.when)) + '</small></p>';
+  }).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div>');
+}
+function vAdminLinks() {
+  var link = shareLink();
+  if (!S.admin || !link) return vAdmin();
+  return admPage(tl('Share links'), '<div class="card" id="adm-links">' +
     '<p class="lab">' + tl('Staff link (share only with staff)') + '</p><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="' + tl('Staff link (share only with staff)') + '" value="' + link + '" onclick="this.select()">' +
     '<button class="btn" data-act="copyLink" data-for="staff-link">' + tl('Copy') + '</button></div>' +
     '<p class="lab">' + tl('Admin link (keep private)') + '</p><div class="linkrow"><input id="admin-link" class="inp" readonly aria-label="' + tl('Admin link (keep private)') + '" value="' + link + '&admin" onclick="this.select()">' +
-    '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div></div></details>' : '';
-  // in test mode only the made-up centres exist: the settings of the real list are left alone
-  var real = !S.test;
-  return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
-    '<div class="stats">' +
-      (shopOn() ? tile(S.requests ? planned : null, tl('on the shopping list'), 'requests') : '') +
-      '<button class="stat" data-act="lowCentre" data-val=""><b>' + lowN + '</b><span>' + tl('running low') + '</span></button>' +
-      '<button class="stat" data-act="nav" data-to="low" data-jump="low-broken"><b>' + broken + '</b><span>' + tl('broken or missing') + '</span></button></div>' +
-    group(tl('Everyday'), row('go', 'overview', tl('All centres'), tl('Each centre at a glance')) +
-      (real ? row('go', 'adminRooms', tl('Manage rooms'), '') + row('go', 'adminTypes', tl('Types'), '') : '') +
-      row('go', 'labels', tl('QR stickers'), '')) +
-    (real ? group(tl('People and access'), row('go', 'phones', tl('Phones'), S.access && S.access.on ? tl('Phone approval is on') : tl('Phone approval is off')) +
-      row('pinChange', '', tl('Change PIN'), '') +
-      row('adminLeaveAll', '', tl('Sign out all phones'), S.admin.phones ? esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) : '')) : '') +
-    (real ? group(tl('Your data'), row('go', 'backups', tl('Backups'), esc(!S.backup ? '' : S.backup.failed ? tl('The last copy failed') : S.backup.last ? tl('Last copy {when}', { when: when(S.backup.last) }) : tl('No copy yet')))) + sheetFold + histFold : histFold) +
-    '<h2 class="sec">' + tl('Setting up') + '</h2>' +
-    (real ? '<div class="card rows">' + row('go', 'adminCentres', tl('Manage centres'), '') + row('starterAdmin', '', tl('Setup checklist'), '') + '</div>' : '') + linkFold + testCardHtml() +
-    '<button class="btn quiet adminout" data-act="adminLeave">' + tl('Sign out') + '</button>';
+    '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div></div>');
+}
+function vAdminTest() {
+  if (!S.admin) return vMore();
+  return admPage(tl('Testing'), testCardHtml());
 }
 // every centre at a glance, on a page of its own
 function vOverview() {
@@ -9901,7 +9895,6 @@ function placeSheet(kb) {
 var ACT = {
   nav: function (el) {
     var to = el.dataset.to, TABS = { home: 1, low: 1, rooms: 1, more: 1 };
-    if (el.dataset.jump) S.jump = el.dataset.jump;
     S.lowPick = false; S.lowOn = {}; S.homeN = 8;
     if (to === 'home') { S.fil = {}; S.qSort = ''; S.q = ''; }
     var from = tabRootOf(cur().name);
@@ -10554,6 +10547,7 @@ var ACT = {
     var v = val('rp-newname').trim(), er = byIdEl('rp-err');
     if (!v) { er.textContent = tl('Choose a room first.'); er.hidden = false; return; }
     if (isReceivedRoom(v)) { er.textContent = reservedMsg(); er.hidden = false; return; }
+    [].forEach.call(document.querySelectorAll('#sheet [data-act=roomSet]'), function (b) { if (b.dataset.val && sameRoom(b.dataset.val, v)) v = b.dataset.val; });   // a room that is there keeps its spelling
     setRoomValue(v);
   },
   infoToggle: function (el) {
@@ -11015,7 +11009,9 @@ var ACT = {
     var url = val('m-url');
     if (!url) return;
     busy(true, tl('Linking…'));
+    S.pinBusy = true;
     callB('adminSetSheet', { pin: S.pin, url: url }).then(function (res) {
+      S.pinBusy = false;
       busy(false);
       S.admin = null; S.pin = '';                    // the new sheet has its own PIN
       S.base = []; S.requests = null; S.history = {}; S.outbox = []; store.set('rm_outbox', []);
@@ -11032,6 +11028,7 @@ var ACT = {
         toast(tl('Now using “{name}”.', { name: res.sheetName }));
       }
     }).catch(function (e) {
+      S.pinBusy = false;
       busy(false);
       var err = byIdEl('m-err');
       var said = e.network ? tl('No answer. Check the link and sharing, and your signal, then try again.') : e.message;
@@ -11105,10 +11102,11 @@ var ACT = {
     if (!/^\d{6}$/.test(n)) { err.textContent = tl('The PIN is 6 digits.'); err.hidden = false; return; }
     if (n !== val('m-pin3')) { err.textContent = tl('The two PINs are different.'); err.hidden = false; return; }
     busy(true, tl('Saving…'));
+    S.pinBusy = true;
     callB('adminSetPin', { pin: S.pin, newPin: n }).then(function () {
-      S.pin = n; store.set('rm_admin_tok', null); closeSheet(); toast(tl('PIN changed.'));
+      S.pinBusy = false; S.pin = n; store.set('rm_admin_tok', null); closeSheet(); toast(tl('PIN changed.'));
       refresh();   // a list asked for with the old PIN while this was saving would have come back as a staff list
-    }).catch(function (e) { busy(false); err.textContent = e.network ? tl('Offline. Try again.') : e.message; err.hidden = false; });
+    }).catch(function (e) { S.pinBusy = false; busy(false); err.textContent = e.network ? tl('Offline. Try again.') : e.message; err.hidden = false; });
   },
   centreAdd: function () {
     M = { type: 'centre', op: 'add' };
@@ -11152,8 +11150,9 @@ var ACT = {
   },
   adminLeaveAllGo: function () {
     busy(true, tl('Saving…'));
-    callB('adminSignOutAll', { pin: S.pin }).then(function () { busy(false); closeSheet(); ACT.adminLeave(); toast(tl('Signed out everywhere.')); })
-      .catch(function (e) { busy(false); var er = byIdEl('m-err'); er.textContent = e.network ? tl('Offline. Try again.') : e.message; er.hidden = false; });
+    S.pinBusy = true;
+    callB('adminSignOutAll', { pin: S.pin }).then(function () { S.pinBusy = false; busy(false); closeSheet(); ACT.adminLeave(); toast(tl('Signed out everywhere.')); })
+      .catch(function (e) { S.pinBusy = false; busy(false); var er = byIdEl('m-err'); er.textContent = e.network ? tl('Offline. Try again.') : e.message; er.hidden = false; });
   },
   adminLeave: function (el) {
     if (el && el.dataset && !S.locked && !el.__left) {   // tapped: a short loading state first (the programmatic call, after "sign out everywhere", has had its own)
@@ -11215,7 +11214,7 @@ function loadTestInfo() {
   if (S.testInfoLoading) return;
   S.testInfoLoading = true;
   var gen = S.modeGen;
-  callRaw('testStatus', { pin: S.pin }).then(function (res) { if (gen === S.modeGen) { S.testInfo = res; S.testAt = Date.now(); if (cur().name === 'admin') render(); } }).catch(function () { /* the card shows the button to make them */ }).then(function () { S.testInfoLoading = false; });
+  callRaw('testStatus', { pin: S.pin }).then(function (res) { if (gen === S.modeGen) { S.testInfo = res; S.testAt = Date.now(); if (cur().name === 'adminTest') render(); } }).catch(function () { /* the card shows the button to make them */ }).then(function () { S.testInfoLoading = false; });
 }
 function admRow(act, icon, title, note) {
   return '<button class="rowbtn" data-act="' + act + '">' + (icon ? '<span class="lead">' + icon + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + ICON.go + '</button>';
@@ -11227,7 +11226,7 @@ function testCardHtml() {
   else if (info.exists) rows = admRow('testOn', ICON.door, tl('Open test mode'), tl('{n} made-up items. Only the test centres, nothing real can be touched.', { n: info.items })) +
     admRow('testCreate', ICON.refresh, tl('Reset test data'), tl('Rebuild the made-up items from scratch.')) + admRow('testRemoveAsk', ICON.x, tl('Remove test data'), '');
   else rows = admRow('testCreate', ICON.plus, tl('Create test centres'), tl('Two made-up centres full of items in every state. Nobody else can see them.'));
-  return '<h2 class="sec">' + tl('Testing') + '</h2><div class="card rows">' + admRow('viewStaff', ICON.shield, tl('View as staff'), tl('See what staff see. You stay signed in.')) + rows + '</div>';
+  return '<div class="card rows">' + admRow('viewStaff', ICON.shield, tl('View as staff'), tl('See what staff see. You stay signed in.')) + rows + '</div>';
 }
 function openLoad(force) {
   if (!shopOn()) return;
@@ -11711,6 +11710,11 @@ function meRow(act, extra, icon, title, small) {
   return '<button type="button" class="rowbtn" data-act="' + act + '"' + (extra || '') + '><span class="lead">' + icon + '</span><span>' + title + (small ? '<small>' + small + '</small>' : '') + '</span>' + ICON.go + '</button>';
 }
 var ICON56 = {
+  building: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5l8-2v18M12 8l8 2v11M3 21h18M7 8h2M7 12h2M7 16h2M15 13h2M15 17h2"/></svg>',
+  grid: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M12 9v12"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+  clip: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M8.5 13.5l2.5 2.5 4.5-5"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4Z"/><circle cx="12" cy="13" r="3.5"/></svg>',
   display: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.500M5.300 5.300 7 7M17 17l1.700 1.700M18.700 5.300 17 7M7 17l-1.700 1.700"/></svg>',
   book: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6c-2-1.500-5-2-8-1.500v14c3-.5 6 0 8 1.500 2-1.500 5-2 8-1.500v-14c-3-.5-6 0-8 1.500Zv14"/></svg>',
   pulse: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>',
@@ -11723,14 +11727,16 @@ function connShort() {
   return S.outbox.length ? tl('{n} waiting to send', { n: S.outbox.length }) : S.offline ? tl('Can’t reach the list.') : tl('Everything is saved');
 }
 function vMore() {
-  var group = function (rows) { return '<div class="card rows" style="margin-top:var(--s3)">' + rows + '</div>'; };
   return top(false, true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Me') + '</h1>' +
     '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + '</p></div>' +
     '<button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
-    (S.admin ? group(meRow('go', ' data-to="admin"', ICON.shield, tl('Admin panel'), tl('Centres, rooms, phones, backups')) + (shopOn() ? meRow('go', ' data-to="requests"', ICON.receipt, tl('Shopping list'), '') : '')) : '') +
-    group(meRow('centrePick', '', ICON.pin, tl('Centre'), esc(S.me.centre)) + meRow('go', ' data-to="removed"', ICON.trash, tl('Trash'), tl('Restore removed items'))) +
-    group(meRow('displayOpen', '', ICON56.display, tl('Display'), esc(themeName() + ' · ' + textName()))) +
-    group(meRow('go', ' data-to="howto"', ICON56.book, tl('How to use'), tl('Short steps with pictures')) + meRow('go', ' data-to="conncheck"', ICON56.pulse, tl('Connection'), esc(connShort()))) +
+    '<div class="card rows onelist">' +
+      (S.admin ? meRow('go', ' data-to="admin"', ICON.shield, tl('Admin panel'), tl('Centres, rooms, phones, backups')) + (shopOn() ? meRow('go', ' data-to="requests"', ICON.receipt, tl('Shopping list'), '') : '') : '') +
+      meRow('centrePick', '', ICON.pin, tl('Centre'), esc(S.me.centre)) +
+      meRow('displayOpen', '', ICON56.display, tl('Display'), esc(themeName() + ' · ' + textName())) +
+      meRow('go', ' data-to="howto"', ICON56.book, tl('How to use'), tl('Short steps with pictures')) +
+      meRow('go', ' data-to="conncheck"', ICON56.pulse, tl('Connection'), esc(connShort())) +
+      meRow('go', ' data-to="removed"', ICON.trash, tl('Trash'), tl('Restore removed items')) + '</div>' +
     (S.admin ? '<button type="button" class="btn quiet adminout" data-act="adminLeave">' + tl('Sign out of admin') + '</button>' : '') +
     '<p class="help verline"><button type="button" data-act="verTap">' + esc(tl('Alpha · version {v} · updated {date}', { v: APP_VER, date: builtText() })) + '</button></p>';
 }
@@ -11980,17 +11986,28 @@ function openMoveRoom(ids) {
   M = { type: 'moveroom', ids: rows.map(function (r) { return r.id; }), to: '' };
   openSheet('<div class="sheetbody"><h2>' + (one ? tl('Move to another room') : esc(tl('Move {n} things', { n: rows.length }))) + '</h2>' +
     (one ? '<p class="sub">' + esc(shown(one)) + ' · ' + esc(isReceivedRoom(one.loc) ? tl('Not sorted yet') : one.loc) + '</p>' : '') +
-    (one && !isLevel(one) && one.qty > 1 ? '<label class="lab" for="m-n">' + tl('How many?') + '</label>' + stepper('m-n', one.qty, 1, one.qty) : '') +
-    (rooms.length ? '<label class="lab">' + tl('To which room?') + '</label><div class="chips">' + rooms.map(function (n) { return '<button type="button" class="chip" data-act="moveTo" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
-    '<label class="lab" for="m-newroom">' + (rooms.length ? tl('Or a new room') : tl('Room name')) + '</label><input id="m-newroom" class="inp" maxlength="60" autocomplete="off"></div>' +
+    (one && !isLevel(one) && one.qty > 1 ? '<label class="lab" for="m-n">' + esc(tl('How many? (of {n})', { n: one.qty })) + '</label>' + stepper('m-n', 1, 1, one.qty) : '') +
+    '<label class="lab"' + (rooms.length ? '' : ' for="m-newroom"') + '>' + (rooms.length ? tl('To which room?') : tl('Room name')) + '</label>' +
+    '<div id="m-newbox"' + (rooms.length ? ' hidden' : '') + '><input id="m-newroom" class="inp" maxlength="60" autocomplete="off"' + (rooms.length ? ' placeholder="' + esc(tl('e.g. Reading corner')) + '" aria-label="' + esc(tl('New room')) + '"' : '') + '></div>' +
+    (rooms.length ? '<div class="chips"><button type="button" class="chip newchip" data-act="moveNew" aria-expanded="false"><i class="ce" aria-hidden="true">' + ICON.plus + '</i>' + tl('New room') + '</button>' +
+      rooms.map(function (n) { return '<button type="button" class="chip" data-act="moveTo" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') + '</div>' +
     '<div class="sheetfoot"><p class="movenote" id="m-preview" role="status" hidden></p>' + confirmBtns('moveRoomGo', tl('Move')) + '</div>', null, 'has-foot');
 }
 ACT.moveRoomOpen = function () { openMoveRoom([cur().id]); };
+function markMoveChoice(el) { [].forEach.call(document.querySelectorAll('#sheet [data-act=moveTo],#sheet [data-act=moveNew]'), function (c) { c.classList.toggle('on', c === el); if (c.dataset.act === 'moveNew') c.setAttribute('aria-expanded', String(c === el)); }); }
 ACT.moveTo = function (el) {
   M.to = el.dataset.val;
-  [].forEach.call(document.querySelectorAll('#sheet [data-act=moveTo]'), function (c) { c.classList.toggle('on', c === el); });
+  markMoveChoice(el);
   var n = byIdEl('m-newroom'); if (n) n.value = '';
+  byIdEl('m-newbox').hidden = true;
   drawMovePreview();
+};
+ACT.moveNew = function (el) {
+  M.to = '';
+  markMoveChoice(el);
+  byIdEl('m-newbox').hidden = false;
+  drawMovePreview();
+  var n = byIdEl('m-newroom'); n.focus(); try { n.scrollIntoView({ block: 'nearest' }); } catch (e) { /* older browsers */ }
 };
 // what the room already holds of these things, and what moving will do to it
 function movePlan(ids, to, qty) {
@@ -12092,7 +12109,8 @@ ACT.roomMore = function () {
   var v = cur(), empty = !itemsIn(v.centre, v.loc).length;
   M = { type: 'roommenu' };
   var opt = function (act, icon, label, cls) { return '<button type="button" class="opt' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"><span class="ri" aria-hidden="true">' + icon + '</span><span>' + label + '</span></button>'; };
-  openSheet('<h2>' + esc(v.loc) + '</h2>' + opt('myRoomRename', ICON.pencil, tl('Rename room')) + (empty ? opt('myRoomRemove', ICON.trash, tl('Remove room'), 'danger') : '<p class="help">' + tl('To remove this room, move its things out first.') + '</p>') +
+  var cannot = '<button type="button" class="opt" disabled><span class="ri" aria-hidden="true">' + ICON.trash + '</span><span class="opt-t">' + tl('Remove room') + '<small>' + tl('Move its things out first.') + '</small></span></button>';
+  openSheet('<h2>' + esc(v.loc) + '</h2>' + opt('myRoomRename', ICON.pencil, tl('Rename room')) + (empty ? opt('myRoomRemove', ICON.trash, tl('Remove room'), 'danger') : cannot) +
     '<button type="button" class="btn quiet" data-act="closeSheet">' + tl('Close') + '</button>');
 };
 
@@ -12418,7 +12436,7 @@ if (S.otherList) {
   openSheet('<h2>' + tl('This link opens a different list') + '</h2><p class="sub">' + tl('Your phone is connected to another list. Switch only if your admin sent you this link.') + '</p>' +
     '<p class="err" id="m-err" hidden></p><button class="btn primary" data-act="listStay">' + tl('Stay with my list') + '</button><button class="btn quiet" data-act="listSwitch">' + tl('Switch to the new list') + '</button>');
 }
-var APP_VER = '57';
+var APP_VER = '58';
 var APP_BUILT = '2026-11-28';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
   var el = document.getElementById('launch'), skip = false;
