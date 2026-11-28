@@ -582,6 +582,13 @@ div.card.empty{padding:var(--s5) var(--s4)}
 .search .filt .fdot{position:absolute;top:4px;right:2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--mark);color:var(--on-mark);font-size:12px;font-weight:700;display:grid;place-items:center}
 .search .filt .fdot[hidden]{display:none}
 .search .clear{right:52px}
+.pagehead .tools{display:flex;gap:var(--s2);flex:none}
+.pagehead .ib.on{color:var(--on-brand)}
+.pagehead .ib.on::before{background:var(--brand);border-color:var(--brand)}
+.movenote{background:var(--tint);border-radius:var(--r);padding:var(--s3);margin:var(--s3) 0 0;font-size:15px}
+.movenote[hidden]{display:none}
+.sheetfoot .movenote{margin:0 0 var(--s2)}
+#sheet .opt + .help{margin:var(--s2) 0 var(--s3)}
 .search input{padding-right:104px}
 .fchips{margin-top:0}
 details.notwhat{margin-top:var(--s4)}
@@ -602,6 +609,9 @@ body.navless .addbar{bottom:calc(env(safe-area-inset-bottom) + 8px)}
 #cam .camtop .btn.ib svg{color:#16181d}
 #cam .camtop .btn.ib.on::before{background:var(--mark)}
 .search .filt svg{width:20px;height:20px}
+/* v57: every icon inside a search box is one size (the scan and clear icons were larger than the filter beside them) */
+.search .scanq svg,.search .clear svg,.search svg.ico{width:20px;height:20px}
+.search svg.ico{top:19px}
 .empty > :last-child{margin-bottom:0}
 .fchip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3);border:1px solid var(--ink);border-radius:var(--r);background:transparent;color:inherit;font-size:14px;font-weight:600;box-shadow:none}
 .fchip svg{width:14px;height:14px}
@@ -1129,7 +1139,30 @@ html.covered{overflow:hidden}
 .lowpick{display:inline-flex;align-items:center;gap:6px;margin-bottom:var(--s2);max-width:100%}
 .lowpick span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lowpick svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.howto h2{margin:var(--s4) 0 var(--s2);font-size:17px}
+.howtabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}
+.howtabs .chip{width:100%;justify-content:center;margin:0}
+.how-card{list-style:none;margin:var(--s3) 0;padding:var(--s3) var(--s4);background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.how-step{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) 0}
+.how-num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--on-brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.how-pic{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;max-width:40%;min-height:44px;border:1.5px solid var(--ink);border-radius:10px;padding:6px 10px;background:var(--surface);font-weight:700;font-size:13px;text-align:center}
+.how-pic.blue{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.how-pic.round{width:48px;height:48px;border-radius:50%;padding:0}
+.how-pic svg{flex:none}
+.how-pic.round svg{width:24px;height:24px}
+.how-text{flex:1;min-width:0}
+.how-arrow{text-align:center;color:var(--brand);font-size:22px;line-height:1}
+.conn-card{text-align:center;padding:var(--s4);margin-top:var(--s3)}
+.conn-card .btn{width:100%;margin-bottom:0}
+.conn-big{width:96px;height:96px;border-radius:50%;margin:var(--s2) auto var(--s3);display:flex;align-items:center;justify-content:center;border:3px solid var(--ink)}
+.conn-big.ok{background:var(--brand);color:var(--on-brand)}
+.conn-big.wait{background:var(--mark);color:var(--on-mark)}
+.conn-big.check{background:var(--surface)}
+.conn-tips{list-style:none;margin:var(--s3) 0 0;padding-top:0;padding-bottom:0}
+.conn-tips li.rowbtn{cursor:default;gap:var(--s3);justify-content:flex-start}
+.conn-tips li.rowbtn > .how-num{flex:0 0 28px;width:28px}
+.conn-report{text-align:center;margin-top:var(--s4)}
+.conn-report .linkbtn{min-height:44px}
+.conn-pre{white-space:pre-wrap;word-break:break-word;font-size:12px;background:var(--wash);border-radius:var(--r);padding:var(--s3);margin:0}
 .howto ol,.howto ul{margin:0;padding-left:22px}
 .howto li{margin:0 0 var(--s2)}
 .bigcode{font-size:30px;font-weight:700;letter-spacing:4px;text-align:center;margin:var(--s2) 0;font-variant-numeric:tabular-nums}
@@ -3800,6 +3833,7 @@ var ICON = {
   };
   ICON.chat = s('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>');
   ICON.pick = s('<path d="M4 6l2 2 3-3M4 13l2 2 3-3M12 7h8M12 14h8M4 20h.01M12 20h8"/>');
+  ICON.dots = s('<circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/>');
   ICON.camera = s('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>');
   ICON.refresh = s('<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>');
   ICON.torch = s('<path d="M8 3h8l-1.5 5h-5z"/><path d="M9.5 8v2.5L8 13v8h8v-8l-1.5-2.5V8"/>');
@@ -3824,11 +3858,14 @@ var L = { ms: {}, zh: {} };
 /*I18N-START (written by dev/i18n.js build; edit dev/i18n.json instead)*/
 L.ms = {
   "(optional)": "(pilihan)",
+  "1 change is safe on this phone. It sends by itself when it can.": "1 perubahan selamat di telefon ini. Ia dihantar sendiri apabila boleh.",
+  "1 change is waiting": "1 perubahan menunggu",
   "1 change is waiting on this phone. It will send once you’re approved.": "1 perubahan menunggu pada telefon ini. Ia dihantar selepas diluluskan.",
   "1 change will send when you’re online.": "1 perubahan akan dihantar apabila dalam talian.",
   "1 item": "1 barang",
   "1 item uses it. Where should it go?": "1 barang menggunakannya. Ke mana ia patut pergi?",
   "1 item will move to Not sorted yet.": "1 barang akan dipindahkan ke Belum disusun.",
+  "1 of these is already in {room}. The numbers will be added together.": "1 daripadanya sudah ada di {room}. Jumlah akan dicampur.",
   "1 person asked": "1 orang meminta",
   "1 phone is signed in": "1 telefon sedang log masuk",
   "1 room": "1 bilik",
@@ -3869,16 +3906,12 @@ L.ms = {
   "Add one": "Tambah satu",
   "Add room": "Tambah bilik",
   "Add rooms in Manage rooms, then print their stickers.": "Tambah bilik di Urus bilik, kemudian cetak pelekatnya.",
-  "Add something": "Tambah sesuatu",
   "Add something here": "Tambah sesuatu di sini",
   "Add something new": "Tambah sesuatu yang baharu",
   "Add them together?": "Campurkan?",
   "Add to shopping list": "Tambah ke senarai beli-belah",
   "Add your rooms": "Tambah bilik anda",
   "Add your things": "Tambah barang anda",
-  "Add, rename or remove centres": "Tambah, tukar nama atau buang pusat",
-  "Add, rename or remove rooms": "Tambah, namakan semula atau buang bilik",
-  "Add, rename or remove types and subtypes": "Tambah, namakan semula atau buang jenis dan subjenis",
   "Added stock": "Stok ditambah",
   "Added this time · 1 item": "Ditambah kali ini · 1 barang",
   "Added this time · {n} items": "Ditambah kali ini · {n} barang",
@@ -3891,8 +3924,6 @@ L.ms = {
   "Admin PIN:": "PIN admin:",
   "Admin link (keep private)": "Pautan admin (simpan sendiri)",
   "Admin panel": "Panel admin",
-  "Admin › Backups: a copy of the sheet is made before the first change of each day.": "Admin › Salinan sandaran: salinan helaian dibuat sebelum perubahan pertama setiap hari.",
-  "Admin › Phones: approve phones. Approval stays off until a developer turns it on.": "Admin › Telefon: luluskan telefon. Kelulusan kekal mati sehingga pembangun menghidupkannya.",
   "All": "Semua",
   "All ({n})": "Semua ({n})",
   "All centres": "Semua pusat",
@@ -3946,6 +3977,7 @@ L.ms = {
   "Backed up.": "Sudah disandarkan.",
   "Backing up…": "Menyandarkan…",
   "Backups": "Salinan sandaran",
+  "Backups: a copy of the sheet is made before the first change of each day.": "Salinan sandaran: salinan helaian dibuat sebelum perubahan pertama setiap hari.",
   "Balloons and banners": "Belon dan sepanduk",
   "Barcode": "Kod bar",
   "Barcode changes are saved straight away.": "Perubahan kod bar disimpan serta-merta.",
@@ -3980,6 +4012,7 @@ L.ms = {
   "Centre": "Pusat",
   "Centre name": "Nama pusat",
   "Centres (one or two)": "Pusat (satu atau dua)",
+  "Centres, rooms, phones, backups": "Pusat, bilik, telefon, sandaran",
   "Certificates and graduation": "Sijil dan konvokesyen",
   "Change": "Tukar",
   "Change PIN": "Tukar PIN",
@@ -3989,11 +4022,12 @@ L.ms = {
   "Changes are still waiting to be sent to your current list. Send them first.": "Perubahan masih menunggu untuk dihantar ke senarai semasa anda. Hantar dahulu.",
   "Changes made after that copy aren’t in it. The sheet you were using stays in your Drive.": "Perubahan selepas salinan itu tiada di dalamnya. Helaian yang digunakan kekal di Drive anda.",
   "Changes still waiting will be sent when you’re online.": "Perubahan yang masih menunggu akan dihantar apabila anda dalam talian.",
+  "Check": "Semak",
+  "Check Wi-Fi or mobile data.": "Semak Wi-Fi atau data mudah alih.",
   "Check a room": "Semak sebuah bilik",
   "Check again": "Semak semula",
   "Check an item": "Semak barang",
   "Check an item with the camera": "Semak barang dengan kamera",
-  "Check now": "Semak sekarang",
   "Check the barcode digits.": "Semak digit kod bar.",
   "Check the connection.": "Semak sambungan.",
   "Check the price.": "Semak harga.",
@@ -4022,7 +4056,7 @@ L.ms = {
   "Choose something to move.": "Pilih sesuatu untuk dipindah.",
   "Choose something to remove.": "Pilih sesuatu untuk dibuang.",
   "Choose supplies or equipment.": "Pilih bekalan atau peralatan.",
-  "Choose the room, then scan, or tap Type.": "Pilih bilik, kemudian imbas, atau ketik Taip.",
+  "Choose the room, then scan the barcode, or tap Type.": "Pilih bilik, kemudian imbas kod bar, atau ketik Taip.",
   "Choose what’s wrong.": "Pilih masalahnya.",
   "Choose which centre it’s at.": "Pilih pusat mana.",
   "Choose which centre it’s for.": "Pilih untuk pusat mana.",
@@ -4047,13 +4081,14 @@ L.ms = {
   "Confirmed {name}.": "{name} disahkan.",
   "Connect": "Sambung",
   "Connect to your list": "Sambung ke senarai anda",
-  "Connected. The sheet answered in {n} seconds.": "Bersambung. Helaian menjawab dalam {n} saat.",
-  "Connection check": "Semakan sambungan",
-  "Connection log": "Log sambungan",
+  "Connected.": "Bersambung.",
+  "Connection": "Sambungan",
   "Continue": "Teruskan",
-  "Copied.": "Disalin.",
+  "Copied. Paste it in a message to your admin.": "Disalin. Tampal dalam mesej kepada admin.",
   "Copy": "Salin",
+  "Copy it, then paste it in a message to your admin. It has no item names.": "Salin, kemudian tampal dalam mesej kepada admin. Tiada nama barang di dalamnya.",
   "Copy its web address.": "Salin alamat webnya.",
+  "Copy report": "Salin laporan",
   "Costumes and props": "Kostum dan prop",
   "Couldn’t check the latest list. It will be checked when it is sent.": "Senarai terkini tidak dapat disemak. Ia akan disemak apabila dihantar.",
   "Couldn’t read it. Move closer.": "Tidak dapat dibaca. Dekatkan.",
@@ -4083,6 +4118,7 @@ L.ms = {
   "Downloaded. Open it in Excel or Sheets.": "Dimuat turun. Buka dalam Excel atau Sheets.",
   "Downloads don’t work here. Use the Google Sheet instead.": "Muat turun tidak berfungsi di sini. Guna Google Sheet.",
   "Draft restored.": "Draf dipulihkan.",
+  "Each centre at a glance": "Setiap pusat sepintas lalu",
   "Each centre gets its own.": "Setiap pusat dapat bilik sendiri.",
   "Edit item": "Ubah barang",
   "Empty": "Kosong",
@@ -4093,16 +4129,17 @@ L.ms = {
   "Enter a whole number.": "Masukkan nombor bulat.",
   "Equipment": "Peralatan",
   "Estimate it": "Anggar",
+  "Estimated ones keep the level in that room, and this can’t be undone.": "Yang dianggar mengekalkan tahap di bilik itu, dan tidak boleh dibatalkan.",
   "Every centre": "Semua pusat",
   "Every phone that isn’t approved stops working until you approve it. Approve your admin and staff phones first.": "Setiap telefon yang belum diluluskan akan berhenti berfungsi sehingga diluluskan. Luluskan telefon admin dan staf dahulu.",
+  "Everyday": "Harian",
   "Everyone will need the PIN again.": "Semua orang perlu PIN semula.",
+  "Everything is saved": "Semua sudah disimpan",
   "Extra Large": "Sangat besar",
   "Fans and lights": "Kipas dan lampu",
   "Festival and event items": "Barang perayaan dan acara",
   "Files, folders and books": "Fail, folder dan buku",
   "Fill in every number": "Isi semua nombor",
-  "Filter": "Tapis",
-  "Filter ({n})": "Tapis ({n})",
   "Find": "Cari",
   "Find anything": "Cari apa-apa sahaja",
   "Finish": "Selesai",
@@ -4116,7 +4153,6 @@ L.ms = {
   "Flashlight": "Lampu suluh",
   "Follow theme": "Ikut tema",
   "For phones you want to approve before turning approval on.": "Untuk telefon yang mahu diluluskan sebelum kelulusan dihidupkan.",
-  "For the admin": "Untuk admin",
   "For {centre}": "Untuk {centre}",
   "Full": "Penuh",
   "Furniture and fittings": "Perabot dan kelengkapan",
@@ -4150,9 +4186,8 @@ L.ms = {
   "Hygiene and cleaning": "Kebersihan dan pembersihan",
   "I have a setup code": "Saya ada kod persediaan",
   "Icon for “{name}”": "Ikon untuk “{name}”",
-  "If sending goes wrong, copy this and send it to your admin. It has no item names.": "Jika penghantaran bermasalah, salin ini dan hantar kepada pentadbir. Tiada nama barang di dalamnya.",
-  "If something won’t save": "Jika sesuatu tidak dapat disimpan",
   "In Admin, open Google Sheet, then Switch Google Sheet, and paste it.": "Di Admin, buka Google Sheet, kemudian Tukar Google Sheet, dan tampal.",
+  "In a room, tap this to choose several things. For one thing, open it and tap More.": "Dalam bilik, ketik ini untuk pilih beberapa barang. Untuk satu, buka dan ketik Lagi.",
   "In each set": "Isi setiap set",
   "In the Google Sheet: Resource Manager menu, Phone setup code.": "Di Google Sheet: menu Resource Manager, Phone setup code.",
   "Is it one of these? Tap to add it.": "Adakah salah satu daripada ini? Ketik untuk tambah.",
@@ -4195,7 +4230,7 @@ L.ms = {
   "Linking to: {name}": "Dipautkan kepada: {name}",
   "Linking…": "Menyambung…",
   "Listed twice under two names": "Tersenarai dua kali dengan dua nama",
-  "Listed twice? Open one, tap More, then “Same item as…”.": "Tersenarai dua kali? Buka satu, ketik Lagi, kemudian “Barang yang sama dengan…”.",
+  "Listed twice? Open one, tap More, then Same item as…": "Tersenarai dua kali? Buka satu, ketik Lagi, kemudian Barang yang sama dengan…",
   "Loading {centre}…": "Memuatkan {centre}…",
   "Loading…": "Memuatkan…",
   "Looking up the name…": "Mencari nama…",
@@ -4226,6 +4261,7 @@ L.ms = {
   "Move {n} things": "Pindah {n} barang",
   "Moved to {room}.": "Dipindah ke {room}.",
   "Moved {n} to {room}.": "{n} dipindah ke {room}.",
+  "Moved. {room} now has {n}.": "Dipindah. {room} kini ada {n}.",
   "Moving…": "Memindahkan…",
   "Music and instruments": "Muzik dan alat muzik",
   "Name": "Nama",
@@ -4243,10 +4279,11 @@ L.ms = {
   "New sheet ready": "Helaian baru sedia",
   "Newest": "Terbaharu",
   "No answer. Check the link and sharing, and your signal, then try again.": "Tiada jawapan. Semak pautan, perkongsian dan isyarat, kemudian cuba lagi.",
-  "No answer. Check your internet, then try again.": "Tiada jawapan. Semak internet, kemudian cuba lagi.",
   "No centres yet.": "Belum ada pusat.",
   "No copies yet.": "Belum ada salinan.",
   "No copy yet": "Belum ada salinan",
+  "No internet": "Tiada internet",
+  "No internet. Saved on this phone; it will send by itself.": "Tiada internet. Disimpan di telefon ini; ia akan dihantar sendiri.",
   "No items here yet.": "Belum ada barang di sini.",
   "No items yet.": "Belum ada barang.",
   "No other centre has spare": "Tiada pusat lain ada lebihan",
@@ -4285,7 +4322,6 @@ L.ms = {
   "Nothing is kept there.": "Tiada apa disimpan di situ.",
   "Nothing is listed there now.": "Tiada barang di tempat itu sekarang.",
   "Nothing is running low.": "Tiada yang tinggal sedikit.",
-  "Nothing is waiting to send.": "Tiada apa-apa menunggu dihantar.",
   "Nothing matches the filters.": "Tiada yang sepadan dengan penapis.",
   "Nothing matches “{q}”.": "Tiada yang sepadan dengan “{q}”.",
   "Nothing matches.": "Tiada yang sepadan.",
@@ -4303,9 +4339,6 @@ L.ms = {
   "Offline. Try again later.": "Luar talian. Cuba lagi nanti.",
   "Offline. Try again.": "Luar talian. Cuba lagi.",
   "Oldest": "Paling lama",
-  "On Find, type a name, or tap the camera and scan the barcode.": "Di Cari, taip nama, atau ketik kamera dan imbas kod bar.",
-  "On Me, open Trash.": "Di Saya, buka Tong Sampah.",
-  "On Rooms, open a room and tap “Start checking”.": "Di Bilik, buka bilik dan ketik “Mula semak”.",
   "On your setup checklist, not confirmed": "Dalam senarai permulaan, belum disahkan",
   "One less": "Kurang satu",
   "One more": "Tambah satu",
@@ -4319,14 +4352,15 @@ L.ms = {
   "Only your admin can send things to another centre.": "Hanya admin boleh menghantar barang ke pusat lain.",
   "Only {centre} can change this.": "Hanya {centre} boleh mengubah ini.",
   "Only {n} here.": "Hanya ada {n} di sini.",
+  "Open Me, then Admin panel.": "Buka Saya, kemudian panel Admin.",
   "Open Trash": "Buka Tong Sampah",
+  "Open Trash.": "Buka Tong Sampah.",
   "Open item": "Buka barang",
   "Open test mode": "Buka mod ujian",
   "Open the Google Sheet": "Buka Google Sheet",
   "Open the app from its own link first.": "Buka apl dari pautannya sendiri dahulu.",
   "Open the copy above and check it’s the one you want.": "Buka salinan di atas dan pastikan ia yang dikehendaki.",
   "Open the full list": "Buka senarai penuh",
-  "Open the item to see how many there are and which room.": "Buka barang untuk lihat jumlah dan biliknya.",
   "Open the link your admin sent.": "Buka pautan yang admin hantar.",
   "Opening the sticker…": "Membuka pelekat…",
   "Or a new room": "Atau bilik baharu",
@@ -4342,10 +4376,12 @@ L.ms = {
   "Paints and brushes": "Cat dan berus",
   "Paper (A4, rolls)": "Kertas (A4, gulung)",
   "Pens and pencils": "Pen dan pensel",
+  "People and access": "Orang dan akses",
   "Phone approval is off": "Kelulusan telefon dimatikan",
   "Phone approval is on": "Kelulusan telefon dihidupkan",
   "Phone {code}": "Telefon {code}",
   "Phones": "Telefon",
+  "Phones: approve phones. Approval stays off until a developer turns it on.": "Telefon: luluskan telefon. Kelulusan kekal mati sehingga pembangun menghidupkannya.",
   "Photo": "Gambar",
   "Photo and notes": "Foto dan nota",
   "Photo didn’t work. Try another.": "Gambar tidak berjaya. Cuba yang lain.",
@@ -4353,6 +4389,7 @@ L.ms = {
   "Photo saved.": "Foto disimpan.",
   "Pick one type to narrow by subtype.": "Pilih satu jenis untuk menyempitkan mengikut subjenis.",
   "Pick the name to keep. “{name}” will take it.": "Pilih nama untuk dikekalkan. “{name}” akan menggunakannya.",
+  "Pick the room. The screen says what will happen before you tap Move.": "Pilih bilik. Skrin memberitahu apa akan berlaku sebelum anda ketik Pindah.",
   "Pick your centre to get started.": "Pilih pusat anda untuk bermula.",
   "Picture": "Gambar",
   "Picture {p}": "Gambar {p}",
@@ -4375,7 +4412,6 @@ L.ms = {
   "Problem reported": "Masalah dilaporkan",
   "Projectors and screens": "Projektor dan skrin",
   "Put away in {room}.": "Disimpan di {room}.",
-  "Put things in order": "Kemaskan senarai",
   "Puzzles": "Puzzle",
   "QR stickers": "Pelekat QR",
   "RM {price}": "RM {price}",
@@ -4402,7 +4438,7 @@ L.ms = {
   "Remove {name}": "Buang {name}",
   "Remove {n} things?": "Buang {n} barang?",
   "Remove “{name}”?": "Buang “{name}”?",
-  "Removed by mistake?": "Terbuang secara tidak sengaja?",
+  "Removed something by mistake? Tap Me.": "Terbuang secara tidak sengaja? Ketik Saya.",
   "Removed {n}. They’re in Trash.": "{n} dibuang. Ada dalam Tong Sampah.",
   "Removed {when}": "Dibuang {when}",
   "Removed.": "Sudah dibuang.",
@@ -4415,6 +4451,7 @@ L.ms = {
   "Rename “{name}”": "Namakan semula “{name}”",
   "Renamed.": "Dinamakan semula.",
   "Report a problem": "Lapor masalah",
+  "Report for your admin": "Laporan untuk admin",
   "Request approved": "Permohonan diluluskan",
   "Request bought": "Permohonan dibeli",
   "Request declined": "Permohonan ditolak",
@@ -4431,6 +4468,7 @@ L.ms = {
   "Room": "Bilik",
   "Room added": "Bilik ditambah",
   "Room name": "Nama bilik",
+  "Room options": "Pilihan bilik",
   "Room removed": "Bilik dibuang",
   "Room renamed": "Bilik dinamakan semula",
   "Rooms": "Bilik",
@@ -4455,6 +4493,7 @@ L.ms = {
   "Saving type…": "Menyimpan jenis…",
   "Saving…": "Menyimpan…",
   "Saving… one moment.": "Sedang menyimpan… sekejap.",
+  "Say how many.": "Nyatakan jumlahnya.",
   "Say how much there is in each room.": "Nyatakan jumlah di setiap bilik.",
   "Say whether it gets used up.": "Nyatakan sama ada ia akan habis.",
   "Scan": "Imbas",
@@ -4488,6 +4527,7 @@ L.ms = {
   "Select all": "Pilih semua",
   "Select none": "Nyahpilih semua",
   "Send": "Hantar",
+  "Send a report to your admin": "Hantar laporan kepada admin",
   "Send now": "Hantar sekarang",
   "Send to": "Hantar ke",
   "Send to another centre": "Hantar ke pusat lain",
@@ -4500,8 +4540,8 @@ L.ms = {
   "Set a Developer PIN first: in the sheet’s Setup tab, a setting called Developer PIN, 6 digits or more, not the admin PIN.": "Tetapkan Developer PIN dahulu: di tab Setup, tetapan bernama Developer PIN, 6 digit atau lebih, bukan PIN admin.",
   "Set the type": "Tetapkan jenis",
   "Set to {level}.": "Ditetapkan ke {level}.",
-  "Set up": "Tetapan",
   "Set up the first developer phone": "Sediakan telefon pembangun pertama",
+  "Setting up": "Persediaan",
   "Setup checklist": "Senarai semak persediaan",
   "Setup code": "Kod persediaan",
   "Share links": "Pautan kongsi",
@@ -4510,7 +4550,7 @@ L.ms = {
   "Sheet edit": "Ubah dalam helaian",
   "Shelves and storage": "Rak dan simpanan",
   "Shopping list": "Senarai beli-belah",
-  "Short steps": "Langkah ringkas",
+  "Short steps with pictures": "Langkah ringkas bergambar",
   "Show more": "Tunjuk lagi",
   "Show more ({n})": "Tunjuk lagi ({n})",
   "Show this code to your admin.": "Tunjukkan kod ini kepada admin.",
@@ -4518,17 +4558,20 @@ L.ms = {
   "Sign out": "Log keluar",
   "Sign out all phones": "Log keluar semua telefon",
   "Sign out all phones?": "Log keluar semua telefon?",
+  "Sign out of admin": "Log keluar admin",
   "Signed out everywhere.": "Telah log keluar di semua tempat.",
   "Signing out…": "Sedang log keluar…",
   "Skip": "Langkau",
   "Skip for now": "Langkau dahulu",
   "Skipped. Nothing was added.": "Dilangkau. Tiada apa-apa ditambah.",
+  "Slow connection. Saved on this phone and still sending.": "Sambungan perlahan. Disimpan di telefon ini dan masih dihantar.",
   "Soap and hand wash": "Sabun dan pencuci tangan",
   "Someone else changed this item. Check it before you save.": "Orang lain mengubah barang ini. Semak sebelum simpan.",
   "Someone else changed this while you were working.": "Orang lain mengubah ini semasa anda bekerja.",
   "Someone just changed this. Showing their version.": "Orang lain baru mengubah ini. Menunjukkan versi mereka.",
   "Something is kept in this room now, so only your admin can remove it.": "Kini ada barang di bilik ini, jadi hanya admin boleh membuangnya.",
   "Something went wrong. Try again.": "Ada masalah. Cuba lagi.",
+  "Something wrong?": "Ada masalah?",
   "Sort": "Isih",
   "Sort and filter": "Isih dan tapis",
   "Speakers and microphones": "Pembesar suara dan mikrofon",
@@ -4543,6 +4586,7 @@ L.ms = {
   "Stay with my list": "Kekal dengan senarai saya",
   "Staying with your list.": "Kekal dengan senarai anda.",
   "Still offline. {n} waiting.": "Masih di luar talian. {n} menunggu.",
+  "Stop selecting": "Berhenti memilih",
   "Subtype": "Subjenis",
   "Subtype (optional)": "Subjenis (pilihan)",
   "Subtype: {name}": "Subjenis: {name}",
@@ -4556,14 +4600,18 @@ L.ms = {
   "Take": "Ambil",
   "Take photo": "Ambil gambar",
   "Take some": "Ambil",
+  "Tap Add. With no internet it is saved on the phone and sent later.": "Ketik Tambah. Tanpa internet, ia disimpan di telefon dan dihantar kemudian.",
+  "Tap Find at the bottom.": "Ketik Cari di bawah.",
   "Tap Full, Half, Almost out or Empty.": "Ketik Penuh, Separuh, Hampir habis atau Kosong.",
-  "Tap OK, or change the number, for each thing.": "Bagi setiap barang, ketik OK atau ubah jumlah.",
+  "Tap Move.": "Ketik Pindah.",
+  "Tap OK for each thing, or change its number.": "Ketik OK bagi setiap barang, atau ubah jumlahnya.",
   "Tap Plan to buy on a low item, or add something new.": "Ketik Rancang beli pada barang yang kurang, atau tambah sesuatu yang baharu.",
   "Tap Restore.": "Ketik Pulihkan.",
-  "Tap Save.": "Ketik Simpan.",
+  "Tap Rooms, then your room.": "Ketik Bilik, kemudian bilik anda.",
+  "Tap Start checking.": "Ketik Mula semak.",
   "Tap a sticker to skip it.": "Ketik pelekat untuk melangkaunya.",
-  "Tap the round button in the middle of the bottom bar.": "Ketik butang bulat di tengah bar bawah.",
-  "Tap “Add more” or “Take some” when the number changes.": "Ketik “Tambah” atau “Ambil” apabila jumlah berubah.",
+  "Tap the big button at the bottom to save.": "Ketik butang besar di bawah untuk simpan.",
+  "Tap the round button in the middle.": "Ketik butang bulat di tengah.",
   "Tell me when below": "Beritahu saya bila kurang daripada",
   "Test": "Ujian",
   "Test centres are ready.": "Pusat ujian sudah sedia.",
@@ -4618,6 +4666,7 @@ L.ms = {
   "The list is busy. Try again in a moment.": "Senarai sibuk. Cuba sebentar lagi.",
   "The list sent back an error ({n}).": "Senarai menghantar ralat ({n}).",
   "The list sent back something unexpected.": "Senarai menghantar sesuatu yang tidak dijangka.",
+  "The number is how many we have. Tap it to see the room.": "Nombor ialah jumlah yang ada. Ketik untuk lihat biliknya.",
   "The number under the bars": "Nombor di bawah garis kod bar",
   "The numbers will be added up.": "Jumlah akan dicampur.",
   "The shopping list is empty.": "Senarai beli-belah kosong.",
@@ -4641,6 +4690,7 @@ L.ms = {
   "This deletes only the made-up items, history and test centres. Your real data is not touched.": "Ini hanya memadam barang rekaan, sejarah dan pusat ujian. Data sebenar anda tidak disentuh.",
   "This isn’t it": "Bukan ini",
   "This link opens a different list": "Pautan ini membuka senarai lain",
+  "This move can’t be undone.": "Pemindahan ini tidak boleh dibatalkan.",
   "This one is checked by level. Use Type to add it to this room.": "Barang ini disemak mengikut paras. Guna Taip untuk menambahnya ke bilik ini.",
   "This page isn’t connected to a list yet.": "Halaman ini belum disambung ke senarai.",
   "This phone is approved.": "Telefon ini telah diluluskan.",
@@ -4657,8 +4707,7 @@ L.ms = {
   "Tissues and wipes": "Tisu dan tuala basah",
   "To buy": "Untuk dibeli",
   "To confirm ({n})": "Untuk disahkan ({n})",
-  "To move several: open the room and tap “Select”.": "Untuk memindah beberapa: buka bilik dan ketik “Pilih”.",
-  "To move something: open it, tap More, then “Move to another room”.": "Untuk memindah: buka barang, ketik Lagi, kemudian “Pindah ke bilik lain”.",
+  "To remove this room, move its things out first.": "Untuk membuang bilik ini, pindahkan barangnya dahulu.",
   "To which room?": "Ke bilik mana?",
   "Together they have more than 12 barcodes. Remove some first.": "Gabungan mempunyai lebih 12 kod bar. Buang sebahagian dahulu.",
   "Toilet supplies": "Keperluan tandas",
@@ -4671,11 +4720,15 @@ L.ms = {
   "Trash is empty.": "Tong Sampah kosong.",
   "Try again": "Cuba lagi",
   "Try again.": "Cuba lagi.",
+  "Try it now": "Cuba sekarang",
+  "Try now": "Cuba sekarang",
   "Turn approval off": "Matikan kelulusan",
   "Turn approval off?": "Matikan kelulusan?",
   "Turn approval on": "Hidupkan kelulusan",
   "Turn approval on?": "Hidupkan kelulusan?",
   "Turn off": "Matikan",
+  "Turn off aeroplane mode.": "Matikan mod pesawat.",
+  "Turn off any ad blocker for this app.": "Matikan penyekat iklan untuk aplikasi ini.",
   "Turn on": "Hidupkan",
   "Two centres at most.": "Paling banyak dua pusat.",
   "Two made-up centres full of items in every state. Nobody else can see them.": "Dua pusat rekaan penuh dengan barang dalam setiap keadaan. Orang lain tidak dapat melihatnya.",
@@ -4683,6 +4736,7 @@ L.ms = {
   "Type a barcode": "Taip kod bar",
   "Type a name for the item.": "Taip nama barang.",
   "Type a name — this barcode isn’t on the list yet.": "Taip nama — kod bar ini belum ada.",
+  "Type a name, or tap the camera in the box.": "Taip nama, atau ketik kamera dalam kotak.",
   "Type a name.": "Taip nama.",
   "Type a number.": "Taip nombor.",
   "Type and subtype are shared by all centres.": "Jenis dan subjenis dikongsi oleh semua pusat.",
@@ -4741,6 +4795,7 @@ L.ms = {
   "What is it?": "Apakah ia?",
   "What to print": "Apa dicetak",
   "What’s wrong?": "Apa masalahnya?",
+  "When the number changes, tap Add more or Take some.": "Apabila jumlah berubah, ketik Tambah atau Ambil.",
   "Where the stickers open": "Tempat pelekat dibuka",
   "Which centre are you at?": "Anda di pusat mana?",
   "Which centre?": "Pusat mana?",
@@ -4754,22 +4809,22 @@ L.ms = {
   "Why": "Sebab",
   "Why: {why}.": "Sebab: {why}.",
   "Why?": "Kenapa?",
-  "With no signal it is saved on the phone and sent later.": "Tanpa isyarat, ia disimpan di telefon dan dihantar kemudian.",
   "Withdraw": "Tarik balik",
   "Withdraw this suggestion?": "Tarik balik cadangan ini?",
   "Worksheets and activity books": "Lembaran kerja dan buku aktiviti",
   "Write it down.": "Catatkan.",
-  "Wrong name or unit: open it and tap “Edit item”.": "Nama atau unit salah: buka dan ketik “Edit barang”.",
   "Yes": "Ya",
   "Yes, it runs out": "Ya, ia akan habis",
   "You can restore it from Me, under Trash.": "Boleh dipulihkan di Saya, bawah Tong Sampah.",
   "You can restore them from Trash.": "Boleh dipulihkan dari Tong Sampah.",
+  "You can still look things up.": "Anda masih boleh mencari barang.",
   "You have {amount} here.": "Anda ada {amount} di sini.",
   "You typed in {field}: {v}": "Anda taip dalam {field}: {v}",
   "Your admin sign-in ended. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your admin sign-in has expired. Sign in again.": "Log masuk admin anda telah tamat. Log masuk semula.",
   "Your centre (one or two)": "Pusat anda (satu atau dua)",
   "Your centre has nothing on the list yet.": "Pusat anda belum ada apa-apa dalam senarai.",
+  "Your data": "Data anda",
   "Your list is up to date.": "Senarai anda sudah terkini.",
   "Your own picture must be one emoji.": "Gambar anda sendiri mesti satu emoji.",
   "Your phone is connected to another list. Switch only if your admin sent you this link.": "Telefon anda disambungkan ke senarai lain. Tukar hanya jika pentadbir menghantar pautan ini.",
@@ -4837,6 +4892,8 @@ L.ms = {
   "{name} is on the setup checklist. Confirm it?": "{name} ada dalam senarai permulaan. Sahkan?",
   "{name}: {level}": "{name}: {level}",
   "{n} broken or missing": "{n} rosak atau hilang",
+  "{n} changes are safe on this phone. They send by themselves when they can.": "{n} perubahan selamat di telefon ini. Ia dihantar sendiri apabila boleh.",
+  "{n} changes are waiting": "{n} perubahan menunggu",
   "{n} changes are waiting on this phone. They will send once you’re approved.": "{n} perubahan menunggu pada telefon ini. Ia dihantar selepas diluluskan.",
   "{n} changes will send when you’re online.": "{n} perubahan akan dihantar apabila dalam talian.",
   "{n} days ago": "{n} hari lalu",
@@ -4848,6 +4905,7 @@ L.ms = {
   "{n} made-up items. Only the test centres, nothing real can be touched.": "{n} barang rekaan. Hanya pusat ujian, tiada apa yang sebenar boleh disentuh.",
   "{n} matches:": "{n} padanan:",
   "{n} need details": "{n} perlu butiran",
+  "{n} of these are already in {room}. The numbers will be added together.": "{n} daripadanya sudah ada di {room}. Jumlah akan dicampur.",
   "{n} of {total} confirmed": "{n} daripada {total} disahkan",
   "{n} of {total} selected": "{n} daripada {total} dipilih",
   "{n} people": "{n} orang",
@@ -4861,10 +4919,14 @@ L.ms = {
   "{n} things are still kept in “{name}”.": "{n} barang masih disimpan di “{name}”.",
   "{n} things offered to confirm.": "{n} barang ditawarkan untuk disahkan.",
   "{n} waiting to send": "{n} menunggu untuk dihantar",
+  "{room} already has it. Its level there stays {level}. This can’t be undone.": "{room} sudah ada barang ini. Tahapnya di sana kekal {level}. Tidak boleh dibatalkan.",
+  "{room} has {a}. After the move it will have {b}.": "{room} ada {a}. Selepas dipindah akan ada {b}.",
+  "{room} keeps {name} a different way (counted and estimated, or other units), so they can’t be added together.": "{room} menyimpan {name} dengan cara lain (dikira dan dianggar, atau unit lain), jadi tidak boleh dicampur.",
   "“Received” is kept for stock that hasn’t been put away yet.": "“Received” dikhaskan untuk stok yang belum disimpan.",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received” dikhaskan untuk stok yang belum disimpan. Pilih bilik.",
   "“{from}” becomes “{to}”. In a room that has both, the numbers are added up. This can’t be undone.": "“{from}” menjadi “{to}”. Dalam bilik yang ada kedua-duanya, jumlah dicampur. Tidak boleh dibatalkan.",
   "“{name}” is already in that room again. Open it to change the count.": "“{name}” sudah ada semula di bilik itu. Buka untuk menukar bilangan.",
+  "“{name}” is already in that room. Ask your admin to combine them.": "“{name}” sudah ada di bilik itu. Minta admin menggabungkannya.",
   "“{name}” is already in that room. Use “Same item as…” to combine them.": "“{name}” sudah ada di bilik itu. Guna “Barang yang sama dengan…” untuk menggabungkannya.",
   "“{name}” wasn’t added.": "“{name}” tidak ditambah.",
   "“{room}” already has {names}.": "“{room}” sudah ada {names}.",
@@ -4872,11 +4934,14 @@ L.ms = {
 };
 L.zh = {
   "(optional)": "（选填）",
+  "1 change is safe on this phone. It sends by itself when it can.": "1 项更改安全保存在本机，会自动发送。",
+  "1 change is waiting": "1 项更改在等待",
   "1 change is waiting on this phone. It will send once you’re approved.": "本机有 1 项更改在等待，获批后发送。",
   "1 change will send when you’re online.": "1 项更改联网后会发送。",
   "1 item": "1 件",
   "1 item uses it. Where should it go?": "有 1 个物品在用它。要移到哪里？",
   "1 item will move to Not sorted yet.": "1 件物品将移到“尚未整理”。",
+  "1 of these is already in {room}. The numbers will be added together.": "其中 1 件已在 {room}，数量会相加。",
   "1 person asked": "1 人申请",
   "1 phone is signed in": "有 1 部手机已登录",
   "1 room": "1 个房间",
@@ -4917,16 +4982,12 @@ L.zh = {
   "Add one": "添加一件",
   "Add room": "添加房间",
   "Add rooms in Manage rooms, then print their stickers.": "请先在“管理房间”里添加房间，再打印贴纸。",
-  "Add something": "添加物品",
   "Add something here": "在这里添加东西",
   "Add something new": "添加新东西",
   "Add them together?": "合并数量？",
   "Add to shopping list": "加入购物清单",
   "Add your rooms": "添加你的房间",
   "Add your things": "添加你的物品",
-  "Add, rename or remove centres": "添加、改名或删除分园",
-  "Add, rename or remove rooms": "添加、改名或删除房间",
-  "Add, rename or remove types and subtypes": "添加、改名或删除类型和子类型",
   "Added stock": "增加数量",
   "Added this time · 1 item": "本次添加 · 1 项",
   "Added this time · {n} items": "本次添加 · {n} 项",
@@ -4939,8 +5000,6 @@ L.zh = {
   "Admin PIN:": "管理员 PIN：",
   "Admin link (keep private)": "管理员链接（请保密）",
   "Admin panel": "管理面板",
-  "Admin › Backups: a copy of the sheet is made before the first change of each day.": "管理 › 备份：每天第一次更改前会复制一份表格。",
-  "Admin › Phones: approve phones. Approval stays off until a developer turns it on.": "管理 › 手机：审批手机。开发者开启前审批保持关闭。",
   "All": "全部",
   "All ({n})": "全部（{n}）",
   "All centres": "所有分园",
@@ -4994,6 +5053,7 @@ L.zh = {
   "Backed up.": "已备份。",
   "Backing up…": "正在备份…",
   "Backups": "备份",
+  "Backups: a copy of the sheet is made before the first change of each day.": "备份：每天第一次更改前复制表格。",
   "Balloons and banners": "气球与横幅",
   "Barcode": "条码",
   "Barcode changes are saved straight away.": "条码的更改会立即保存。",
@@ -5028,6 +5088,7 @@ L.zh = {
   "Centre": "分园",
   "Centre name": "分园名称",
   "Centres (one or two)": "分园（一或两个）",
+  "Centres, rooms, phones, backups": "分园、房间、手机、备份",
   "Certificates and graduation": "证书与毕业用品",
   "Change": "更改",
   "Change PIN": "更改 PIN",
@@ -5037,11 +5098,12 @@ L.zh = {
   "Changes are still waiting to be sent to your current list. Send them first.": "还有更改等待发送到当前清单。请先发送。",
   "Changes made after that copy aren’t in it. The sheet you were using stays in your Drive.": "该备份之后的更改不在其中。原来使用的表格仍在云端硬盘。",
   "Changes still waiting will be sent when you’re online.": "还在等待的更改会在联网后发送。",
+  "Check": "清点",
+  "Check Wi-Fi or mobile data.": "检查 Wi-Fi 或移动数据。",
   "Check a room": "盘点一个房间",
   "Check again": "再看一次",
   "Check an item": "查物品",
   "Check an item with the camera": "用相机查物品",
-  "Check now": "立即检查",
   "Check the barcode digits.": "请检查条码数字。",
   "Check the connection.": "请检查网络。",
   "Check the price.": "请检查价格。",
@@ -5070,7 +5132,7 @@ L.zh = {
   "Choose something to move.": "请选择要移动的物品。",
   "Choose something to remove.": "请选择要删除的物品。",
   "Choose supplies or equipment.": "请选择耗材或设备。",
-  "Choose the room, then scan, or tap Type.": "选择房间，然后扫描，或点“输入”。",
+  "Choose the room, then scan the barcode, or tap Type.": "选房间后扫描条码，或点“输入”。",
   "Choose what’s wrong.": "请选择是什么问题。",
   "Choose which centre it’s at.": "请选择在哪个分园。",
   "Choose which centre it’s for.": "请选择是给哪个分园。",
@@ -5095,13 +5157,14 @@ L.zh = {
   "Confirmed {name}.": "已确认 {name}。",
   "Connect": "连接",
   "Connect to your list": "连接你的清单",
-  "Connected. The sheet answered in {n} seconds.": "已连接。表格在 {n} 秒内回应。",
-  "Connection check": "网络检查",
-  "Connection log": "连接记录",
+  "Connected.": "已连接。",
+  "Connection": "网络",
   "Continue": "继续",
-  "Copied.": "已复制。",
+  "Copied. Paste it in a message to your admin.": "已复制。请粘贴到给管理员的消息中。",
   "Copy": "复制",
+  "Copy it, then paste it in a message to your admin. It has no item names.": "复制后粘贴到给管理员的消息中。其中没有物品名称。",
   "Copy its web address.": "复制它的网址。",
+  "Copy report": "复制报告",
   "Costumes and props": "服装与道具",
   "Couldn’t check the latest list. It will be checked when it is sent.": "无法核对最新清单。发送时会再核对。",
   "Couldn’t read it. Move closer.": "读不出来，请靠近一点。",
@@ -5131,6 +5194,7 @@ L.zh = {
   "Downloaded. Open it in Excel or Sheets.": "已下载，可用 Excel 或 Sheets 打开。",
   "Downloads don’t work here. Use the Google Sheet instead.": "这里不能下载，请改用 Google Sheet。",
   "Draft restored.": "已恢复草稿。",
+  "Each centre at a glance": "各分园一览",
   "Each centre gets its own.": "每个分园各有一个。",
   "Edit item": "编辑物品",
   "Empty": "空的",
@@ -5141,16 +5205,17 @@ L.zh = {
   "Enter a whole number.": "请填整数。",
   "Equipment": "设备",
   "Estimate it": "估量",
+  "Estimated ones keep the level in that room, and this can’t be undone.": "估计类物品保留该房间的存量，且无法撤销。",
   "Every centre": "所有分园",
   "Every phone that isn’t approved stops working until you approve it. Approve your admin and staff phones first.": "未获批的手机会停止使用，直到您批准。请先批准管理员和员工的手机。",
+  "Everyday": "日常",
   "Everyone will need the PIN again.": "所有人都需要重新输入 PIN。",
+  "Everything is saved": "全部已保存",
   "Extra Large": "特大",
   "Fans and lights": "风扇与灯",
   "Festival and event items": "节庆与活动用品",
   "Files, folders and books": "文件夹与簿本",
   "Fill in every number": "请填好每个数字",
-  "Filter": "筛选",
-  "Filter ({n})": "筛选（{n}）",
   "Find": "查找",
   "Find anything": "快速查找任何东西",
   "Finish": "完成",
@@ -5164,7 +5229,6 @@ L.zh = {
   "Flashlight": "手电筒",
   "Follow theme": "跟随主题",
   "For phones you want to approve before turning approval on.": "用于在开启审批前要批准的手机。",
-  "For the admin": "管理员须知",
   "For {centre}": "给 {centre}",
   "Full": "满的",
   "Furniture and fittings": "家具与设施",
@@ -5198,9 +5262,8 @@ L.zh = {
   "Hygiene and cleaning": "卫生与清洁",
   "I have a setup code": "我有设置码",
   "Icon for “{name}”": "“{name}”的图标",
-  "If sending goes wrong, copy this and send it to your admin. It has no item names.": "如果发送出现问题，请复制并发给管理员。其中不含物品名称。",
-  "If something won’t save": "当内容无法保存时",
   "In Admin, open Google Sheet, then Switch Google Sheet, and paste it.": "在管理页打开“Google 表格”，点“更换表格”并粘贴。",
+  "In a room, tap this to choose several things. For one thing, open it and tap More.": "在房间里点它可选多件。单件请打开后点“更多”。",
   "In each set": "每套包含",
   "In the Google Sheet: Resource Manager menu, Phone setup code.": "在 Google 表格：Resource Manager 菜单的 Phone setup code。",
   "Is it one of these? Tap to add it.": "是其中之一吗？点一下即可添加。",
@@ -5243,7 +5306,7 @@ L.zh = {
   "Linking to: {name}": "正在关联到：{name}",
   "Linking…": "正在连接…",
   "Listed twice under two names": "用两个名称列了两次",
-  "Listed twice? Open one, tap More, then “Same item as…”.": "列了两次？打开其中一个，点“更多”，再点“与某物品相同…”。",
+  "Listed twice? Open one, tap More, then Same item as…": "列了两次？打开一个，点“更多”，再点“与某物品相同…”",
   "Loading {centre}…": "正在载入 {centre}…",
   "Loading…": "加载中…",
   "Looking up the name…": "正在查找名称…",
@@ -5274,6 +5337,7 @@ L.zh = {
   "Move {n} things": "移动 {n} 件",
   "Moved to {room}.": "已移到 {room}。",
   "Moved {n} to {room}.": "已将 {n} 件移到 {room}。",
+  "Moved. {room} now has {n}.": "已移动。{room} 现有 {n}。",
   "Moving…": "正在移动…",
   "Music and instruments": "音乐与乐器",
   "Name": "名称",
@@ -5291,10 +5355,11 @@ L.zh = {
   "New sheet ready": "新表格已就绪",
   "Newest": "最新",
   "No answer. Check the link and sharing, and your signal, then try again.": "没有回应。请检查链接、分享设置和信号后再试。",
-  "No answer. Check your internet, then try again.": "没有回应。请检查网络后重试。",
   "No centres yet.": "还没有分园。",
   "No copies yet.": "尚无备份。",
   "No copy yet": "尚无备份",
+  "No internet": "没有网络",
+  "No internet. Saved on this phone; it will send by itself.": "没有网络。已保存在本机，会自动发送。",
   "No items here yet.": "这里还没有物品。",
   "No items yet.": "还没有物品。",
   "No other centre has spare": "其他中心都没有多余的",
@@ -5333,7 +5398,6 @@ L.zh = {
   "Nothing is kept there.": "那里没有存放任何物品。",
   "Nothing is listed there now.": "那个位置现在没有物品。",
   "Nothing is running low.": "没有快不够的。",
-  "Nothing is waiting to send.": "没有等待发送的内容。",
   "Nothing matches the filters.": "没有符合筛选的项目。",
   "Nothing matches “{q}”.": "没有与“{q}”匹配的内容。",
   "Nothing matches.": "没有匹配项。",
@@ -5351,9 +5415,6 @@ L.zh = {
   "Offline. Try again later.": "离线，请稍后再试。",
   "Offline. Try again.": "离线，请重试。",
   "Oldest": "最早",
-  "On Find, type a name, or tap the camera and scan the barcode.": "在“查找”输入名称，或点相机扫描条码。",
-  "On Me, open Trash.": "在“我的”打开回收站。",
-  "On Rooms, open a room and tap “Start checking”.": "在“房间”打开一个房间，点“开始清点”。",
   "On your setup checklist, not confirmed": "在起步清单里，尚未确认",
   "One less": "减一",
   "One more": "加一",
@@ -5367,14 +5428,15 @@ L.zh = {
   "Only your admin can send things to another centre.": "只有管理员能把物品送到其他分园。",
   "Only {centre} can change this.": "只有{centre}可以更改这个。",
   "Only {n} here.": "这里只有 {n}。",
+  "Open Me, then Admin panel.": "打开“我的”，再点管理面板。",
   "Open Trash": "打开回收站",
+  "Open Trash.": "打开回收站。",
   "Open item": "打开物品",
   "Open test mode": "打开测试模式",
   "Open the Google Sheet": "打开 Google Sheet",
   "Open the app from its own link first.": "请先从应用自己的链接打开。",
   "Open the copy above and check it’s the one you want.": "打开上面的备份，确认是您要的那份。",
   "Open the full list": "打开完整列表",
-  "Open the item to see how many there are and which room.": "打开物品查看数量和房间。",
   "Open the link your admin sent.": "请打开管理员发来的链接。",
   "Opening the sticker…": "正在打开贴纸…",
   "Or a new room": "或新房间",
@@ -5390,10 +5452,12 @@ L.zh = {
   "Paints and brushes": "颜料与画笔",
   "Paper (A4, rolls)": "纸张（A4、卷纸）",
   "Pens and pencils": "笔类",
+  "People and access": "人员与访问",
   "Phone approval is off": "手机审批已关闭",
   "Phone approval is on": "手机审批已开启",
   "Phone {code}": "手机 {code}",
   "Phones": "手机",
+  "Phones: approve phones. Approval stays off until a developer turns it on.": "手机：审批手机。开发者开启前审批保持关闭。",
   "Photo": "照片",
   "Photo and notes": "照片和备注",
   "Photo didn’t work. Try another.": "这张照片不行，换一张。",
@@ -5401,6 +5465,7 @@ L.zh = {
   "Photo saved.": "照片已保存。",
   "Pick one type to narrow by subtype.": "选一个类型才能按子类型筛选。",
   "Pick the name to keep. “{name}” will take it.": "选择要保留的名称。“{name}”将改用它。",
+  "Pick the room. The screen says what will happen before you tap Move.": "选择房间。点“移动”前屏幕会说明结果。",
   "Pick your centre to get started.": "请选择您的中心开始使用。",
   "Picture": "图标",
   "Picture {p}": "图标 {p}",
@@ -5423,7 +5488,6 @@ L.zh = {
   "Problem reported": "已报告问题",
   "Projectors and screens": "投影仪与屏幕",
   "Put away in {room}.": "已放在 {room}。",
-  "Put things in order": "整理清单",
   "Puzzles": "拼图",
   "QR stickers": "二维码贴纸",
   "RM {price}": "RM {price}",
@@ -5450,7 +5514,7 @@ L.zh = {
   "Remove {name}": "删除 {name}",
   "Remove {n} things?": "删除 {n} 件？",
   "Remove “{name}”?": "删除“{name}”？",
-  "Removed by mistake?": "误删了？",
+  "Removed something by mistake? Tap Me.": "误删了？点“我的”。",
   "Removed {n}. They’re in Trash.": "已删除 {n} 件，在回收站中。",
   "Removed {when}": "移除于 {when}",
   "Removed.": "已删除。",
@@ -5463,6 +5527,7 @@ L.zh = {
   "Rename “{name}”": "重命名“{name}”",
   "Renamed.": "已重命名。",
   "Report a problem": "报告问题",
+  "Report for your admin": "给管理员的报告",
   "Request approved": "申请已批准",
   "Request bought": "申请已购买",
   "Request declined": "申请已拒绝",
@@ -5479,6 +5544,7 @@ L.zh = {
   "Room": "房间",
   "Room added": "已添加房间",
   "Room name": "房间名称",
+  "Room options": "房间选项",
   "Room removed": "已删除房间",
   "Room renamed": "房间已改名",
   "Rooms": "房间",
@@ -5503,6 +5569,7 @@ L.zh = {
   "Saving type…": "正在保存类型…",
   "Saving…": "保存中…",
   "Saving… one moment.": "正在保存…请稍等。",
+  "Say how many.": "填写数量。",
   "Say how much there is in each room.": "请填写每个房间的数量。",
   "Say whether it gets used up.": "请回答它会不会用完。",
   "Scan": "扫描",
@@ -5536,6 +5603,7 @@ L.zh = {
   "Select all": "全选",
   "Select none": "全不选",
   "Send": "发送",
+  "Send a report to your admin": "把报告发给管理员",
   "Send now": "立即发送",
   "Send to": "送到",
   "Send to another centre": "送到别的分园",
@@ -5548,8 +5616,8 @@ L.zh = {
   "Set a Developer PIN first: in the sheet’s Setup tab, a setting called Developer PIN, 6 digits or more, not the admin PIN.": "请先设置 Developer PIN：在 Setup 页添加名为 Developer PIN 的设置，至少 6 位，且不同于管理员 PIN。",
   "Set the type": "设定类型",
   "Set to {level}.": "已设为{level}。",
-  "Set up": "设置",
   "Set up the first developer phone": "设置第一部开发者手机",
+  "Setting up": "设置",
   "Setup checklist": "设置清单",
   "Setup code": "设置码",
   "Share links": "分享链接",
@@ -5558,7 +5626,7 @@ L.zh = {
   "Sheet edit": "表格里的修改",
   "Shelves and storage": "架子与收纳",
   "Shopping list": "购物清单",
-  "Short steps": "简短步骤",
+  "Short steps with pictures": "带图的简短步骤",
   "Show more": "显示更多",
   "Show more ({n})": "显示更多（{n}）",
   "Show this code to your admin.": "请把此代码给管理员看。",
@@ -5566,17 +5634,20 @@ L.zh = {
   "Sign out": "退出登录",
   "Sign out all phones": "退出所有手机",
   "Sign out all phones?": "退出所有手机？",
+  "Sign out of admin": "退出管理员",
   "Signed out everywhere.": "已在所有设备退出。",
   "Signing out…": "正在退出…",
   "Skip": "跳过",
   "Skip for now": "先跳过",
   "Skipped. Nothing was added.": "已跳过。没有添加任何内容。",
+  "Slow connection. Saved on this phone and still sending.": "网络较慢。已保存在本机，仍在发送。",
   "Soap and hand wash": "肥皂与洗手液",
   "Someone else changed this item. Check it before you save.": "别人修改了这件物品。保存前请先检查。",
   "Someone else changed this while you were working.": "在你操作时，别人修改了这里。",
   "Someone just changed this. Showing their version.": "别人刚修改了这里。显示对方的版本。",
   "Something is kept in this room now, so only your admin can remove it.": "房间里现在有物品，只有管理员能删除它。",
   "Something went wrong. Try again.": "出了点问题，请再试一次。",
+  "Something wrong?": "遇到问题？",
   "Sort": "排序",
   "Sort and filter": "排序与筛选",
   "Speakers and microphones": "音响与麦克风",
@@ -5591,6 +5662,7 @@ L.zh = {
   "Stay with my list": "继续用我的清单",
   "Staying with your list.": "继续使用你的清单。",
   "Still offline. {n} waiting.": "仍然离线。{n} 项等待中。",
+  "Stop selecting": "停止选择",
   "Subtype": "细类",
   "Subtype (optional)": "子类型（可不选）",
   "Subtype: {name}": "子类型：{name}",
@@ -5604,14 +5676,18 @@ L.zh = {
   "Take": "取用",
   "Take photo": "拍照",
   "Take some": "取用",
+  "Tap Add. With no internet it is saved on the phone and sent later.": "点“添加”。没有网络时先存在手机里，稍后发送。",
+  "Tap Find at the bottom.": "点底部的“查找”。",
   "Tap Full, Half, Almost out or Empty.": "请点“满的”“一半”“快没了”或“空的”。",
-  "Tap OK, or change the number, for each thing.": "每件物品点 OK 或修改数量。",
+  "Tap Move.": "点“移动”。",
+  "Tap OK for each thing, or change its number.": "每件物品点 OK，或修改数量。",
   "Tap Plan to buy on a low item, or add something new.": "在库存不足的物品上点“计划购买”，或添加新东西。",
   "Tap Restore.": "点“恢复”。",
-  "Tap Save.": "点“保存”。",
+  "Tap Rooms, then your room.": "点“房间”，再点您的房间。",
+  "Tap Start checking.": "点“开始清点”。",
   "Tap a sticker to skip it.": "点一张贴纸即可跳过。",
-  "Tap the round button in the middle of the bottom bar.": "点底部栏中间的圆形按钮。",
-  "Tap “Add more” or “Take some” when the number changes.": "数量变化时点“添加”或“取用”。",
+  "Tap the big button at the bottom to save.": "点底部的大按钮保存。",
+  "Tap the round button in the middle.": "点中间的圆形按钮。",
   "Tell me when below": "低于此数时告诉我",
   "Test": "测试",
   "Test centres are ready.": "测试分园已准备好。",
@@ -5666,6 +5742,7 @@ L.zh = {
   "The list is busy. Try again in a moment.": "清单正忙，请稍后再试。",
   "The list sent back an error ({n}).": "清单返回了错误（{n}）。",
   "The list sent back something unexpected.": "清单返回了意料之外的内容。",
+  "The number is how many we have. Tap it to see the room.": "数字是现有数量。点开可看所在房间。",
   "The number under the bars": "条码下方的数字",
   "The numbers will be added up.": "数量会相加。",
   "The shopping list is empty.": "购物清单是空的。",
@@ -5689,6 +5766,7 @@ L.zh = {
   "This deletes only the made-up items, history and test centres. Your real data is not touched.": "这只会删除虚构的物品、历史和测试分园。您的真实数据不受影响。",
   "This isn’t it": "不是这个",
   "This link opens a different list": "这个链接会打开另一个清单",
+  "This move can’t be undone.": "此次移动无法撤销。",
   "This one is checked by level. Use Type to add it to this room.": "这个按存量程度检查。请用“输入”添加到这个房间。",
   "This page isn’t connected to a list yet.": "这个页面还没有连接清单。",
   "This phone is approved.": "此手机已获批。",
@@ -5705,8 +5783,7 @@ L.zh = {
   "Tissues and wipes": "纸巾与湿巾",
   "To buy": "待购买",
   "To confirm ({n})": "待确认（{n}）",
-  "To move several: open the room and tap “Select”.": "移动多件：打开房间点“选择”。",
-  "To move something: open it, tap More, then “Move to another room”.": "移动物品：打开它，点“更多”，再点“移到其他房间”。",
+  "To remove this room, move its things out first.": "要删除此房间，请先移走里面的物品。",
   "To which room?": "移到哪个房间？",
   "Together they have more than 12 barcodes. Remove some first.": "合起来超过 12 个条码。请先删除一些。",
   "Toilet supplies": "厕所用品",
@@ -5719,11 +5796,15 @@ L.zh = {
   "Trash is empty.": "回收站是空的。",
   "Try again": "重试",
   "Try again.": "请重试。",
+  "Try it now": "现在试试",
+  "Try now": "立即重试",
   "Turn approval off": "关闭审批",
   "Turn approval off?": "关闭审批？",
   "Turn approval on": "开启审批",
   "Turn approval on?": "开启审批？",
   "Turn off": "关闭",
+  "Turn off aeroplane mode.": "关闭飞行模式。",
+  "Turn off any ad blocker for this app.": "为本应用关闭广告拦截器。",
   "Turn on": "开启",
   "Two centres at most.": "最多两个分园。",
   "Two made-up centres full of items in every state. Nobody else can see them.": "两个虚构分园，里面有各种状态的物品。其他人看不到。",
@@ -5731,6 +5812,7 @@ L.zh = {
   "Type a barcode": "输入条码",
   "Type a name for the item.": "请输入物品名称。",
   "Type a name — this barcode isn’t on the list yet.": "请输入名称——这个条码还没有记录。",
+  "Type a name, or tap the camera in the box.": "输入名称，或点框内的相机。",
   "Type a name.": "请输入名称。",
   "Type a number.": "请输入数字。",
   "Type and subtype are shared by all centres.": "类型和子类型由所有中心共用。",
@@ -5789,6 +5871,7 @@ L.zh = {
   "What is it?": "它是什么身份？",
   "What to print": "打印什么",
   "What’s wrong?": "出了什么问题？",
+  "When the number changes, tap Add more or Take some.": "数量变化时，点“添加”或“取用”。",
   "Where the stickers open": "贴纸打开的地址",
   "Which centre are you at?": "你在哪个分园？",
   "Which centre?": "哪个分园？",
@@ -5802,22 +5885,22 @@ L.zh = {
   "Why": "原因",
   "Why: {why}.": "原因：{why}。",
   "Why?": "为什么？",
-  "With no signal it is saved on the phone and sent later.": "没有信号时会先存在手机里，之后发送。",
   "Withdraw": "撤回",
   "Withdraw this suggestion?": "撤回这条建议？",
   "Worksheets and activity books": "练习纸与活动书",
   "Write it down.": "请记下。",
-  "Wrong name or unit: open it and tap “Edit item”.": "名称或单位错误：打开它点“编辑物品”。",
   "Yes": "好",
   "Yes, it runs out": "会，用着用着就没了",
   "You can restore it from Me, under Trash.": "可在“我的”的回收站中恢复。",
   "You can restore them from Trash.": "可从回收站恢复。",
+  "You can still look things up.": "您仍可查询物品。",
   "You have {amount} here.": "这里有 {amount}。",
   "You typed in {field}: {v}": "你在{field}输入的是：{v}",
   "Your admin sign-in ended. Sign in again.": "你的管理员登录已结束，请重新登录。",
   "Your admin sign-in has expired. Sign in again.": "你的管理员登录已过期，请重新登录。",
   "Your centre (one or two)": "您的分园（一或两个）",
   "Your centre has nothing on the list yet.": "你的中心在清单上还没有物品。",
+  "Your data": "您的数据",
   "Your list is up to date.": "清单已是最新。",
   "Your own picture must be one emoji.": "自定义图标必须是一个表情符号。",
   "Your phone is connected to another list. Switch only if your admin sent you this link.": "你的手机连接的是另一个清单。只有管理员发给你这个链接时才切换。",
@@ -5885,6 +5968,8 @@ L.zh = {
   "{name} is on the setup checklist. Confirm it?": "{name} 在起步清单里。要确认吗？",
   "{name}: {level}": "{name}：{level}",
   "{n} broken or missing": "{n} 件损坏或缺失",
+  "{n} changes are safe on this phone. They send by themselves when they can.": "{n} 项更改安全保存在本机，会自动发送。",
+  "{n} changes are waiting": "{n} 项更改在等待",
   "{n} changes are waiting on this phone. They will send once you’re approved.": "本机有 {n} 项更改在等待，获批后发送。",
   "{n} changes will send when you’re online.": "{n} 项更改联网后会发送。",
   "{n} days ago": "{n} 天前",
@@ -5896,6 +5981,7 @@ L.zh = {
   "{n} made-up items. Only the test centres, nothing real can be touched.": "{n} 件虚构物品。只有测试分园，不会碰到任何真实数据。",
   "{n} matches:": "{n} 个相符：",
   "{n} need details": "{n} 件待补资料",
+  "{n} of these are already in {room}. The numbers will be added together.": "其中 {n} 件已在 {room}，数量会相加。",
   "{n} of {total} confirmed": "已确认 {n} / {total}",
   "{n} of {total} selected": "已选 {n}/{total}",
   "{n} people": "{n} 人",
@@ -5909,10 +5995,14 @@ L.zh = {
   "{n} things are still kept in “{name}”.": "“{name}”里还存放着 {n} 件物品。",
   "{n} things offered to confirm.": "已提供 {n} 件待确认。",
   "{n} waiting to send": "{n} 项待发送",
+  "{room} already has it. Its level there stays {level}. This can’t be undone.": "{room} 已有此物品。那里的存量仍为{level}。无法撤销。",
+  "{room} has {a}. After the move it will have {b}.": "{room} 现有 {a}，移动后为 {b}。",
+  "{room} keeps {name} a different way (counted and estimated, or other units), so they can’t be added together.": "{room} 中的 {name} 记录方式不同（计数与估计，或单位不同），无法合并。",
   "“Received” is kept for stock that hasn’t been put away yet.": "“Received”留给还没收好的物品。",
   "“Received” is kept for stock that hasn’t been put away yet. Choose a room.": "“Received”留给还没放好的物品。请选择一个房间。",
   "“{from}” becomes “{to}”. In a room that has both, the numbers are added up. This can’t be undone.": "“{from}”将变为“{to}”。同一房间有两者时数量相加。此操作无法撤销。",
   "“{name}” is already in that room again. Open it to change the count.": "“{name}”已经又在那个房间里了。打开它修改数量。",
+  "“{name}” is already in that room. Ask your admin to combine them.": "该房间已有“{name}”。请让管理员合并。",
   "“{name}” is already in that room. Use “Same item as…” to combine them.": "该房间已有“{name}”。请用“与某物品相同…”合并。",
   "“{name}” wasn’t added.": "“{name}”没有添加。",
   "“{room}” already has {names}.": "“{room}”里已有 {names}。",
@@ -6500,19 +6590,25 @@ function enqueue(fn, data) {
   flush();
 }
 // v44: a routine change is sent now; with no signal it waits on the phone (shown at once, sent later). Test mode never queues.
-function queuedMsg() { return tl('Saved on this phone. It will send when you’re online.'); }
+function queuedMsg(r) {
+  if (r && r.slow) return tl('Slow connection. Saved on this phone and still sending.');
+  return phoneHasNoSignal() ? tl('No internet. Saved on this phone; it will send by itself.') : tl('Saved on this phone. It will send when you’re online.');
+}
 function sendOrQueue(fn, data) {
   data.actionId = data.actionId || uid();
   if (S.test) return call(fn, data);
   var q = function () { enqueue(fn, data); return { queued: true }; };
+  if (phoneHasNoSignal()) S.offline = true;   // the phone knows: do not wait to find out
   if (S.offline) return Promise.resolve(q());
+  var slowOk = fn === 'addItem';   // safe to send again, and a person is waiting: give it less time
   return new Promise(function (resolve, reject) {
     var over = false, began = Date.now();
     var limit = setTimeout(function () {
       if (over) return; over = true;
       connLog('save ' + fn + ' got no answer, kept on the phone', Date.now() - began);
-      S.offline = true; resolve(q());
-    }, window.__rmStall || 15000);
+      if (!slowOk) S.offline = true;   // a slow add is not proof of no signal: it is simply sent again in the background
+      var r = q(); r.slow = slowOk && !phoneHasNoSignal(); resolve(r);
+    }, window.__rmStall || (slowOk ? 5000 : 15000));
     call(fn, data).then(function (v) { if (over) return; over = true; clearTimeout(limit); resolve(v); }, function (e) {
       if (over) return; over = true; clearTimeout(limit);
       if (e && e.network) { connLog('save ' + fn + ' failed, kept on the phone', Date.now() - began, whyOf(e)); resolve(q()); }
@@ -6555,10 +6651,6 @@ function connText() {
   return 'Ada Tak? version ' + APP_VER + ' · ' + (HOSTED ? 'hosted page' : 'Apps Script page') + ' · waiting now: ' + S.outbox.length + '\n' + list.map(function (x) {
     return clock(x.t) + (x.n > 1 ? '–' + clock(x.u) : '') + '  ' + x.e + (x.n > 1 ? ' ×' + x.n : '') + (x.ms != null ? '  ' + (x.ms / 1000).toFixed(1) + ' s' : '') + (x.w ? '  (' + x.w + ')' : '');
   }).join('\n') + (list.length ? '' : 'Nothing recorded yet.');
-}
-function connLogHtml() {
-  return '<details class="settings connlog" data-keep="connlog"><summary>' + tl('Connection log') + '</summary><div class="card"><p class="help">' + tl('If sending goes wrong, copy this and send it to your admin. It has no item names.') + '</p>' +
-    '<pre id="connlog-text">' + esc(connText()) + '</pre><button type="button" class="btn" data-act="connCopy">' + tl('Copy') + '</button></div></details>';
 }
 function whyOf(e) { return e && e.timeout ? 'no answer' : String(WHY || (e && e.message) || ''); }
 function syncOver(failed) {
@@ -6646,7 +6738,7 @@ if (!hist && HOSTED) {
     setChangeHandler: function (fn) { window.addEventListener('popstate', function (e) { fn(e); }); }
   };
 }
-var TAB_ROOT = { howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', adminTypes: 'more', adminType: 'more', unknown: 'home', home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', removed: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
+var TAB_ROOT = { overview: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', adminTypes: 'more', adminType: 'more', unknown: 'home', home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', rooms: 'rooms', room: 'rooms', countList: 'rooms', needName: 'rooms', unsorted: 'rooms', allitems: 'home', more: 'more', requests: 'more', settings: 'more', admin: 'more', adminCentres: 'more', adminRooms: 'more', removed: 'more', labels: 'more', scanBooks: 'home', bulk: 'home', starter: 'home', count: 'rooms' };
 function tabRootOf(name) { return TAB_ROOT[name] || 'home'; }
 // v43: HISTORY. Chrome skips, when Back is pressed, any history step that a page added without a tap behind it (that is how Back used to leave the app).
 // So: every history entry holds a snapshot of where the person was (the stack of screens and the sheet that was open); a step is ADDED only inside a tap
@@ -6851,7 +6943,7 @@ function render() {
   if (!hasCentre()) v = { name: 'pick' };
   var views = { home: vHome, item: vItem, add: vAdd, request: vRequest, edit: vEdit, low: vLow, count: vRooms,
     countList: vCountList, more: vMore, requests: vRequests, admin: vAdmin, pick: vPick, labels: vLabels,
-    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, adminTypes: vAdminTypes, adminType: vAdminType, unknown: vUnknown, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vMore, removed: vRemoved, adminCentres: vAdminCentres, howto: vHowto, conncheck: vConncheck, backups: vBackups, phones: vPhones };
+    rooms: vRooms, room: vRoom, adminRooms: vAdminRooms, adminTypes: vAdminTypes, adminType: vAdminType, unknown: vUnknown, scanBooks: vScanBooks, needName: vAttention, allitems: vAllItems, starter: vStarter, settings: vMore, removed: vRemoved, adminCentres: vAdminCentres, howto: vHowto, conncheck: vConncheck, overview: vOverview, backups: vBackups, phones: vPhones };
   delete views.bulk;
   views.unsorted = vAttention;
   rememberOpen(app);
@@ -6972,7 +7064,7 @@ function drawChrome(v) {
   nav.hidden = !!S.gate || v.name === 'pick' || task;
   document.body.classList.toggle('navless', task);
   var tab0 = { home: 'home', item: 'home', add: 'home', request: 'home', edit: 'home', low: 'low', count: 'rooms',
-    countList: 'rooms', needName: 'rooms', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'rooms', room: 'rooms', adminRooms: 'more', settings: 'more', adminCentres: 'more', removed: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', unknown: 'home', adminTypes: 'more', adminType: 'more', scanBooks: 'add' }[v.name];
+    countList: 'rooms', needName: 'rooms', starter: 'home', more: 'more', requests: 'more', admin: 'more', labels: 'more', bulk: 'add', rooms: 'rooms', room: 'rooms', adminRooms: 'more', settings: 'more', adminCentres: 'more', removed: 'more', overview: 'more', howto: 'more', conncheck: 'more', backups: 'more', phones: 'more', unknown: 'home', adminTypes: 'more', adminType: 'more', scanBooks: 'add' }[v.name];
   var tab = v.name === 'add' && v.fromAdd ? 'add' : v.name === 'scanBooks' && v.f ? 'home' : tab0;
   var lows = centreWaiting() ? 0 : S.items.filter(function (it) { return (S.admin ? true : it.centre === myCentre()) && low(it); }).length;
   var ICON = {
@@ -7456,8 +7548,8 @@ function vItem(v) {
     (can ? '<button class="rowbtn" data-act="moveRoomOpen"><span>' + tl('Move to another room') + '</span>' + ICON.go + '</button>' : '') +
     (S.admin && can && !isLevel(sel) && sel.qty > 0 && S.centres.length > 1
       ? '<button class="rowbtn" data-act="moveOpen"><span>' + tl('Send to another centre') + '</span>' + ICON.go + '</button>' : '') +
-    (can && canCorrect(sel) ? '<button class="rowbtn" data-act="sameOpen"><span>' + tl('Same item as…') + '<small>' + tl('Listed twice under two names') + '</small></span>' + ICON.go + '</button>' +
-      '<button class="rowbtn" data-act="kindOpen"><span>' + tl('How it’s kept') + '<small>' + esc(keptName(keptMode(sel))) + '</small></span>' + ICON.go + '</button>' : '') +
+    (can && S.admin ? '<button class="rowbtn" data-act="sameOpen"><span>' + tl('Same item as…') + '<small>' + tl('Listed twice under two names') + '</small></span>' + ICON.go + '</button>' : '') +
+    (can && canCorrect(sel) ? '<button class="rowbtn" data-act="kindOpen"><span>' + tl('How it’s kept') + '<small>' + esc(keptName(keptMode(sel))) + '</small></span>' + ICON.go + '</button>' : '') +
     '<button class="rowbtn" data-act="addPlace"><span>' + (g.rows.some(function (r) { return r.centre === myCentre(); }) ? tl('Add in another room') : esc(tl('Add it at {centre}', { centre: myCentre() }))) + '</span>' + ICON.go + '</button>' +
     (!sel.cat ? '<button class="rowbtn" data-act="setTypeOpen"><span>' + tl('Set the type') + '<small>' + tl('Needs details') + '</small></span>' + ICON.go + '</button>' : '') +
     (can ? '<button class="rowbtn" data-act="removeItem"><span>' + tl('Remove item') + (many ? '<small>' + esc(sel.centre + ' · ' + sel.loc) + '</small>' : '') + '</span>' + ICON.go + '</button>' : '') +
@@ -7868,9 +7960,16 @@ function endRoomPick() {
   w.parentNode.removeChild(w);
   [].forEach.call($('#sheet .panel').children, function (c) { c.classList.remove('rp-hide'); });
 }
+function drawEditMove() {
+  var box = byIdEl('edit-move'), loc = val('f-loc'), v = cur();
+  if (!box || v.name !== 'edit' || !S.byId[v.id]) return;
+  var text = loc && !sameRoom(loc, S.byId[v.id].loc) ? previewText(movePlan([v.id], loc, NaN), loc) : '';
+  box.textContent = text; box.hidden = !text;
+}
 function setRoomValue(v) {
   var i = byIdEl(RP.target);
   if (i) { i.value = v; syncPick(RP.target); i.dispatchEvent(new Event('input', { bubbles: true })); }
+  if (RP.target === 'f-loc') drawEditMove();
   leaveRoomPick();
 }
 function photoField() {
@@ -8078,6 +8177,7 @@ function vEdit(v) {
     '<div class="labrow"><label class="lab" for="f-loc-btn">' + (isReceivedRoom(it.loc) ? tl('Which room?') : tl('Which room?')) + '</label><button type="button" class="info" data-act="infoToggle" data-for="note-place" aria-expanded="false" aria-label="' + esc(tl('More information')) + '"><i aria-hidden="true">i</i></button></div>' +
     '<p class="typenote" id="note-place" role="note" hidden>' + esc(tl('Place and notes stay at {centre}.', { centre: it.centre })) + '</p>' +
     roomField('f-loc', isReceivedRoom(it.loc) ? '' : it.loc, it.centre, tl('Choose a room')) +
+    '<p class="movenote" id="edit-move" role="status" hidden></p>' +
     '<label class="lab" for="f-notes">' + tl('Notes') + ' <i>' + tl('(optional)') + '</i></label><input id="f-notes" class="inp" maxlength="300" autocomplete="off" value="' + esc(it.notes) + '">' +
     photoField() +
     (canCorrect(it) ? '<div class="card rows" style="margin-top:var(--s3)"><button type="button" class="rowbtn" data-act="kindOpen"><span>' + tl('How it’s kept') + '<small>' + esc(keptName(keptMode(it))) + '</small></span>' + ICON.go + '</button></div>' : '') +
@@ -8139,12 +8239,11 @@ function vLow() {
   };
   var n = lows.length + broken.length;
   var sl = lows.filter(function (it) { return on[it.id]; }), sb = broken.filter(function (it) { return on[it.id]; }), shareN = sl.length + sb.length;
-  return top(false) + '<h1 class="title">' + tl('Running low') + '</h1>' + lowChips() +
+  var tools = !n ? '' : (!pick && lows.length > 1 ? iconTool('lowSortOpen', ICON.filter, tl('Sort')) : '') + (S.admin ? iconTool('lowPick', ICON.pick, pick ? tl('Stop selecting') : tl('Select'), pick) : '');
+  return top(false) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Running low') + '</h1></div><div class="tools">' + tools + '</div></div>' + lowChips() +
     (n ? '<div class="lowbar">' + (pick
         ? '<button type="button" class="triall" data-act="lowAllSel" role="checkbox" aria-checked="' + (shareN === n ? 'true' : shareN ? 'mixed' : 'false') + '"><i class="pk2 ' + (shareN === n ? 'on' : shareN ? 'mixed' : '') + '" aria-hidden="true"></i><span>' + esc(tl('{n} selected', { n: shareN })) + '</span></button>'
-        : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '<div class="tools">' +
-      (!pick && lows.length > 1 ? '<button type="button" class="chip tbtn" data-act="lowSortOpen">' + ICON.sort + '<span>' + tl('Sort') + '</span></button>' : '') +
-      (S.admin ? '<button type="button" class="chip tbtn' + (pick ? ' on' : '') + '" data-act="lowPick" aria-pressed="' + (pick ? 'true' : 'false') + '">' + (pick ? ICON.x : ICON.pick) + '<span>' + (pick ? tl('Cancel') : tl('Select')) + '</span></button>' : '') + '</div></div>' : '') +
+        : '<p class="count">' + esc(tl('{n} running low', { n: lows.length })) + '</p>') + '</div>' : '') +
     (pick && shareN ? '<div class="savebar"><a class="btn primary" id="share" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(shoppingText(sl, sb, mine || (S.admin ? tl('all centres') : tl('my centre')))) + '">' + ICON.chat + '<span>' + esc(tl('Share {n}', { n: shareN })) + '</span></a></div>' : '') +
     (shopOn() && lows.length && !Array.isArray(S.open) ? '<div class="list lowlist skelwrap" role="status" aria-busy="true" aria-label="' + esc(tl('Loading…')) + '">' + lows.slice(0, 8).map(skelLowRow).join('') + '</div>'
     : lows.length ? '<div class="list lowlist">' + lows.map(function (it) {
@@ -8168,7 +8267,7 @@ function vCountList(v) {
   F = { was: {} };
   rows.forEach(function (it) { F.was[it.id] = it.qty; });
   return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + esc(v.loc) + '</h1></div><div class="tools">' +
-      '<button type="button" class="ib" data-act="countSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.sort + '</button>' +
+      '<button type="button" class="ib" data-act="countSortOpen" aria-label="' + tl('Sort') + '" title="' + tl('Sort') + '">' + ICON.filter + '</button>' +
       '<button type="button" class="ib' + (S.checkHide ? ' on' : '') + '" data-act="countHide" aria-label="' + tl('Hide checked') + '" title="' + tl('Hide checked') + '" aria-pressed="' + (S.checkHide ? 'true' : 'false') + '">' + (S.checkHide ? ICON.eyeoff : ICON.eye) + '</button></div></div>' +
     '<p class="prog" id="c-prog" style="margin-top:var(--s3)">' + tl('{n} of {total} confirmed', { n: 0, total: rows.length }) + '</p><div class="progbar"><i id="c-bar"></i></div>' +
     '<div class="card' + (S.checkHide ? ' hidechecked' : '') + '" id="checklist">' + rows.map(function (it) {
@@ -8315,18 +8414,26 @@ function vRoom(v) {
   var chipsOn = selCats(f).map(function (c) { return ['cat', c, tl(c)]; }).concat(f.sub ? [['sub', f.sub, tl(f.sub)]] : []).concat(f.status ? [['status', f.status, STATUS_NAME()[f.status]]] : []);
   return top(true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + esc(v.loc) + '</h1>' +
     '<p class="sub">' + esc(v.centre) + (all.length ? ' · ' + (all.length === 1 ? tl('1 item') : tl('{n} items', { n: all.length })) : '') + '</p></div>' +
-    (all.length > 6 ? '<button type="button" class="ib" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '</button>' : '') + '</div>' +
+    roomTools(v, all) + '</div>' +
     (all.length > 6 ? '<div class="search" id="rsearch">' + ICON.search +
       '<input id="rq" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + esc(tl('Search in this room')) + '" placeholder="' + esc(tl('Search this room…')) + '" value="' + esc(S.rq || '') + '">' +
-      '<button class="clear" data-act="clearRq" aria-label="' + esc(tl('Clear')) + '"' + (S.rq ? '' : ' hidden') + '>' + ICON.x + '</button></div>' : '') +
+      '<button class="clear" data-act="clearRq" aria-label="' + esc(tl('Clear')) + '"' + (S.rq ? '' : ' hidden') + '>' + ICON.x + '</button>' +
+      '<button type="button" class="filt" data-act="roomFilterOpen" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '<span class="fdot"' + (roomFilterCount() ? '' : ' hidden') + '>' + roomFilterCount() + '</span></button></div>' : '') +
     (chipsOn.length ? '<div class="seg fchips">' + chipsOn.map(function (o) { return '<button class="fchip" data-act="roomFilterDrop" data-k="' + o[0] + '" data-val="' + esc(o[1]) + '">' + esc(o[2]) + ' ' + ICON.x + '</button>'; }).join('') + '</div>' : '') +
     ((S.roomNotes || {})[v.centre + '|' + v.loc] ? '<p class="note" role="status"><b>' + esc(tl('Changed while you counted:')) + '</b><br>' + S.roomNotes[v.centre + '|' + v.loc].map(esc).join('<br>') + '</p>' : '') +
     '<div id="roomlist">' + roomListHtml(v) + '</div>' +
     (S.sel ? selBarHtml(v, all.filter(function (it) { return !it.pend; }))
-      : all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button>' +
-        (ownRoom(v.centre, v.loc) ? '<div class="two"><button type="button" class="btn quiet" data-act="selStart">' + tl('Select') + '</button><button type="button" class="btn quiet" data-act="myRoomRename">' + tl('Rename room') + '</button></div>' : '') + '</div>'
-      : (S.admin || v.centre === myCentre()) && !isReceivedRoom(v.loc) ? '<div class="after"><button class="btn primary" data-act="addHere">' + tl('Add something here') + '</button>' +
-        (ownRoom(v.centre, v.loc) ? '<div class="two"><button type="button" class="btn quiet" data-act="myRoomRename">' + tl('Rename room') + '</button><button type="button" class="btn quiet" data-act="myRoomRemove">' + tl('Remove room') + '</button></div>' : '') + '</div>' : '');
+      : all.length ? '<div class="after"><button class="btn primary" data-act="countPlaceHere" data-val="' + esc(v.loc) + '">' + tl('Start checking') + '</button></div>'
+      : (S.admin || v.centre === myCentre()) && !isReceivedRoom(v.loc) ? '<div class="after"><button class="btn primary" data-act="addHere">' + tl('Add something here') + '</button></div>' : '');
+}
+function iconTool(act, icon, label, on) {
+  return '<button type="button" class="ib' + (on ? ' on' : '') + '" data-act="' + act + '"' + (on === undefined ? '' : ' aria-pressed="' + !!on + '"') + ' aria-label="' + esc(label) + '" title="' + esc(label) + '">' + icon + '</button>';
+}
+function roomTools(v, all) {
+  if (!ownRoom(v.centre, v.loc)) return '';
+  var choosable = all.some(function (it) { return !it.pend; });
+  return '<div class="tools">' + (S.sel ? iconTool('selEnd', ICON.pick, tl('Stop selecting'), true)
+    : (choosable ? iconTool('selStart', ICON.pick, tl('Select'), false) : '') + iconTool('roomMore', ICON.dots, tl('Room options'))) + '</div>';
 }
 function roomFilterSheet(v) {
   var f = S.rfil || {}, all = itemsIn(v.centre, v.loc), counts = {};
@@ -8499,45 +8606,51 @@ function vAdmin() {
     var wait = n === null;
     return '<button class="stat' + (wait ? ' loading' : '') + '"' + (wait ? ' aria-busy="true"' : '') + ' data-act="go" data-to="' + to + '"><b>' + (wait ? '<span class="dots3" role="img" aria-label="' + esc(tl('Loading…')) + '"><i></i><i></i><i></i></span>' : n) + '</b><span>' + label + '</span></button>';
   };
-  var ROW_ICON = { adminLeaveAll: ICON.x, adminTypes: ICON.tag, addNew: ICON.plus, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, backups: ICON56.copy, phones: ICON56.phone, pinChange: ICON.key, labels: ICON.qr };
+  var ROW_ICON = { overview: ICON.pin, adminLeaveAll: ICON.x, adminTypes: ICON.tag, starterAdmin: ICON.list, adminCentres: ICON.pin, adminRooms: ICON.door, backups: ICON56.copy, phones: ICON56.phone, pinChange: ICON.key, labels: ICON.qr };
   var row = function (act, to, title, note, extra) {
     var ic = ROW_ICON[to || act];
     return '<button class="rowbtn" data-act="' + act + '"' + (to ? ' data-to="' + to + '"' : '') + '>' + (ic ? '<span class="lead">' + ic + '</span>' : '') + '<span>' + title + (note ? '<small>' + note + '</small>' : '') + '</span>' + (extra || '') + ICON.go + '</button>';
   };
+  var group = function (title, rows, id) { return '<h2 class="sec"' + (id ? ' id="' + id + '"' : '') + '>' + title + '</h2><div class="card rows">' + rows + '</div>'; };
   var link = HOSTED && BACKEND.id ? esc(location.origin + location.pathname + '#b=' + BACKEND.id) : '';
-  return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
-    '<div class="stats">' +
-      (shopOn() ? tile(S.requests ? planned : null, tl('on the shopping list'), 'requests') : '') +
-      '<button class="stat" data-act="lowCentre" data-val=""><b>' + lowN + '</b><span>' + tl('running low') + '</span></button>' +
-      '<button class="stat" data-act="nav" data-to="low" data-jump="low-broken"><b>' + broken + '</b><span>' + tl('broken or missing') + '</span></button></div>' + overviewHtml() +
-    '<h2 class="sec">' + tl('Set up') + '</h2><div class="card rows">' +
-      (S.test ? '' : row('starterAdmin', '', tl('Setup checklist'), '') +
-      row('go', 'adminCentres', tl('Manage centres'), tl('Add, rename or remove centres')) +
-      row('go', 'adminRooms', tl('Manage rooms'), tl('Add, rename or remove rooms')) +
-      row('go', 'adminTypes', tl('Types'), tl('Add, rename or remove types and subtypes')) +
-      row('go', 'backups', tl('Backups'), esc(!S.backup ? '' : S.backup.failed ? tl('The last copy failed') : S.backup.last ? tl('Last copy {when}', { when: when(S.backup.last) }) : tl('No copy yet'))) +
-      row('go', 'phones', tl('Phones'), S.access && S.access.on ? tl('Phone approval is on') : tl('Phone approval is off')) +
-      row('pinChange', '', tl('Change PIN'), '') +
-      row('adminLeaveAll', '', tl('Sign out all phones'), S.admin.phones ? esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) : '')) +
-      row('go', 'labels', tl('QR stickers'), '') +
-    '</div>' + testCardHtml() +
-    '<details class="settings" id="adm-sheet" data-keep="adm-sheet"' + (S.test ? ' hidden' : '') + '><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
-      '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
-      row('sheetChange', '', tl('Switch Google Sheet'), '') +
-      row('csv', '', tl('Download'), '') +
-    '</div></details>' +
-    (link ? '<details class="settings" id="adm-links" data-keep="adm-links"><summary>' + tl('Share links') + '<small>' + tl('Staff link and admin link') + '</small></summary><div class="card">' +
-      '<p class="lab">' + tl('Staff link (share only with staff)') + '</p><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="' + tl('Staff link (share only with staff)') + '" value="' + link + '" onclick="this.select()">' +
-      '<button class="btn" data-act="copyLink" data-for="staff-link">' + tl('Copy') + '</button></div>' +
-      '<p class="lab">' + tl('Admin link (keep private)') + '</p><div class="linkrow"><input id="admin-link" class="inp" readonly aria-label="' + tl('Admin link (keep private)') + '" value="' + link + '&admin" onclick="this.select()">' +
-      '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div></div></details>' : '') +
-    '<details class="settings" id="adm-hist" data-keep="adm-hist"><summary>' + tl('History') + '</summary><div class="card">' +
+  var sheetFold = '<details class="settings" id="adm-sheet" data-keep="adm-sheet"><summary>' + tl('Google Sheet') + '</summary><div class="card rows">' +
+    '<a class="rowbtn" target="_blank" rel="noopener" href="' + esc(S.admin.sheetUrl) + '"><span>' + tl('Open the Google Sheet') + '<small>' + esc(S.admin.sheetName || '') + '</small></span>' + ICON.go + '</a>' +
+    row('sheetChange', '', tl('Switch Google Sheet'), '') +
+    row('csv', '', tl('Download'), '') +
+  '</div></details>';
+  var histFold = '<details class="settings" id="adm-hist" data-keep="adm-hist"><summary>' + tl('History') + '</summary><div class="card">' +
     (S.admin.log.length ? S.admin.log.slice(0, 8).map(function (h) {
       return '<p class="hist"><b>' + esc(tl(h.action)) + '</b>' + (h.name ? ' · ' + esc(h.name) : '') +
         (h.change != null && h.change !== 0 && h.action !== 'Level set' ? ' ' + (h.change > 0 ? '+' : '−') + Math.abs(h.change) + ' (' + h.before + ' → ' + h.after + ')' : '') +
         (h.note ? '<br>' + esc(h.note) : '') + '<br><small>' + esc(h.centre) + (h.loc ? ' · ' + esc(h.loc) : '') + ' · ' + esc(when(h.when)) + '</small></p>';
-    }).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div></details>' +
+    }).join('') : '<p class="hist muted">' + tl('Nothing yet.') + '</p>') + '</div></details>';
+  var linkFold = link ? '<details class="settings" id="adm-links" data-keep="adm-links"><summary>' + tl('Share links') + '<small>' + tl('Staff link and admin link') + '</small></summary><div class="card">' +
+    '<p class="lab">' + tl('Staff link (share only with staff)') + '</p><div class="linkrow"><input id="staff-link" class="inp" readonly aria-label="' + tl('Staff link (share only with staff)') + '" value="' + link + '" onclick="this.select()">' +
+    '<button class="btn" data-act="copyLink" data-for="staff-link">' + tl('Copy') + '</button></div>' +
+    '<p class="lab">' + tl('Admin link (keep private)') + '</p><div class="linkrow"><input id="admin-link" class="inp" readonly aria-label="' + tl('Admin link (keep private)') + '" value="' + link + '&admin" onclick="this.select()">' +
+    '<button class="btn" data-act="copyLink" data-for="admin-link">' + tl('Copy') + '</button></div></div></details>' : '';
+  // in test mode only the made-up centres exist: the settings of the real list are left alone
+  var real = !S.test;
+  return top(true) + '<h1 class="title">' + tl('Admin') + '</h1>' +
+    '<div class="stats">' +
+      (shopOn() ? tile(S.requests ? planned : null, tl('on the shopping list'), 'requests') : '') +
+      '<button class="stat" data-act="lowCentre" data-val=""><b>' + lowN + '</b><span>' + tl('running low') + '</span></button>' +
+      '<button class="stat" data-act="nav" data-to="low" data-jump="low-broken"><b>' + broken + '</b><span>' + tl('broken or missing') + '</span></button></div>' +
+    group(tl('Everyday'), row('go', 'overview', tl('All centres'), tl('Each centre at a glance')) +
+      (real ? row('go', 'adminRooms', tl('Manage rooms'), '') + row('go', 'adminTypes', tl('Types'), '') : '') +
+      row('go', 'labels', tl('QR stickers'), '')) +
+    (real ? group(tl('People and access'), row('go', 'phones', tl('Phones'), S.access && S.access.on ? tl('Phone approval is on') : tl('Phone approval is off')) +
+      row('pinChange', '', tl('Change PIN'), '') +
+      row('adminLeaveAll', '', tl('Sign out all phones'), S.admin.phones ? esc(S.admin.phones === 1 ? tl('1 phone is signed in') : tl('{n} phones are signed in', { n: S.admin.phones })) : '')) : '') +
+    (real ? group(tl('Your data'), row('go', 'backups', tl('Backups'), esc(!S.backup ? '' : S.backup.failed ? tl('The last copy failed') : S.backup.last ? tl('Last copy {when}', { when: when(S.backup.last) }) : tl('No copy yet')))) + sheetFold + histFold : histFold) +
+    '<h2 class="sec">' + tl('Setting up') + '</h2>' +
+    (real ? '<div class="card rows">' + row('go', 'adminCentres', tl('Manage centres'), '') + row('starterAdmin', '', tl('Setup checklist'), '') + '</div>' : '') + linkFold + testCardHtml() +
     '<button class="btn quiet adminout" data-act="adminLeave">' + tl('Sign out') + '</button>';
+}
+// every centre at a glance, on a page of its own
+function vOverview() {
+  if (!S.admin) return vMore();
+  return top(true) + '<h1 class="title">' + tl('All centres') + '</h1>' + overviewHtml();
 }
 
 // ----- Scan books: point the camera, each book is recorded as it is read -----
@@ -10509,7 +10622,7 @@ var ACT = {
         if (from.fromAdd) store.set('rm_adddraft', null);
         if (another) { if (keepOn()) S.keepForm = { cat: F.cat || '', sub: F.sub || '', kind: F.kind || '', kindTouched: !!F.kindTouched, tracking: F.tracking, set: !!F.set, parts: val('f-parts') || F.parts || '', unit: val('f-unit') }; render(); }
         else popView();
-        return toast(queuedMsg());
+        return toast(queuedMsg(res));
       }
       if (res.replay) { refresh(); popView(); return toast(tl('Added.')); }
       var it = res.items[0];
@@ -10637,7 +10750,7 @@ var ACT = {
       if (!res.queued) toast(res.photoFailed ? tl('Saved, but the photo didn’t save.') : tl('Saved.'));
     }).catch(function (e) {
       if (e.data && e.data.conflict && e.data.conflicts) return editConflict(e.data);
-      if (e.data && e.data.needCombine && f.loc) { busy(false); return editCombine(it, f, f.loc); }
+      if (e.data && e.data.needCombine && f.loc) return editCombine(it, f, f.loc);
       failed(e);
     });
   },
@@ -10963,7 +11076,7 @@ var ACT = {
   connCopy: function () {
     var text = connText(), box = byIdEl('connlog-text');
     var select = function () { try { var r = document.createRange(); r.selectNodeContents(box); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (e) { /* nothing to select */ } toast(tl('Press and hold, then Copy.')); };
-    try { navigator.clipboard.writeText(text).then(function () { toast(tl('Copied.')); }, select); } catch (e) { select(); }
+    try { navigator.clipboard.writeText(text).then(function () { toast(tl('Copied. Paste it in a message to your admin.')); }, select); } catch (e) { select(); }
   },
   pillMenu: function (el) {
     var r = el.getBoundingClientRect();
@@ -10994,6 +11107,7 @@ var ACT = {
     busy(true, tl('Saving…'));
     callB('adminSetPin', { pin: S.pin, newPin: n }).then(function () {
       S.pin = n; store.set('rm_admin_tok', null); closeSheet(); toast(tl('PIN changed.'));
+      refresh();   // a list asked for with the old PIN while this was saving would have come back as a staff list
     }).catch(function (e) { busy(false); err.textContent = e.network ? tl('Offline. Try again.') : e.message; err.hidden = false; });
   },
   centreAdd: function () {
@@ -11603,22 +11717,21 @@ var ICON56 = {
   copy: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
   phone: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="7" y="2.500" width="10" height="19" rx="2.500"/><path d="M11 18h2"/></svg>'
 };
+// ----- the Me page: what people use most first, help lower down, signing out last -----
+function connShort() {
+  if (phoneHasNoSignal()) return tl('No internet');
+  return S.outbox.length ? tl('{n} waiting to send', { n: S.outbox.length }) : S.offline ? tl('Can’t reach the list.') : tl('Everything is saved');
+}
 function vMore() {
-  var waiting = S.outbox.length;
+  var group = function (rows) { return '<div class="card rows" style="margin-top:var(--s3)">' + rows + '</div>'; };
   return top(false, true) + '<div class="pagehead"><div class="ph-text"><h1 class="title">' + tl('Me') + '</h1>' +
-    '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + (waiting ? ' · ' + esc(tl('{n} waiting to send', { n: waiting })) : '') + '</p></div>' +
+    '<p class="sub">' + esc(tl('Updated {when}', { when: when(S.syncedAt) })) + '</p></div>' +
     '<button type="button" class="ib' + (S.refreshing ? ' spin' : '') + '" data-act="refresh" aria-label="' + tl('Refresh') + '" title="' + tl('Refresh') + '">' + ICON.refresh + '</button></div>' +
-    '<div class="card rows" style="margin-top:var(--s3)">' +
-    meRow('centrePick', '', ICON.pin, tl('Centre'), esc(S.me.centre)) +
-    meRow('displayOpen', '', ICON56.display, tl('Display'), esc(themeName() + ' · ' + textName())) +
-    meRow('go', ' data-to="removed"', ICON.trash, tl('Trash'), tl('Restore removed items')) +
-    meRow('go', ' data-to="howto"', ICON56.book, tl('How to use'), tl('Short steps')) +
-    meRow('go', ' data-to="conncheck"', ICON56.pulse, tl('Connection check'), tl('If something won’t save')) +
-    (S.admin && shopOn() ? meRow('go', ' data-to="requests"', ICON.receipt, tl('Shopping list'), '') : '') +
-    '</div>' +
-    (S.admin
-      ? '<h2 class="sec">' + tl('Admin') + '</h2><div class="card rows">' + meRow('go', ' data-to="admin"', ICON.shield, tl('Admin panel'), '') + meRow('adminLeave', '', ICON.door, tl('Sign out'), '') + '</div>'
-      : '') +
+    (S.admin ? group(meRow('go', ' data-to="admin"', ICON.shield, tl('Admin panel'), tl('Centres, rooms, phones, backups')) + (shopOn() ? meRow('go', ' data-to="requests"', ICON.receipt, tl('Shopping list'), '') : '')) : '') +
+    group(meRow('centrePick', '', ICON.pin, tl('Centre'), esc(S.me.centre)) + meRow('go', ' data-to="removed"', ICON.trash, tl('Trash'), tl('Restore removed items'))) +
+    group(meRow('displayOpen', '', ICON56.display, tl('Display'), esc(themeName() + ' · ' + textName()))) +
+    group(meRow('go', ' data-to="howto"', ICON56.book, tl('How to use'), tl('Short steps with pictures')) + meRow('go', ' data-to="conncheck"', ICON56.pulse, tl('Connection'), esc(connShort()))) +
+    (S.admin ? '<button type="button" class="btn quiet adminout" data-act="adminLeave">' + tl('Sign out of admin') + '</button>' : '') +
     '<p class="help verline"><button type="button" data-act="verTap">' + esc(tl('Alpha · version {v} · updated {date}', { v: APP_VER, date: builtText() })) + '</button></p>';
 }
 // the way in for an admin is not on show: the version line, tapped seven times in a row (the #admin address works too)
@@ -11643,34 +11756,116 @@ ACT.setLook = function (el) {
   if (M.type === 'display' && !byIdEl('sheet').hidden) { $('#sheet .panel').innerHTML = displaySheet(); fitSheet(); }
 };
 
-// ----- How to use: a few short steps -----
-function vHowto() {
-  var sec = function (title, steps) { return '<div class="card" style="padding:var(--s4);margin-top:var(--s3)"><h2 style="margin-top:0">' + title + '</h2><ol>' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></div>'; };
-  return top(true) + '<h1 class="title">' + tl('How to use') + '</h1><div class="howto">' +
-    sec(tl('Do we have it?'), [tl('On Find, type a name, or tap the camera and scan the barcode.'), tl('Open the item to see how many there are and which room.'), tl('Tap “Add more” or “Take some” when the number changes.')]) +
-    sec(tl('Add something'), [tl('Tap the round button in the middle of the bottom bar.'), tl('Choose the room, then scan, or tap Type.'), tl('With no signal it is saved on the phone and sent later.')]) +
-    sec(tl('Check a room'), [tl('On Rooms, open a room and tap “Start checking”.'), tl('Tap OK, or change the number, for each thing.'), tl('Tap Save.')]) +
-    sec(tl('Put things in order'), [tl('To move something: open it, tap More, then “Move to another room”.'), tl('To move several: open the room and tap “Select”.'), tl('Listed twice? Open one, tap More, then “Same item as…”.'), tl('Wrong name or unit: open it and tap “Edit item”.')]) +
-    sec(tl('Removed by mistake?'), [tl('On Me, open Trash.'), tl('Tap Restore.')]) +
-    (S.admin ? sec(tl('For the admin'), [tl('Admin › Backups: a copy of the sheet is made before the first change of each day.'), tl('Admin › Phones: approve phones. Approval stays off until a developer turns it on.')]) : '') +
-    '</div>';
-}
-function vConncheck() {
-  return top(true) + '<h1 class="title">' + tl('Connection check') + '</h1>' +
-    '<div class="card" style="padding:var(--s4)"><p id="conn-now">' + esc(S.connSaid || (S.outbox.length ? tl('{n} waiting to send', { n: S.outbox.length }) : tl('Nothing is waiting to send.'))) + '</p>' +
-    '<button type="button" class="btn primary" data-act="connTest">' + tl('Check now') + '</button></div>' + connLogHtml();
-}
-ACT.connTest = function () {
-  var began = Date.now();
-  busy(true, tl('Checking…'));
-  callB('version', {}).then(function () {
-    busy(false); S.offline = false;
-    S.connSaid = tl('Connected. The sheet answered in {n} seconds.', { n: Math.max(1, Math.round((Date.now() - began) / 1000)) });
-    connLog('check worked', Date.now() - began); render(); if (S.outbox.length) flush();
-  }).catch(function (e) {
-    busy(false); S.connSaid = tl('No answer. Check your internet, then try again.'); connLog('check failed', Date.now() - began, whyOf(e)); render();
-  });
+// ----- How to use: one job at a time, each step with a picture of the button it means -----
+function howSvg(d, size) { return '<svg viewBox="0 0 24 24" width="' + (size || 22) + '" height="' + (size || 22) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; }
+var HOW_D = {
+  find: '<circle cx="10.500" cy="10.500" r="6.500"/><path d="M15.500 15.500 21 21"/>', me: '<circle cx="12" cy="8" r="4"/><path d="M4.500 21c.6-4.200 3.600-6.500 7.500-6.500s6.900 2.300 7.500 6.500"/>',
+  rooms: '<path d="M6 21V4h9l3 2v15M4 21h16"/><circle cx="13" cy="12.500" r=".9"/>',
+  add: '<path d="M4 9V6.500A2.500 2.500 0 0 1 6.500 4H9M15 4h2.500A2.500 2.500 0 0 1 20 6.500V9M20 15v2.500a2.500 2.500 0 0 1-2.500 2.500H15M9 20H6.500A2.500 2.500 0 0 1 4 17.500V15M12 9.200v5.600M9.200 12h5.600"/>'
 };
+function howTab(d) { return '<span class="how-pic round">' + howSvg(HOW_D[d]) + '</span>'; }
+function howRound(svg) { return '<span class="how-pic round">' + svg + '</span>'; }
+function howBtn(label, blue, svg) { return '<span class="how-pic' + (blue ? ' blue' : '') + '">' + (svg || '') + '<span>' + label + '</span></span>'; }
+function howAddButton() { return '<span class="how-pic round blue">' + howSvg(HOW_D.add, 26) + '</span>'; }
+function howJobs() {
+  var jobs = [
+    ['find', tl('Find'), 'home', [
+      [howTab('find'), tl('Tap Find at the bottom.')],
+      [howBtn(tl('Search…'), false, howSvg(HOW_D.find, 16)), tl('Type a name, or tap the camera in the box.')],
+      [howBtn('📚 <b>12</b>'), tl('The number is how many we have. Tap it to see the room.')],
+      [howBtn('+ ' + tl('Add more'), true), tl('When the number changes, tap Add more or Take some.')]]],
+    ['add', tl('Add'), 'add', [
+      [howAddButton(), tl('Tap the round button in the middle.')],
+      [howBtn(tl('Scan') + ' · ' + tl('Type')), tl('Choose the room, then scan the barcode, or tap Type.')],
+      [howBtn('− 1 +'), tl('Say how many.')],
+      [howBtn(tl('Add'), true), tl('Tap Add. With no internet it is saved on the phone and sent later.')]]],
+    ['check', tl('Check'), 'rooms', [
+      [howTab('rooms'), tl('Tap Rooms, then your room.')],
+      [howBtn(tl('Start checking'), true), tl('Tap Start checking.')],
+      [howBtn('✓ OK'), tl('Tap OK for each thing, or change its number.')],
+      [howBtn(tl('Save'), true), tl('Tap the big button at the bottom to save.')]]],
+    ['move', tl('Move'), 'rooms', [
+      [howRound(ICON.pick), tl('In a room, tap this to choose several things. For one thing, open it and tap More.')],
+      [howBtn(tl('Move'), true), tl('Tap Move.')],
+      [howBtn(tl('To which room?')), tl('Pick the room. The screen says what will happen before you tap Move.')]]],
+    ['undo', tl('Undo'), 'removed', [
+      [howTab('me'), tl('Removed something by mistake? Tap Me.')],
+      [howRound(ICON.trash), tl('Open Trash.')],
+      [howBtn(tl('Restore'), true), tl('Tap Restore.')]]]
+  ];
+  if (S.admin) jobs.push(['admin', tl('Admin'), 'admin', [
+    [howRound(ICON.shield), tl('Open Me, then Admin panel.')],
+    [howRound(ICON56.copy), tl('Backups: a copy of the sheet is made before the first change of each day.')],
+    [howRound(ICON56.phone), tl('Phones: approve phones. Approval stays off until a developer turns it on.')],
+    [howBtn(tl('Same item as…')), tl('Listed twice? Open one, tap More, then Same item as…')]]]);
+  return jobs;
+}
+function vHowto() {
+  var jobs = howJobs(), job = jobs.filter(function (j) { return j[0] === S.howJob; })[0] || jobs[0];
+  return top(true) + '<h1 class="title">' + tl('How to use') + '</h1>' +
+    '<div class="chips howtabs" role="tablist">' + jobs.map(function (j) { return '<button type="button" role="tab" aria-selected="' + (j === job) + '" class="chip' + (j === job ? ' on' : '') + '" data-act="howJob" data-val="' + j[0] + '">' + j[1] + '</button>'; }).join('') + '</div>' +
+    '<ol class="card how-card">' + job[3].map(function (s, i) {
+      return (i ? '<li class="how-arrow" aria-hidden="true">↓</li>' : '') + '<li class="how-step"><span class="how-num">' + (i + 1) + '</span>' + s[0] + '<span class="how-text">' + s[1] + '</span></li>';
+    }).join('') + '</ol>' +
+    '<button type="button" class="btn primary" data-act="howTry" data-val="' + job[2] + '">' + tl('Try it now') + '</button>';
+}
+ACT.howJob = function (el) { S.howJob = el.dataset.val; render(); };
+ACT.howTry = function (el) {
+  var to = el.dataset.val;
+  if (to === 'add') return ACT.addOpen({ dataset: {} });
+  if (to === 'removed' || to === 'admin') return go({ name: to });
+  ACT.nav({ dataset: { to: to } });
+};
+
+// ----- Connection: one big answer, one button; the technical log is only in the report -----
+function checkConn(quiet) {
+  var began = Date.now();
+  S.conn = { state: 'checking' };
+  if (cur().name === 'conncheck') render();
+  minWait(callRaw('version', {}), 500).then(function () {
+    S.offline = false; S.conn = { state: 'ok', at: Date.now() };
+    connLog('check worked', Date.now() - began); if (S.outbox.length) flush();
+    if (cur().name === 'conncheck') render();
+    if (!quiet) toast(tl('Connected.'));
+  }).catch(function (e) {
+    S.conn = { state: 'fail', at: Date.now() };
+    connLog('check failed', Date.now() - began, whyOf(e));
+    if (cur().name === 'conncheck') render();
+  });
+}
+function connCard(kind, icon, title, text, button) {
+  return '<div class="card conn-card" role="status"><div class="conn-big ' + kind + '" aria-hidden="true">' + icon + '</div><h2>' + title + '</h2><p class="sub">' + text + '</p>' + button + '</div>';
+}
+var CONN_ICON = {
+  ok: howSvg('<path d="m5 12.500 4.500 4.500L19 7"/>', 52),
+  off: howSvg('<path d="M3 3l18 18M8.500 16.500a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5-2.700M14 10.300A10 10 0 0 1 19 13M2.500 9.500A15 15 0 0 1 7 6.800M11 5.600a15 15 0 0 1 10.500 3.900M12 20h.1"/>', 52)
+};
+function vConncheck(v) {
+  if (!v.asked) { v.asked = true; setTimeout(function () { checkConn(true); }, 0); }
+  var c = S.conn || { state: 'checking' }, n = S.outbox.length, noNet = phoneHasNoSignal();
+  var waiting = !n ? '' : (n === 1 ? tl('1 change is safe on this phone. It sends by itself when it can.') : tl('{n} changes are safe on this phone. They send by themselves when they can.', { n: n }));
+  var card, tips = false;
+  if (noNet || c.state === 'fail') {
+    tips = true;
+    card = connCard('wait', CONN_ICON.off, noNet ? tl('No internet') : tl('Can’t reach the list.'), waiting || tl('You can still look things up.'), '<button type="button" class="btn primary" data-act="connTest">' + tl('Try now') + '</button>');
+  } else if (c.state === 'checking') {
+    card = connCard('check', '<span class="lockring"></span>', tl('Checking…'), waiting, '');
+  } else if (n) {
+    card = connCard('wait', CONN_ICON.off, n === 1 ? tl('1 change is waiting') : tl('{n} changes are waiting', { n: n }), waiting, '<button type="button" class="btn primary" data-act="flushNow">' + tl('Send now') + '</button>');
+  } else {
+    card = connCard('ok', CONN_ICON.ok, tl('Everything is saved'), esc(tl('Checked {when}', { when: ago(c.at) })), '<button type="button" class="btn primary" data-act="connTest">' + tl('Check again') + '</button>');
+  }
+  return top(true) + '<h1 class="title">' + tl('Connection') + '</h1>' + card +
+    (tips ? '<ol class="card rows conn-tips">' + [tl('Turn off aeroplane mode.'), tl('Check Wi-Fi or mobile data.'), tl('Turn off any ad blocker for this app.')].map(function (t, i) { return '<li class="rowbtn"><span class="how-num">' + (i + 1) + '</span><span>' + t + '</span></li>'; }).join('') + '</ol>' : '') +
+    '<p class="help conn-report">' + tl('Something wrong?') + ' <button type="button" class="linkbtn" data-act="reportOpen">' + tl('Send a report to your admin') + '</button></p>';
+}
+ACT.connTest = function () { checkConn(true); };
+ACT.reportOpen = function () {
+  M = { type: 'report' };
+  openSheet('<div class="sheetbody"><h2>' + tl('Report for your admin') + '</h2><p class="sub">' + tl('Copy it, then paste it in a message to your admin. It has no item names.') + '</p><pre id="connlog-text" class="conn-pre">' + esc(connText()) + '</pre></div>' +
+    '<div class="sheetfoot"><div class="two"><button type="button" class="btn" data-act="closeSheet">' + tl('Close') + '</button><button type="button" class="btn primary" data-act="connCopy">' + tl('Copy report') + '</button></div></div>', null, 'has-foot');
+};
+['online', 'offline'].forEach(function (n) { window.addEventListener(n, function () { setTimeout(function () { if (S.loaded && cur().name === 'conncheck') checkConn(true); }, 50); }); });
 
 // ----- Trash -----
 function trashRows(v) {
@@ -11696,37 +11891,41 @@ function trashListHtml(v) {
   }).join('') + '</div>' + (list.length > cut.length ? '<button type="button" class="btn quiet" data-act="trashMore">' + esc(tl('Show more ({n})', { n: list.length - cut.length })) + '</button>' : '');
 }
 function redrawTrash() { var box = byIdEl('trashlist'); if (box) box.innerHTML = trashListHtml(cur()); }
+function trashFiltered() { return (S.tr.type ? 1 : 0) + (S.tr.centre ? 1 : 0) + (S.tr.sort && S.tr.sort !== 'new' ? 1 : 0); }
 function vRemoved(v) {
   if (!v.list && !v.err && !v.loading) { v.loading = true; S.tr = { q: '', sort: 'new', type: '', centre: '', n: 50 }; setTimeout(function () { loadRemoved(v); }, 0); }
   var head = top(true) + '<h1 class="title">' + tl('Trash') + '</h1>';
   if (v.err) return head + emptyArt('search', esc(v.err), '<button type="button" class="btn primary" data-act="removedRetry">' + tl('Try again') + '</button>', true);
   if (!v.list) return head + '<div class="card empty centreload" role="status"><span class="lockring" aria-hidden="true"></span><h2>' + tl('Loading…') + '</h2></div>';
   if (!v.list.length) return head + emptyArt('back', tl('Trash is empty.'));
-  var f = S.tr, types = [], centres = [];
-  v.list.forEach(function (x) { if (x.cat && types.indexOf(x.cat) < 0) types.push(x.cat); if (centres.indexOf(x.centre) < 0) centres.push(x.centre); });
-  var filtered = (f.type ? 1 : 0) + (f.centre ? 1 : 0);
-  var sortName = f.sort === 'old' ? tl('Oldest') : f.sort === 'az' ? tl('A to Z') : tl('Newest');
-  return head + '<div class="search">' + ICON.search + '<input id="tq" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + esc(tl('Search Trash')) + '" placeholder="' + esc(tl('Search Trash…')) + '" value="' + esc(f.q) + '"></div>' +
-    '<div class="two trashbar"><button type="button" class="btn quiet" data-act="trashSortOpen">' + ICON.sort + '<span>' + sortName + '</span></button>' +
-    '<button type="button" class="btn quiet" data-act="trashFilterOpen"' + (types.length > 1 || centres.length > 1 ? '' : ' disabled') + '>' + ICON.filter + '<span>' + (filtered ? esc(tl('Filter ({n})', { n: filtered })) : tl('Filter')) + '</span></button></div>' +
+  var f = S.tr, chips = (f.type ? [['type', f.type, tl(f.type)]] : []).concat(f.centre ? [['centre', f.centre, f.centre]] : []);
+  return head + '<div class="search">' + ICON.search + '<input id="tq" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + esc(tl('Search Trash')) + '" placeholder="' + esc(tl('Search Trash…')) + '" value="' + esc(f.q) + '">' +
+    '<button type="button" class="filt" data-act="trashOptions" aria-label="' + tl('Sort and filter') + '" title="' + tl('Sort and filter') + '">' + ICON.filter + '<span class="fdot"' + (trashFiltered() ? '' : ' hidden') + '>' + trashFiltered() + '</span></button></div>' +
+    (chips.length ? '<div class="seg fchips">' + chips.map(function (o) { return '<button type="button" class="fchip" data-act="trashDrop" data-k="' + o[0] + '">' + esc(o[2]) + ' ' + ICON.x + '</button>'; }).join('') + '</div>' : '') +
     '<div id="trashlist">' + trashListHtml(v) + '</div>';
 }
-ACT.trashSortOpen = function () {
-  M = { type: 'trashsort' };
-  openSheet('<h2>' + tl('Sort') + '</h2>' + [['new', tl('Newest')], ['old', tl('Oldest')], ['az', tl('A to Z')]].map(function (o) { return '<button type="button" class="opt' + (S.tr.sort === o[0] ? ' on' : '') + '" data-act="trashSort" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join(''));
-};
-ACT.trashSort = function (el) { S.tr.sort = el.dataset.val; closeSheet(); render(); };
-function trashFilterSheet() {
+function trashSheet() {
   var v = cur(), f = S.tr, types = [], centres = [];
   (v.list || []).forEach(function (x) { if (x.cat && types.indexOf(x.cat) < 0) types.push(x.cat); if (centres.indexOf(x.centre) < 0) centres.push(x.centre); });
-  var chips = function (k, list, labelOf) { return '<div class="chips">' + list.map(function (x) { return '<button type="button" class="chip' + (f[k] === x ? ' on' : '') + '" data-act="trashFilter" data-k="' + k + '" data-val="' + esc(x) + '">' + esc(labelOf(x)) + '</button>'; }).join('') + '</div>'; };
-  return '<div class="sheetbody"><h2>' + tl('Filter') + '</h2>' + (centres.length > 1 ? '<label class="lab">' + tl('Centre') + '</label>' + chips('centre', centres, function (x) { return x; }) : '') +
-    (types.length ? '<label class="lab">' + tl('Type') + '</label>' + chips('type', types, function (x) { return tl(x); }) : '') + '</div>' +
-    '<div class="sheetfoot"><button type="button" class="btn primary" data-act="closeSheet">' + tl('Done') + '</button></div>';
+  var chips = function (act, k, list, labelOf) { return '<div class="chips">' + list.map(function (x) { return '<button type="button" class="chip' + ((f[k] || '') === x ? ' on' : '') + '" data-act="' + act + '" data-k="' + k + '" data-val="' + esc(x) + '">' + esc(labelOf(x)) + '</button>'; }).join('') + '</div>'; };
+  var sorts = { new: tl('Newest'), old: tl('Oldest'), az: tl('A to Z') };
+  return '<div class="sheetbody"><h2>' + tl('Sort and filter') + '</h2><label class="lab">' + tl('Sort') + '</label>' + chips('trashSort', 'sort', ['new', 'old', 'az'], function (x) { return sorts[x]; }) +
+    (centres.length > 1 ? '<label class="lab">' + tl('Centre') + '</label>' + chips('trashFilter', 'centre', centres, function (x) { return x; }) : '') +
+    (types.length > 1 ? '<label class="lab">' + tl('Type') + '</label>' + chips('trashFilter', 'type', types, function (x) { return tl(x); }) : '') + '</div>' +
+    '<div class="sheetfoot">' + (trashFiltered()
+      ? '<button type="button" class="btn primary" data-act="closeSheet">' + esc(tl('Apply ({n})', { n: trashFiltered() })) + '</button><button type="button" class="btn quiet" data-act="trashClear">' + tl('Clear all') + '</button>'
+      : '<button type="button" class="btn primary" data-act="closeSheet">' + tl('Close') + '</button>') + '</div>';
 }
-ACT.trashFilterOpen = function () { M = { type: 'trashfilter' }; openSheet(trashFilterSheet(), null, 'has-foot'); };
-ACT.trashFilter = function (el) { var k = el.dataset.k, x = el.dataset.val; S.tr[k] = S.tr[k] === x ? '' : x; S.tr.n = 50; render(); $('#sheet .panel').innerHTML = trashFilterSheet(); fitSheet(); };
-ACT.trashClear = function () { S.tr = { q: '', sort: S.tr.sort, type: '', centre: '', n: 50 }; render(); };
+function redrawTrashSheet() {
+  var sb = $('#sheet .sheetbody'), y = sb ? sb.scrollTop : 0;
+  render();
+  if (M.type === 'trashsheet' && !byIdEl('sheet').hidden) { $('#sheet .panel').innerHTML = trashSheet(); fitSheet(); var nb = $('#sheet .sheetbody'); if (nb) nb.scrollTop = y; }
+}
+ACT.trashOptions = function () { M = { type: 'trashsheet' }; openSheet(trashSheet(), null, 'has-foot'); };
+ACT.trashSort = function (el) { S.tr.sort = el.dataset.val; S.tr.n = 50; redrawTrashSheet(); };
+ACT.trashFilter = function (el) { var k = el.dataset.k, x = el.dataset.val; S.tr[k] = S.tr[k] === x ? '' : x; S.tr.n = 50; redrawTrashSheet(); };
+ACT.trashDrop = function (el) { S.tr[el.dataset.k] = ''; render(); };
+ACT.trashClear = function () { S.tr = { q: '', sort: 'new', type: '', centre: '', n: 50 }; redrawTrashSheet(); };
 ACT.trashMore = function () { S.tr.n += 100; redrawTrash(); };
 document.addEventListener('input', function (e) { if (e.target && e.target.id === 'tq') { S.tr.q = e.target.value; S.tr.n = 50; redrawTrash(); } });
 
@@ -11784,15 +11983,78 @@ function openMoveRoom(ids) {
     (one && !isLevel(one) && one.qty > 1 ? '<label class="lab" for="m-n">' + tl('How many?') + '</label>' + stepper('m-n', one.qty, 1, one.qty) : '') +
     (rooms.length ? '<label class="lab">' + tl('To which room?') + '</label><div class="chips">' + rooms.map(function (n) { return '<button type="button" class="chip" data-act="moveTo" data-val="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
     '<label class="lab" for="m-newroom">' + (rooms.length ? tl('Or a new room') : tl('Room name')) + '</label><input id="m-newroom" class="inp" maxlength="60" autocomplete="off"></div>' +
-    '<div class="sheetfoot">' + confirmBtns('moveRoomGo', tl('Move')) + '</div>', null, 'has-foot');
+    '<div class="sheetfoot"><p class="movenote" id="m-preview" role="status" hidden></p>' + confirmBtns('moveRoomGo', tl('Move')) + '</div>', null, 'has-foot');
 }
 ACT.moveRoomOpen = function () { openMoveRoom([cur().id]); };
 ACT.moveTo = function (el) {
   M.to = el.dataset.val;
   [].forEach.call(document.querySelectorAll('#sheet [data-act=moveTo]'), function (c) { c.classList.toggle('on', c === el); });
   var n = byIdEl('m-newroom'); if (n) n.value = '';
+  drawMovePreview();
 };
-function sendMove(data, to) {
+// what the room already holds of these things, and what moving will do to it
+function movePlan(ids, to, qty) {
+  return ids.map(function (id) {
+    var it = S.byId[id];
+    if (!it || sameRoom(it.loc, to)) return null;
+    var dest = S.items.filter(function (x) { return !x.pend && x.id !== it.id && x.centre === it.centre && sameRoom(x.loc, to) && RMSearch.norm(x.name) === RMSearch.norm(it.name); })[0] || null;
+    var n = isLevel(it) ? it.qty : (ids.length === 1 && qty >= 1 ? Math.min(qty, it.qty) : it.qty);
+    return { id: it.id, name: it.name, shown: shown(it), from: it.loc, qty: n, whole: isLevel(it) || n === it.qty, level: isLevel(it), unit: it.unit,
+      settings: it.min > 0 || !!STATUS_LABEL[it.status],   // a low-stock level or a problem report: joining hands these to the other room
+      dest: dest ? { id: dest.id, qty: dest.qty, level: isLevel(dest), unit: dest.unit } : null };
+  }).filter(Boolean);
+}
+// Joined into the other room's entry, these cannot be pulled apart again: an estimate; a room that had 0 (moving "the same number" back
+// would take its whole entry); or all of an entry that had its own low-stock level or problem report.
+function noWayBack(p) { return !!p.dest && (p.level || p.dest.qty === 0 || (p.whole && p.settings)); }
+function previewText(plan, to) {
+  var clash = plan.filter(function (p) { return p.dest; });
+  if (!clash.length) return '';
+  var wrong = clash.filter(function (p) { return p.level !== p.dest.level || (!p.level && p.unit !== p.dest.unit); })[0];
+  if (wrong) return tl('{room} keeps {name} a different way (counted and estimated, or other units), so they can’t be added together.', { room: to, name: wrong.shown });
+  var levels = clash.filter(function (p) { return p.level; });
+  if (plan.length === 1) {
+    var p = clash[0];
+    return p.level ? tl('{room} already has it. Its level there stays {level}. This can’t be undone.', { room: to, level: LEVEL_LABELS[p.dest.qty] })
+      : tl('{room} has {a}. After the move it will have {b}.', { room: to, a: p.dest.qty, b: p.dest.qty + p.qty }) + (noWayBack(p) ? ' ' + tl('This move can’t be undone.') : '');
+  }
+  return (clash.length === 1 ? tl('1 of these is already in {room}. The numbers will be added together.', { room: to }) : tl('{n} of these are already in {room}. The numbers will be added together.', { n: clash.length, room: to })) +
+    (levels.length ? ' ' + tl('Estimated ones keep the level in that room, and this can’t be undone.') : plan.some(noWayBack) ? ' ' + tl('This move can’t be undone.') : '');
+}
+function drawMovePreview() {
+  var box = byIdEl('m-preview');
+  if (!box || M.type !== 'moveroom') return;
+  var to = val('m-newroom') || M.to, n = byIdEl('m-n') ? parseQty(byIdEl('m-n').value) : NaN;
+  var text = to ? previewText(movePlan(M.ids, to, n), to) : '';
+  box.textContent = text; box.hidden = !text;
+  fitSheet();
+}
+document.addEventListener('input', function (e) { if (e.target && (e.target.id === 'm-n' || e.target.id === 'm-newroom')) drawMovePreview(); });
+// the message after a move, with Undo where the move can be taken back (the same numbers go back to where they came from)
+function movedMessage(plan, res, to, count) {
+  var clash = plan.filter(function (p) { return p.dest; });
+  var first = res.items.filter(function (x) { return sameRoom(x.loc, to) && plan[0] && RMSearch.norm(x.name) === RMSearch.norm(plan[0].name); })[0];
+  var said = count > 1 ? tl('Moved {n} to {room}.', { n: count, room: to }) : clash.length && first && first.tracking !== 'Level' ? tl('Moved. {room} now has {n}.', { room: to, n: first.qty }) : tl('Moved to {room}.', { room: to });
+  var sources = plan.map(function (p) { return p.from; }).filter(function (x, i, a) { return a.indexOf(x) === i; });
+  var can = plan.length && sources.length === 1 && !isReceivedRoom(sources[0]) && !plan.some(noWayBack);
+  if (!can) return toast(said);
+  var back = plan.map(function (p) {
+    if (p.whole && !p.dest) return { id: p.id };   // the same entry goes back
+    var there = p.dest ? p.dest.id : (res.items.filter(function (x) { return x.id !== p.id && sameRoom(x.loc, to) && RMSearch.norm(x.name) === RMSearch.norm(p.name); })[0] || {}).id;
+    return there ? (p.level ? { id: there } : { id: there, qty: p.qty }) : null;
+  }).filter(Boolean);
+  toast(said, tl('Undo'), function () {
+    if (offlineNow()) return needNet();
+    busy(true, tl('Undoing…'));
+    callB('moveRoom', { moves: back, toLoc: sources[0], combine: true, actionId: uid() }).then(function (r) {
+      busy(false); applyResult(r);
+      var v = cur(); if (v.name === 'item' && !S.byId[v.id] && r.items.length) v.id = r.items[0].id;
+      render(); toast(tl('Undone.')); refresh();
+    }).catch(function (e) { busy(false); toast(e.network ? tl('Offline. Try again.') : e.message); });
+  });
+}
+function sendMove(data, to, plan) {
+  plan = plan || [];
   busy(true, tl('Moving…'));
   callB('moveRoom', Object.assign({ actionId: uid() }, data)).then(function (res) {
     busy(false); applyResult(res);
@@ -11801,7 +12063,7 @@ function sendMove(data, to) {
     S.sel = null;
     if (v.name === 'item' && !S.byId[v.id] && res.items.length) v.id = res.items[0].id;
     render();
-    toast(many ? tl('Moved {n} to {room}.', { n: data.moves.length, room: to }) : tl('Moved to {room}.', { room: to }));
+    movedMessage(plan, res, to, data.moves.length);
     refresh();   // the room list may have gained a room
   }).catch(function (e) {
     if (e.data && e.data.needCombine) {
@@ -11821,18 +12083,29 @@ ACT.moveRoomGo = function () {
   if (isReceivedRoom(to)) return say(reservedMsg());
   var one = m.ids.length === 1 ? S.byId[m.ids[0]] : null, n = byIdEl('m-n') ? parseQty(byIdEl('m-n').value) : NaN;
   if (one && byIdEl('m-n') && !(n >= 1 && n <= one.qty)) return say(tl('Type how many to move.'));
-  sendMove({ moves: m.ids.map(function (id) { return one && byIdEl('m-n') ? { id: id, qty: n } : { id: id }; }), toLoc: to }, to);
+  sendMove({ moves: m.ids.map(function (id) { return one && byIdEl('m-n') ? { id: id, qty: n } : { id: id }; }), toLoc: to, combine: true }, to, movePlan(m.ids, to, n));   // the sheet above already said what will happen
 };
 ACT.moveCombineGo = function () { var m = M; sendMove(Object.assign({}, m.data, { combine: true }), m.to); };
+
+// ----- a room's other options: renaming, and removing while it is empty -----
+ACT.roomMore = function () {
+  var v = cur(), empty = !itemsIn(v.centre, v.loc).length;
+  M = { type: 'roommenu' };
+  var opt = function (act, icon, label, cls) { return '<button type="button" class="opt' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"><span class="ri" aria-hidden="true">' + icon + '</span><span>' + label + '</span></button>'; };
+  openSheet('<h2>' + esc(v.loc) + '</h2>' + opt('myRoomRename', ICON.pencil, tl('Rename room')) + (empty ? opt('myRoomRemove', ICON.trash, tl('Remove room'), 'danger') : '<p class="help">' + tl('To remove this room, move its things out first.') + '</p>') +
+    '<button type="button" class="btn quiet" data-act="closeSheet">' + tl('Close') + '</button>');
+};
 
 // ----- choosing several things in a room -----
 function selIds() { return S.sel ? Object.keys(S.sel.ids) : []; }
 function selBarHtml(v, all) {
   if (!S.sel) return '';
   var n = selIds().length;
-  return '<div class="after"><div class="two"><button type="button" class="btn quiet" data-act="selEnd">' + tl('Cancel') + '</button><button type="button" class="btn quiet" data-act="selAll">' + (n === all.length ? tl('Select none') : tl('Select all')) + '</button></div>' +
-    (S.admin ? '<div class="two"><button type="button" class="btn" data-act="bulkRemoveAsk"' + (n ? '' : ' disabled') + '>' + esc(tl('Remove ({n})', { n: n })) + '</button><button type="button" class="btn primary" data-act="bulkMove"' + (n ? '' : ' disabled') + '>' + esc(tl('Move ({n})', { n: n })) + '</button></div>'
-      : '<button type="button" class="btn primary" data-act="bulkMove"' + (n ? '' : ' disabled') + '>' + esc(tl('Move ({n})', { n: n })) + '</button>') + '</div>';
+  var allBtn = '<button type="button" class="btn quiet" data-act="selAll">' + (n === all.length ? tl('Select none') : tl('Select all')) + '</button>';
+  var moveBtn = '<button type="button" class="btn primary" data-act="bulkMove"' + (n ? '' : ' disabled') + '>' + esc(tl('Move ({n})', { n: n })) + '</button>';
+  return '<div class="after">' +
+    (S.admin ? allBtn + '<div class="two"><button type="button" class="btn" data-act="bulkRemoveAsk"' + (n ? '' : ' disabled') + '>' + esc(tl('Remove ({n})', { n: n })) + '</button>' + moveBtn + '</div>'
+      : '<div class="two">' + allBtn + moveBtn + '</div>') + '</div>';
 }
 ACT.selStart = function () { S.sel = { loc: cur().loc, ids: {} }; render(); };
 ACT.selEnd = function () { S.sel = null; render(); };
@@ -11955,24 +12228,20 @@ ACT.kindGo = function () {
   }).catch(sheetErr);
 };
 // an edit that would put two rows of one thing in the same room: ask, then move into it (which adds them up)
-function editCombine(it, fields, loc, photo) {
-  M = { type: 'editcombine', id: it.id, fields: fields, loc: loc };
-  openSheet('<h2>' + tl('Add them together?') + '</h2><p class="sub">' + esc(tl('“{room}” already has {names}.', { room: loc, names: shown(it) })) + ' ' + tl('The numbers will be added up.') + '</p>' + confirmBtns('editCombineGo', tl('Combine')));
-}
-ACT.editCombineGo = function () {
-  var m = M, rest = Object.assign({}, m.fields);
+function editCombine(it, fields, loc) {
+  var rest = Object.assign({}, fields), plan = movePlan([it.id], loc, NaN), id = it.id;
   delete rest.loc;
   busy(true, tl('Moving…'));
-  var first = Object.keys(rest).length ? callRaw('updateItem', { itemId: m.id, fields: rest, pin: S.pin }).then(function (r) { mergeItems(r.items); }) : Promise.resolve();
-  first.then(function () { return callB('moveRoom', { moves: [{ id: m.id }], toLoc: m.loc, combine: true, actionId: uid() }); }).then(function (res) {
-    busy(false); applyResult(res); closeSheet();
+  var first = Object.keys(rest).length ? callRaw('updateItem', { itemId: id, fields: rest, pin: S.pin }).then(function (r) { mergeItems(r.items); }) : Promise.resolve();
+  first.then(function () { return callB('moveRoom', { moves: [{ id: id }], toLoc: loc, combine: true, actionId: uid() }); }).then(function (res) {
+    busy(false); applyResult(res); if (!byIdEl('sheet').hidden) closeSheet();
     var into = res.items[0], st = S.stack.filter(function (x) { return x.name !== 'edit'; });
     var top0 = st[st.length - 1];
     if (top0 && top0.name === 'item' && into) { top0.id = into.id; top0.key = RMSearch.norm(into.name); }
     setStack(st.length ? st : [{ name: 'home' }]);
-    toast(tl('Combined.'));
-  }).catch(sheetErr);
-};
+    movedMessage(plan, res, loc, 1);
+  }).catch(function (e) { busy(false); formError(e.network ? tl('Offline. Try again.') : e.message); });
+}
 
 // ----- admin: every centre at a glance -----
 function centreFacts(c) {
@@ -12149,7 +12418,7 @@ if (S.otherList) {
   openSheet('<h2>' + tl('This link opens a different list') + '</h2><p class="sub">' + tl('Your phone is connected to another list. Switch only if your admin sent you this link.') + '</p>' +
     '<p class="err" id="m-err" hidden></p><button class="btn primary" data-act="listStay">' + tl('Stay with my list') + '</button><button class="btn quiet" data-act="listSwitch">' + tl('Switch to the new list') + '</button>');
 }
-var APP_VER = '56';
+var APP_VER = '57';
 var APP_BUILT = '2026-11-28';   // the label is "Alpha" for now (then "Beta", then real version numbers); bump the date each release
 (function () {
   var el = document.getElementById('launch'), skip = false;
